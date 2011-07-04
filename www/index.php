@@ -50,7 +50,7 @@ echo $contents; } ?>
 <!-- end of project description -->
 
 <div>
-  <p>Global Soil Information Facilities - tools and procedures to handle soil data and produce gridded soil property maps.</p>
+  <p>This package contains tools and procedures to handle soil data and produce gridded soil property maps for the purpose of the global soil data initivatives such as the GlobalSoilMap.net project.</p>
 </div>
 <table border="0" cellspacing="0" cellpadding="10">
   <tr>
