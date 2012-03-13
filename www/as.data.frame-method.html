@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: Converts an object of class '&quot;SpatialProfileCollection&quot;' to a...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="R.css">
+</head><body>
+
+<table width="100%" summary="page for as.data.frame {GSIF}"><tr><td>as.data.frame {GSIF}</td><td align="right">R Documentation</td></tr></table>
+
+<h2>Converts an object of class <code>"SpatialProfileCollection"</code> to a data frame</h2>
+
+<h3>Description</h3>
+
+<p>Converts an object of class <code>"SpatialProfileCollection"</code> to an object of class <code>"data.frame"</code> with both site and horizon data sorted in one row. Each original column name in the horizons table receives a sufix <code>*_A,B,...,Z</code> where alphabetic letters represent horizon sequence. </p>
+
+
+<h3>Usage</h3>
+
+<pre>
+as.table(obj)
+</pre>
+
+
+<h3>Arguments</h3>
+
+
+<table summary="R argblock">
+<tr valign="top"><td><code>obj</code></td>
+<td>
+<p>object of class <code>"SoilProfileCollection"</code></p>
+</td></tr>                                          
+</table>
+
+
+<h3>Details</h3>
+
+<p>The advantage of converting the <code>"SoilProfileCollection"</code> data to a single table is that, once both tables have been merged to a single data frame, it can be more easily exported and visualized in a GIS and/or imported into a data base.</p>
+
+
+<h3>Note</h3>
+
+<p>Few profiles with a large number of horizons can make the whole data frame become large. Consider removing such locations or aggregating measured values per horizon to a lower number of horizons.</p>
+
+
+<h3>Author(s)</h3>
+
+<p> Tomislav Hengl </p>
+
+
+<h3>See Also</h3>
+
+ <p><code><a href="as.geosamples-method.html">as.geosamples</a></code>, <code><a href="mpspline-method.html">mpspline</a></code> </p>
+
+
+<h3>Examples</h3>
+
+<pre>
+require(aqp)
+# sample profile from Nigeria:
+lon = 3.90; lat = 7.50; id = "ISRIC:NG0017"; FAO1988 = "LXp" 
+top = c(0, 18, 36, 65, 87, 127) 
+bottom = c(18, 36, 65, 87, 127, 181)
+ORCDRC = c(18.4, 4.4, 3.6, 3.6, 3.2, 1.2)
+# prepare a SoilProfileCollection:
+prof1 &lt;- join(data.frame(id, top, bottom, ORCDRC), data.frame(id, lon, lat, FAO1988), type='inner')
+depths(prof1) &lt;- id ~ top + bottom
+site(prof1) &lt;- ~ lon + lat + FAO1988 
+coordinates(prof1) &lt;- ~ lon + lat
+proj4string(prof1) &lt;- CRS("+proj=longlat +datum=WGS84")
+# convert to a simple table:
+x &lt;- as.data.frame(prof1)
+x
+</pre>
+
+<hr><div align="center">[Package <em>GSIF</em> version 0.1-1 <a href="00Index.html">Index</a>]</div>
+</body></html>

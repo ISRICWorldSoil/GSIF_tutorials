@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: 1-degree cell land mask for Global soil mapping purposes</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="R.css">
+</head><body>
+
+<table width="100%" summary="page for landmask {GSIF}"><tr><td>landmask {GSIF}</td><td align="right">R Documentation</td></tr></table>
+
+<h2>1-degree cell land mask for Global soil mapping purposes</h2>
+
+<h3>Description</h3>
+
+<p>Land mask showing the 1-degree cells (about 19 thousand in total) in the geographical coordinates. Derived using the <a href="http://www.ngdc.noaa.gov/mgg/shorelines/gshhs.html">Global Self-consistent, Hierarchical, High-resolution Shoreline Database</a> data (GSHHS 2.1).</p>
+
+
+<h3>Usage</h3>
+
+<pre>data(landmask)</pre>
+
+
+<h3>Format</h3>
+
+
+<p>Data frame with the following columns:
+</p>
+
+<dl>
+<dt><code>mask</code></dt><dd><p>boolean; land mask value</p>
+</dd>
+<dt><code>Lon_it</code></dt><dd><p>indication of the longitude quadrant (W or E)</p>
+</dd>
+<dt><code>Lat_it</code></dt><dd><p>indication of the latitude quadrant (S or N)</p>
+</dd>
+<dt><code>cell_id</code></dt><dd><p>cell id code e.g. <code>W79_N83</code></p>
+</dd>
+<dt><code>x</code></dt><dd><p>longitudes of the center of the grid nodes</p>
+</dd>
+<dt><code>y</code></dt><dd><p>latitudes of the center of the grid nodes</p>
+</dd>  	
+</dl>
+
+
+
+<h3>Note</h3>
+
+<p>The land mask has been generated using the layer <code>GSHHS_shp/h/GSHHS_h_L1.shp</code> (level-1 boundaries). For practical purposes, all latitudes beyond 65S and 84N (polar land masses) have been masked out.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p> Tomislav Hengl </p>
+
+
+<h3>References</h3>
+
+
+
+<ul>
+<li><p> Wessel, P., Smith, W.H.F., (1996) <a href="http://dx.doi.org/10.1029/96JB00104">A Global Self-consistent, Hierarchical, High-resolution Shoreline Database</a>. Journal of Geophysical Research, 101, 8741-8743.
+</p>
+</li>
+<li><p> Global Self-consistent, Hierarchical, High-resolution Shoreline Database (<a href="http://en.wikipedia.org/wiki/GSHHS">http://en.wikipedia.org/wiki/GSHHS</a>)
+</p>
+</ul>
+
+
+
+<h3>Examples</h3>
+
+<pre>
+data(landmask)
+gridded(landmask) &lt;- ~x+y
+proj4string(landmask) &lt;- "+proj=longlat +datum=WGS84"
+## Not run: 
+spplot(landmask["mask"], col.regions="grey")
+
+## End(Not run)
+</pre>
+
+<hr><div align="center">[Package <em>GSIF</em> version 0.1-1 <a href="00Index.html">Index</a>]</div>
+</body></html>

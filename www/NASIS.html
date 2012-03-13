@@ -1,0 +1,158 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: NASIS pedon data for Indiana State</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="R.css">
+</head><body>
+
+<table width="100%" summary="page for NASIS {GSIF}"><tr><td>NASIS {GSIF}</td><td align="right">R Documentation</td></tr></table>
+
+<h2>NASIS pedon data for Indiana State</h2>
+
+<h3>Description</h3>
+
+<p>A subset of the <a href="http://soils.usda.gov/technical/nasis/">National Soil Information System</a> (NASIS) pedon data covering the Indiana State. Contains a total of 489 representative soil profiles.</p>
+
+
+<h3>Usage</h3>
+
+<pre>data(NASIS)</pre>
+
+
+<h3>Format</h3>
+
+
+<p>Sites table. Contains the following columns:
+</p>
+
+<dl>
+<dt><code>siteiid</code></dt><dd><p>factor; unique name that identifies a particular site</p>
+</dd>
+<dt><code>obsdate</code></dt><dd><p>POSIXct; sampling date</p>
+</dd>
+<dt><code>usiteid</code></dt><dd><p>factor; unique name set by the surveyor e.g. &quot;92IN025001&quot;</p>
+</dd>
+<dt><code>LON</code></dt><dd><p>numeric; longitude in decimal degrees (NAD83 datum)</p>
+</dd>
+<dt><code>LAT</code></dt><dd><p>numeric; latitude in decimal degrees (NAD83 datum)</p>
+</dd>
+<dt><code>pedonpurpose</code></dt><dd><p>factor; intended purpose of the profile description e.g. &quot;full pedon description&quot;</p>
+</dd>
+<dt><code>pedontype</code></dt><dd><p>factor; the description represents in relation to a series, component, etc e.g. &quot;modal pedon for series&quot;</p>
+</dd>
+<dt><code>geomposhill</code></dt><dd><p>factor; geomorphic component - hills e.g. &quot;interfluve&quot;</p>
+</dd>
+<dt><code>hillslopeprof</code></dt><dd><p>factor; two dimensional slope segments of a hillslope that have similar geometric, erosional, or depositional characteristics e.g. &quot;footslope&quot;</p>
+</dd>
+<dt><code>shapeacross</code></dt><dd><p>factor; two dimensional shape profile e.g. &quot;concave&quot;</p>
+</dd>
+<dt><code>shapedown</code></dt><dd><p>factor; the longitudinal shape of the slope e.g. &quot;concave&quot;</p>
+</dd>
+<dt><code>drainagecl</code></dt><dd><p>factor; the natural drainage conditions of the soil e.g. &quot;very poorly&quot;</p>
+</dd>
+<dt><code>siteperm</code></dt><dd><p>factor; site permeability e.g. &quot;moderately slow&quot;</p>
+</dd>
+<dt><code>runoff</code></dt><dd><p>factor; potential runoff class for the soil e.g. &quot;very low&quot;</p>
+</dd>
+<dt><code>soinmassamp</code></dt><dd><p>factor; soil name as sampled e.g. &quot;Zanesville&quot;</p>
+</dd>
+<dt><code>taxorder</code></dt><dd><p>factor; the Keys to Soil Taxonomy order class e.g. &quot;alfisols&quot;</p>
+</dd>
+<dt><code>taxsuborder</code></dt><dd><p>factor; the Keys to Soil Taxonomy suborder class e.g. &quot;udalfs&quot;</p>
+</dd>
+<dt><code>taxgrtgroup</code></dt><dd><p>factor; the Keys to Soil Taxonomy group class e.g. &quot;fraglossudalfs&quot;</p>
+</dd>
+<dt><code>taxsubgrp</code></dt><dd><p>factor; the Keys to Soil Taxonomy subgroup class e.g. &quot;oxyaquic fraglossudalfs&quot;</p>
+</dd>
+<dt><code>taxpartsize</code></dt><dd><p>factor; the Keys to Soil Taxonomy family / particle class e.g. &quot;fine-silty&quot;</p>
+</dd>
+<dt><code>taxtempregime</code></dt><dd><p>factor; the soil temperature regime e.g. &quot;mesic&quot;</p>
+</dd>
+</dl>
+
+<p>Horizons table. Contains the following columns:
+</p>
+
+<dl>
+<dt><code>siteiid</code></dt><dd><p>factor; unique name that identifies a particular site</p>
+</dd>
+<dt><code>phiid</code></dt><dd><p>factor; unique name that identifies a particular horizon</p>
+</dd>
+<dt><code>hzname</code></dt><dd><p>factor; pedological horizon designation e.g. &quot;Btx1&quot;</p>
+</dd>
+<dt><code>seqnum</code></dt><dd><p>integer; horizon sequence number</p>
+</dd>
+<dt><code>hzdept</code></dt><dd><p>integer; horizon top depth in cm</p>
+</dd>
+<dt><code>hzdepb</code></dt><dd><p>integer; horizon bottom depth in cm</p>
+</dd>
+<dt><code>texture</code></dt><dd><p>factor; texture by hand class determined on the field e.g. &quot;SIL&quot;</p>
+</dd>
+<dt><code>rupresblkmst</code></dt><dd><p>integer; rupture moist class</p>
+</dd>
+<dt><code>phfield</code></dt><dd><p>numeric; pH as measured on the field</p>
+</dd>
+<dt><code>phdetermeth</code></dt><dd><p>factor; pH determination method</p>
+</dd>
+<dt><code>bounddistinct</code></dt><dd><p>integer; boundary distinctness grade</p>
+</dd>
+<dt><code>boundtopo</code></dt><dd><p>integer; horizontal shape of the interface between adjacent soil horizons</p>
+</dd>
+</dl>
+
+
+
+<h3>Note</h3>
+
+<p>The original NASIS database contains about 25 thousand profiles. Locations of samples were selected by experienced surveyors and are often clustered in some parts of the state (see plot below).<br> 
+The variables listed above were selected to test various Digital Soil Mapping algorithms and represent only a subset of the NASIS data. Please refer to the NASIS technical documentation for more information about the specific columns.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p> The NASIS server is located at the USDA Kansas City data center. This subset has been prepared for the purpose of testing various DSM methods by Tomislav Hengl (tom.hengl@wur.nl). The processing steps are described in <a href="http://gsif.r-forge.r-project.org/rw_NASIS.R">this script</a>.</p>
+
+
+<h3>References</h3>
+
+
+
+<ul>
+<li><p> National Soil Information System (<a href="http://soils.usda.gov/technical/nasis/">http://soils.usda.gov/technical/nasis/</a>)
+</p>
+</li>
+<li><p> soilDB package (<a href="http://cran.r-project.org/package=soilDB">http://cran.r-project.org/package=soilDB</a>)
+</p>
+</ul>
+
+
+
+<h3>See Also</h3>
+
+ <p><code><a href="NCSS.html">NCSS</a></code>, <code><a href="hoosier.html">hoosier</a></code>, <code><a href="geochm.html">geochm</a></code></p>
+
+
+<h3>Examples</h3>
+
+<pre>
+library(aqp)
+data(NASIS)
+plot(NASIS$sites$LON, NASIS$sites$LAT)
+aea.prj &lt;- "+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs"
+NASIS.spc &lt;- join(NASIS$horizons, NASIS$sites, type='inner')
+depths(NASIS.spc) &lt;- siteiid ~ hzdept + hzdepb
+site(NASIS.spc) &lt;- ~ LON + LAT + taxorder
+# generate SpatialPoints:
+coordinates(NASIS.spc) &lt;- ~ LON + LAT
+proj4string(NASIS.spc@sp) &lt;- CRS("+proj=longlat +datum=NAD83")
+# soil covariate layers:
+data(indiana)
+border &lt;- SpatialLines(list(Lines(list(Line(indiana)), "border")))
+proj4string(border) &lt;- aea.prj
+par(mar=c(0,0,0,0))
+plot(spTransform(border, NASIS.spc@sp@proj4string))
+points(NASIS.spc@sp, pch="+", cex=.7)
+</pre>
+
+<hr><div align="center">[Package <em>GSIF</em> version 0.1-1 <a href="00Index.html">Index</a>]</div>
+</body></html>

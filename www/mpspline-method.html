@@ -1,0 +1,131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: Fits a mass preserving spline</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="R.css">
+</head><body>
+
+<table width="100%" summary="page for mpspline {GSIF}"><tr><td>mpspline {GSIF}</td><td align="right">R Documentation</td></tr></table>
+
+<h2>Fits a mass preserving spline</h2>
+
+<h3>Description</h3>
+
+<p>Fits a mass preserving spline to a soil profile data. Target variable needs to be a numeric vector measured at least 3 horizons. It is assumed that soil variables collected per horizon refer to block support i.e. they represent composite values for the whole horizon.</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+mpspline(obj, var.name, mxd = 200, lam = 0.1, d = t(c(0,5,15,30,60,100,200)), 
+          vlow = 0, vhigh = 1000)
+</pre>
+
+
+<h3>Arguments</h3>
+
+
+<table summary="R argblock">
+<tr valign="top"><td><code>obj</code></td>
+<td>
+<p>object of class <code>"SoilProfileCollection"</code></p>
+</td></tr> 
+<tr valign="top"><td><code>var.name</code></td>
+<td>
+<p>character; target variable name (must be a numeric variable)</p>
+</td></tr>
+<tr valign="top"><td><code>mxd</code></td>
+<td>
+<p>numeric; maximum depth to which spline should be fitted</p>
+</td></tr>        
+<tr valign="top"><td><code>lam</code></td>
+<td>
+<p>numeric; lambda the smoothing parameter</p>
+</td></tr>
+<tr valign="top"><td><code>d</code></td>
+<td>
+<p>numeric; standard depths</p>
+</td></tr>
+<tr valign="top"><td><code>vlow</code></td>
+<td>
+<p>numeric; smallest value of the target variable (smaller values will be replaced)</p>
+</td></tr> 
+<tr valign="top"><td><code>vhigh</code></td>
+<td>
+<p>numeric; highest value of the target variable (larger values will be replaced)</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>Returns a list with four elements:
+</p>
+
+<dl>
+<dt><code>idcol</code></dt><dd><p>site ID column</p>
+</dd>
+<dt><code>depth</code></dt><dd><p>matrix; are observed depths of horizon boundaries</p>
+</dd>
+<dt><code>var.fitted</code></dt><dd><p>matrix; are are spline-estimated values of the target variable at observed depths</p>
+</dd>
+<dt><code>var.std</code></dt><dd><p>matrix; are spline-estimated values of the target variable at standard depths</p>
+</dd> 
+<dt><code>var.1cm</code></dt><dd><p>matrix; are spline-estimated values of the target variable using the 1 cm increments</p>
+</dd>   
+</dl>
+
+<p>All detphs are commonly expressed in centimeters. The returned values refer to point support and can be used to construct a <code>"SpatialPointsDataFrame"</code> (3-dimensional).</p>
+
+
+<h3>Note</h3>
+
+<p>This operation can be time-consuming for large data sets.</p>
+
+
+<h3>Author(s)</h3>
+
+<p> Brendon Malone and Tomislav Hengl </p>
+
+
+<h3>References</h3>
+
+
+
+<ul>
+<li><p> Bishop, T.F.A., McBratney, A.B., Laslett, G.M., (1999) <a href="http://dx.doi.org/10.1016/S0016-7061(99)00003-8">Modelling soil attribute depth functions with equal-area quadratic smoothing splines</a>. Geoderma, 91(1-2): 27-45. 
+</p>
+</li>
+<li><p> Malone, B.P., McBratney, A.B., Minasny, B., Laslett, G.M. (2009) <a href="http://dx.doi.org/10.1016/j.geoderma.2009.10.007">Mapping continuous depth functions of soil carbon storage and available water capacity</a>. Geoderma, 154(1-2): 138-152.
+</p>
+</ul>
+
+
+
+<h3>See Also</h3>
+
+ <p><code>stats::spline</code> </p>
+
+
+<h3>Examples</h3>
+
+<pre>
+require(aqp)
+# sample profile from Nigeria:
+lon = 3.90; lat = 7.50; id = "ISRIC:NG0017"; FAO1988 = "LXp" 
+top = c(0, 18, 36, 65, 87, 127) 
+bottom = c(18, 36, 65, 87, 127, 181)
+ORCDRC = c(18.4, 4.4, 3.6, 3.6, 3.2, 1.2)
+munsell = c("7.5YR3/2", "7.5YR4/4", "2.5YR5/6", "5YR5/8", "5YR5/4", "10YR7/3")
+# prepare a SoilProfileCollection:
+prof1 &lt;- join(data.frame(id, top, bottom, ORCDRC, munsell), data.frame(id, lon, lat, FAO1988), type='inner')
+depths(prof1) &lt;- id ~ top + bottom
+site(prof1) &lt;- ~ lon + lat + FAO1988 
+coordinates(prof1) &lt;- ~ lon + lat
+proj4string(prof1) &lt;- CRS("+proj=longlat +datum=WGS84")
+# fit a spline:
+ORCDRC.s &lt;- mpspline(prof1, "ORCDRC")
+ORCDRC.s
+</pre>
+
+<hr><div align="center">[Package <em>GSIF</em> version 0.1-1 <a href="00Index.html">Index</a>]</div>
+</body></html>

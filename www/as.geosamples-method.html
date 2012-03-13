@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: Converts an object of class '&quot;SpatialProfileCollection&quot;' to a...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="R.css">
+</head><body>
+
+<table width="100%" summary="page for as.geosamples {GSIF}"><tr><td>as.geosamples {GSIF}</td><td align="right">R Documentation</td></tr></table>
+
+<h2>Converts an object of class <code>"SpatialProfileCollection"</code> to a standardized data frame</h2>
+
+<h3>Description</h3>
+
+<p>Converts an object of class <code>"SpatialProfileCollection"</code> to an object of class <code>"geosamples"</code> with all measurements broken separately as individual records. Geo-records are standardized universal spatially and temporally referenced samples from the Earth's surface.</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+as.geosamples(obj)
+</pre>
+
+
+<h3>Arguments</h3>
+
+
+<table summary="R argblock">
+<tr valign="top"><td><code>obj</code></td>
+<td>
+<p>object of class <code>"SoilProfileCollection"</code></p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>Returns an object of type <code>"geosamples"</code> with the following slots:
+</p>
+
+<dl>
+<dt><code>registry</code></dt><dd><p>character; an unique URI defining the global registry with all metadata and attribute lists (domains)</p>
+</dd>
+<dt><code>methods</code></dt><dd><p>data.frame; a table with method names (<code>"methodid"</code>), a detailed description of each method (<code>"description"</code>), measurement units or levels (<code>"units"</code>), and associated detection limits (<code>"detectionLimit"</code>)</p>
+</dd>
+<dt><code>data</code></dt><dd><p>data.frame; a standardized table with fixed column names: <code>"sampleid"</code> (universal ID; as specified in the data registry service), <code>"producerid"</code> (producer's ID; usually site ID and horizon ID or sequence number), <code>"longitude"</code>, <code>"latitude"</code>, <code>"locationError"</code>, <code>"TimeSpan.begin"</code>, <code>"TimeSpan.end"</code>, <code>"altitude"</code>, <code>"altitudeError"</code>, <code>"altitudeMode"</code>, <code>"dimension"</code>, <code>"volume"</code>, <code>"value"</code> (measured value), <code>"methodid"</code>, <code>"measurementError"</code></p>
+</dd>
+</dl>
+
+<p>The column names in the data slot largely reflect the KML schema elements. For more information about what each column means, refer to the <a href="https://developers.google.com/kml/documentation/kmlreference">KML reference</a>.<br> 
+Many columns required by the <code>"geosamples"</code> class can be missing and will result in <code>NA</code> values. These will likely need to be inserted afterwards, within or outside R.</p>
+
+
+<h3>Note</h3>
+
+<p>The basic idea of this class is to outsource the metadata management to some global publicly available service. Georecord class can be used to prepare geological, hydrological, geochemical, biodiversity, soil science and similar samples. Geological and soil samples can be registered via the <a href="http://www.geosamples.org/">geosamples.org</a>, for example, so that the <code>"sampleid"</code> corresponds to the IGSN (unique sample identifier). The methods used in the field of soil science could be all implemented via the <a href="http://soilinformationstandards.org">SoilLM</a> scheme. <code>"producerid"</code> column is recommended as it allows linking to the original data set.</p>
+
+
+<h3>Author(s)</h3>
+
+<p> Tomislav Hengl and Hannes I. Reuter </p>
+
+
+<h3>See Also</h3>
+
+ <p><code><a href="as.data.frame-method.html">as.data.frame</a></code>, <code>geosamples-class</code> </p>
+
+<hr><div align="center">[Package <em>GSIF</em> version 0.1-1 <a href="00Index.html">Index</a>]</div>
+</body></html>
