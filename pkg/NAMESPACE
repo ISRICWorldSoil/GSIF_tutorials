@@ -1,0 +1,8 @@
+importFrom("aqp", SoilProfileCollection)
+importFrom("gstat", gstat)
+importFrom("methods", as)
+importFrom("sp", SpatialPolygons, SpatialPointsDataFrame)
+importFrom("plotKML", check_projection)
+exportClasses(geosamples)
+exportMethods(mpspline, as.geosamples, getID, as.data.frame)
+exportPattern("^[^\\.]")

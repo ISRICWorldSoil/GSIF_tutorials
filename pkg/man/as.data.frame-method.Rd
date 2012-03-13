@@ -1,0 +1,34 @@
+\name{as.data.frame}
+\docType{methods}
+\alias{as.data.frame}
+\alias{as.data.frame,SpatialProfileCollection-method}
+\title{Converts an object of class \code{"SpatialProfileCollection"} to a data frame}
+\description{Converts an object of class \code{"SpatialProfileCollection"} to an object of class \code{"data.frame"} with both site and horizon data sorted in one row. Each original column name in the horizons table receives a sufix \code{*_A,B,\dots,Z} where alphabetic letters represent horizon sequence. }
+\usage{
+as.table(obj)
+}
+\arguments{
+  \item{obj}{object of class \code{"SoilProfileCollection"}}                                          
+}
+\details{The advantage of converting the \code{"SoilProfileCollection"} data to a single table is that, once both tables have been merged to a single data frame, it can be more easily exported and visualized in a GIS and/or imported into a data base.}
+\note{Few profiles with a large number of horizons can make the whole data frame become large. Consider removing such locations or aggregating measured values per horizon to a lower number of horizons.}
+\author{ Tomislav Hengl }
+\seealso{ \code{\link{as.geosamples}}, \code{\link{mpspline}} }
+\examples{
+require(aqp)
+# sample profile from Nigeria:
+lon = 3.90; lat = 7.50; id = "ISRIC:NG0017"; FAO1988 = "LXp" 
+top = c(0, 18, 36, 65, 87, 127) 
+bottom = c(18, 36, 65, 87, 127, 181)
+ORCDRC = c(18.4, 4.4, 3.6, 3.6, 3.2, 1.2)
+# prepare a SoilProfileCollection:
+prof1 <- join(data.frame(id, top, bottom, ORCDRC), data.frame(id, lon, lat, FAO1988), type='inner')
+depths(prof1) <- id ~ top + bottom
+site(prof1) <- ~ lon + lat + FAO1988 
+coordinates(prof1) <- ~ lon + lat
+proj4string(prof1) <- CRS("+proj=longlat +datum=WGS84")
+# convert to a simple table:
+x <- as.data.frame(prof1)
+x
+}
+\keyword{methods}
