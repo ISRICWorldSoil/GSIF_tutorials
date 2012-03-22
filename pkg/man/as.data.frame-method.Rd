@@ -3,9 +3,9 @@
 \alias{as.data.frame}
 \alias{as.data.frame,SpatialProfileCollection-method}
 \title{Converts an object of class \code{"SpatialProfileCollection"} to a data frame}
-\description{Converts an object of class \code{"SpatialProfileCollection"} to an object of class \code{"data.frame"} with both site and horizon data sorted in one row. Each original column name in the horizons table receives a sufix \code{*_A,B,\dots,Z} where alphabetic letters represent horizon sequence. }
+\description{Converts an object of class \code{"SpatialProfileCollection"} to an object of class \code{"data.frame"} with both site and horizon data sorted in one row. Each original column name in the horizons table receives a sufix \code{*_A, B, \dots, Z} where alphabetic letters represent horizon sequence. }
 \usage{
-as.table(obj)
+as.data.frame(obj)
 }
 \arguments{
   \item{obj}{object of class \code{"SoilProfileCollection"}}                                          
@@ -29,6 +29,6 @@ coordinates(prof1) <- ~ lon + lat
 proj4string(prof1) <- CRS("+proj=longlat +datum=WGS84")
 # convert to a simple table:
 x <- as.data.frame(prof1)
-x
+str(x)
 }
 \keyword{methods}

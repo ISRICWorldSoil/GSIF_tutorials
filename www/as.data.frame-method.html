@@ -10,13 +10,13 @@
 
 <h3>Description</h3>
 
-<p>Converts an object of class <code>"SpatialProfileCollection"</code> to an object of class <code>"data.frame"</code> with both site and horizon data sorted in one row. Each original column name in the horizons table receives a sufix <code>*_A,B,...,Z</code> where alphabetic letters represent horizon sequence. </p>
+<p>Converts an object of class <code>"SpatialProfileCollection"</code> to an object of class <code>"data.frame"</code> with both site and horizon data sorted in one row. Each original column name in the horizons table receives a sufix <code>*_A, B, ..., Z</code> where alphabetic letters represent horizon sequence. </p>
 
 
 <h3>Usage</h3>
 
 <pre>
-as.table(obj)
+as.data.frame(obj)
 </pre>
 
 
@@ -68,7 +68,7 @@ coordinates(prof1) &lt;- ~ lon + lat
 proj4string(prof1) &lt;- CRS("+proj=longlat +datum=WGS84")
 # convert to a simple table:
 x &lt;- as.data.frame(prof1)
-x
+str(x)
 </pre>
 
 <hr><div align="center">[Package <em>GSIF</em> version 0.1-1 <a href="00Index.html">Index</a>]</div>

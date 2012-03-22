@@ -15,7 +15,7 @@
 
 ## georecord class:
 setClass("geosamples", representation (registry = 'character', methods = 'data.frame', data = 'data.frame'), validity <- function(obj) {
-   cnames <- c("sampleid", "producerid", "longitude", "latitude", "TimeSpan.begin", "TimeSpan.end", "altitude", "altitudeMode", "dimension", "volume", "value", "methodid", "measurementError")
+   cnames <- c("sampleid", "producerid", "longitude", "latitude", "locationError", "TimeSpan.begin", "TimeSpan.end", "altitude", "altitudeMode", "volume", "observedValue", "methodid", "measurementError")
    if(any(!(names(obj@data) %in% cnames)))
       return(paste("Expecting only column names:", cnames))
    mnames <- c("methodid", "description", "units", "detectionLimit")
@@ -47,6 +47,18 @@ setClass("geosamples", representation (registry = 'character', methods = 'data.f
       return("longitude and latitude values in the range -180 to 180 and -90 to 90 required") 
 })
 
+## WPS class
+setClass("WPS", representation (server = 'list', inRastername = 'character'), validity <- function(obj) {
+   cnames <- c("URI", "service.name", "version", "request", "identifier")
+   if(any(!(names(obj@server) %in% cnames)))
+      return(paste("Expecting only column names:", cnames))
+   # check if URI exists:
+   uri = paste(paste(obj@server$URI, "?", sep=""), obj@server$version, obj@server$service, "request=GetCapabilities", sep="&") 
+   require(RCurl)
+   try(z <- getURI(uri, .opts=curlOptions(header=TRUE, nobody=TRUE, transfertext=TRUE, failonerror=FALSE)))
+   if(!length(x <- grep(z, pattern="404 Not Found"))==0)
+      return("Server error: 404 Not Found")
+})
 
 
 ################## generic functions ##############
@@ -63,8 +75,9 @@ if (!isGeneric("as.geosamples")){
   setGeneric("as.geosamples", function(obj, ...){standardGeneric("as.geosamples")})
 }
 
-## internal methods:
-
+if (!isGeneric("getProcess")){
+  setGeneric("getProcess", function(x, ...){standardGeneric("getProcess")})
+}
 
 ################## STANDARD ENVIRONMENTS ##############
 

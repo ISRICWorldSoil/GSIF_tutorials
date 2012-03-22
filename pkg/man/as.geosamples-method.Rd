@@ -3,28 +3,50 @@
 \alias{as.geosamples}
 \alias{as.geosamples,SpatialProfileCollection-method}
 \title{Converts an object of class \code{"SpatialProfileCollection"} to a standardized data frame}
-\description{Converts an object of class \code{"SpatialProfileCollection"} to an object of class \code{"geosamples"} with all measurements broken separately as individual records. Geo-records are standardized universal spatially and temporally referenced samples from the Earth's surface.}
+\description{Converts an object of class \code{"SpatialProfileCollection"} to an object of class \code{"geosamples"} with all measurements broken separately as individual records. Geosamples are standardized spatially and temporally referenced samples from the Earth's surface.}
 \usage{
 as.geosamples(obj)
 }
 \arguments{
   \item{obj}{object of class \code{"SoilProfileCollection"}}
 }
-\details{Returns an object of type \code{"geosamples"} with the following slots:
-  \describe{
-   \item{\code{registry}}{character; an unique URI defining the global registry with all metadata and attribute lists (domains)}
-   \item{\code{methods}}{data.frame; a table with method names (\code{"methodid"}), a detailed description of each method (\code{"description"}), measurement units or levels (\code{"units"}), and associated detection limits (\code{"detectionLimit"})}
-   \item{\code{data}}{data.frame; a standardized table with fixed column names: \code{"sampleid"} (universal ID; as specified in the data registry service), \code{"producerid"} (producer's ID; usually site ID and horizon ID or sequence number), \code{"longitude"}, \code{"latitude"}, \code{"locationError"}, \code{"TimeSpan.begin"}, \code{"TimeSpan.end"}, \code{"altitude"}, \code{"altitudeError"}, \code{"altitudeMode"}, \code{"dimension"}, \code{"volume"}, \code{"value"} (measured value), \code{"methodid"}, \code{"measurementError"}}
-  }
-The column names in the data slot largely reflect the KML schema elements. For more information about what each column means, refer to the \href{https://developers.google.com/kml/documentation/kmlreference}{KML reference}.\cr 
-Many columns required by the \code{"geosamples"} class can be missing and will result in \code{NA} values. These will likely need to be inserted afterwards, within or outside R.}
-\note{The basic idea of this class is to outsource the metadata management to some global publicly available service. Georecord class can be used to prepare geological, hydrological, geochemical, biodiversity, soil science and similar samples. Geological and soil samples can be registered via the \href{http://www.geosamples.org/}{geosamples.org}, for example, so that the \code{"sampleid"} corresponds to the IGSN (unique sample identifier). The methods used in the field of soil science could be all implemented via the \href{http://soilinformationstandards.org}{SoilLM} scheme. \code{"producerid"} column is recommended as it allows linking to the original data set.}
+\details{Returns an object of type \code{"geosamples"}. Many columns required by the \code{"geosamples"} class might be not available and will result in \code{NA} values. To ensure compatibility, when building an object of type \code{"SoilProfilesCollection"}, use some standard naming convention to attach attributes:
+\describe{
+  \item{\code{"measurementError"}}{can be used to attach location errors in meters to each spatial location}
+  \item{\code{"measurementError"}}{can be used to attach specific measurement errors to each measurement in both site and horizons table}
+  \item{\code{"IGSN"}}{can be used to attach the unique identifier (\href{http://en.wikipedia.org/wiki/International_Geo_Sample_Number}{International Geo Sample Number}) to each specific measurement}  
+}
+}
 \author{ Tomislav Hengl and Hannes I. Reuter }
-
-\seealso{ \code{\link{as.data.frame}}, \code{\link{geosamples-class}} }
+\seealso{ \code{\link{geosamples-class}}, \code{\link{as.data.frame}}, \code{aqp::SoilProfileCollection} }
 \examples{
 \dontrun{
-
+require(aqp)
+# sample profile from Nigeria:
+lon = 3.90; lat = 7.50; time = as.POSIXct("1978", format="%Y"); id = "ISRIC:NG0017"; TAXNFAO8 = "LXp" 
+top = c(0, 18, 36, 65, 87, 127) 
+bottom = c(18, 36, 65, 87, 127, 181)
+ORCDRC = c(18.4, 4.4, 3.6, 3.6, 3.2, 1.2)
+methodid = c("TAXNFAO8", "ORCDRC")
+description = c("FAO 1988 classification system group", "Method of Walkley-Black (Org. matter = Org. C x 1.72)")
+units = c("FAO 1988 classes", "permille")
+detectionLimit = c(as.character(NA), "0.1")
+# prepare a SoilProfileCollection:
+prof1 <- join(data.frame(id, top, bottom, ORCDRC), data.frame(id, lon, lat, time, TAXNFAO8), type='inner')
+depths(prof1) <- id ~ top + bottom
+site(prof1) <- ~ lon + lat + time + TAXNFAO8 
+coordinates(prof1) <- ~ lon + lat + time
+proj4string(prof1) <- CRS("+proj=longlat +datum=WGS84")
+# add measurement errors:
+attr(prof1@horizons$ORCDRC, "measurementError") <- c(1.5, 0.5, 0.5, 0.5, 0.5, 0.5)
+attr(prof1@sp@coords, "locationError") <- 1500
+# add the metadata:
+prof1@metadata <- data.frame(methodid, description, units, detectionLimit)
+# convert to geosamples:
+x <- as.geosamples(prof1)
+show(x)
+# print only the sampled values of ORCDRC:
+ORCDRC <- subset(x, "ORCDRC")
 }
 }
 \keyword{methods}
