@@ -79,6 +79,10 @@ if (!isGeneric("getProcess")){
   setGeneric("getProcess", function(x, ...){standardGeneric("getProcess")})
 }
 
+if (!isGeneric("describe")){
+  setGeneric("describe", function(x, ...){standardGeneric("describe")})
+}
+
 ################## STANDARD ENVIRONMENTS ##############
 
 ## setup the plotKML environment:
