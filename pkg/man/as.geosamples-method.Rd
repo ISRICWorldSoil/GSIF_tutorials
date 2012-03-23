@@ -12,7 +12,7 @@ as.geosamples(obj)
 }
 \details{Returns an object of type \code{"geosamples"}. Many columns required by the \code{"geosamples"} class might be not available and will result in \code{NA} values. To ensure compatibility, when building an object of type \code{"SoilProfilesCollection"}, use some standard naming convention to attach attributes:
 \describe{
-  \item{\code{"measurementError"}}{can be used to attach location errors in meters to each spatial location}
+  \item{\code{"locationError"}}{can be used to attach location errors in meters to each spatial location}
   \item{\code{"measurementError"}}{can be used to attach specific measurement errors to each measurement in both site and horizons table}
   \item{\code{"IGSN"}}{can be used to attach the unique identifier (\href{http://en.wikipedia.org/wiki/International_Geo_Sample_Number}{International Geo Sample Number}) to each specific measurement}  
 }
@@ -20,10 +20,9 @@ as.geosamples(obj)
 \author{ Tomislav Hengl and Hannes I. Reuter }
 \seealso{ \code{\link{geosamples-class}}, \code{\link{as.data.frame}}, \code{aqp::SoilProfileCollection} }
 \examples{
-\dontrun{
 require(aqp)
 # sample profile from Nigeria:
-lon = 3.90; lat = 7.50; time = as.POSIXct("1978", format="%Y"); id = "ISRIC:NG0017"; TAXNFAO8 = "LXp" 
+lon = 3.90; lat = 7.50; time = as.POSIXct("1978", format="\%Y"); id = "ISRIC:NG0017"; TAXNFAO8 = "LXp" 
 top = c(0, 18, 36, 65, 87, 127) 
 bottom = c(18, 36, 65, 87, 127, 181)
 ORCDRC = c(18.4, 4.4, 3.6, 3.6, 3.2, 1.2)
@@ -47,6 +46,5 @@ x <- as.geosamples(prof1)
 show(x)
 # print only the sampled values of ORCDRC:
 ORCDRC <- subset(x, "ORCDRC")
-}
 }
 \keyword{methods}

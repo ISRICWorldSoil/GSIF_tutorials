@@ -37,7 +37,7 @@ as.geosamples(obj)
 </p>
 
 <dl>
-<dt><code>"measurementError"</code></dt><dd><p>can be used to attach location errors in meters to each spatial location</p>
+<dt><code>"locationError"</code></dt><dd><p>can be used to attach location errors in meters to each spatial location</p>
 </dd>
 <dt><code>"measurementError"</code></dt><dd><p>can be used to attach specific measurement errors to each measurement in both site and horizons table</p>
 </dd>
@@ -60,10 +60,9 @@ as.geosamples(obj)
 <h3>Examples</h3>
 
 <pre>
-## Not run: 
 require(aqp)
 # sample profile from Nigeria:
-lon = 3.90; lat = 7.50; time = as.POSIXct("1978", format="
+lon = 3.90; lat = 7.50; time = as.POSIXct("1978", format="%Y"); id = "ISRIC:NG0017"; TAXNFAO8 = "LXp" 
 top = c(0, 18, 36, 65, 87, 127) 
 bottom = c(18, 36, 65, 87, 127, 181)
 ORCDRC = c(18.4, 4.4, 3.6, 3.6, 3.2, 1.2)
@@ -87,8 +86,6 @@ x &lt;- as.geosamples(prof1)
 show(x)
 # print only the sampled values of ORCDRC:
 ORCDRC &lt;- subset(x, "ORCDRC")
-
-## End(Not run)
 </pre>
 
 <hr><div align="center">[Package <em>GSIF</em> version 0.1-1 <a href="00Index.html">Index</a>]</div>

@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: A class for spatially and temporally referenced samples</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="R.css">
+</head><body>
+
+<table width="100%" summary="page for geosamples-class {GSIF}"><tr><td>geosamples-class {GSIF}</td><td align="right">R Documentation</td></tr></table>
+
+<h2>A class for spatially and temporally referenced samples</h2>
+
+<h3>Description</h3>
+
+<p>A class for spatially and temporally referenced samples with fixed column names (standardized geosamples). Corresponds to the point <code>"Placemark"</code> in the KML schema.</p>
+
+
+<h3>Slots</h3>
+
+
+
+<dl>
+<dt><code>registry</code>:</dt><dd><p>object of class <code>"character"</code>; URI of the online registry i.e. the URL where the <code>"producerid"</code> column can be linked to all other connected metadata</p>
+</dd>
+<dt><code>methods</code>:</dt><dd><p>object of class <code>"data.frame"</code>; a table with method names (<code>"methodid"</code>), a one sentence description of each method (<code>"description"</code>), measurement units or levels (<code>"units"</code>), and associated detection limits (<code>"detectionLimit"</code>)</p>
+</dd>
+<dt><code>data</code>:</dt><dd><p>object of class <code>"data.frame"</code>; a standardized table with fixed column names: <code>"sampleid"</code> (universal ID; as specified in the data registry service), <code>"producerid"</code> (producer's ID; usually site ID and horizon ID or sequence number), <code>"longitude"</code>, <code>"latitude"</code>, <code>"locationError"</code> (error radius in meters), <code>"TimeSpan.begin"</code>, <code>"TimeSpan.end"</code>, <code>"altitude"</code>, <code>"altitudeError"</code>, <code>"altitudeMode"</code>, <code>"volume"</code>, <code>"value"</code> (measured value), <code>"methodid"</code>, <code>"measurementError"</code></p>
+</dd>
+</dl>
+
+<p>The column names in the data slot largely reflect the KML schema elements. For more information refer to the <a href="https://developers.google.com/kml/documentation/kmlreference">KML reference</a>. Geosamples-class can be used to store and manipulate geological, hydrological, geochemical, biodiversity, soil science and similar field samples. Geological and soil samples can be registered via the <a href="http://www.geosamples.org/">geosamples.org</a>, in which case the <code>"sampleid"</code> will correspond to the unique sample identifier (IGSN). <code>"producerid"</code> column allows linking geosamples to the original data set id's. Geosamples-class (fully referenced observations) are universal input for 3D geostatistics.
+</p>
+
+
+<h3>Methods</h3>
+
+
+
+<dl>
+<dt>show</dt><dd><p><code>signature(obj = "geosamples")</code>: summarize object by listing methods, total number of observations, total area covered etc. </p>
+</dd>
+<dt>subset</dt><dd><p><code>signature(obj = "geosamples")</code>: subset to a single variable type; returns a data frame </p>
+</dd>
+</dl>
+
+
+
+<h3>Author(s)</h3>
+
+<p> Tomislav Hengl and Hannes I. Reuter </p>
+
+
+<h3>References</h3>
+
+
+
+<ul>
+<li><p> Dyson, E., (2003) <a href="http://cdn.oreilly.com/radar/r1/09-03.pdf">Online Registries: The DNS and Beyond...</a>. Edventure, Vol 21(8).
+</p>
+</li>
+<li><p> International Geo Sample Number (<a href="http://en.wikipedia.org/wiki/International_Geo_Sample_Number">http://en.wikipedia.org/wiki/International_Geo_Sample_Number</a>)
+</p>
+</li>
+<li><p> KML Reference (<a href="https://developers.google.com/kml/documentation/kmlreference">https://developers.google.com/kml/documentation/kmlreference</a>)
+</p>
+</li>
+<li><p> SESAR, the System for Earth Sample Registration (<a href="http://www.geosamples.org">http://www.geosamples.org</a>)
+</p>
+</li>
+<li><p> Soil Information Standards (<a href="http://soilinformationstandards.org">http://soilinformationstandards.org</a>)
+</p>
+</ul>
+
+
+
+<h3>See Also</h3>
+
+ <p><code><a href="as.geosamples-method.html">as.geosamples</a></code> </p>
+
+<hr><div align="center">[Package <em>GSIF</em> version 0.1-1 <a href="00Index.html">Index</a>]</div>
+</body></html>

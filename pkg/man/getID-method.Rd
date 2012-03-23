@@ -5,7 +5,8 @@
 \title{Derive 1 degree cell IDs}
 \description{Derives ID's of the 1 degree cells in the default land mask for a given polygon defining the spatial domain of interest.}
 \usage{
-getID(obj, pixsize = 3/3600, empty.tif = FALSE, compress = FALSE, zipname)
+getID(obj, pixsize = 3/3600, empty.tif = FALSE, compress = FALSE, 
+        zipname = set.file.extension(tempfile(tmpdir = getwd()), "zip"))
 }
 \arguments{
   \item{obj}{object of class \code{"SpatialPolygons"}; must be in geographical coordinates (WGS84)} 
@@ -20,12 +21,10 @@ getID(obj, pixsize = 3/3600, empty.tif = FALSE, compress = FALSE, zipname)
 \seealso{ \code{\link{landmask}}
 }
 \examples{
-\dontrun{
 bbox = expand.grid(lon=c(32.67152, 35.915046), lat=c(-17.12721, -9.363796))
 bbox[5,] <- bbox[1,]
 crs = CRS("+proj=longlat +datum=WGS84")
 x <- SpatialPolygons(list(Polygons(list(Polygon(bbox)), ID="1")), proj4string=crs)
 ID.lst <- getID(x)
-}
 }
 \keyword{methods}

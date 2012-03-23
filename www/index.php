@@ -23,6 +23,10 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 <!--
 .style1 {font-size: x-small}
 .style2 {font-size: small}
+.R_code {font-family:"Courier New", Courier, monospace;
+font-style:italic;
+font-size: x-small;
+}
 -->
     </style>
 </head>
@@ -60,8 +64,20 @@ echo $contents; } ?>
 </table>
 <p class="style1">Contact: <a href="http://www.wewur.wur.nl/popups/vcard.aspx?id=HENGL001" target="_blank">Tomislav Hengl</a></p>
 
-<p> The <strong>project summary page</strong> you can find <a href="http://<?php echo $domain; ?>/projects/<?php echo $group_name; ?>/"><strong>here</strong></a>.</p>
+<p> The <strong>project summary page</strong> you can find <a href="http://<?php echo $domain; ?>/projects/<?php echo $group_name; ?>/"><strong>here</strong></a>. See the complete list of <strong><a href="00Index.html">functions</a></strong> available in this package <a href="settings.php"><strong></strong></a>. </p>
 
+<p><strong>Installation:</strong></p>
+<p>To install this package from R-forge use (works only on<strong> &gt;= R 2.14!</strong>):</p>
+<p class="R_code">&gt; install.packages(c(&quot;RCurl&quot;, &quot;XML&quot;, &quot;RSAGA&quot;, &quot;rgdal&quot;, &quot;raster&quot;, &quot;sp&quot;, &quot;gstat&quot;, &quot;aqp&quot;)) </p>
+<p class="R_code">&gt; install.packages(&quot;GSIF&quot;, repos=c(&quot;http://R-Forge.R-project.org&quot;)) </p>
+<p>Alternatively, you can install the most recent snapshot of the package directly from the source by using e.g.:</p>
+<p class="R_code">&gt; download.file(&quot;http://gsif.r-forge.r-project.org/GSIF_0.1-1.tar.gz&quot;, &quot;GSIF_0.1-1.tar.gz&quot;)<br />
+  &gt; system(&quot;R CMD INSTALL GSIF_0.1-1.tar.gz&quot;) </p>
+<p><strong>News:</strong></p>
+<ul>
+  <li>Apr 2012: GSIF package will be presented at the <a href="http://www.pedometrics.org/dsm_oz/" target="_blank">DSM conference</a> in Sydney; </li>
+  <li>Mar 2012: first version of the package on R-forge; </li>
+</ul>
 <hr />
 <p><img src="ISRIC_logo.jpg" alt="ISRIC - World Soil Information" width="297" height="72" longdesc="http://www.isric.org" /></p>
 </body>

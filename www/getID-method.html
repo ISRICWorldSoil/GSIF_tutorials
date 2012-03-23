@@ -16,7 +16,8 @@
 <h3>Usage</h3>
 
 <pre>
-getID(obj, pixsize = 3/3600, empty.tif = FALSE, compress = FALSE, zipname)
+getID(obj, pixsize = 3/3600, empty.tif = FALSE, compress = FALSE, 
+        zipname = set.file.extension(tempfile(tmpdir = getwd()), "zip"))
 </pre>
 
 
@@ -71,14 +72,11 @@ getID(obj, pixsize = 3/3600, empty.tif = FALSE, compress = FALSE, zipname)
 <h3>Examples</h3>
 
 <pre>
-## Not run: 
 bbox = expand.grid(lon=c(32.67152, 35.915046), lat=c(-17.12721, -9.363796))
 bbox[5,] &lt;- bbox[1,]
 crs = CRS("+proj=longlat +datum=WGS84")
 x &lt;- SpatialPolygons(list(Polygons(list(Polygon(bbox)), ID="1")), proj4string=crs)
 ID.lst &lt;- getID(x)
-
-## End(Not run)
 </pre>
 
 <hr><div align="center">[Package <em>GSIF</em> version 0.1-1 <a href="00Index.html">Index</a>]</div>

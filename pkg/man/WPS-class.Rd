@@ -23,7 +23,7 @@
   \item{subset}{\code{signature(x = "WPS")}: subsets a grid (from server) and loads it to R; use \code{bbox} argument to specify the bounding box}
   }
 }
-\note{More examples of overlay, subset and aggregation functions are available via \href{http://worldgrids.org/doku.php?id=wiki:functions.r}{WorldGrids.org}. WPS WorldGrids.org uses the \href{http://pywps.wald.intevation.org}{PyWPS} module. The standard format for the gridded data on the worldgrids.org repository is \code{"GeoTiff"}. Use of the \code{"bbox"} object to obtain grids that cover more than 30 percent of the global coverage is not recommended. Consider downloading the compressed images directly from \href{http://worldgrids.org}{WorldGrids.org} instead.}
+\note{More examples of overlay, subset and aggregation functions are available via \href{http://worldgrids.org/doku.php?id=wiki:functions.r}{WorldGrids.org}. WPS WorldGrids.org uses the \href{http://pywps.wald.intevation.org}{PyWPS} module on a Debian system with Webserver, GDAL, Python and Scipy. The standard format for the gridded data on the worldgrids.org repository is \code{"GeoTiff"}. Use of the \code{"bbox"} object to obtain grids that cover more than 30 percent of the global coverage is not recommended. Consider downloading the compressed images directly from \href{http://worldgrids.org}{WorldGrids.org} instead.}
 \references{
 \itemize{
 \item PyWPS module (\url{http://pywps.wald.intevation.org})
