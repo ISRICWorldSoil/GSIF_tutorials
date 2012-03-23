@@ -27,7 +27,7 @@ mpspline(obj, var.name, mxd = 200, lam = 0.1, d = t(c(0,5,15,30,60,100,200)),
   }
 All detphs are commonly expressed in centimeters. The returned values refer to point support and can be used to construct a \code{"SpatialPointsDataFrame"} (3-dimensional).}
 \note{This operation can be time-consuming for large data sets.}
-\author{ Brendon Malone and Tomislav Hengl }
+\author{ Brendan Malone and Tomislav Hengl }
 \references{
 \itemize{
   \item Bishop, T.F.A., McBratney, A.B., Laslett, G.M., (1999) \href{http://dx.doi.org/10.1016/S0016-7061(99)00003-8}{Modelling soil attribute depth functions with equal-area quadratic smoothing splines}. Geoderma, 91(1-2): 27-45. 
