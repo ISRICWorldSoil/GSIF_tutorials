@@ -13,6 +13,11 @@ setMethod("as.geosamples", signature(obj = "SoilProfileCollection"),
   vols <- abs(obj@horizons[,obj@depthcols[2]] - obj@horizons[,obj@depthcols[1]])/100 * sample.area
   depths <- - (obj@horizons[,obj@depthcols[1]] + (obj@horizons[,obj@depthcols[2]] - obj@horizons[,obj@depthcols[1]])/2)/100
 
+  # add the time coordinate if missing:
+  if(ncol(obj@sp@coords)==2){
+    obj@sp@coords[,3] <- rep(Sys.time(), nrow(obj@sp@coords))
+  }
+
   # convert site data to geosamples:
   x <- NULL
   site <- obj@site

@@ -5,8 +5,8 @@
 # Note           : see also "join" operation;
 
 # Converts a SoilProfileCollection to a data frame:
-setMethod("as.data.frame", signature(x = "SoilProfileCollection"), 
-  function(x) 
+
+as.data.frame.SoilProfileCollection <- function(x) 
   {
  
   # derive layer sequence:
@@ -41,7 +41,10 @@ setMethod("as.data.frame", signature(x = "SoilProfileCollection"),
    
   return(fdb)
 
-})
+}
 
+setMethod("as.data.frame", signature(x = "SoilProfileCollection"), as.data.frame.SoilProfileCollection)
+
+setMethod("as.data.frame.default", signature(x = "SoilProfileCollection"), as.data.frame.SoilProfileCollection)
 
 # end of script;

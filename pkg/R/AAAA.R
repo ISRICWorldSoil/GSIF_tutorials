@@ -79,6 +79,10 @@ if (!isGeneric("getProcess")){
   setGeneric("getProcess", function(x, ...){standardGeneric("getProcess")})
 }
 
+if (!isGeneric("as.data.frame.default")) {
+	setGeneric("as.data.frame.default", function(x, ...){standardGeneric("as.data.frame.default")})
+}	
+
 if (!isGeneric("describe")){
   setGeneric("describe", function(x, ...){standardGeneric("describe")})
 }

@@ -12,9 +12,9 @@ setMethod("mpspline", signature(obj = "SoilProfileCollection"),
 
   depthcols = obj@depthcols
   idcol = obj@idcol
-  obj <- as.data.frame(obj)
+  objd <- as.data.frame.SoilProfileCollection(obj)
   # organize the data:
-  ndata <- nrow(obj)
+  ndata <- nrow(objd)
   # Matrix in which the averaged values of the spline are fitted. The depths are specified in the (d) object:
   m_fyfit <- matrix(NA, ncol=length(c(0:mxd)), nrow=ndata)
   # Matrix in which the sum of square errors of each lamda iteration for the working profile are stored
@@ -23,13 +23,13 @@ setMethod("mpspline", signature(obj = "SoilProfileCollection"),
   sse <- matrix(NA, ncol=length(lam), nrow=1)
   sset <- matrix(NA, ncol=length(lam), nrow=ndata)
   nl <- length(lam)  # Length of the lam matrix
-  svar.lst <- grep(names(obj), pattern=glob2rx(paste(var.name, "_*", sep="")))
-  s <- 0.05*sd(unlist(unclass(obj[,svar.lst])), na.rm=TRUE)  # 5% of the standard deviation of the target attribute 
+  svar.lst <- grep(names(objd), pattern=glob2rx(paste(var.name, "_*", sep="")))
+  s <- 0.05*sd(unlist(unclass(objd[,svar.lst])), na.rm=TRUE)  # 5% of the standard deviation of the target attribute 
   s2 <- s*s   # overall variance of soil attribute
   # reformat table (profile no, upper boundary, lower boundary, vars):
-  upperb.lst <- grep(names(obj), pattern=glob2rx(paste(depthcols[1], "_*",sep="")))
-  lowerb.lst <- grep(names(obj), pattern=glob2rx(paste(depthcols[2], "_*",sep="")))
-  obj_m <- obj[,c(grep(names(obj), pattern=idcol), upperb.lst, lowerb.lst, svar.lst)]
+  upperb.lst <- grep(names(objd), pattern=glob2rx(paste(depthcols[1], "_*",sep="")))
+  lowerb.lst <- grep(names(objd), pattern=glob2rx(paste(depthcols[2], "_*",sep="")))
+  objd_m <- objd[,c(grep(names(objd), pattern=idcol), upperb.lst, lowerb.lst, svar.lst)]
   np <- length(svar.lst) # max number of horizons
   # Matrix in which the observed depth will be entered:
   obdep <- matrix(NA, ncol=np, nrow=ndata)
@@ -40,35 +40,35 @@ setMethod("mpspline", signature(obj = "SoilProfileCollection"),
       print("Submitted data does not contain enough horizons (>2) for spline fitting.")
   }
   else { 
-  svar.lst <- grep(names(obj_m), pattern=glob2rx(paste(var.name, "_*",sep="")))
-  upperb.lst <- grep(names(obj_m), pattern=glob2rx(paste(depthcols[1], "_*",sep="")))
-  lowerb.lst <- grep(names(obj_m), pattern=glob2rx(paste(depthcols[2], "_*",sep="")))
+  svar.lst <- grep(names(objd_m), pattern=glob2rx(paste(var.name, "_*",sep="")))
+  upperb.lst <- grep(names(objd_m), pattern=glob2rx(paste(depthcols[1], "_*",sep="")))
+  lowerb.lst <- grep(names(objd_m), pattern=glob2rx(paste(depthcols[2], "_*",sep="")))
   
   # if missing, fill in the depth of first horizon as "0"
-  missing.A <- is.na(obj_m[,which(names(obj_m)==paste(depthcols[1], "_A",sep=""))])
-  obj_m[missing.A,which(names(obj_m)==paste(depthcols[1], "_A",sep=""))] <- 0
+  missing.A <- is.na(objd_m[,which(names(objd_m)==paste(depthcols[1], "_A",sep=""))])
+  objd_m[missing.A,which(names(objd_m)==paste(depthcols[1], "_A",sep=""))] <- 0
   
   # mask out all profiles with <2 horizons and with at least one of the first 3 horizons defined:
-    sel <- !(is.na(obj_m[,which(names(obj_m)==paste(var.name, "_A",sep=""))])&is.na(obj_m[,which(names(obj_m)==paste(var.name, "_B",sep=""))]))&rowSums(!is.na(obj_m[,svar.lst]))>1&rowSums(!is.na(obj_m[,upperb.lst]))>1&rowSums(!is.na(obj_m[,lowerb.lst]))>1
+    sel <- !(is.na(objd_m[,which(names(objd_m)==paste(var.name, "_A",sep=""))])&is.na(objd_m[,which(names(objd_m)==paste(var.name, "_B",sep=""))]))&rowSums(!is.na(objd_m[,svar.lst]))>1&rowSums(!is.na(objd_m[,upperb.lst]))>1&rowSums(!is.na(objd_m[,lowerb.lst]))>1
   
   # detect lowest horizon no:
-  uw.hor <- rowSums(!is.na(obj_m[,upperb.lst]))
-  lw.hor <- as.vector(which(rowSums(!is.na(obj_m[,lowerb.lst])) < rowSums(!is.na(obj_m[,upperb.lst]))&rowSums(!is.na(obj_m[,upperb.lst]))>1))  # profiles with un-even number of lower/upper depths
+  uw.hor <- rowSums(!is.na(objd_m[,upperb.lst]))
+  lw.hor <- as.vector(which(rowSums(!is.na(objd_m[,lowerb.lst])) < rowSums(!is.na(objd_m[,upperb.lst]))&rowSums(!is.na(objd_m[,upperb.lst]))>1))  # profiles with un-even number of lower/upper depths
   message("Adding missing lower depths")
   
   # add missing lower depth where necessary:
   for(lw in lw.hor){
-    uwx <- obj_m[lw,upperb.lst[uw.hor[lw]]]
+    uwx <- objd_m[lw,upperb.lst[uw.hor[lw]]]
      if(!is.na(uwx)&sel[lw]==TRUE){
-     if(uwx<150) { obj_m[lw,lowerb.lst[uw.hor[lw]]] <- 150 }
-     else { obj_m[lw,lowerb.lst[uw.hor[lw]]] <- 200 }
+     if(uwx<150) { objd_m[lw,lowerb.lst[uw.hor[lw]]] <- 150 }
+     else { objd_m[lw,lowerb.lst[uw.hor[lw]]] <- 200 }
   } 
   }
 
   ## Fit splines profile by profile:
   pb <- txtProgressBar(min=0, max=length(which(sel)), style=3)
   for(st in as.vector(which(sel))) {
-    subs <- matrix(unlist(c(1:np, as.vector(obj_m[st, upperb.lst]), as.vector(obj_m[st, lowerb.lst]), as.vector(obj_m[st, svar.lst]))), ncol=4)
+    subs <- matrix(unlist(c(1:np, as.vector(objd_m[st, upperb.lst]), as.vector(objd_m[st, lowerb.lst]), as.vector(objd_m[st, svar.lst]))), ncol=4)
     d.ho <- rowMeans(data.frame(x=subs[,2], y=c(NA, subs[1:(nrow(subs)-1),3])), na.rm=TRUE) 
     # mask out missing values:
     subs <- subs[!is.na(subs[,2])&!is.na(subs[,3])&!is.na(subs[,4]),]
@@ -253,7 +253,7 @@ setMethod("mpspline", signature(obj = "SoilProfileCollection"),
   yave <- ifelse(yave<vlow, vlow, yave) 
   dave <- ifelse(dave<vlow, vlow, dave) 
   dave <- ifelse(dave>vhigh, NA, dave)
-  retval <- list(idcol=obj_m[,1], depths=obdep, var.fitted=dave, var.std=yave, var.1cm=t(m_fyfit))
+  retval <- list(idcol=objd_m[,1], depths=obdep, var.fitted=dave, var.std=yave, var.1cm=t(m_fyfit))
   
   return(retval)
   }

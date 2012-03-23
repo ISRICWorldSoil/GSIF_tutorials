@@ -14,7 +14,7 @@
 
   # create env variables:
   GSIF.env(show.env = FALSE)
-  packageStartupMessage(paste("Project URL:", get("project_url", envir = GSIF.opts)))
+  packageStartupMessage(paste("URL:", get("project_url", envir = GSIF.opts)))
 
   return(invisible(0))
   	
