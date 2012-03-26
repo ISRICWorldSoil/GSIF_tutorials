@@ -59,7 +59,7 @@ echo $contents; } ?>
 <table border="0" cellspacing="0" cellpadding="10">
   <tr>
     <td><div align="center"><a href="http://globalsoilmap.org/content/1-degree-tiles-world"><img src="Fig_1degree_tiles_world.thumbnail.png" alt="One degree tiles (world map)" width="220" height="120" border="0" /></a></div></td>
-    <td><img src="opensoilprofiles.gif" alt="Open Soil Profiles" width="320" height="100" longdesc="http://soilprofiles.org" /></td>
+    <td><a href="http://soilprofiles.org"><img src="opensoilprofiles.gif" alt="Open Soil Profiles" width="320" height="100" border="0" longdesc="http://soilprofiles.org" /></a></td>
   </tr>
 </table>
 <p class="style1">Contact: <a href="http://www.wewur.wur.nl/popups/vcard.aspx?id=HENGL001" target="_blank">Tomislav Hengl</a></p>
@@ -75,7 +75,7 @@ echo $contents; } ?>
   &gt; system(&quot;R CMD INSTALL GSIF_0.1-1.tar.gz&quot;) </p>
 <p><strong>News:</strong></p>
 <ul>
-  <li>Apr 2012: GSIF package will be presented at the <a href="http://www.pedometrics.org/dsm_oz/" target="_blank">DSM conference</a> in Sydney; </li>
+  <li>Apr 2012: first meeting of the package development team at the <a href="http://www.pedometrics.org/dsm_oz/" target="_blank">DSM conference</a> in Sydney; </li>
   <li>Mar 2012: first version of the package on R-forge; </li>
 </ul>
 <hr />

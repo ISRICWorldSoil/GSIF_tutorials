@@ -166,11 +166,11 @@ setMethod("mpspline", signature(obj = "SoilProfileCollection"),
 
       pr.mat <- matrix(0,ncol=length(1:nm1),nrow=length(1:n))
       pr.mat[] <- 6*n*lam
-      fdub <- pr.mat*t(dim.mat)%*%rinv
-      z <- fdub%*%dim.mat+ind
+      fdub <- try(pr.mat*t(dim.mat)%*%rinv)
+      z <- try(fdub%*%dim.mat+ind)
 
       # solve for the fitted layer means
-      sbar <- solve(z,t(y))
+      sbar <- try(solve(z,t(y)))
 
       # calculate the fitted value at the knots
       b <- 6*rinv%*%dim.mat%*% sbar
@@ -206,7 +206,7 @@ setMethod("mpspline", signature(obj = "SoilProfileCollection"),
           # CALCULATION OF THE ERROR BETWEEN OBSERVED AND FITTED VALUES
           # calculate Wahba's estimate of the residual variance sigma^2
           ssq <- sum((t(y)-sbar)^2)
-          g <- solve(z)
+          g <- try(solve(z))
           ei <- eigen(g)
           ei <- ei$values
           df <- n-sum(ei)
