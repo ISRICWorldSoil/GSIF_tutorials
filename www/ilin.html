@@ -1,0 +1,158 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: NSCD soil samples for Illinois and Indiana States</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="R.css">
+</head><body>
+
+<table width="100%" summary="page for ilin {GSIF}"><tr><td>ilin {GSIF}</td><td align="right">R Documentation</td></tr></table>
+
+<h2>NSCD soil samples for Illinois and Indiana States</h2>
+
+<h3>Description</h3>
+
+<p>A subset of the <a href="http://soils.usda.gov/survey/nscd/">National Cooperative Soil Characterization Database</a> (NSCD) covering the Illinois and Indiana States (5193 soil profiles). Analytical procedures and methods of soil preparation are identified by methods codes in the column headings of the standard NSSC data sheets and are described in <a href="http://soils.usda.gov/survey/nscd/lim/">Soil Survey Laboratory Information Manual No. 42</a>.</p>
+
+
+<h3>Usage</h3>
+
+<pre>data(ilin)</pre>
+
+
+<h3>Format</h3>
+
+
+<p>Sites table. Contains the following columns:
+</p>
+
+<dl>
+<dt><code>site_key</code></dt><dd><p>factor; unique name that identifies a particular site</p>
+</dd>
+<dt><code>user_site_id</code></dt><dd><p>character; a short label to help a user identify a particular site</p>
+</dd>
+<dt><code>LAT</code></dt><dd><p>numeric; latitude in decimal degrees on the NAD83 datum</p>
+</dd>
+<dt><code>LON</code></dt><dd><p>numeric; longitude in decimal degrees on the NAD83 datum</p>
+</dd>
+<dt><code>horizontal_datum_name</code></dt><dd><p>character; horizontal datum name (if different from NAD83)</p>
+</dd>
+<dt><code>observation_date</code></dt><dd><p>character; the date on which this particular soil was described or sampled</p>
+</dd>
+<dt><code>sampled_taxon_name</code></dt><dd><p>character; KST soil series or taxadjunct name e.g. &quot;Paxton&quot;</p>
+</dd>
+<dt><code>correlated_taxon_name</code></dt><dd><p>character; correlated name for soil series</p>
+</dd>
+<dt><code>correlated_taxon_kind</code></dt><dd><p>character; taxon type &mdash; soil series or taxadjunct</p>
+</dd>
+<dt><code>correlated_class_name</code></dt><dd><p>character; correlated Keys to Soil Taxonomy taxon complete name e.g. &quot;Sandy, mixed, thermic Ustic Torriorthent&quot;</p>
+</dd>
+<dt><code>SSL_class_name</code></dt><dd><p>characted; original Keys to Soil Taxonomy taxon designation</p>
+</dd>
+</dl>
+
+<p>Horizons table. Contains the following columns:
+</p>
+
+<dl>
+<dt><code>site_key</code></dt><dd><p>factor; unique name that identifies a particular site</p>
+</dd>
+<dt><code>natural_key</code></dt><dd><p>character; an integer number that uniquely identifies a particular horizon</p>
+</dd>
+<dt><code>layer_sequence</code></dt><dd><p>integer; a layer sequence number 1 to N</p>
+</dd>
+<dt><code>hzn_desgn</code></dt><dd><p>character; pedological designation of the horizon e.g. &quot;Bt1&quot;</p>
+</dd>
+<dt><code>hzn_bot</code></dt><dd><p>numeric; lower horizon depth from the surface in cm</p>
+</dd>
+<dt><code>hzn_top</code></dt><dd><p>numeric; upper horizon depth from the surface in cm</p>
+</dd>
+<dt><code>hzn_vert_subdvn</code></dt><dd><p>integer; an integer number that identifies horizon subdivision e.g. &quot;Bt1&quot; and &quot;Bt2&quot; both receive number &quot;2&quot;</p>
+</dd>
+<dt><code>clay_tot_psa</code></dt><dd><p>numeric; weight percentage of the clay particles (&lt;0.0002 mm)</p>
+</dd>
+<dt><code>sand_tot_psa</code></dt><dd><p>numeric; weight percentage of the silt particles (0.0002&ndash;0.05 mm)</p>
+</dd>
+<dt><code>silt_tot_psa</code></dt><dd><p>numeric; weight percentage of the sand particles (0.05&ndash;2 mm)</p>
+</dd>
+<dt><code>wpg2</code></dt><dd><p>numeric; weight percentage of coarse fragments (&gt; 2 mm)</p>
+</dd>
+<dt><code>caco3</code></dt><dd><p>numeric; weight percentage of carbonates in the soil</p>
+</dd>
+<dt><code>oc</code></dt><dd><p>numeric; weight percentage of organic carbon</p>
+</dd>
+<dt><code>c_tot</code></dt><dd><p>numeric; weight percentage of the total organic and inorganic carbon</p>
+</dd>
+<dt><code>base_sum</code></dt><dd><p>numeric; base saturation in percent</p>
+</dd>
+<dt><code>cec_sum</code></dt><dd><p>numeric; Cation Exchange Capacity in cmol(+)/kg (summary)</p>
+</dd>
+<dt><code>cec_nh4</code></dt><dd><p>numeric; Cation Exchange Capacity in cmol(+)/kg (NH4OAc)</p>
+</dd>
+<dt><code>ph_h2o</code></dt><dd><p>numeric; pH index measured in water solution</p>
+</dd>
+<dt><code>ph_kcl</code></dt><dd><p>numeric; pH index measured in KCl solution</p>
+</dd>
+<dt><code>db_od</code></dt><dd><p>bulk density oven dry (105 C) in kg per cubic meter</p>
+</dd>
+<dt><code>layer_ID</code></dt><dd><p>factor; unique name that identifies a particular horizon</p>
+</dd>
+</dl>
+
+
+
+<h3>Note</h3>
+
+<p> This data set is only a sample of the complete laboratory data. The original database contains over 30 thousand profiles. The variables listed above were selected for testing algorithms to produce soil property maps according to the <a href="http://globalsoilmap.net/specifications">GlobalSoilMap.net specifications</a>. The total organic carbon for alkaline soils (pH in water &gt; 7) needs to be corrected e.g. by removing 12 percent of weight percentage of CaCO3. <br>
+Disclaimer: The assessment of the accuracy and applicability of the NSCD is strictly a USER RESPONSIBILITY. NRCS and NCSS take no responsibility for problems that arise from use of this database.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p> The NSCD data is maintained by the NRCS NSSC Soil Survey Lab, Lincoln (NE). This subset has been prepared for the purpose of testing various DSM methods by Tomislav Hengl (tom.hengl@wur.nl). The processing steps are described in <a href="http://gsif.r-forge.r-project.org/rw_NCSS.R">this script</a>.</p>
+
+
+<h3>References</h3>
+
+
+
+<ul>
+<li><p> Soil Data Subcommittee, (1997) <a href="http://www.fgdc.gov/standards/projects/FGDC-standards-projects/soils/soil997.PDF">Soil Geographic Data Standard</a>. Federal Geographic Data Committee, p. 286.
+</p>
+</li>
+<li><p> United States Department of Agriculture, Natural Resources Conservation Service, (2010) <a href="http://soils.usda.gov/technical/classification/tax_keys/">Keys to Soil Taxonomy</a>, Eleventh Edition. Soil Survey Staff.
+</p>
+</li>
+<li><p> National Cooperative Soil Characterization Database (<a href="http://soils.usda.gov/survey/nscd/">http://soils.usda.gov/survey/nscd/</a>)
+</p>
+</ul>
+
+
+
+<h3>See Also</h3>
+
+ <p><code><a href="ilin.grids.html">ilin.grids</a></code>, <code><a href="geochm.html">geochm</a></code></p>
+
+
+<h3>Examples</h3>
+
+<pre>
+## Not run: 
+require(aqp)
+data(ilin)
+coordinates(ilin$sites) &lt;- ~ LON + LAT
+proj4string(ilin$sites) &lt;- CRS("+proj=longlat +datum=NAD83")
+# obtain state borders:
+require(maps)
+states.m = map('state', plot=FALSE, fill=TRUE)
+IDs &lt;- sapply(strsplit(states.m$names, ":"), function(x) x[1])
+require(maptools)
+states &lt;- as(map2SpatialPolygons(states.m, IDs=IDs), "SpatialLines")
+# overlay and plot points and maps:
+plot(spTransform(ilin$sites, CRS("+proj=longlat +datum=WGS84")), pch="+", cex=.6, col="black")
+lines(states)
+
+## End(Not run)
+</pre>
+
+<hr><div align="center">[Package <em>GSIF</em> version 0.1-1 <a href="00Index.html">Index</a>]</div>
+</body></html>

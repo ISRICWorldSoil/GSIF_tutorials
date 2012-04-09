@@ -71,6 +71,11 @@
 
 
 
+<h3>See Also</h3>
+
+ <p><code>rworldmap::rworldmapExamples</code>, <code>maps::</code></p>
+
+
 <h3>Examples</h3>
 
 <pre>
@@ -78,8 +83,13 @@ data(landmask)
 gridded(landmask) &lt;- ~x+y
 proj4string(landmask) &lt;- "+proj=longlat +datum=WGS84"
 ## Not run: 
-spplot(landmask["mask"], col.regions="grey")
-spplot(landmask["soilmask"], col.regions="grey")
+require(maps)
+country.m = map('world', plot=FALSE, fill=TRUE)
+IDs &lt;- sapply(strsplit(country.m$names, ":"), function(x) x[1])
+require(maptools)
+country &lt;- as(map2SpatialPolygons(country.m, IDs=IDs), "SpatialLines")
+spplot(landmask["mask"], col.regions="grey", sp.layout=list("sp.lines", country))
+spplot(landmask["soilmask"], col.regions="grey", sp.layout=list("sp.lines", country))
 
 ## End(Not run)
 </pre>

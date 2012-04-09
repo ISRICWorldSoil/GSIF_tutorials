@@ -10,7 +10,7 @@
 
 <h3>Description</h3>
 
-<p>A subset of the National Geochemical Survey (NGS) samples covering the Indiana State. Contains a total of 879 point samples.</p>
+<p>A subset of the National Geochemical Survey (NGS) samples covering the Indiana and Illinois State. Contains a total of 2681 point samples.</p>
 
 
 <h3>Usage</h3>
@@ -91,7 +91,7 @@
 
 <h3>Author(s)</h3>
 
-<p> National Geochemical Survey database is maintaned by the USGS (contact: Peter Schweitzer). This subset has been prepared for the purpose of testing various geostatistical mapping algoriths by Tomislav Hengl (tom.hengl@wur.nl).</p>
+<p> National Geochemical Survey database is maintaned by the USGS National Geochemical Survey Team (contact: Peter Schweitzer). This subset has been prepared for the purpose of testing various geostatistical mapping algoriths by Tomislav Hengl (tom.hengl@wur.nl).</p>
 
 
 <h3>References</h3>
@@ -115,12 +115,15 @@
 data(geochm)
 coordinates(geochm) &lt;- ~LONGITUDE+LATITUDE
 proj4string(geochm) &lt;- CRS("+proj=longlat +ellps=clrk66 +datum=NAD27 +no_defs")
-data(indiana)
-border &lt;- SpatialLines(list(Lines(list(Line(indiana)), "border")))
-proj4string(border) &lt;- aea.prj
-par(mar=c(0,0,0,0))
-plot(spTransform(border, geochm@proj4string))
-points(geochm, pch="+", cex=.7)
+## Not run: 
+require(plotKML)
+data(SAGA_pal)
+# replace the missing values with half the detection limit:
+geochm$PB_ICP40 &lt;- ifelse(geochm$PB_ICP40 &lt; 0, 2, geochm$PB_ICP40) 
+shape = "http://maps.google.com/mapfiles/kml/pal2/icon18.png"
+kml(geochm, shape = shape, colour = log1p(PB_ICP40), labels = "", colour_scale = SAGA_pal[[1]], kmz = TRUE)
+
+## End(Not run)
 </pre>
 
 <hr><div align="center">[Package <em>GSIF</em> version 0.1-1 <a href="00Index.html">Index</a>]</div>

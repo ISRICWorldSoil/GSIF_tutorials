@@ -1,22 +1,22 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><head><title>R: Converts an object of class '&quot;SpatialProfileCollection&quot;' to a...</title>
+<html><head><title>R: Converts an object of class '&quot;SoilProfileCollection&quot;' to a...</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <link rel="stylesheet" type="text/css" href="R.css">
 </head><body>
 
 <table width="100%" summary="page for as.geosamples {GSIF}"><tr><td>as.geosamples {GSIF}</td><td align="right">R Documentation</td></tr></table>
 
-<h2>Converts an object of class <code>"SpatialProfileCollection"</code> to a standardized data frame</h2>
+<h2>Converts an object of class <code>"SoilProfileCollection"</code> to a standardized data frame</h2>
 
 <h3>Description</h3>
 
-<p>Converts an object of class <code>"SpatialProfileCollection"</code> to an object of class <code>"geosamples"</code> with all measurements broken separately as individual records. Geosamples are standardized spatially and temporally referenced samples from the Earth's surface.</p>
+<p>Converts an object of class <code>"SoilProfileCollection"</code> to an object of class <code>"geosamples"</code> with all measurements broken separately as individual records. Geosamples are standardized spatially and temporally referenced samples from the Earth's surface.</p>
 
 
 <h3>Usage</h3>
 
 <pre>
-as.geosamples(obj)
+as.geosamples(obj, registry = as.character(NA), sample.area = 1, mxd = 2, dtime = 3600)
 </pre>
 
 
@@ -27,6 +27,22 @@ as.geosamples(obj)
 <tr valign="top"><td><code>obj</code></td>
 <td>
 <p>object of class <code>"SoilProfileCollection"</code></p>
+</td></tr>
+<tr valign="top"><td><code>registry</code></td>
+<td>
+<p>URI specifying the metadata registry</p>
+</td></tr>
+<tr valign="top"><td><code>sample.area</code></td>
+<td>
+<p>standard sample area in square meters</p>
+</td></tr>
+<tr valign="top"><td><code>mxd</code></td>
+<td>
+<p>maximum depth of interest in meters</p>
+</td></tr>
+<tr valign="top"><td><code>dtime</code></td>
+<td>
+<p>standard temporal support in seconds</p>
 </td></tr>
 </table>
 

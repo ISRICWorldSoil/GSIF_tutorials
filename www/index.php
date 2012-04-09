@@ -54,11 +54,11 @@ echo $contents; } ?>
 <!-- end of project description -->
 
 <div>
-  <p>This package contains tools and procedures to handle soil data and produce gridded soil property maps for the purpose of the global soil data initivatives such as the GlobalSoilMap.net project.</p>
+  <p>This package contains tools and procedures to handle soil data and produce gridded soil property maps to support the global soil data initivatives such as the GlobalSoilMap.net project.</p>
 </div>
 <table border="0" cellspacing="0" cellpadding="10">
   <tr>
-    <td><div align="center"><a href="http://globalsoilmap.org/content/1-degree-tiles-world"><img src="Fig_1degree_tiles_world.thumbnail.png" alt="One degree tiles (world map)" width="220" height="120" border="0" /></a></div></td>
+    <td><div align="center"><a href="http://globalsoilmap.net/content/1-degree-tiles-world"><img src="Fig_1degree_tiles_world.thumbnail.png" alt="One degree tiles (world map)" width="220" height="120" border="0" /></a></div></td>
     <td><a href="http://soilprofiles.org"><img src="opensoilprofiles.gif" alt="Open Soil Profiles" width="320" height="100" border="0" longdesc="http://soilprofiles.org" /></a></td>
   </tr>
 </table>
