@@ -2,7 +2,7 @@
 \docType{data}
 \alias{geochm}
 \title{NGS database samples for Indiana State}
-\description{A subset of the National Geochemical Survey (NGS) samples covering the Indiana State. Contains a total of 879 point samples.}
+\description{A subset of the National Geochemical Survey (NGS) samples covering the Indiana and Illinois State. Contains a total of 2681 point samples.}
 \usage{data(geochm)}
 \format{
 Data frame; contains the following columns:
@@ -36,7 +36,7 @@ Data frame; contains the following columns:
   \item{\code{S_TOT}}{numeric; total sulfur (weight percentage) by combustion}
 }
 }
-\author{ National Geochemical Survey database is maintaned by the USGS (contact: Peter Schweitzer). This subset has been prepared for the purpose of testing various geostatistical mapping algoriths by Tomislav Hengl (tom.hengl@wur.nl).}
+\author{ National Geochemical Survey database is maintaned by the USGS National Geochemical Survey Team (contact: Peter Schweitzer). This subset has been prepared for the purpose of testing various geostatistical mapping algoriths by Tomislav Hengl (tom.hengl@wur.nl).}
 \references{
 \itemize{
 \item The National Geochemical Survey Team, (2008) \href{http://tin.er.usgs.gov/geochem/doc/home.htm}{The National Geochemical Survey: database and documentation}. U.S. Geological Survey Open-File Report 2004-1001, U.S. Geological Survey, Reston VA.
@@ -50,11 +50,13 @@ Data frame; contains the following columns:
 data(geochm)
 coordinates(geochm) <- ~LONGITUDE+LATITUDE
 proj4string(geochm) <- CRS("+proj=longlat +ellps=clrk66 +datum=NAD27 +no_defs")
-data(indiana)
-border <- SpatialLines(list(Lines(list(Line(indiana)), "border")))
-proj4string(border) <- aea.prj
-par(mar=c(0,0,0,0))
-plot(spTransform(border, geochm@proj4string))
-points(geochm, pch="+", cex=.7)
+\dontrun{
+require(plotKML)
+data(SAGA_pal)
+# replace the missing values with half the detection limit:
+geochm$PB_ICP40 <- ifelse(geochm$PB_ICP40 < 0, 2, geochm$PB_ICP40) 
+shape = "http://maps.google.com/mapfiles/kml/pal2/icon18.png"
+kml(geochm, shape = shape, colour = log1p(PB_ICP40), labels = "", colour_scale = SAGA_pal[[1]], kmz = TRUE)
+}
 }
 \keyword{datasets}

@@ -12,7 +12,7 @@ setMethod("getID", signature(obj = "SpatialPolygons"), function(obj, pixsize = 3
   }
 
   # overlay polygons and landmask to get a list of IDs:
-  load(system.file("data/landmask.rda", package="gsif"))
+  load(system.file("data/landmask.rda", package="GSIF"))
   gridded(landmask) <- ~x+y
   proj4string(landmask) <- "+proj=longlat +datum=WGS84"
   list.id <- overlay(landmask, obj)

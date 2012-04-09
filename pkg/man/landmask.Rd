@@ -26,13 +26,19 @@ Data frame with the following columns:
 }
 \note{The land mask has been generated from the layer \code{GSHHS_shp/h/GSHHS_h_L1.shp} (level-1 boundaries). For practical purposes, all latitudes beyond 65S and 84N (polar land masses) have been masked out.
 }
+\seealso{ \code{rworldmap::rworldmapExamples}, \code{maps::}}
 \examples{
 data(landmask)
 gridded(landmask) <- ~x+y
 proj4string(landmask) <- "+proj=longlat +datum=WGS84"
 \dontrun{
-spplot(landmask["mask"], col.regions="grey")
-spplot(landmask["soilmask"], col.regions="grey")
+require(maps)
+country.m = map('world', plot=FALSE, fill=TRUE)
+IDs <- sapply(strsplit(country.m$names, ":"), function(x) x[1])
+require(maptools)
+country <- as(map2SpatialPolygons(country.m, IDs=IDs), "SpatialLines")
+spplot(landmask["mask"], col.regions="grey", sp.layout=list("sp.lines", country))
+spplot(landmask["soilmask"], col.regions="grey", sp.layout=list("sp.lines", country))
 }
 }
 \keyword{datasets}

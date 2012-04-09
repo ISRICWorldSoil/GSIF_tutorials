@@ -38,10 +38,10 @@ setMethod("as.geosamples", signature(obj = "SoilProfileCollection"),
   rx <- do.call(rbind, x)
   # reformat values:
   rx$sampleid <- as.character(rx$sampleid)
-  rx$locationError <- as.character(rx$locationError)
+  rx$locationError <- as.numeric(rx$locationError)
   rx$altitude <- as.character(rx$altitude)
   rx$observedValue <- as.character(rx$observedValue)
-  rx$measurementError <- as.character(rx$measurementError)
+  rx$measurementError <- as.numeric(rx$measurementError)
     
   # convert horizon data to geosamples:
   y <- NULL
@@ -61,10 +61,10 @@ setMethod("as.geosamples", signature(obj = "SoilProfileCollection"),
   ry <- do.call(rbind, y)
   # reformat values:
   ry$sampleid <- as.character(ry$sampleid)
-  ry$locationError <- as.character(ry$locationError)
+  ry$locationError <- as.numeric(ry$locationError)
   ry$altitude <- as.character(ry$altitude)
   ry$observedValue <- as.character(ry$observedValue)
-  ry$measurementError <- as.character(ry$measurementError)
+  ry$measurementError <- as.numeric(ry$measurementError)
   
   # merge the two:
   tb <- rbind(rx, ry)

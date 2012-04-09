@@ -1,14 +1,18 @@
 \name{as.geosamples}
 \docType{methods}
 \alias{as.geosamples}
-\alias{as.geosamples,SpatialProfileCollection-method}
-\title{Converts an object of class \code{"SpatialProfileCollection"} to a standardized data frame}
-\description{Converts an object of class \code{"SpatialProfileCollection"} to an object of class \code{"geosamples"} with all measurements broken separately as individual records. Geosamples are standardized spatially and temporally referenced samples from the Earth's surface.}
+\alias{as.geosamples,SoilProfileCollection-method}
+\title{Converts an object of class \code{"SoilProfileCollection"} to a standardized data frame}
+\description{Converts an object of class \code{"SoilProfileCollection"} to an object of class \code{"geosamples"} with all measurements broken separately as individual records. Geosamples are standardized spatially and temporally referenced samples from the Earth's surface.}
 \usage{
-as.geosamples(obj)
+as.geosamples(obj, registry = as.character(NA), sample.area = 1, mxd = 2, dtime = 3600)
 }
 \arguments{
   \item{obj}{object of class \code{"SoilProfileCollection"}}
+  \item{registry}{URI specifying the metadata registry}
+  \item{sample.area}{standard sample area in square meters}
+  \item{mxd}{maximum depth of interest in meters}
+  \item{dtime}{standard temporal support in seconds}
 }
 \details{Returns an object of type \code{"geosamples"}. Many columns required by the \code{"geosamples"} class might be not available and will result in \code{NA} values. To ensure compatibility, when building an object of type \code{"SoilProfilesCollection"}, use some standard naming convention to attach attributes:
 \describe{

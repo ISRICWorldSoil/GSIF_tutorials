@@ -1,7 +1,7 @@
 \name{mpspline}
 \docType{methods}
 \alias{mpspline}
-\alias{mpspline,SpatialProfileCollection-method}
+\alias{mpspline,SoilProfileCollection-method}
 \title{Fits a mass preserving spline}
 \description{Fits a mass preserving spline to a soil profile data. Target variable needs to be a numeric vector measured at least 3 horizons. It is assumed that soil variables collected per horizon refer to block support i.e. they represent composite values for the whole horizon.}
 \usage{

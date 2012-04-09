@@ -1,10 +1,10 @@
 \name{as.data.frame}
 \docType{methods}
 \alias{as.data.frame}
-\alias{as.data.frame,SpatialProfileCollection-method}
+\alias{as.data.frame,SoilProfileCollection-method}
 \alias{as.data.frame.SoilProfileCollection}
-\title{Converts an object of class \code{"SpatialProfileCollection"} to a data frame}
-\description{Converts an object of class \code{"SpatialProfileCollection"} to an object of class \code{"data.frame"} with both site and horizon data sorted in one row. Each original column name in the horizons table receives a sufix \code{*_A, B, \dots, Z} where alphabetic letters represent horizon sequence. }
+\title{Converts an object of class \code{"SoilProfileCollection"} to a data frame}
+\description{Converts an object of class \code{"SoilProfileCollection"} to an object of class \code{"data.frame"} with both site and horizon data sorted in one row. Each original column name in the horizons table receives a sufix \code{*_A, B, \dots, Z} where alphabetic letters represent horizon sequence. }
 \usage{
 as.data.frame(obj)
 }
