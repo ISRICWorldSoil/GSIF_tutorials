@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: Soil samples for the Rio Doce basin</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="R.css">
+</head><body>
+
+<table width="100%" summary="page for riodoce {GSIF}"><tr><td>riodoce {GSIF}</td><td align="right">R Documentation</td></tr></table>
+
+<h2>Soil samples for the Rio Doce basin</h2>
+
+<h3>Description</h3>
+
+<p>Soil samples (456) collected for the Rio Doce basin in Brazil.</p>
+
+
+<h3>Usage</h3>
+
+<pre>data(riodoce)</pre>
+
+
+<h3>Format</h3>
+
+
+<p>Sites table. Contains the following columns:
+</p>
+
+<dl>
+<dt><code>SOURCEID</code></dt><dd><p>factor; unique name that identifies a particular site</p>
+</dd>
+<dt><code>LAT</code></dt><dd><p>numeric; latitude in decimal degrees on the NAD83 datum</p>
+</dd>
+<dt><code>LON</code></dt><dd><p>numeric; longitude in decimal degrees on the NAD83 datum</p>
+</dd>
+<dt><code>TAXBRC</code></dt><dd><p>factor; original soil class based on the <a href="http://www.cnps.embrapa.br/sibcs/">Brazilian Soil Classification System</a></p>
+</dd>
+</dl>
+
+<p>Horizons table. Contains the following columns:
+</p>
+
+<dl>
+<dt><code>SOURCEID</code></dt><dd><p>factor; unique name that identifies a particular site</p>
+</dd>
+<dt><code>HRDLOC</code></dt><dd><p>character; local pedological designation of the horizon e.g. &quot;Bt1&quot;</p>
+</dd>
+<dt><code>UHDICM</code></dt><dd><p>numeric; upper horizon depth from the surface in cm</p>
+</dd>
+<dt><code>LHDICM</code></dt><dd><p>numeric; lower horizon depth from the surface in cm</p>
+</dd>
+<dt><code>PHIHO5</code></dt><dd><p>numeric; pH index measured in water solution</p>
+</dd>
+<dt><code>PHIKCL</code></dt><dd><p>numeric; pH index measured in KCl solution</p>
+</dd>
+<dt><code>ORCDRC</code></dt><dd><p>numeric; weight percentage in permilles of the total organic carbon</p>
+</dd>
+<dt><code>SNDPPT</code></dt><dd><p>numeric; weight percentage of the silt particles (0.0002&ndash;0.05 mm)</p>
+</dd>
+<dt><code>SLTPPT</code></dt><dd><p>numeric; weight percentage of the sand particles (0.05&ndash;2 mm)</p>
+</dd>
+<dt><code>CLYPPT</code></dt><dd><p>numeric; weight percentage of the clay particles (&lt;0.0002 mm)</p>
+</dd>
+<dt><code>BSABCL</code></dt><dd><p>numeric; base saturation in percent</p>
+</dd>
+<dt><code>CEXBCL</code></dt><dd><p>numeric; Cation Exchange Capacity in cmol(+)/kg (summary)</p>
+</dd>
+<dt><code>BLDVOL</code></dt><dd><p>bulk density oven dry (105 C) in kg per cubic meter</p>
+</dd>
+<dt><code>AWAIMM</code></dt><dd><p>total available water capacity in mm</p>
+</dd>
+<dt><code>HORUID</code></dt><dd><p>factor; unique name that identifies a particular horizon</p>
+</dd>
+</dl>
+
+
+
+<h3>Author(s)</h3>
+
+<p>This soil profile data set has been prepared for the purpose of testing various soil mapping methods by Eliana de Souza and Tomislav Hengl. The processing steps are described in <a href="http://gsif.r-forge.r-project.org/rw_riodoce.R">this script</a>.</p>
+
+
+<h3>References</h3>
+
+
+
+<ul>
+<li><p> Benedetti, M.M. and Curi, N. and Sparovek, G. and de Carvalho Filho, A. and Silva, S.H.G., (2011) Updated Brazilian's Georeferenced Soil Database  an Improvement for International Scientific Information Exchanging. In: Principles, Application and Assessment in Soil Science (Edited by E. Burcu Ozkaraova Gungor), InTech, chapter 16, pp. 307-330.
+</p>
+</li>
+<li><p> Filho, E.F. et al. (2011) Levantamento de solos e aptidao agricola das terras da bacia do Rio Doce, Estado de Minas Gerais. Belo Horizonte/MG, 453 p. <a href="www.meioambiente.mg.gov.br">www.meioambiente.mg.gov.br</a>
+</p>
+</li>
+<li><p> Cooper, M., Mendes. L.M.S., Silva, W.L.C, and Sparovek, G., (2005) <a href="https://www.soils.org/publications/sssaj/articles/69/3/0649">A National Soil Profile Database for Brazil Available to International Scientists</a>. Soil Science Society of America Journal, 69:649-652.
+</p>
+</ul>
+
+
+
+<h3>See Also</h3>
+
+ <p><code><a href="riodoce.grids.html">riodoce.grids</a></code></p>
+
+
+<h3>Examples</h3>
+
+<pre>
+## Not run: 
+require(aqp)
+data(riodoce)
+depths(riodoce) &lt;- SOURCEID ~ UHDICM + LHDICM
+# extract site data
+site(riodoce) &lt;- ~ LONWGS84 + LATWGS84 + TAXBRC  
+# generate SpatialPoints
+coordinates(riodoce) &lt;- ~ LONWGS84 + LATWGS84
+proj4string(riodoce) &lt;- "+proj=latlong +datum=WGS84"
+str(riodoce)
+
+## End(Not run)
+</pre>
+
+<hr><div align="center">[Package <em>GSIF</em> version 0.1-2 <a href="00Index.html">Index</a>]</div>
+</body></html>
