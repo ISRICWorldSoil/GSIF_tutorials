@@ -71,8 +71,8 @@ echo $contents; } ?>
 <p class="R_code">&gt; install.packages(c(&quot;RCurl&quot;, &quot;XML&quot;, &quot;RSAGA&quot;, &quot;rgdal&quot;, &quot;raster&quot;, &quot;sp&quot;, &quot;gstat&quot;, &quot;aqp&quot;)) </p>
 <p class="R_code">&gt; install.packages(&quot;GSIF&quot;, repos=c(&quot;http://R-Forge.R-project.org&quot;)) </p>
 <p>Alternatively, you can install the most recent snapshot of the package directly from the source by using e.g.:</p>
-<p class="R_code">&gt; download.file(&quot;http://gsif.r-forge.r-project.org/GSIF_0.1-1.tar.gz&quot;, &quot;GSIF_0.1-1.tar.gz&quot;)<br />
-  &gt; system(&quot;R CMD INSTALL GSIF_0.1-1.tar.gz&quot;) </p>
+<p class="R_code">&gt; download.file(&quot;http://gsif.r-forge.r-project.org/GSIF_0.1-2.tar.gz&quot;, &quot;GSIF_0.1-2.tar.gz&quot;)<br />
+  &gt; system(&quot;R CMD INSTALL GSIF_0.1-2.tar.gz&quot;) </p>
 <p><strong>News:</strong></p>
 <ul>
   <li>Apr 2012: first meeting of the package development team at the <a href="http://www.pedometrics.org/dsm_oz/" target="_blank">DSM conference</a> in Sydney; </li>
