@@ -33,10 +33,11 @@ Data frame contains the following columns:
 }
 \seealso{ \code{\link{ilin}}, \code{\link{geochm}}}
 \examples{
-data(ilin.grids)
+\dontrun{# Load the data from GSIF page:
+download.file("http://gsif.r-forge.r-project.org/ilin.grids.rda", "ilin.grids.rda")
+load("ilin.grids.rda")
 gridded(ilin.grids) <- ~LON+LAT
 proj4string(ilin.grids) <- CRS("+proj=longlat +datum=WGS84")
-\dontrun{
 # obtain state borders:
 require(maps)
 states.m = map('state', plot=FALSE, fill=TRUE)

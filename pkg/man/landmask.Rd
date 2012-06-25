@@ -2,7 +2,7 @@
 \docType{data}
 \alias{landmask}
 \title{1-degree cell land mask for Global soil mapping purposes}
-\description{Land mask showing the 1-degree cells (about 19 thousand in total) in the geographical coordinates, and the productive soils mask (areas with a positive Leaf Area Index at least once in the period 2002 till today). The land mask is based on the \href{http://www.ngdc.noaa.gov/mgg/shorelines/gshhs.html}{Global Self-consistent, Hierarchical, High-resolution Shoreline Database} data (GSHHS 2.1), and the productive soils mask on the MODIS Leaf Area Index monthtly product (\href{https://lpdaac.usgs.gov/lpdaac/products/modis_products_table/leaf_area_index_fraction_of_photosynthetically_active_radiation/8_day_l4_global_1km/mcd15a2}{MOD15A2}).}
+\description{Land mask showing the 1-degree cells (about 19 thousand in total) in the geographical coordinates, and the productive soils mask (areas with a positive Leaf Area Index at least once in the period 2002--2011). The land mask is based on the \href{http://www.ngdc.noaa.gov/mgg/shorelines/gshhs.html}{Global Self-consistent, Hierarchical, High-resolution Shoreline Database} data (GSHHS 2.1), and the productive soils mask on the MODIS Leaf Area Index monthtly product (\href{https://lpdaac.usgs.gov/lpdaac/products/modis_products_table/leaf_area_index_fraction_of_photosynthetically_active_radiation/8_day_l4_global_1km/mcd15a2}{MOD15A2}).}
 \usage{data(landmask)}
 \format{
 Data frame with the following columns:
@@ -26,12 +26,12 @@ Data frame with the following columns:
 }
 \note{The land mask has been generated from the layer \code{GSHHS_shp/h/GSHHS_h_L1.shp} (level-1 boundaries). For practical purposes, all latitudes beyond 65S and 84N (polar land masses) have been masked out.
 }
-\seealso{ \code{rworldmap::rworldmapExamples}, \code{maps::}}
+\seealso{ \code{rworldmap::rworldmapExamples}, \code{maps::map}}
 \examples{
 data(landmask)
 gridded(landmask) <- ~x+y
 proj4string(landmask) <- "+proj=longlat +datum=WGS84"
-\dontrun{
+\dontrun{ # plot maps:
 require(maps)
 country.m = map('world', plot=FALSE, fill=TRUE)
 IDs <- sapply(strsplit(country.m$names, ":"), function(x) x[1])

@@ -9,8 +9,8 @@
 Sites table. Contains the following columns:
   \describe{
   \item{\code{SOURCEID}}{factor; unique name that identifies a particular site}
-  \item{\code{LAT}}{numeric; latitude in decimal degrees on the NAD83 datum}
-  \item{\code{LON}}{numeric; longitude in decimal degrees on the NAD83 datum}
+  \item{\code{LATWGS84}}{numeric; latitude in decimal degrees on the NAD83 datum}
+  \item{\code{LONWGS84}}{numeric; longitude in decimal degrees on the NAD83 datum}
   \item{\code{TAXBRC}}{factor; original soil class based on the \href{http://www.cnps.embrapa.br/sibcs/}{Brazilian Soil Classification System}}
 }
 Horizons table. Contains the following columns:
@@ -35,8 +35,8 @@ Horizons table. Contains the following columns:
 \author{This soil profile data set has been prepared for the purpose of testing various soil mapping methods by Eliana de Souza and Tomislav Hengl. The processing steps are described in \href{http://gsif.r-forge.r-project.org/rw_riodoce.R}{this script}.}
 \references{
 \itemize{
-\item Benedetti, M.M. and Curi, N. and Sparovek, G. and de Carvalho Filho, A. and Silva, S.H.G., (2011) Updated Brazilian's Georeferenced Soil Database – an Improvement for International Scientific Information Exchanging. In: Principles, Application and Assessment in Soil Science (Edited by E. Burcu \enc{Ozkaraova}{Özkaraova} \enc{Gungor}{Güngör}), InTech, chapter 16, pp. 307-330.
-\item Filho, E.F. et al. (2011) Levantamento de solos e \enc{aptidao}{aptidão} \enc{agricola}{agrícola} das terras da bacia do Rio Doce, Estado de Minas Gerais. Belo Horizonte/MG, 453 p. \url{www.meioambiente.mg.gov.br}
+\item Benedetti, M.M. and Curi, N. and Sparovek, G. and de Carvalho Filho, A. and Silva, S.H.G., (2011) Updated Brazilian's Georeferenced Soil Database –-- an Improvement for International Scientific Information Exchanging. In: Principles, Application and Assessment in Soil Science (Edited by E. Burcu \enc{Özkaraova}{Ozkaraova} \enc{Güngör}{Gungor}), InTech, chapter 16, pp. 307-330.
+\item Filho, E.F. et al. (2011) Levantamento de solos e \enc{aptidão}{aptidao} \enc{agrícola}{agricola} das terras da bacia do Rio Doce, Estado de Minas Gerais. Belo Horizonte/MG, 453 p. \url{www.meioambiente.mg.gov.br}
 \item Cooper, M., Mendes. L.M.S., Silva, W.L.C, and Sparovek, G., (2005) \href{https://www.soils.org/publications/sssaj/articles/69/3/0649}{A National Soil Profile Database for Brazil Available to International Scientists}. Soil Science Society of America Journal, 69:649-652.
 }
 }
@@ -45,6 +45,9 @@ Horizons table. Contains the following columns:
 \dontrun{
 require(aqp)
 data(riodoce)
+# Promote to SoilProfileCollection
+riodoce <- join(riodoce$horizons, riodoce$sites, type='inner')
+# specify point IDs and depths:
 depths(riodoce) <- SOURCEID ~ UHDICM + LHDICM
 # extract site data
 site(riodoce) <- ~ LONWGS84 + LATWGS84 + TAXBRC  
@@ -52,6 +55,7 @@ site(riodoce) <- ~ LONWGS84 + LATWGS84 + TAXBRC
 coordinates(riodoce) <- ~ LONWGS84 + LATWGS84
 proj4string(riodoce) <- "+proj=latlong +datum=WGS84"
 str(riodoce)
+plot(riodoce@sp, pch="+")
 }
 }
 \keyword{datasets}

@@ -10,7 +10,7 @@
 
 <h3>Description</h3>
 
-<p>Land mask showing the 1-degree cells (about 19 thousand in total) in the geographical coordinates, and the productive soils mask (areas with a positive Leaf Area Index at least once in the period 2002 till today). The land mask is based on the <a href="http://www.ngdc.noaa.gov/mgg/shorelines/gshhs.html">Global Self-consistent, Hierarchical, High-resolution Shoreline Database</a> data (GSHHS 2.1), and the productive soils mask on the MODIS Leaf Area Index monthtly product (<a href="https://lpdaac.usgs.gov/lpdaac/products/modis_products_table/leaf_area_index_fraction_of_photosynthetically_active_radiation/8_day_l4_global_1km/mcd15a2">MOD15A2</a>).</p>
+<p>Land mask showing the 1-degree cells (about 19 thousand in total) in the geographical coordinates, and the productive soils mask (areas with a positive Leaf Area Index at least once in the period 2002&ndash;2011). The land mask is based on the <a href="http://www.ngdc.noaa.gov/mgg/shorelines/gshhs.html">Global Self-consistent, Hierarchical, High-resolution Shoreline Database</a> data (GSHHS 2.1), and the productive soils mask on the MODIS Leaf Area Index monthtly product (<a href="https://lpdaac.usgs.gov/lpdaac/products/modis_products_table/leaf_area_index_fraction_of_photosynthetically_active_radiation/8_day_l4_global_1km/mcd15a2">MOD15A2</a>).</p>
 
 
 <h3>Usage</h3>
@@ -73,7 +73,7 @@
 
 <h3>See Also</h3>
 
- <p><code>rworldmap::rworldmapExamples</code>, <code>maps::</code></p>
+ <p><code>rworldmap::rworldmapExamples</code>, <code>maps::map</code></p>
 
 
 <h3>Examples</h3>
@@ -82,7 +82,7 @@
 data(landmask)
 gridded(landmask) &lt;- ~x+y
 proj4string(landmask) &lt;- "+proj=longlat +datum=WGS84"
-## Not run: 
+## Not run:  # plot maps:
 require(maps)
 country.m = map('world', plot=FALSE, fill=TRUE)
 IDs &lt;- sapply(strsplit(country.m$names, ":"), function(x) x[1])
@@ -94,5 +94,5 @@ spplot(landmask["soilmask"], col.regions="grey", sp.layout=list("sp.lines", coun
 ## End(Not run)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.1-2 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.2-0 <a href="00Index.html">Index</a>]</div>
 </body></html>

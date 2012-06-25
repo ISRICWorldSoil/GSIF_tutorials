@@ -94,10 +94,11 @@
 <h3>Examples</h3>
 
 <pre>
-data(ilin.grids)
+## Not run: # Load the data from GSIF page:
+download.file("http://gsif.r-forge.r-project.org/ilin.grids.rda", "ilin.grids.rda")
+load("ilin.grids.rda")
 gridded(ilin.grids) &lt;- ~LON+LAT
 proj4string(ilin.grids) &lt;- CRS("+proj=longlat +datum=WGS84")
-## Not run: 
 # obtain state borders:
 require(maps)
 states.m = map('state', plot=FALSE, fill=TRUE)
@@ -115,5 +116,5 @@ writeGDAL(ilin.grids["FORUSG2"], "FORUSG2.tif", "GTiff", mvFlag=-99999)
 ## End(Not run)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.1-2 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.2-0 <a href="00Index.html">Index</a>]</div>
 </body></html>

@@ -27,9 +27,9 @@
 <dl>
 <dt><code>SOURCEID</code></dt><dd><p>factor; unique name that identifies a particular site</p>
 </dd>
-<dt><code>LAT</code></dt><dd><p>numeric; latitude in decimal degrees on the NAD83 datum</p>
+<dt><code>LATWGS84</code></dt><dd><p>numeric; latitude in decimal degrees on the NAD83 datum</p>
 </dd>
-<dt><code>LON</code></dt><dd><p>numeric; longitude in decimal degrees on the NAD83 datum</p>
+<dt><code>LONWGS84</code></dt><dd><p>numeric; longitude in decimal degrees on the NAD83 datum</p>
 </dd>
 <dt><code>TAXBRC</code></dt><dd><p>factor; original soil class based on the <a href="http://www.cnps.embrapa.br/sibcs/">Brazilian Soil Classification System</a></p>
 </dd>
@@ -83,10 +83,10 @@
 
 
 <ul>
-<li><p> Benedetti, M.M. and Curi, N. and Sparovek, G. and de Carvalho Filho, A. and Silva, S.H.G., (2011) Updated Brazilian's Georeferenced Soil Database  an Improvement for International Scientific Information Exchanging. In: Principles, Application and Assessment in Soil Science (Edited by E. Burcu Ozkaraova Gungor), InTech, chapter 16, pp. 307-330.
+<li><p> Benedetti, M.M. and Curi, N. and Sparovek, G. and de Carvalho Filho, A. and Silva, S.H.G., (2011) Updated Brazilian's Georeferenced Soil Database &ndash; an Improvement for International Scientific Information Exchanging. In: Principles, Application and Assessment in Soil Science (Edited by E. Burcu Özkaraova Güngör), InTech, chapter 16, pp. 307-330.
 </p>
 </li>
-<li><p> Filho, E.F. et al. (2011) Levantamento de solos e aptidao agricola das terras da bacia do Rio Doce, Estado de Minas Gerais. Belo Horizonte/MG, 453 p. <a href="www.meioambiente.mg.gov.br">www.meioambiente.mg.gov.br</a>
+<li><p> Filho, E.F. et al. (2011) Levantamento de solos e aptidão agrícola das terras da bacia do Rio Doce, Estado de Minas Gerais. Belo Horizonte/MG, 453 p. <a href="www.meioambiente.mg.gov.br">www.meioambiente.mg.gov.br</a>
 </p>
 </li>
 <li><p> Cooper, M., Mendes. L.M.S., Silva, W.L.C, and Sparovek, G., (2005) <a href="https://www.soils.org/publications/sssaj/articles/69/3/0649">A National Soil Profile Database for Brazil Available to International Scientists</a>. Soil Science Society of America Journal, 69:649-652.
@@ -106,6 +106,9 @@
 ## Not run: 
 require(aqp)
 data(riodoce)
+# Promote to SoilProfileCollection
+riodoce &lt;- join(riodoce$horizons, riodoce$sites, type='inner')
+# specify point IDs and depths:
 depths(riodoce) &lt;- SOURCEID ~ UHDICM + LHDICM
 # extract site data
 site(riodoce) &lt;- ~ LONWGS84 + LATWGS84 + TAXBRC  
@@ -113,9 +116,10 @@ site(riodoce) &lt;- ~ LONWGS84 + LATWGS84 + TAXBRC
 coordinates(riodoce) &lt;- ~ LONWGS84 + LATWGS84
 proj4string(riodoce) &lt;- "+proj=latlong +datum=WGS84"
 str(riodoce)
+plot(riodoce@sp, pch="+")
 
 ## End(Not run)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.1-2 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.2-0 <a href="00Index.html">Index</a>]</div>
 </body></html>
