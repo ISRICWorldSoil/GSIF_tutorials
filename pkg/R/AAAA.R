@@ -102,7 +102,7 @@ GSIF.env <- function(
     show.env = TRUE
     ){
     
-#    require(plotKML)
+    # require(plotKML)
     if(missing(wps.server)) { wps.server <- "http://wps.worldgrids.org" }
     if(missing(ref_CRS)) { ref_CRS <- "+proj=longlat +datum=WGS84" }
     if(missing(NAflag)) { NAflag <- -99999 }

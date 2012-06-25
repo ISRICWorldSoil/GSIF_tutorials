@@ -1,0 +1,107 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: Malawi study area grids at 1/120 arcdegrees (1 km) resolution</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="R.css">
+</head><body>
+
+<table width="100%" summary="page for mw.grids {GSIF}"><tr><td>mw.grids {GSIF}</td><td align="right">R Documentation</td></tr></table>
+
+<h2>Malawi study area grids at 1/120 arcdegrees (1 km) resolution</h2>
+
+<h3>Description</h3>
+
+<p>A list of soil covariates prepared for Malawi (94,215 grid nodes).</p>
+
+
+<h3>Usage</h3>
+
+<pre>str(mw.grids)</pre>
+
+
+<h3>Format</h3>
+
+
+<p>Data frame contains the following columns:
+</p>
+
+<dl>
+<dt><code>DEMSRT3</code></dt><dd><p>numeric; SRTM DEM</p>
+</dd>  
+<dt><code>EV1MOD3</code></dt><dd><p>numeric; first principal component of the monthly MODIS EVI time series data</p>
+</dd>
+<dt><code>EV2MOD3</code></dt><dd><p>numeric; second principal component of the monthly MODIS EVI time series data</p>
+</dd>
+<dt><code>GLCESA3</code></dt><dd><p>factor; general land cover class based on the <a href="http://ionia1.esrin.esa.int">GlobCov v2.2</a></p>
+</dd>
+<dt><code>INSSRT3</code></dt><dd><p>numeric; potential incoming solar radiation derived in SAGA GIS</p>
+</dd>
+<dt><code>SLPSRT3</code></dt><dd><p>numeric; slope in degrees based on the SRTM DEM</p>
+</dd>
+<dt><code>TAXWRB3</code></dt><dd><p>factor; dominant soil class (group) following the World Reference Base soil classification system derived from the general soil polygon map of Malawi</p>
+</dd>
+<dt><code>TD1MOD3</code></dt><dd><p>numeric; first principal component of the 8-day MODIS day-time LST time series data</p>
+</dd>         
+<dt><code>TN1MOD3</code></dt><dd><p>numeric; first principal component of the 8-day MODIS night-time LST time series data</p>
+</dd> 
+<dt><code>TWISRT2</code></dt><dd><p>numeric; SAGA Topographic Wetness Index based on the SRTM DEM</p>
+</dd>
+<dt><code>x</code></dt><dd><p>numeric; x-coordinate in the UTM 36S coordiante system with WGS84 ellipsoid</p>
+</dd>
+<dt><code>y</code></dt><dd><p>numeric; y-coordinate in the UTM 36S coordiante system with WGS84 ellipsoid</p>
+</dd>
+</dl>
+
+
+
+<h3>Details</h3>
+
+<p>The landscape of Malawi is a series of dissected plateaus and mountainous areas along the Rift Valley i.e. lake Malawi. The size of the country is 118,000 square kilometers (the size of the rectangular block is 349 by 860 km). Dominat soil type map (<code>TAXWRB3</code>) was derived from the 1:600k scale soils map of Malawi and rasterized to 1 km resolution.  </p>
+
+
+<h3>Note</h3>
+
+<p>Listed layer follow a standard naming convention used by WorlGrids.org (the standard 8.3 filename convention with at most eight characters): first three letter are used for the variable type e.g. <code>DEM</code> (digital elevation model); the next three letters represent the data source or collection method e.g. <code>SRT</code> (SRTM); the 6th character is the effective scale e.g. <code>3</code> indicates the 2nd standard scale i.e. 1/120 decimal degrees (about 1 km).</p>
+
+
+<h3>Author(s)</h3>
+
+<p> Tomislav Hengl &amp; Markus Walsh</p>
+
+
+<h3>References</h3>
+
+
+
+<ul>
+<li><p> Ministry of Agriculture Malawi / FAO, (1992) Soils map of Malawi. Land Resources Evaluation Project /MLW/85/011. Land Resources Conservation Board, Lilongwe.
+</p>
+</li>
+<li><p> Africa Soil Information Service (<a href="http://africasoils.net">http://africasoils.net</a>)
+</p>
+</li>
+<li><p> WorldGrids repository of soil covariate layers (<a href="http://worldgrids.org">http://worldgrids.org</a>)
+</p>
+</ul>
+
+
+
+<h3>Examples</h3>
+
+<pre>
+## Not run: # Load the data from GSIF page:
+download.file("http://gsif.r-forge.r-project.org/mw.grids.rda", "mw.grids.rda")
+load("mw.grids.rda")
+gridded(mw.grids) &lt;- ~x+y
+proj4string(mw.grids) &lt;- CRS(utm.csy)
+# plot maps:
+col = grey(rev(seq(0.1,0.975,0.025)))
+names(mw.grids)
+spplot(mw.grids[1], col.regions=col)
+# write to a GIS format:
+writeGDAL(mw.grids["EV1MOD3"], "EV1MOD3.tif", "GTiff", mvFlag=-99999)
+
+## End(Not run)
+</pre>
+
+<hr><div align="center">[Package <em>GSIF</em> version 0.2-0 <a href="00Index.html">Index</a>]</div>
+</body></html>

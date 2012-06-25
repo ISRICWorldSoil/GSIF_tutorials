@@ -3,7 +3,7 @@
 \alias{ilin.grids}
 \title{Illinois and Indiana State soil covariates at 3/120 arcdegrees (2.5 km) resolution}
 \description{A list of soil covariates prepared for the Illinois and Indiana States (40383 grid nodes).}
-\usage{data(ilin.grids)}
+\usage{str(ilin.grids)}
 \format{
 Data frame contains the following columns:
   \describe{

@@ -43,7 +43,7 @@ Horizons table. Contains the following columns:
 \seealso{ \code{\link{riodoce.grids}}}
 \examples{
 \dontrun{
-require(aqp)
+library(aqp)
 data(riodoce)
 # Promote to SoilProfileCollection
 riodoce <- join(riodoce$horizons, riodoce$sites, type='inner')

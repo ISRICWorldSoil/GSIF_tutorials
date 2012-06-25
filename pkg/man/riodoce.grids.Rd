@@ -4,7 +4,7 @@
 \alias{riodoce.grids}
 \title{Rio Doce study area grids at 1/120 arcdegrees (1 km) resolution}
 \description{A list of soil covariates prepared for the Rio Doce catchment in Brazil (71,492 grid nodes).}
-\usage{data(riodoce.grids)}
+\usage{str(riodoce.grids)}
 \format{
 Data frame contains the following columns:
   \describe{

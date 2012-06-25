@@ -3,7 +3,7 @@
 \alias{mw.grids}
 \title{Malawi study area grids at 1/120 arcdegrees (1 km) resolution}
 \description{A list of soil covariates prepared for Malawi (94,215 grid nodes).}
-\usage{data(mw.grids)}
+\usage{str(mw.grids)}
 \format{
 Data frame contains the following columns:
   \describe{
