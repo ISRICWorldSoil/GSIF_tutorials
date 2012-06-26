@@ -28,12 +28,11 @@ Data frame contains the following columns:
 \itemize{
 \item Ministry of Agriculture Malawi / FAO, (1992) Soils map of Malawi. Land Resources Evaluation Project /MLW/85/011. Land Resources Conservation Board, Lilongwe.
 \item Africa Soil Information Service (\url{http://africasoils.net})
-\item WorldGrids repository of soil covariate layers (\url{http://worldgrids.org})
 }
 }
 \examples{
 \dontrun{# Load the data from GSIF page:
-download.file("http://gsif.r-forge.r-project.org/mw.grids.rda", "mw.grids.rda")
+download.file("http://worldgrids.org/rda/mw.grids.rda", "mw.grids.rda")
 load("mw.grids.rda")
 gridded(mw.grids) <- ~x+y
 proj4string(mw.grids) <- CRS(utm.csy)

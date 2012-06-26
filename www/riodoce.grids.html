@@ -75,9 +75,6 @@
 <ul>
 <li><p> EMBRAPA (2006) <a href="http://www.cnps.embrapa.br/sibcs/">Sistema Brasileiro de Classificação de Solos</a>. Centro Nacional de Pesquisa de Solos. 2nd Ed, Rio de Janeiro, Brasil.
 </p>
-</li>
-<li><p> WorldGrids repository of soil covariate layers (<a href="http://worldgrids.org">http://worldgrids.org</a>)
-</p>
 </ul>
 
 
@@ -91,7 +88,7 @@
 
 <pre>
 ## Not run: # Load the data from GSIF page:
-download.file("http://gsif.r-forge.r-project.org/riodoce.grids.rda", "riodoce.grids.rda")
+download.file("http://worldgrids.org/rda/riodoce.grids.rda", "riodoce.grids.rda")
 load("riodoce.grids.rda")
 gridded(riodoce.grids) &lt;- ~x+y
 utm.csy &lt;- "+proj=utm +zone=23 +south +ellps=GRS67 +units=m +no_defs"

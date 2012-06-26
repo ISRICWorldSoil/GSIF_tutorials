@@ -10,7 +10,7 @@
 
 <h3>Description</h3>
 
-<p>A subset of the <a href="http://soils.usda.gov/survey/nscd/">National Cooperative Soil Characterization Database</a> (NSCD) covering the Illinois and Indiana States (5193 soil profiles). Analytical procedures and methods of soil preparation are identified by methods codes in the column headings of the standard NSSC data sheets and are described in <a href="http://soils.usda.gov/survey/nscd/lim/">Soil Survey Laboratory Information Manual No. 42</a>.</p>
+<p>A subset of the <a href="http://soils.usda.gov/survey/nscd/">National Cooperative Soil Characterization Database</a> (NSCD) covering the Illinois and Indiana States (5189 soil profiles). Analytical procedures and methods of soil preparation are identified by methods codes in the column headings of the standard NSSC data sheets and are described in <a href="http://soils.usda.gov/survey/nscd/lim/">Soil Survey Laboratory Information Manual No. 42</a>.</p>
 
 
 <h3>Usage</h3>
@@ -25,27 +25,19 @@
 </p>
 
 <dl>
-<dt><code>site_key</code></dt><dd><p>factor; unique name that identifies a particular site</p>
+<dt><code>SOURCEID</code></dt><dd><p>factor; unique label to help a user identify a particular site (<code>user_site_id</code> in the NSCD)</p>
 </dd>
-<dt><code>user_site_id</code></dt><dd><p>character; a short label to help a user identify a particular site</p>
+<dt><code>LATNAD83</code></dt><dd><p>numeric; latitude in decimal degrees on the NAD83 datum</p>
 </dd>
-<dt><code>LAT</code></dt><dd><p>numeric; latitude in decimal degrees on the NAD83 datum</p>
+<dt><code>LONNAD83</code></dt><dd><p>numeric; longitude in decimal degrees on the NAD83 datum</p>
 </dd>
-<dt><code>LON</code></dt><dd><p>numeric; longitude in decimal degrees on the NAD83 datum</p>
+<dt><code>TIMESTRR</code></dt><dd><p>Date; the date on which this particular soil was described or sampled (<code>observation_date</code> in the NSCD)</p>
 </dd>
-<dt><code>horizontal_datum_name</code></dt><dd><p>character; horizontal datum name (if different from NAD83)</p>
+<dt><code>TAXSUSDA</code></dt><dd><p>factor; correlated name for soil series (<code>correlated_taxon_name</code> in the NSCD)</p>
 </dd>
-<dt><code>observation_date</code></dt><dd><p>character; the date on which this particular soil was described or sampled</p>
+<dt><code>TAXKUSDA</code></dt><dd><p>factor; taxon type &mdash; soil series or taxadjunct (<code>correlated_taxon_kind</code> in the NSCD)</p>
 </dd>
-<dt><code>sampled_taxon_name</code></dt><dd><p>character; KST soil series or taxadjunct name e.g. &quot;Paxton&quot;</p>
-</dd>
-<dt><code>correlated_taxon_name</code></dt><dd><p>character; correlated name for soil series</p>
-</dd>
-<dt><code>correlated_taxon_kind</code></dt><dd><p>character; taxon type &mdash; soil series or taxadjunct</p>
-</dd>
-<dt><code>correlated_class_name</code></dt><dd><p>character; correlated Keys to Soil Taxonomy taxon complete name e.g. &quot;Sandy, mixed, thermic Ustic Torriorthent&quot;</p>
-</dd>
-<dt><code>SSL_class_name</code></dt><dd><p>characted; original Keys to Soil Taxonomy taxon designation</p>
+<dt><code>TAXNUSDA</code></dt><dd><p>factor; correlated Keys to Soil Taxonomy taxon complete name e.g. <code>"Sandy, mixed, thermic Ustic Torriorthent"</code> (<code>correlated_class_name</code> in the NSCD)</p>
 </dd>
 </dl>
 
@@ -53,47 +45,31 @@
 </p>
 
 <dl>
-<dt><code>site_key</code></dt><dd><p>factor; unique name that identifies a particular site</p>
+<dt><code>SOURCEID</code></dt><dd><p>factor; a short label to help a user identify a particular site (<code>user_site_id</code> in the NSCD)</p>
 </dd>
-<dt><code>natural_key</code></dt><dd><p>character; an integer number that uniquely identifies a particular horizon</p>
+<dt><code>LSQINT</code></dt><dd><p>integer; a layer sequence number 1 to N (<code>layer_sequence</code> in the NSCD)</p>
 </dd>
-<dt><code>layer_sequence</code></dt><dd><p>integer; a layer sequence number 1 to N</p>
+<dt><code>HZDUSD</code></dt><dd><p>character; pedological designation of the horizon e.g. <code>"Bt1"</code> (<code>hzn_desgn</code> in the NSCD)</p>
 </dd>
-<dt><code>hzn_desgn</code></dt><dd><p>character; pedological designation of the horizon e.g. &quot;Bt1&quot;</p>
+<dt><code>UHDICM</code></dt><dd><p>numeric; lower horizon depth from the surface in cm (<code>hzn_bot</code> in the NSCD)</p>
 </dd>
-<dt><code>hzn_bot</code></dt><dd><p>numeric; lower horizon depth from the surface in cm</p>
+<dt><code>LHDICM</code></dt><dd><p>numeric; upper horizon depth from the surface in cm (<code>hzn_top</code> in the NSCD)</p>
 </dd>
-<dt><code>hzn_top</code></dt><dd><p>numeric; upper horizon depth from the surface in cm</p>
+<dt><code>CLYPPT</code></dt><dd><p>numeric; weight percentage of the clay particles (&lt;0.0002 mm; <code>clay_tot_psa</code> in the NSCD)</p>
 </dd>
-<dt><code>hzn_vert_subdvn</code></dt><dd><p>integer; an integer number that identifies horizon subdivision e.g. &quot;Bt1&quot; and &quot;Bt2&quot; both receive number &quot;2&quot;</p>
+<dt><code>SNDPPT</code></dt><dd><p>numeric; weight percentage of the silt particles (0.0002&ndash;0.05 mm; <code>sand_tot_psa</code> in the NSCD)</p>
 </dd>
-<dt><code>clay_tot_psa</code></dt><dd><p>numeric; weight percentage of the clay particles (&lt;0.0002 mm)</p>
+<dt><code>SLTPPT</code></dt><dd><p>numeric; weight percentage of the sand particles (0.05&ndash;2 mm; <code>silt_tot_psa</code> in the NSCD)</p>
 </dd>
-<dt><code>sand_tot_psa</code></dt><dd><p>numeric; weight percentage of the silt particles (0.0002&ndash;0.05 mm)</p>
+<dt><code>CRFMAS</code></dt><dd><p>numeric; weight percentage of coarse fragments (&gt; 2 mm; <code>wpg2</code> in the NSCD)</p>
 </dd>
-<dt><code>silt_tot_psa</code></dt><dd><p>numeric; weight percentage of the sand particles (0.05&ndash;2 mm)</p>
+<dt><code>PHIHO5</code></dt><dd><p>numeric; pH index measured in water solution(<code>ph_h2o</code> in the NSCD)</p>
 </dd>
-<dt><code>wpg2</code></dt><dd><p>numeric; weight percentage of coarse fragments (&gt; 2 mm)</p>
+<dt><code>PHIKCL</code></dt><dd><p>numeric; pH index measured in KCl solution (<code>ph_kcl</code> in the NSCD)</p>
 </dd>
-<dt><code>caco3</code></dt><dd><p>numeric; weight percentage of carbonates in the soil</p>
+<dt><code>ORCDRC</code></dt><dd><p>numeric; soil organic carbon content in permille (see below)</p>
 </dd>
-<dt><code>oc</code></dt><dd><p>numeric; weight percentage of organic carbon</p>
-</dd>
-<dt><code>c_tot</code></dt><dd><p>numeric; weight percentage of the total organic and inorganic carbon</p>
-</dd>
-<dt><code>base_sum</code></dt><dd><p>numeric; base saturation in percent</p>
-</dd>
-<dt><code>cec_sum</code></dt><dd><p>numeric; Cation Exchange Capacity in cmol(+)/kg (summary)</p>
-</dd>
-<dt><code>cec_nh4</code></dt><dd><p>numeric; Cation Exchange Capacity in cmol(+)/kg (NH4OAc)</p>
-</dd>
-<dt><code>ph_h2o</code></dt><dd><p>numeric; pH index measured in water solution</p>
-</dd>
-<dt><code>ph_kcl</code></dt><dd><p>numeric; pH index measured in KCl solution</p>
-</dd>
-<dt><code>db_od</code></dt><dd><p>bulk density oven dry (105 C) in kg per cubic meter</p>
-</dd>
-<dt><code>layer_ID</code></dt><dd><p>factor; unique name that identifies a particular horizon</p>
+<dt><code>BLDODR</code></dt><dd><p>bulk density oven dry (105 C) in kg per cubic meter (<code>db_od</code> in the NSCD)</p>
 </dd>
 </dl>
 
@@ -101,14 +77,14 @@
 
 <h3>Note</h3>
 
-<p> This data set is only a sample of the complete laboratory data. The original database contains over 30 thousand profiles. The variables listed above were selected for testing algorithms to produce soil property maps according to the <a href="http://globalsoilmap.net/specifications">GlobalSoilMap.net specifications</a>. The total organic carbon for alkaline soils (pH in water &gt; 7) needs to be corrected e.g. by removing 12 percent of weight percentage of CaCO3. <br>
+<p> This data set is only a sample of the complete laboratory data. The original database contains over 30 thousand profiles. The variables listed above were selected for testing algorithms to produce soil property maps according to the <a href="http://globalsoilmap.net/specifications">GlobalSoilMap.net specifications</a>. <code>ORCDRC</code> values are based on the <code>c_tot</code> and <code>oc</code> values in the NSCD. The total organic carbon in permille for alkaline soils (pH in water &gt; 7) has been corrected by removing 12 percent of weight percentage of CaCO3. <br>
 Disclaimer: The assessment of the accuracy and applicability of the NSCD is strictly a USER RESPONSIBILITY. NRCS and NCSS take no responsibility for problems that arise from use of this database.
 </p>
 
 
 <h3>Author(s)</h3>
 
-<p> The NSCD data is maintained by the NRCS NSSC Soil Survey Lab, Lincoln (NE). This subset has been prepared for the purpose of testing various DSM methods by Tomislav Hengl (tom.hengl@wur.nl). The processing steps are described in <a href="http://gsif.r-forge.r-project.org/rw_NCSS.R">this script</a>.</p>
+<p> The NSCD data is maintained by the NRCS NSSC Soil Survey Lab, Lincoln (NE). This subset has been prepared for the purpose of testing various DSM methods by Tomislav Hengl &lt;tom.hengl@wur.nl&gt;. The processing steps are described in <a href="http://gsif.r-forge.r-project.org/rw_NCSS.R">this script</a>.</p>
 
 
 <h3>References</h3>
@@ -136,12 +112,10 @@ Disclaimer: The assessment of the accuracy and applicability of the NSCD is stri
 <h3>Examples</h3>
 
 <pre>
-## Not run: 
-require(aqp)
 data(ilin)
-coordinates(ilin$sites) &lt;- ~ LON + LAT
+coordinates(ilin$sites) &lt;- ~ LONNAD83 + LATNAD83
 proj4string(ilin$sites) &lt;- CRS("+proj=longlat +datum=NAD83")
-# obtain state borders:
+## Not run: # obtain state borders:
 require(maps)
 states.m = map('state', plot=FALSE, fill=TRUE)
 IDs &lt;- sapply(strsplit(states.m$names, ":"), function(x) x[1])

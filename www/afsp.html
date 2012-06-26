@@ -1,0 +1,126 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: Africa Soil Profiles Database</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="R.css">
+</head><body>
+
+<table width="100%" summary="page for afsp {GSIF}"><tr><td>afsp {GSIF}</td><td align="right">R Documentation</td></tr></table>
+
+<h2>Africa Soil Profiles Database</h2>
+
+<h3>Description</h3>
+
+<p>A subset of the <a href="http://africasoils.net/data/legacyprofile">Africa Soil Profiles Database</a> (AFSP) that contains over 12,000 geo-referenced legacy soil profile records for 37 countries.</p>
+
+
+<h3>Usage</h3>
+
+<pre>data(afsp)</pre>
+
+
+<h3>Format</h3>
+
+
+<p>Sites table. Contains the following columns:
+</p>
+
+<dl>
+<dt><code>SOURCEID</code></dt><dd><p>factor; unique label to help a user identify a particular site (<code>user_site_id</code> in the NSCD)</p>
+</dd>
+<dt><code>RLBISRIC</code></dt><dd><p>factor; reliability class according to the ISRIC quality standards</p>
+</dd>
+<dt><code>LONWGS84</code></dt><dd><p>numeric; longitude in decimal degrees on the WGS84 datum</p>
+</dd>
+<dt><code>LATWGS84</code></dt><dd><p>numeric; latitude in decimal degrees on the WGS84 datum</p>
+</dd>
+<dt><code>STDXYZ</code></dt><dd><p>numeric; profile location accuracy in decimal degrees</p>
+</dd>
+<dt><code>TIMESTRR</code></dt><dd><p>character; the date on which this particular soil was described or sampled</p>
+</dd>
+<dt><code>TAXNWRB</code></dt><dd><p>factor; full soil classification name based on the WRB classification system</p>
+</dd>
+<dt><code>TAXGWRB</code></dt><dd><p>factor; abbreviated soil group based on the WRB classification system</p>
+</dd>
+<dt><code>TAXNUSDA</code></dt><dd><p>factor; Keys to Soil Taxonomy taxon name e.g. <code>"Plinthic Udoxic Dystropept"</code></p>
+</dd>
+</dl>
+
+<p>Horizons table. Contains the following columns:
+</p>
+
+<dl>
+<dt><code>SOURCEID</code></dt><dd><p>factor; a short label to help a user identify a particular site (<code>ProfileID</code> in the AFSP)</p>
+</dd>
+<dt><code>LSQINT</code></dt><dd><p>integer; a layer sequence number 1 to N (<code>LayerNr</code> in the AFSP)</p>
+</dd>
+<dt><code>UHDICM</code></dt><dd><p>numeric; upper horizon depth from the surface in cm (<code>UpDpth</code> in the AFSP)</p>
+</dd>
+<dt><code>LHDICM</code></dt><dd><p>numeric; lower horizon depth from the surface in cm (<code>LowDpth</code> in the AFSP)</p>
+</dd>
+<dt><code>MCOMNS</code></dt><dd><p>factor; Munsell color moist (<code>ColorM</code> in the NSCD)</p>
+</dd>
+<dt><code>CRFVOL</code></dt><dd><p>numeric; volume percentage of coarse fragments (&gt; 2 mm; <code>CfPc</code> in the AFSP)</p>
+</dd>
+<dt><code>SNDPPT</code></dt><dd><p>numeric; weight percentage of the silt particles (0.0002&ndash;0.05 mm; <code>Sand</code> in the AFSP)</p>
+</dd>
+<dt><code>SLTPPT</code></dt><dd><p>numeric; weight percentage of the sand particles (0.05&ndash;2 mm; <code>Silt</code> in the AFSP)</p>
+</dd>
+<dt><code>CLYPPT</code></dt><dd><p>numeric; weight percentage of the clay particles (&lt;0.0002 mm; <code>Clay</code> in the AFSP)</p>
+</dd>
+<dt><code>BLD</code></dt><dd><p>bulk density in kg per cubic meter (<code>BlkDens</code> in the AFSP)</p>
+</dd>
+<dt><code>PHIHO5</code></dt><dd><p>numeric; pH index measured in water solution(<code>PHH2O</code> in the AFSP)</p>
+</dd>
+<dt><code>PHIKCL</code></dt><dd><p>numeric; pH index measured in KCl solution (<code>PHKCl</code> in the AFSP)</p>
+</dd>
+<dt><code>ORCDRC</code></dt><dd><p>numeric; soil organic carbon content in permille (<code>OrgC</code> in the AFSP))</p>
+</dd>
+</dl>
+
+
+
+<h3>Author(s)</h3>
+
+<p> The Africa Soil Profiles Database have been prepared by Johan Leenaars &lt;johan.leenaars@wur.nl&gt;. This is a subset of the original database that can be downloaded via <a href="http://www.isric.org/sites/default/files/private/datasets/AfSP01Qry_ISRIC.zip">www.isric.org</a>. The processing steps used to prepare this data are described in <a href="http://gsif.r-forge.r-project.org/rw_AFSP.R">this script</a>.</p>
+
+
+<h3>References</h3>
+
+
+
+<ul>
+<li><p> Leenaars, J.G.B. (2012) <a href="http://www.isric.org/content/publications">Africa Soil Profiles Database, Version 1.0. A compilation of geo-referenced and standardized legacy soil profile data for Sub Saharan Africa (with dataset)</a>. ISRIC report 2012/03. Africa Soil Information Service (AfSIS) project and ISRIC – World Soil Information, Wageningen, the Netherlands.
+</p>
+</li>
+<li><p> Africa Soil Information Service (<a href="http://africasoils.net">http://africasoils.net</a>) 
+</p>
+</ul>
+
+
+
+<h3>See Also</h3>
+
+ <p><code><a href="mw.grids.html">mw.grids</a></code></p>
+
+
+<h3>Examples</h3>
+
+<pre>
+data(afsp)
+coordinates(afsp$sites) &lt;- ~ LONWGS84 + LATWGS84
+proj4string(afsp$sites) &lt;- CRS("+proj=longlat +datum=WGS84")
+## Not run: # obtain state borders:
+require(maps)
+country.m = map('world', plot=FALSE, fill=TRUE)
+IDs &lt;- sapply(strsplit(country.m$names, ":"), function(x) x[1])
+require(maptools)
+country &lt;- as(map2SpatialPolygons(country.m, IDs=IDs), "SpatialLines")
+# overlay and plot points and maps:
+plot(afsp$sites, pch="+", cex=.6, col="black")
+lines(country)
+
+## End(Not run)
+</pre>
+
+<hr><div align="center">[Package <em>GSIF</em> version 0.2-0 <a href="00Index.html">Index</a>]</div>
+</body></html>

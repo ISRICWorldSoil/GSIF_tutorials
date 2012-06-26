@@ -79,9 +79,6 @@
 </li>
 <li><p> soilDB package (<a href="http://cran.r-project.org/package=soilDB">http://cran.r-project.org/package=soilDB</a>)
 </p>
-</li>
-<li><p> WorldGrids repository of soil covariate layers (<a href="http://worldgrids.org">http://worldgrids.org</a>)
-</p>
 </ul>
 
 
@@ -95,7 +92,7 @@
 
 <pre>
 ## Not run: # Load the data from GSIF page:
-download.file("http://gsif.r-forge.r-project.org/ilin.grids.rda", "ilin.grids.rda")
+download.file("http://worldgrids.org/rda/ilin.grids.rda", "ilin.grids.rda")
 load("ilin.grids.rda")
 gridded(ilin.grids) &lt;- ~LON+LAT
 proj4string(ilin.grids) &lt;- CRS("+proj=longlat +datum=WGS84")

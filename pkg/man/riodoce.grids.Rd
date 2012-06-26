@@ -28,13 +28,12 @@ Data frame contains the following columns:
 \references{
 \itemize{
 \item EMBRAPA (2006) \href{http://www.cnps.embrapa.br/sibcs/}{Sistema Brasileiro de \enc{Classificação}{Classificacao} de Solos}. Centro Nacional de Pesquisa de Solos. 2nd Ed, Rio de Janeiro, Brasil.
-\item WorldGrids repository of soil covariate layers (\url{http://worldgrids.org})
 }
 }
 \seealso{ \code{\link{riodoce}}}
 \examples{
 \dontrun{# Load the data from GSIF page:
-download.file("http://gsif.r-forge.r-project.org/riodoce.grids.rda", "riodoce.grids.rda")
+download.file("http://worldgrids.org/rda/riodoce.grids.rda", "riodoce.grids.rda")
 load("riodoce.grids.rda")
 gridded(riodoce.grids) <- ~x+y
 utm.csy <- "+proj=utm +zone=23 +south +ellps=GRS67 +units=m +no_defs"

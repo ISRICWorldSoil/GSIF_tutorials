@@ -28,13 +28,12 @@ Data frame contains the following columns:
 \item Soil Survey Staff, Natural Resources Conservation Service, United States Department of Agriculture. U.S. General Soil Map (STATSGO2). Available online at \url{http://soildatamart.nrcs.usda.gov}.
 \item Xian, G., and Homer C., (2010) \href{http://dx.doi.org/10.1016/j.rse.2010.02.018}{Updating the 2001 National Land Cover Database impervious surface products to 2006 using Landsat imagery change detection methods}. Remote Sensing of Environment, 114, 1676-1686.
 \item soilDB package (\url{http://cran.r-project.org/package=soilDB})
-\item WorldGrids repository of soil covariate layers (\url{http://worldgrids.org})
 }
 }
 \seealso{ \code{\link{ilin}}, \code{\link{geochm}}}
 \examples{
 \dontrun{# Load the data from GSIF page:
-download.file("http://gsif.r-forge.r-project.org/ilin.grids.rda", "ilin.grids.rda")
+download.file("http://worldgrids.org/rda/ilin.grids.rda", "ilin.grids.rda")
 load("ilin.grids.rda")
 gridded(ilin.grids) <- ~LON+LAT
 proj4string(ilin.grids) <- CRS("+proj=longlat +datum=WGS84")

@@ -94,24 +94,6 @@ horizon$GRAVEL <- horizon$wpg2*mBD/2.6
 ## check visually:
 # plot(y=horizon$GRAVEL, x=horizon$wpg2, xlim=c(0,100), ylab="GRAVEL (vol %)", xlab="GRAVEL (mass %)", main="NCSS (250K measurements)", pch="+", cex=.7)
 
-
-# subset tables:
-hs <- subset(horizon[,c("site_key", "natural_key", "layer_sequence", "hzn_desgn", "hzn_bot", "hzn_top", "hzn_vert_subdvn", "clay_tot_psa", "sand_tot_psa", "silt_tot_psa", "pyr_col", "wpg2", "caco3", "ph_hist", "oc", "c_tot", "base_sum", "cec_sum", "cec_nh4", "ph_h2o", "ph_kcl", "db_od")], !is.na(horizon$DEPTH)&!is.na(horizon$site_key)&horizon$layer_sequence<15)
-# strange - there are layer_sequence numbers up to 259?!
-str(hs)
-# summary(as.factor(horizon$layer_sequence))
-hs$site_key <- as.factor(hs$site_key)
-# remove duplicate site keys (there are many!!):
-hs$layer_ID <- as.factor(paste(hs$site_key, hs$layer_sequence, sep="_"))
-hs <- hs[!duplicated(hs$layer_ID),]
-length(levels(as.factor(hs$layer_ID)))
-mean(hs$oc, na.rm=TRUE) ## Organic Carbon in %!
-# estimate OC by correcting for CaCO3:
-hs$ORCDRC <- 10*ifelse(!is.na(hs$c_tot), ifelse((hs$ph_h2o > 7)&!is.na(hs$caco3), hs$c_tot - .12 * hs$caco3, hs$c_tot), hs$oc)  
-hs$ORCDRC <- ifelse(hs$ORCDRC < 0, 0, hs$ORCDRC) 
-# stats:
-summary(hs$ORCDRC)
-
 pedon$site_key <- as.factor(pedon$site_key)
 # there are also pedons with multiple site IDs!?
 s1 <- merge(pedon, tax[,!(names(tax) %in% c("natural_key"))], by=c("pedon_key"), all=TRUE)
@@ -124,49 +106,97 @@ site.s <- merge(site, s1, by=c("site_key"), all.x=TRUE)
 site.s <- site.s[!is.na(site.s$LAT)&!is.na(site.s$LON), c("site_key","user_site_id","LAT","LON","horizontal_datum_name","observation_date","sampled_taxon_name","correlated_taxon_name","correlated_taxon_kind","correlated_class_name","SSL_class_name")]
 str(site.s)
 
+# subset tables:
+hs <- subset(horizon[,c("site_key", "natural_key", "layer_sequence", "hzn_desgn", "hzn_bot", "hzn_top", "hzn_vert_subdvn", "clay_tot_psa", "sand_tot_psa", "silt_tot_psa", "pyr_col", "wpg2", "caco3", "ph_hist", "oc", "c_tot", "base_sum", "cec_sum", "cec_nh4", "ph_h2o", "ph_kcl", "db_od")], !is.na(horizon$DEPTH)&!is.na(horizon$site_key)&horizon$layer_sequence<15)
+# strange - there are layer_sequence numbers up to 259?!
+str(hs)
+# summary(as.factor(horizon$layer_sequence))
+hs$site_key <- as.factor(hs$site_key)
+# remove duplicate site keys (there are many!!):
+hs$layer_ID <- as.factor(paste(hs$site_key, hs$layer_sequence, sep="_"))
+hs <- hs[!duplicated(hs$layer_ID),]
+# remove IDs that do not exist in the site table:
+sel <- hs$site_key %in% site.s$site_key
+length(levels(as.factor(hs$layer_ID)))
+mean(hs$oc, na.rm=TRUE) ## Organic Carbon in percent!
+## estimate OC by correcting for CaCO3:
+hs$ORCDRC <- 10*ifelse(!is.na(hs$c_tot), ifelse((hs$ph_h2o > 7)&!is.na(hs$caco3), hs$c_tot - .12 * hs$caco3, hs$c_tot), hs$oc)  
+hs$ORCDRC <- ifelse(hs$ORCDRC < 0, 0, hs$ORCDRC) 
+## stats:
+# summary(hs$ORCDRC)
+
+
 # ------------------------------------------------------------
 # SoilProfileCollection
 # ------------------------------------------------------------
 
-NCSS_all <- list(sites=site.s, horizons=hs)
+NCSS_all <- list(sites=site.s, horizons=hs[sel,])
 str(NCSS_all)
-# save(NCSS_all, file="NCSS_all.rda", compress="xz")
-# Promote to SoilProfileCollection
-NCSS.spc <- join(NCSS_all$horizons, NCSS_all$sites, type='inner')
-depths(NCSS.spc) <- site_key ~ hzn_top + hzn_bot
-# TAKES 4-5 mins!
-# extract site data
-site(NCSS.spc) <- ~ LON + LAT + horizontal_datum_name + observation_date + sampled_taxon_name + correlated_taxon_name + correlated_taxon_kind + correlated_class_name + SSL_class_name
-# generate SpatialPoints
-coordinates(NCSS.spc) <- ~ LON + LAT
-# assign CRS data
-proj4string(NCSS.spc) <- "+proj=latlong +datum=NAD83"
-str(NCSS.spc)
+# specify classes:
+NCSS_all$sites$user_site_id <- as.factor(NCSS_all$sites$user_site_id)
+NCSS_all$sites$horizontal_datum_name <- as.factor(NCSS_all$sites$horizontal_datum_name)
+NCSS_all$sites$correlated_taxon_name <- as.factor(NCSS_all$sites$correlated_taxon_name)
+NCSS_all$sites$sampled_taxon_name <- as.factor(NCSS_all$sites$sampled_taxon_name)
+NCSS_all$sites$correlated_taxon_kind <- as.factor(NCSS_all$sites$correlated_taxon_kind)
+NCSS_all$sites$correlated_class_name <- as.factor(NCSS_all$sites$correlated_class_name)
+NCSS_all$sites$SSL_class_name <- as.factor(NCSS_all$sites$SSL_class_name)
+NCSS_all$horizons$hzn_desgn <- as.factor(NCSS_all$horizons$hzn_desgn)
+NCSS_all$horizons$natural_key <- as.factor(NCSS_all$horizons$natural_key)
+NCSS_all$horizons$pyr_col <- NULL
+# round up the numbers:
+NCSS_all$horizons$ORCDRC <- round(NCSS_all$horizons$ORCDRC, 1)
+NCSS_all$horizons$clay_tot_psa <- round(NCSS_all$horizons$clay_tot_psa, 0)
+NCSS_all$horizons$sand_tot_psa <- round(NCSS_all$horizons$sand_tot_psa, 0)
+NCSS_all$horizons$silt_tot_psa <- round(NCSS_all$horizons$silt_tot_psa, 0)
+NCSS_all$horizons$oc <- round(NCSS_all$horizons$oc, 2)
+NCSS_all$horizons$c_tot <- round(NCSS_all$horizons$c_tot, 2)
+NCSS_all$horizons$base_sum <- round(NCSS_all$horizons$base_sum, 1)
+NCSS_all$horizons$caco3 <- round(NCSS_all$horizons$caco3, 2)
+NCSS_all$horizons$cec_sum <- round(NCSS_all$horizons$cec_sum, 1)
+NCSS_all$horizons$cec_nh4 <- round(NCSS_all$horizons$cec_nh4, 1)
+NCSS_all$horizons$ph_h2o <- round(NCSS_all$horizons$ph_h2o, 1)
+NCSS_all$horizons$ph_kcl <- round(NCSS_all$horizons$ph_kcl, 1)
+NCSS_all$horizons$db_od <- round(NCSS_all$horizons$db_od, 2)
+save(NCSS_all, file="NCSS_all.rda", compress="xz")
+
+## Promote to SoilProfileCollection
+# NCSS.spc <- join(NCSS_all$horizons, NCSS_all$sites, type='inner')
+# depths(NCSS.spc) <- site_key ~ hzn_top + hzn_bot
+## TAKES 4-5 mins!
+## extract site data
+# site(NCSS.spc) <- ~ LON + LAT + horizontal_datum_name + observation_date + sampled_taxon_name + correlated_taxon_name + correlated_taxon_kind + correlated_class_name + SSL_class_name
+## generate SpatialPoints
+# coordinates(NCSS.spc) <- ~ LON + LAT
+## assign CRS data
+# proj4string(NCSS.spc) <- "+proj=latlong +datum=NAD83"
+# str(NCSS.spc)
 # library(plotKML)
 # kml(NCSS.spc, var.name="ORCDRC")
 
-# subset to Indiana state:
-sel <- site.s$LAT>37.2&site.s$LAT<42.2&site.s$LON< -84.5&site.s$LON> -87.5
-site.s_in <- site.s[sel,]
-hs_in <- hs[hs$site_key %in% site.s_in$site_key,]
-NCSS <- list(sites=site.s_in, horizons=hs_in)
-# round up the numbers:
-NCSS$horizons$ORCDRC <- round(NCSS$horizons$ORCDRC, 1)
-NCSS$horizons$clay_tot_psa <- round(NCSS$horizons$clay_tot_psa, 0)
-NCSS$horizons$sand_tot_psa <- round(NCSS$horizons$sand_tot_psa, 0)
-NCSS$horizons$silt_tot_psa <- round(NCSS$horizons$silt_tot_psa, 0)
-NCSS$horizons$oc <- round(NCSS$horizons$oc, 2)
-NCSS$horizons$c_tot <- round(NCSS$horizons$c_tot, 2)
-NCSS$horizons$base_sum <- round(NCSS$horizons$base_sum, 1)
-NCSS$horizons$caco3 <- round(NCSS$horizons$caco3, 2)
-NCSS$horizons$cec_sum <- round(NCSS$horizons$cec_sum, 1)
-NCSS$horizons$cec_nh4 <- round(NCSS$horizons$cec_nh4, 1)
-NCSS$horizons$ph_h2o <- round(NCSS$horizons$ph_h2o, 1)
-NCSS$horizons$ph_kcl <- round(NCSS$horizons$ph_kcl, 1)
-NCSS$horizons$db_od <- round(NCSS$horizons$db_od, 2)
-# Save object:
-save(NCSS, file="NCSS.rda", compress="xz")
+## subset to Indiana state:
+sel2 <- NCSS_all$sites$LAT>36.9&NCSS_all$sites$LAT<42.5&NCSS_all$sites$LON< -84.5&NCSS_all$sites$LON> -91.7
+site.s_in <- NCSS_all$sites[sel2,]
+# remove some duplicated "user_site_id"s:
+site.s_in <- site.s_in[!duplicated(site.s_in$user_site_id),]
+hs_in <- NCSS_all$horizons[NCSS_all$horizons$site_key %in% site.s_in$site_key,]
+# add the user_site_id column:
+hs_in <- merge(hs_in, site.s_in[,c("site_key","user_site_id")])
+ilin <- list(sites=site.s_in[,c("user_site_id","LAT","LON","observation_date","correlated_taxon_name","correlated_taxon_kind","correlated_class_name")], horizons=hs_in[,c("user_site_id", "layer_sequence", "hzn_desgn", "hzn_bot", "hzn_top", "clay_tot_psa", "sand_tot_psa", "silt_tot_psa", "wpg2", "ph_h2o", "ph_kcl", "ORCDRC", "db_od")])
+# remove exta levels:
+ilin$sites$user_site_id <- as.factor(paste(ilin$sites$user_site_id))
+ilin$horizons$user_site_id <- as.factor(paste(ilin$horizons$user_site_id))
+ilin$sites$correlated_taxon_name <- as.factor(paste(ilin$sites$correlated_taxon_name))
+ilin$sites$correlated_class_name <- as.factor(paste(ilin$sites$correlated_class_name))
+ilin$horizons$hzn_desgn <- as.factor(paste(ilin$horizons$hzn_desgn))
+names(ilin$sites) <- c("SOURCEID", "LATNAD83", "LONNAD83", "TIMESTRR", "TAXSUSDA", "TAXKUSDA", "TAXNUSDA")
+names(ilin$horizons) <- c("SOURCEID", "LSQINT", "HZDUSD", "UHDICM", "LHDICM", "CLYPPT", "SNDPPT", "SLTPPT", "CRFMAS", "PHIHO5", "PHIKCL", "ORCDRC", "BLDODR")
+ilin$sites$TIMESTRR <- as.Date(ilin$sites$TIMESTRR)
+str(ilin)
+
+## Save object:
+save(ilin, file="ilin.rda", compress="xz")
 # save(NCSS, file="NCSS.rda", compress="gzip")
+
 save.image("Repository2010.RData")
 
 # end of script;
