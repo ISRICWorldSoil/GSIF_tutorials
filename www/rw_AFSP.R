@@ -63,4 +63,32 @@ afsp <- list(sites=sites[,c("SOURCEID", "RLBISRIC", "LONWGS84", "LATWGS84", "STD
 str(afsp)
 save(afsp, file="afsp.rda", compress="xz")
 
+# try to plot soil colors:
+afsp.spc <- join(afsp$horizons, afsp$sites, type='inner')
+depths(afsp.spc) <- SOURCEID ~ UHDICM + LHDICM
+site(afsp.spc) <- ~ LONWGS84+LATWGS84+STDXYZ+TIMESTRR+TAXNWRB+TAXGWRB+TAXNUSDA
+coordinates(afsp.spc) <- ~ LONWGS84 + LATWGS84
+proj4string(afsp.spc) <- "+proj=latlong +datum=WGS84"
+str(afsp.spc)
+# get colors:
+sc <- data.frame(mcolor=afsp.spc@horizons$MCOMNS)
+# reformat color codes:
+sc$Munsell <- sub(" ", "", sub("/", "_", sc$mcolor))
+hue.lst <- expand.grid(c("2.5", "5", "7.5", "10"), c("YR","GY","BG","YE","YN","YY","R","Y","B","G"))
+hue.lst$mhue <- paste(hue.lst$Var1, hue.lst$Var2, sep="") 
+for(j in hue.lst$mhue[1:24]){ 
+  sc$Munsell <- sub(j, paste(j, "_", sep=""), sc$Munsell, fixed=TRUE)
+  sc$Munsell <- sub("__", "_", sc$Munsell, fixed=TRUE) 
+}
+# match MunsellRGB table:
+load(file("http://globalsoilmap.net/data/munsell_rgb.RData"))
+Munsell.rgb <- merge(sc, munsell.rgb, by="Munsell", all.x=TRUE, all.y=FALSE)
+Munsell.rgb$R <- ifelse(is.na(Munsell.rgb$R), 255, Munsell.rgb$R)
+Munsell.rgb$G <- ifelse(is.na(Munsell.rgb$G), 255, Munsell.rgb$G)
+Munsell.rgb$B <- ifelse(is.na(Munsell.rgb$B), 255, Munsell.rgb$B)
+afsp.spc@horizons$m_color <- rgb(red=Munsell.rgb$R, green=Munsell.rgb$G, blue=Munsell.rgb$B, maxColorValue = 255)
+# library(plotKML)
+# kml(afsp.spc, color.name ="m_color", var.name="ORCDRC")
+## Takes 10 mins!!
+
 # end of script;

@@ -25,23 +25,23 @@
 </p>
 
 <dl>
-<dt><code>SOURCEID</code></dt><dd><p>factor; unique label to help a user identify a particular site (<code>user_site_id</code> in the NSCD)</p>
+<dt><code>SOURCEID</code></dt><dd><p>factor; unique label to help a user identify a particular site (<code>ProfileID</code> in the AFSP)</p>
 </dd>
-<dt><code>RLBISRIC</code></dt><dd><p>factor; reliability class according to the ISRIC quality standards</p>
+<dt><code>RLBISRIC</code></dt><dd><p>factor; reliability class according to the ISRIC quality standards (<code>Reliab</code> in the AFSP)</p>
 </dd>
-<dt><code>LONWGS84</code></dt><dd><p>numeric; longitude in decimal degrees on the WGS84 datum</p>
+<dt><code>LONWGS84</code></dt><dd><p>numeric; longitude in decimal degrees on the WGS84 datum (<code>X_LonDD</code> in the AFSP)</p>
 </dd>
-<dt><code>LATWGS84</code></dt><dd><p>numeric; latitude in decimal degrees on the WGS84 datum</p>
+<dt><code>LATWGS84</code></dt><dd><p>numeric; latitude in decimal degrees on the WGS84 datum (<code>Y_LatDD</code> in the AFSP)</p>
 </dd>
-<dt><code>STDXYZ</code></dt><dd><p>numeric; profile location accuracy in decimal degrees</p>
+<dt><code>STDXYZ</code></dt><dd><p>numeric; profile location accuracy in decimal degrees (<code>XYAccur</code> in the AFSP)</p>
 </dd>
-<dt><code>TIMESTRR</code></dt><dd><p>character; the date on which this particular soil was described or sampled</p>
+<dt><code>TIMESTRR</code></dt><dd><p>character; the date on which this particular soil was described or sampled (<code>T_Year</code> in the AFSP)</p>
 </dd>
-<dt><code>TAXNWRB</code></dt><dd><p>factor; full soil classification name based on the WRB classification system</p>
+<dt><code>TAXNWRB</code></dt><dd><p>factor; full soil classification name based on the WRB classification system (<code>ProfileID</code> in the AFSP)</p>
 </dd>
-<dt><code>TAXGWRB</code></dt><dd><p>factor; abbreviated soil group based on the WRB classification system</p>
+<dt><code>WRB06</code></dt><dd><p>factor; abbreviated soil group based on the WRB classification system (<code>WRB06rg</code> in the AFSP)</p>
 </dd>
-<dt><code>TAXNUSDA</code></dt><dd><p>factor; Keys to Soil Taxonomy taxon name e.g. <code>"Plinthic Udoxic Dystropept"</code></p>
+<dt><code>TAXNUSDA</code></dt><dd><p>factor; Keys to Soil Taxonomy taxon name e.g. <code>"Plinthic Udoxic Dystropept"</code> (<code>USDA</code> in the AFSP)</p>
 </dd>
 </dl>
 
@@ -106,17 +106,21 @@
 <h3>Examples</h3>
 
 <pre>
+## Not run: # load data and convert to SPC:
 data(afsp)
-coordinates(afsp$sites) &lt;- ~ LONWGS84 + LATWGS84
-proj4string(afsp$sites) &lt;- CRS("+proj=longlat +datum=WGS84")
-## Not run: # obtain state borders:
+afsp.spc &lt;- join(afsp$horizons, afsp$sites, type='inner')
+depths(afsp.spc) &lt;- SOURCEID ~ UHDICM + LHDICM
+site(afsp.spc) &lt;- ~ LONWGS84+LATWGS84+STDXYZ+TIMESTRR+TAXNWRB+TAXGWRB+TAXNUSDA
+coordinates(afsp.spc) &lt;- ~ LONWGS84 + LATWGS84
+proj4string(afsp.spc) &lt;- "+proj=latlong +datum=WGS84"
+# obtain country borders:
 require(maps)
 country.m = map('world', plot=FALSE, fill=TRUE)
 IDs &lt;- sapply(strsplit(country.m$names, ":"), function(x) x[1])
 require(maptools)
 country &lt;- as(map2SpatialPolygons(country.m, IDs=IDs), "SpatialLines")
 # overlay and plot points and maps:
-plot(afsp$sites, pch="+", cex=.6, col="black")
+plot(afsp.spc$sites, pch="+", cex=.6, col="black")
 lines(country)
 
 ## End(Not run)
