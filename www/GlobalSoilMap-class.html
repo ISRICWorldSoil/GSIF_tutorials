@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: A class for GlobalSoilMap soil property maps</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="R.css">
+</head><body>
+
+<table width="100%" summary="page for GlobalSoilMap-class {GSIF}"><tr><td>GlobalSoilMap-class {GSIF}</td><td align="right">R Documentation</td></tr></table>
+
+<h2>A class for GlobalSoilMap soil property maps</h2>
+
+<h3>Description</h3>
+
+<p>A class containing multiple realizations of soil properties following the <a href="http://globalsoilmap.net/specifications">GlobalSoilMap.net specifications</a>, i.e. predictions of some of the target global soil properties at six depths (<code>sd1</code> = 2.5 cm, <code>sd2</code> = 10 cm, <code>sd3</code> = 22.5 cm, <code>sd4</code> = 45 cm, <code>sd5</code> = 80 cm, <code>sd6</code> = 150 cm).</p>
+
+
+<h3>Slots</h3>
+
+
+    
+<dl>
+<dt><code>varname</code>:</dt><dd><p>object of class <code>"character"</code>; abbreviated variable name registered in the Global Soil Data registry</p>
+</dd>
+<dt><code>sd1</code>:</dt><dd><p>object of class <code>"SpatialPixelsDataFrame"</code>; number of realizations of the target variable at depth 2.5 cm</p>
+</dd>
+<dt><code>sd2</code>:</dt><dd><p>object of class <code>"SpatialPixelsDataFrame"</code>; number of realizations of the target variable at depth 10 cm</p>
+</dd>
+<dt><code>sd3</code>:</dt><dd><p>object of class <code>"SpatialPixelsDataFrame"</code>; number of realizations of the target variable at depth 22.5 cm</p>
+</dd>
+<dt><code>sd4</code>:</dt><dd><p>object of class <code>"SpatialPixelsDataFrame"</code>; number of realizations of the target variable at depth 45 cm</p>
+</dd>
+<dt><code>sd5</code>:</dt><dd><p>object of class <code>"SpatialPixelsDataFrame"</code>; number of realizations of the target variable at depth 80 cm</p>
+</dd>
+<dt><code>sd6</code>:</dt><dd><p>object of class <code>"SpatialPixelsDataFrame"</code>; number of realizations of the target variable at depth 150 cm</p>
+</dd>
+<dt><code>validation</code>:</dt><dd><p>object of class <code>"SpatialPointsDataFrame"</code>; cross-validation data set with values of the target variable at six depths</p>
+</dd>
+</dl>
+
+
+
+<h3>Methods</h3>
+
+
+
+<dl>
+<dt>summary</dt><dd><p><code>signature(x = "GlobalSoilMap")</code>: generates summary statistics for the object</p>
+</dd>
+</dl>
+
+
+
+<h3>Author(s)</h3>
+
+<p> Tomislav Hengl \&amp; Robert A. MacMillan </p>
+
+
+<h3>See Also</h3>
+
+ <p><code><a href="SpatialComponents-class.html">SpatialComponents-class</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+## Not run: # load soil samples from the plotKML package: 
+library(plotKML)
+data(eberg)
+# 30 percent subsample:
+eberg &lt;- eberg[runif(nrow(eberg)) &lt; .3,]
+# sites table:
+s.lst &lt;- c("ID", "soiltype", "TAXGRSC", "X", "Y")
+sites &lt;- eberg[,s.lst]
+# get horizons table:
+horizons &lt;- getHorizons(eberg, idcol="ID", sel=c("UHDICM","LHDICM","SNDMHT","SLTMHT","CLYMHT"))
+# create object of type "SoilProfileCollection"
+eberg.spc &lt;- join(horizons, sites, type='inner')
+depths(eberg.spc) &lt;- ID ~ UHDICM + LHDICM
+site(eberg.spc) &lt;- as.formula(paste("~", paste(sel.site[-1], collapse="+"), sep=""))
+coordinates(eberg.spc) &lt;- ~X+Y
+proj4string(eberg.spc) &lt;- CRS("+init=epsg:31467")
+# convert to geosamples:
+eberg.geo &lt;- as.geosamples(eberg.spc)
+# prepare covariates:
+data(eberg_grid)
+gridded(eberg_grid) &lt;- ~x+y
+proj4string(eberg_grid) &lt;- CRS("+init=epsg:31467")
+eberg_spc &lt;- spc(eberg_grid, as.formula("~ PRMGEO6+DEMSRT6+TWISRT6+TIRAST6"))
+# fit gstat Model:
+formulaString = as.formula(paste("observedValue ~ ", paste(names(eberg_spc@sp), collapse="+"), "+ ns(altitude, df=5)"))
+SNDMHT.m &lt;- fit.gstatModel(eberg.geo, formulaString, covariates=eberg_spc, methodid="SNDMHT")
+summary(SNDMHT.m@regModel)
+
+## End(Not run)
+</pre>
+
+<hr><div align="center">[Package <em>GSIF</em> version 0.2-0 <a href="00Index.html">Index</a>]</div>
+</body></html>

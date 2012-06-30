@@ -3,6 +3,7 @@
 \alias{as.data.frame}
 \alias{as.data.frame,SoilProfileCollection-method}
 \alias{as.data.frame.SoilProfileCollection}
+\alias{getHorizons}
 \title{Converts an object of class \code{"SoilProfileCollection"} to a data frame}
 \description{Converts an object of class \code{"SoilProfileCollection"} to an object of class \code{"data.frame"} with both site and horizon data sorted in one row. Each original column name in the horizons table receives a sufix \code{*_A, B, \dots, Z} where alphabetic letters represent horizon sequence. }
 \usage{
@@ -31,5 +32,7 @@ proj4string(prof1) <- CRS("+proj=longlat +datum=WGS84")
 # convert to a simple table:
 x <- as.data.frame(prof1)
 str(x)
+# horizons only
+horizons <- getHorizons(x, idcol="id", sel=c("top", "bottom", "ORCDRC"))
 }
 \keyword{methods}

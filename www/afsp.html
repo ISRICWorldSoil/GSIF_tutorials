@@ -73,7 +73,7 @@
 </dd>
 <dt><code>PHIKCL</code></dt><dd><p>numeric; pH index measured in KCl solution (<code>PHKCl</code> in the AFSP)</p>
 </dd>
-<dt><code>ORCDRC</code></dt><dd><p>numeric; soil organic carbon content in permille (<code>OrgC</code> in the AFSP))</p>
+<dt><code>ORCDRC</code></dt><dd><p>numeric; soil organic carbon content in permille (<code>OrgC</code> in the AFSP)</p>
 </dd>
 </dl>
 
@@ -108,20 +108,18 @@
 <pre>
 ## Not run: # load data and convert to SPC:
 data(afsp)
-afsp.spc &lt;- join(afsp$horizons, afsp$sites, type='inner')
-depths(afsp.spc) &lt;- SOURCEID ~ UHDICM + LHDICM
-site(afsp.spc) &lt;- ~ LONWGS84+LATWGS84+STDXYZ+TIMESTRR+TAXNWRB+TAXGWRB+TAXNUSDA
-coordinates(afsp.spc) &lt;- ~ LONWGS84 + LATWGS84
-proj4string(afsp.spc) &lt;- "+proj=latlong +datum=WGS84"
+sites &lt;- afsp$sites
+coordinates(sites) &lt;- ~ LONWGS84 + LATWGS84
+proj4string(sites) &lt;- "+proj=latlong +datum=WGS84"
 # obtain country borders:
-require(maps)
+library(maps)
 country.m = map('world', plot=FALSE, fill=TRUE)
 IDs &lt;- sapply(strsplit(country.m$names, ":"), function(x) x[1])
 require(maptools)
 country &lt;- as(map2SpatialPolygons(country.m, IDs=IDs), "SpatialLines")
 # overlay and plot points and maps:
-plot(afsp.spc$sites, pch="+", cex=.6, col="black")
-lines(country)
+plot(country, col="darkgrey", xlim=c(-25.3,57.8), ylim=c(-34.8, 37.4))
+points(sites, pch=21, bg="white", cex=.6, col="black")
 
 ## End(Not run)
 </pre>

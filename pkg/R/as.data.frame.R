@@ -47,4 +47,18 @@ setMethod("as.data.frame", signature(x = "SoilProfileCollection"), as.data.frame
 
 setMethod("as.data.frame.default", signature(x = "SoilProfileCollection"), as.data.frame.SoilProfileCollection)
 
+
+# Reverse function -- extract horizons from a data.frame:
+getHorizons <- function(x, idcol, sel){
+    h.lst <- sapply(sel, FUN=function(l){grep(l, names(x))})
+    m.lst <- rep(list(data.frame(x[,idcol])), nrow(h.lst))
+    for(j in 1:nrow(h.lst)){
+      names(m.lst[[j]]) <- idcol
+      m.lst[[j]][,sel] <- x[,h.lst[j,]]
+    }
+    horizons <- do.call(rbind, m.lst)
+    return(horizons)
+}
+
+
 # end of script;

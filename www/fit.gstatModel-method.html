@@ -1,0 +1,107 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: Methods to fit a regression-kriging model</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="R.css">
+</head><body>
+
+<table width="100%" summary="page for fit.gstatModel-methods {GSIF}"><tr><td>fit.gstatModel-methods {GSIF}</td><td align="right">R Documentation</td></tr></table>
+
+<h2>Methods to fit a regression-kriging model</h2>
+
+<h3>Description</h3>
+
+<p>Tries to automatically fit a 2D or 3D regression-kriging model for a given set of points and covariates (object of type <code>"SpatialPixelsDataFrame"</code>; 2-dimensional objects only applicable). It runs GLM following the <code>formulaString</code> model and then fits variogram for residuals usign the <code>fit.variogram</code> method from the package gstat. Creates an output object of class <code><a href="gstatModel-class.html">gstatModel-class</a></code>.</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+fit.gstatModel(observations, formulaString, covariates, ... )
+</pre>
+
+
+<h3>Arguments</h3>
+
+
+<table summary="R argblock">
+<tr valign="top"><td><code>observations</code></td>
+<td>
+<p>object of type <code>"SpatialPointsDataFrame"</code></p>
+</td></tr>
+<tr valign="top"><td><code>formulaString</code></td>
+<td>
+<p>object of type <code>"formula"</code> or a character</p>
+</td></tr>
+<tr valign="top"><td><code>covariates</code></td>
+<td>
+<p>object of type <code>"SpatialPixelsDataFrame"</code></p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>other optional arguments that can be passed to <code>glm</code> and/or <code>fit.variogram</code></p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>Optional arguments are <code>vgmFun</code> &mdash; variogram model type passed from gstat; <code>family</code> &mdash; character string defyning the GLM family (for more info see <code>stats::glm</code>); <code>stepwise</code> &mdash; specifies wether to run step-wise regression on top of GLM to get an optimal subset of predictors. The method by default assumes that the target variable follows a normal distribution <code>family = gaussian</code>. Possible distributions are:
+</p>
+
+<dl>
+<dt>normal distribution</dt><dd><p><code>family = gaussian</code> (default setting)</p>
+</dd>
+<dt>log-normal distribution</dt><dd><p><code>family = gaussian(log)</code></p>
+</dd>
+<dt>binomial variable</dt><dd><p><code>family = binomial(logit)</code></p>
+</dd>
+<dt>variable following a poisson distribution</dt><dd><p><code>family = poisson(log)</code></p>
+</dd>
+</dl>
+
+
+
+<h3>Author(s)</h3>
+
+<p> Tomislav Hengl \&amp; Gerard B.M. Heuvelink</p>
+
+
+<h3>References</h3>
+
+
+
+<ul>
+<li><p> Hengl, T. (2009) <a href="http://spatial-analyst.net/book/">A Practical Guide to Geostatistical Mapping</a>, 2nd Edt. University of Amsterdam, www.lulu.com, 291 p.
+</p>
+</ul>
+
+
+
+<h3>See Also</h3>
+
+ <p><code><a href="gstatModel-class.html">gstatModel-class</a></code>, <code>stats::glm</code>, <code>gstat::fit.variogram</code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+data(meuse)
+coordinates(meuse) &lt;- ~x+y
+# load grids:
+data(meuse.grid)
+coordinates(meuse.grid) &lt;- ~x+y
+gridded(meuse.grid) &lt;- TRUE
+# fit a model:
+omm &lt;- fit.gstatModel(observations = meuse, om~dist, covariates = meuse.grid,
+  family = gaussian(log))
+show(omm@regModel)
+om.sp &lt;- SpatialPointsDataFrame(omm@sp, data = omm@regModel$model)
+## Not run: # plot a variogram:
+plot(variogram(om~1, om.sp))
+
+## End(Not run)
+</pre>
+
+<hr><div align="center">[Package <em>GSIF</em> version 0.2-0 <a href="00Index.html">Index</a>]</div>
+</body></html>

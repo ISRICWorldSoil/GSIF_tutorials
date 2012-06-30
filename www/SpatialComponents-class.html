@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: A class for gridded components derived using the 'spc' method</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="R.css">
+</head><body>
+
+<table width="100%" summary="page for SpatialComponents-class {GSIF}"><tr><td>SpatialComponents-class {GSIF}</td><td align="right">R Documentation</td></tr></table>
+
+<h2>A class for gridded components derived using the <code>spc</code> method</h2>
+
+<h3>Description</h3>
+
+<p>A class containing a list of gridded components and results of principal component analysis.</p>
+
+
+<h3>Slots</h3>
+
+
+    
+<dl>
+<dt><code>sp</code>:</dt><dd><p>object of class <code>"SpatialPixelsDataFrame"</code>; derived components</p>
+</dd>
+<dt><code>pca</code>:</dt><dd><p>object of class <code>"list"</code>; output objects from the <code>stats::prcomp</code> process &mdash; contains objects: 'stdev', 'rotation', 'center' and 'scale'</p>
+</dd>
+</dl>
+
+
+
+<h3>Methods</h3>
+
+
+
+<dl>
+<dt>extract</dt><dd><p><code>signature(x = "SpatialComponents", y = "SpatialPoints", ...)</code>: extracts data from a list of components and creates a regression matrix (<code>"data.frame"</code>)</p>
+</dd>
+</dl>
+
+
+
+<h3>Author(s)</h3>
+
+<p> Tomislav Hengl </p>
+
+
+<h3>See Also</h3>
+
+ <p><code>raster::extract</code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre> 
+## Not run: # load soil samples from the plotKML package:
+library(plotKML)
+data(eberg)
+# 20 percent subsample:
+eberg &lt;- eberg[runif(nrow(eberg)) &lt; .2,]
+# sites table:
+s.lst &lt;- c("ID", "soiltype", "TAXGRSC", "X", "Y")
+sites &lt;- eberg[,s.lst]
+# get horizons table:
+horizons &lt;- getHorizons(eberg, idcol="ID", sel=c("UHDICM","LHDICM","SNDMHT","SLTMHT","CLYMHT"))
+# create object of type "SoilProfileCollection"
+eberg.spc &lt;- join(horizons, sites, type='inner')
+depths(eberg.spc) &lt;- ID ~ UHDICM + LHDICM
+site(eberg.spc) &lt;- as.formula(paste("~", paste(sel.site[-1], collapse="+"), sep=""))
+coordinates(eberg.spc) &lt;- ~X+Y
+proj4string(eberg.spc) &lt;- CRS("+init=epsg:31467")
+# convert to geosamples:
+eberg.geo &lt;- as.geosamples(eberg.spc)
+# prepare covariates:
+data(eberg_grid)
+gridded(eberg_grid) &lt;- ~x+y
+proj4string(eberg_grid) &lt;- CRS("+init=epsg:31467")
+eberg_spc &lt;- spc(eberg_grid, as.formula("~ PRMGEO6+DEMSRT6+TWISRT6+TIRAST6"))
+# overlay with SPCs (create the regression matrix):
+SNDMHT.eberg &lt;- extract(eberg_spc, eberg.geo, methodid="SNDMHT")
+# fit a glm:
+SNDMHT.glm &lt;- glm(observedValue~PC1+PC2+PC3+PC4+PC5+PC6+PC7+PC8+PC9+PC10+PC11+ns(altitude, df=4), SNDMHT.eberg, family=gaussian())
+summary(SNDMHT.glm)
+
+## End(Not run)
+</pre>
+
+<hr><div align="center">[Package <em>GSIF</em> version 0.2-0 <a href="00Index.html">Index</a>]</div>
+</body></html>

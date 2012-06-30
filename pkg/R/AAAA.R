@@ -7,11 +7,42 @@
 
 ################## NEW GSIF CLASSES ##############
 
+## A new class for models fitted in gstat:
+setClass("gstatModel", representation(regModel = "glm", sp = "SpatialPoints", vgmModel = "data.frame"), validity = function(object) {
+    cn = c("model", "psill", "range", "kappa", "ang1", "ang2", "ang3", "anis1", "anis2")
+    if(any(!(names(object@vgmModel) %in% cn)))
+      return(paste("Expecting only column names:", cn))
+    if(!all(cn %in% names(object@vgmModel))){
+      x <- cn[!(cn %in% names(object@vgmModel))]
+      return(paste("Missing column names:", x)) 
+      }
+})
+
 ### GSIF soil property maps class:
-#setClass("GlobalSoilMap", representation (property = 'character', raster = 'RasterBrick', model = 'list', validationPoints = 'SpatialPointsDataFrame', spMetadata = 'SpatialMetadata'), validity <- function(obj) {
-#   if(obj@bounds)
-#      return('vector with (upper and lower limits) required')
-#})
+setClass("GlobalSoilMap", representation (varname = 'character', sd1 = 'SpatialPixelsDataFrame', sd2 = 'SpatialPixelsDataFrame', sd3 = 'SpatialPixelsDataFrame', sd4 = 'SpatialPixelsDataFrame', sd5 = 'SpatialPixelsDataFrame', sd6 = 'SpatialPixelsDataFrame', model = 'list', validation = 'SpatialPointsDataFrame'), validity <- function(obj) {
+   # Check column names:
+   soilvars = read.csv(system.file("soilvars.csv", package="GSIF"))
+   if(obj@varname %in% soilvars$varname)
+      warning(paste("'property'", obj@property, "not specified in the Soil Reference Library.", "See", system.file("soilvars.csv", package="GSIF"), "for more details."))
+   if(ncol(obj@sd1)<2)
+      return("Object in slot 'sd' with at least two realizations required")
+   if(ncol(obj@sd1)<5)
+      warning("Using <5 realizations can result in artifacts")
+   # check the projection system:
+   require(plotKML)
+   if(check_projection(obj@sd1)){
+      ref_CRS = get("ref_CRS", envir = plotKML.opts)
+      return(paste("The GlobalSoilMap object requires grids to be projected in the", ref_CRS, "projection"))
+   }
+   # check the target resolution:
+   grd.lst <- c(6/120,3/120,1/120,1/240,1/600,3/3600)
+   if(!(any(eberg_grid@grid@cellsize) %in% grd.lst))
+      warning(paste("Recommended grid cell size does not correspond to one of the following:", signif(grd.lst, 4))) 
+   # check if validation slot is complete:
+   ov <- extract(brick(obj@sd1), obj@validation)
+   if(length(ov)==0)
+      return("'sd1' and 'validation' do not overlap spatially")
+})
 
 ## georecord class:
 setClass("geosamples", representation (registry = 'character', methods = 'data.frame', data = 'data.frame'), validity <- function(obj) {
@@ -60,31 +91,51 @@ setClass("WPS", representation (server = 'list', inRastername = 'character'), va
       return("Server error: 404 Not Found")
 })
 
+## SpatialComponents class
+setClass("SpatialComponents", representation (sp = "SpatialPixelsDataFrame", pca = "list"), validity <- function(obj) {
+   cnames <- attr(obj@pca$rotation, "dimnames")[[1]]
+   pnames <- attr(obj@pca$rotation, "dimnames")[[2]]
+   if(!length(obj@pca$sdev)==length(cnames)|!length(obj@pca$sdev)==length(pnames))
+      return("Number of components of the 'sdev' and 'rotation' objects do not match")
+   # check if column names match:
+   if(!all(pnames %in% names(obj@sp)))
+      return("Column names in the 'sp' slot and 'pca' slots do not match")
+})
+
+
 
 ################## generic functions ##############
 
-if (!isGeneric("getID")){
+if(!isGeneric("getID")){
   setGeneric("getID", function(obj, ...){standardGeneric("getID")})
 }
 
-if (!isGeneric("mpspline")){
+if(!isGeneric("mpspline")){
   setGeneric("mpspline", function(obj, ...){standardGeneric("mpspline")})
 }
 
-if (!isGeneric("as.geosamples")){
+if(!isGeneric("as.geosamples")){
   setGeneric("as.geosamples", function(obj, ...){standardGeneric("as.geosamples")})
 }
 
-if (!isGeneric("getProcess")){
+if(!isGeneric("getProcess")){
   setGeneric("getProcess", function(x, ...){standardGeneric("getProcess")})
 }
 
-if (!isGeneric("as.data.frame.default")) {
+if(!isGeneric("as.data.frame.default")) {
 	setGeneric("as.data.frame.default", function(x, ...){standardGeneric("as.data.frame.default")})
 }	
 
-if (!isGeneric("describe")){
+if(!isGeneric("describe")){
   setGeneric("describe", function(x, ...){standardGeneric("describe")})
+}
+
+if(!isGeneric("spc")){
+  setGeneric("spc", function(obj, formulaString, ...){standardGeneric("spc")})
+}
+
+if (!isGeneric("fit.gstatModel")){
+  setGeneric("fit.gstatModel", function(observations, formulaString, covariates, ...){standardGeneric("fit.gstatModel")})
 }
 
 ################## STANDARD ENVIRONMENTS ##############

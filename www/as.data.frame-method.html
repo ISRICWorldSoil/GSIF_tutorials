@@ -69,6 +69,8 @@ proj4string(prof1) &lt;- CRS("+proj=longlat +datum=WGS84")
 # convert to a simple table:
 x &lt;- as.data.frame(prof1)
 str(x)
+# horizons only
+horizons &lt;- getHorizons(x, idcol="id", sel=c("top", "bottom", "ORCDRC"))
 </pre>
 
 <hr><div align="center">[Package <em>GSIF</em> version 0.2-0 <a href="00Index.html">Index</a>]</div>

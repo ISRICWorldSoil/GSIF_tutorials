@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: Derive Soil Predictive Components</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="R.css">
+</head><body>
+
+<table width="100%" summary="page for spc {GSIF}"><tr><td>spc {GSIF}</td><td align="right">R Documentation</td></tr></table>
+
+<h2>Derive Soil Predictive Components</h2>
+
+<h3>Description</h3>
+
+<p>Derives Soil Predictive Components for a given set of covariates. It wraps the <code>stats::prcomp</code> method and predicts a list principal components using the same grid system.</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+spc( )
+</pre>
+
+
+<h3>Arguments</h3>
+
+
+<table summary="R argblock">
+<tr valign="top"><td><code>obj</code></td>
+<td>
+<p>object of class <code>"SpatialPixelsDataFrame"</code>; must contain at least two grids</p>
+</td></tr> 
+</table>
+
+
+<h3>Details</h3>
+
+<p>The output is a <code>"SpatialPixelsDataFrame"</code> object with generic names <code>PC1</code>,...,<code>PCp</code>, where <code>p</code> is the total number of input grids.</p>
+
+
+<h3>Value</h3>
+
+
+<p><code>spc</code> returns an object of type <code>"SpatialComponents"</code>.
+</p>
+
+
+<h3>Note</h3>
+
+<p>This method assumes that the input covariates are cross-correlated and hence their overlap can be reduced. This method scales input variables by default and replaces all missing values with 0 values, to reduce loss of data due to missing pixels. This operation can be time consuming for large grids.</p>
+
+
+<h3>Author(s)</h3>
+
+<p> Tomislav Hengl </p>
+
+
+<h3>See Also</h3>
+
+ <p><code>stats::prcomp</code>, <code><a href="SpatialComponents-class.html">SpatialComponents-class</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+## Not run: # load data:
+library(plotKML)
+pal = rev(rainbow(65)[1:48])
+data(eberg_grid)
+gridded(eberg_grid) &lt;- ~x+y
+proj4string(eberg_grid) &lt;- CRS("+init=epsg:31467")
+eberg_spc &lt;- spc(eberg_grid, as.formula("~ PRMGEO6+DEMSRT6+TWISRT6+TIRAST6"))
+names(eberg_spc@sp) # 11 components on the end;
+rd = range(eberg_spc@sp@data[,1], na.rm=TRUE)
+spplot(eberg_spc@sp[1:4], at=seq(rd[1], rd[2], length.out=48), col.regions=pal)
+
+## End(Not run)
+{methods}
+</pre>
+
+<hr><div align="center">[Package <em>GSIF</em> version 0.2-0 <a href="00Index.html">Index</a>]</div>
+</body></html>
