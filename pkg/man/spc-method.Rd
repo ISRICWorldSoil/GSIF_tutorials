@@ -5,11 +5,14 @@
 \title{Derive Soil Predictive Components}
 \description{Derives Soil Predictive Components for a given set of covariates. It wraps the \code{stats::prcomp} method and predicts a list principal components using the same grid system.}
 \usage{
-spc( )
+spc(obj, formulaString, scale.=TRUE, silent = FALSE, ...)
 }
 \arguments{
-  \item{obj}{object of class \code{"SpatialPixelsDataFrame"}; must contain at least two grids} 
-
+  \item{obj}{object of class \code{"SpatialPixelsDataFrame"}; must contain at least two grids}
+  \item{formulaString}{object of class \code{"formula"}}
+  \item{scale.}{object of class \code{"logical"}; specifies whether covariates need to be scaled}
+  \item{silent}{object of class \code{"logical"}; specifies whether to print the progress}
+  \item{\dots}{additional arguments that can be passed to \code{stats::prcomp}} 
 }
 \value{
 \code{spc} returns an object of type \code{"SpatialComponents"}.
@@ -30,5 +33,5 @@ eberg_spc <- spc(eberg_grid, as.formula("~ PRMGEO6+DEMSRT6+TWISRT6+TIRAST6"))
 names(eberg_spc@sp) # 11 components on the end;
 rd = range(eberg_spc@sp@data[,1], na.rm=TRUE)
 spplot(eberg_spc@sp[1:4], at=seq(rd[1], rd[2], length.out=48), col.regions=pal)
-}
+}}
 \keyword{methods}

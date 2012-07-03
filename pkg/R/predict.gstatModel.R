@@ -12,6 +12,11 @@ setMethod("fit.gstatModel", signature(observations = "geosamples", formulaString
   require(gstat)
   require(splines)
   require(plotKML)
+
+  # generate formula if missing:
+  if(missing(formulaString)) {  
+    formulaString <- as.formula(paste(names(observations)[1], "~", paste(names(covariates), collapse="+"), sep=""))
+  }
    
   # prepare regression matrix:
   ov <- extract(covariates, observations, methodid)
@@ -64,13 +69,16 @@ setMethod("fit.gstatModel", signature(observations = "SpatialPointsDataFrame", f
 
   # generate formula if missing:
   if(missing(formulaString)) {  
-   formulaString <- as.formula(paste(names(observations)[1], "~", paste(names(covariates), collapse="+"), sep=""))
+    formulaString <- as.formula(paste(names(observations)[1], "~", paste(names(covariates), collapse="+"), sep=""))
   }
   
   fullgrid(covariates) <- TRUE
   ov <- overlay(covariates, observations)
   tv = all.vars(formulaString)[1]
   sel = names(covariates) %in% all.vars(formulaString)[-1]
+  if(length(sel)==0){
+      stop("None of the covariates in the 'formulaString' do not match the names in the'covariates' object")
+  }
   xyn = attr(coordinates(observations), "dimnames")[[2]]
   x <- cbind(data.frame(observations[,tv]), ov[sel]@data)
   # fit the regression model:
@@ -238,7 +246,7 @@ setMethod("summary", signature(object = "SpatialPredictions"), function(object){
    z$maximum = range(object@observed@data[,object@variable])[2]
    z$npoints = length(object@observed@data[,object@variable])
    z$area = paste(length(object@predicted[,object@variable]) * object@predicted@grid@cellsize[1] * object@predicted@grid@cellsize[2])
-   prj = parse_proj4(p4s = proj4string(object@observed), params = as.list("\\+proj="))
+   prj = plotKML::parse_proj4(p4s = proj4string(object@observed), params = as.list("\\+proj="))
       if(prj=="longlat")  {
           areaunits = "square-arcdegrees"
       } 
@@ -273,7 +281,7 @@ setMethod("summary", signature(object = "SpatialPredictions"), function(object){
 
 ## Summary for an object of type SpatialPredictions:
 setMethod("show", signature(object = "SpatialPredictions"), function(object){
-  require(rgdal)
+  require(plotKML)
   
   cat("  Variable           :", object@variable, "\n")
   cat("  Minium value       :", range(object@observed@data[,object@variable])[1], "\n")
@@ -281,7 +289,7 @@ setMethod("show", signature(object = "SpatialPredictions"), function(object){
   cat("  Size               :", length(object@observed@data[,object@variable]), "\n")  
   # check the projection system:
   Tarea <- length(object@predicted[,object@variable]) * object@predicted@grid@cellsize[1] * object@predicted@grid@cellsize[2]
-  prj = parse_proj4(p4s = proj4string(object@observed), params = as.list("\\+proj="))
+  prj = plotKML::parse_proj4(p4s = proj4string(object@observed), params = as.list("\\+proj="))
       if(prj=="longlat")  {
           areaunits = "square-arcdegrees"
           lengthunits = "arcdegrees" 

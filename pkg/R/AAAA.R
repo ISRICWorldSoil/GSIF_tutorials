@@ -92,14 +92,34 @@ setClass("WPS", representation (server = 'list', inRastername = 'character'), va
 })
 
 ## SpatialComponents class
-setClass("SpatialComponents", representation (sp = "SpatialPixelsDataFrame", pca = "list"), validity <- function(obj) {
+setClass("SpatialComponents", representation (predicted = "SpatialPixelsDataFrame", pca = "list"), validity <- function(obj) {
    cnames <- attr(obj@pca$rotation, "dimnames")[[1]]
    pnames <- attr(obj@pca$rotation, "dimnames")[[2]]
    if(!length(obj@pca$sdev)==length(cnames)|!length(obj@pca$sdev)==length(pnames))
       return("Number of components of the 'sdev' and 'rotation' objects do not match")
    # check if column names match:
-   if(!all(pnames %in% names(obj@sp)))
-      return("Column names in the 'sp' slot and 'pca' slots do not match")
+   if(!all(pnames %in% names(obj@predicted)))
+      return("Column names in the 'predicted' slot and 'pca' slots do not match")
+})
+
+## SpatialMemberships class
+setClass("SpatialMemberships", representation (predicted = "SpatialPixelsDataFrame", model = "list", mu = "SpatialPixelsDataFrame", class.c = "matrix", class.sd = "matrix", confusion = "matrix"), validity <- function(obj) {
+   # check if column names match:
+   if(!all(levels(obj@predicted@data[,1]) %in% names(obj@mu)))
+      return("Class names in the 'predicted' and 'mu' slots do not match")
+   # check if the row names in the class.sd, class.c match:
+   if(!all(levels(obj@predicted@data[,1]) %in% row.names(obj@class.c)))
+      return("Row names in the 'class.c' slot and 'predicted' slots do not match")
+   if(!all(levels(obj@predicted@data[,1]) %in% row.names(obj@class.sd)))
+      return("Row names in the 'class.sd' slot and 'predicted' slots do not match")
+   if(ncol(obj@mu)<2)
+      return("A minimum of two membership maps required")   
+   # check if all mu's sum to 1:
+   if(!all(rowSums(obj@mu)==1))
+      return("Some rows in the 'mu' slot do not sum up to 1")
+   # check if the confusion matrix has kappa > 0
+   if(length(obj@confusion)==0|attr(obj@confusion, "error")==0)
+      return("Not possible to derive confusion table or no significant match detected")
 })
 
 

@@ -53,7 +53,7 @@ setMethod("spc", signature(obj = "SpatialPixelsDataFrame", formulaString = "form
     summary(pcs)
   }
  
-  pcs <- new("SpatialComponents", sp = out, pca = pcs[-which(names(pcs)=="x")])
+  pcs <- new("SpatialComponents", predicted = out, pca = pcs[-which(names(pcs)=="x")])
   return(pcs)
 
 }) 
@@ -71,7 +71,7 @@ setMethod("extract", signature(x = "SpatialComponents", y = "geosamples"), funct
   coordinates(pnts) <- ~longitude+latitude
   proj4string(pnts) <- get("ref_CRS", envir = plotKML.opts) 
   pnts <- spTransform(pnts, x@sp@proj4string)
-  ov <- extract(brick(x@sp), pnts)
+  ov <- extract(brick(x@predicted), pnts)
   out <- cbind(data.frame(pnts), data.frame(ov))
   
   # reformat observed values:

@@ -16,7 +16,7 @@
 <h3>Usage</h3>
 
 <pre>
-spc( )
+spc(obj, formulaString, scale.=TRUE, silent = FALSE, ...)
 </pre>
 
 
@@ -27,6 +27,22 @@ spc( )
 <tr valign="top"><td><code>obj</code></td>
 <td>
 <p>object of class <code>"SpatialPixelsDataFrame"</code>; must contain at least two grids</p>
+</td></tr>
+<tr valign="top"><td><code>formulaString</code></td>
+<td>
+<p>object of class <code>"formula"</code></p>
+</td></tr>
+<tr valign="top"><td><code>scale.</code></td>
+<td>
+<p>object of class <code>"logical"</code>; specifies whether covariates need to be scaled</p>
+</td></tr>
+<tr valign="top"><td><code>silent</code></td>
+<td>
+<p>object of class <code>"logical"</code>; specifies whether to print the progress</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>additional arguments that can be passed to <code>stats::prcomp</code></p>
 </td></tr> 
 </table>
 
@@ -73,9 +89,7 @@ names(eberg_spc@sp) # 11 components on the end;
 rd = range(eberg_spc@sp@data[,1], na.rm=TRUE)
 spplot(eberg_spc@sp[1:4], at=seq(rd[1], rd[2], length.out=48), col.regions=pal)
 
-## End(Not run)
-{methods}
-</pre>
+## End(Not run)</pre>
 
 <hr><div align="center">[Package <em>GSIF</em> version 0.2-0 <a href="00Index.html">Index</a>]</div>
 </body></html>

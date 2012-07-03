@@ -5,9 +5,9 @@ Version: 0.2-0
 Date: 2012-06-25
 Author: Tomislav Hengl <tom.hengl@wur.nl>, Contributions by: Dylan Beaudette <debeaudette@ucdavis.edu>, Pierre Roudier <roudierp@landcareresearch.co.nz>, Gerard Heuvelink <gerard.heuvelink@wur.nl>
 Maintainer: Tomislav Hengl <tom.hengl@wur.nl>
-Description: Global Soil Information Facilities - tools (standards and functions) and sample datasets for global soil mapping applications.
+Description: Global Soil Information Facilities - tools (standards and functions) and sample datasets for global soil mapping.
 License: GPL
 URL: http://gsif.r-forge.r-project.org/
 LazyLoad: yes
 Depends: R (>= 2.12.0), methods, XML, RCurl, sp, rgdal, raster, aqp
-Suggests: soiltexture, RSAGA, gstat, plotKML
+Suggests: soiltexture, RSAGA, gstat, plotKML, mda, nnet, SDMTools

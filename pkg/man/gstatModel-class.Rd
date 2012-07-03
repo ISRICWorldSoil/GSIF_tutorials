@@ -6,7 +6,7 @@
 \description{A class containing fitted parameters of a linear geostatistical model. It contains regression (GLM) and the kriging part (variogram).}
 \section{Slots}{
   \describe{
-    \item{\code{regModel}:}{object of class \code{"glm"}; fitted GLM}
+    \item{\code{regModel}:}{object of class \code{"glm"}; output of fitting a generalized linear model (GLM)}
     \item{\code{sp}:}{object of class \code{"SpatialPointsDataFrame"}; observation locations}
     \item{\code{vgmModel}:}{object of class \code{"data.frame"}; the fitted gstat variogram model parameters}
   }
@@ -28,7 +28,7 @@ i.e. \emph{N} number of equiprobable realizations. To generate an object of type
 use \code{nsim = 0}. 
 }
 \author{ Tomislav Hengl }
-\seealso{ \code{plotKML::SpatialPredictions-class}, \code{plotKML::RasterBrickSimulations-class}, \code{gstat::gstat-class}
+\seealso{ \code{plotKML::SpatialPredictions-class}, \code{plotKML::RasterBrickSimulations-class}, \code{gstat::gstat}, \code{stats::glm}
 }
 \examples{ 
 # load observations:
@@ -41,8 +41,7 @@ coordinates(meuse.grid) <- ~x+y
 gridded(meuse.grid) <- TRUE
 proj4string(meuse.grid) <- CRS("+init=epsg:28992")
 \dontrun{# fit a model:
-omm <- fit.gstatModel(observations = meuse, formulaString = om~dist, 
-covariates = meuse.grid)
+omm <- fit.gstatModel(meuse, formulaString = om~dist, covariates = meuse.grid)
 show(omm@regModel)
 library(plotKML)
 # produce SpatialPredictions:
