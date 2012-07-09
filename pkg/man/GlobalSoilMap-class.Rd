@@ -20,7 +20,7 @@
 	\item{summary}{\code{signature(x = "GlobalSoilMap")}: generates summary statistics for the object}
   }
 }
-\author{ Tomislav Hengl \& Robert A. MacMillan }
+\author{ Tomislav Hengl and Robert A. MacMillan }
 \seealso{ \code{\link{SpatialComponents-class}}
 }
 \examples{

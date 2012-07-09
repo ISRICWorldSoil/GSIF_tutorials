@@ -50,7 +50,7 @@ setMethod("fit.gstatModel", signature(observations = "geosamples", formulaString
   }
   
   # save the fitted model:
-  rkm <- new("gstatModel", regModel = rgm, sp = as(ov, "SpatialPoints"), vgmModel = as.data.frame(rv.fit))
+  rkm <- new("gstatModel", regModel = rgm, vgmModel = as.data.frame(rv.fit), sp = as(ov, "SpatialPoints"))
   return(rkm)  
 
 })
@@ -314,7 +314,7 @@ setMethod("show", signature(object = "SpatialPredictions"), function(object){
   RMSE <- sqrt(mean((object@validation$var1.pred-object@validation$observed)^2))
   cat("  RMSE (validation)  :", signif(RMSE, 4), "\n")
   tvar <- 1-var(object@validation$residual, na.rm=T)/var(object@validation$observed, na.rm=T)
-  cat("  Var explained      :", signif(tvar*100, 3), "% \n")
+  cat(paste("  Var explained      : ", signif(tvar*100, 3), "% \n", sep=""))
   # Effective bytes:
   asint <- as.integer(na.omit(round(object@predicted$var1.pred/(RMSE*.5))))
   tmp <- tempfile()

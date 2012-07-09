@@ -21,8 +21,7 @@ setMethod("as.geosamples", signature(obj = "SoilProfileCollection"),
   # add the time coordinate if missing:
   if(ncol(obj@sp@coords)==2){
     XYT <- data.frame(cbind(obj@sp@coords, time=rep(NA, nrow(obj@sp@coords))))
-  }
-  else {
+  } else {
     XYT <- data.frame(obj@sp@coords)
   }
   XYT$ID <- profile_id(obj)
@@ -38,15 +37,15 @@ setMethod("as.geosamples", signature(obj = "SoilProfileCollection"),
   # for each soil variable
   for(j in 1:length(names(site))){
     ll <- length(site[,names(site)[j]])
-    sampleid = attr(site[,names(site)[j]], "IGSN")
-    if(is.null(sampleid)) { sampleid = rep(as.character(NA), ll) } 
+    observationid = attr(site[,names(site)[j]], "IGSN")
+    if(is.null(observationid)) { observationid = rep(as.character(NA), ll) } 
     measurementError = attr(site[,names(site)[j]], "measurementError")
     if(is.null(measurementError)) { measurementError = rep(as.character(NA), ll) }
-    x[[j]] <- data.frame(sampleid = sampleid, producerid = profile_id(obj), longitude = XYT[,1], latitude = XYT[,2], locationError = locationError, TimeSpan.begin = as.POSIXct(XYT[,3]-dtime/2, origin="1970-01-01"), TimeSpan.end = as.POSIXct(XYT[,3]+dtime/2, origin="1970-01-01"), altitude = rep("0", ll), altitudeMode = rep("relativeToGround", ll), volume = rep(mxd*sample.area, ll), observedValue = site[,names(site)[j]], methodid = rep(names(site)[j], ll), measurementError = measurementError) 
+    x[[j]] <- data.frame(observationid = observationid, sampleid = profile_id(obj), longitude = XYT[,1], latitude = XYT[,2], locationError = locationError, TimeSpan.begin = as.POSIXct(XYT[,3]-dtime/2, origin="1970-01-01"), TimeSpan.end = as.POSIXct(XYT[,3]+dtime/2, origin="1970-01-01"), altitude = rep("0", ll), altitudeMode = rep("relativeToGround", ll), volume = rep(mxd*sample.area, ll), observedValue = site[,names(site)[j]], methodid = rep(names(site)[j], ll), measurementError = measurementError) 
   }
   rx <- do.call(rbind, x)
   # reformat values:
-  rx$sampleid <- as.character(rx$sampleid)
+  rx$observationid <- as.character(rx$observationid)
   rx$locationError <- as.numeric(rx$locationError)
   rx$altitude <- as.numeric(rx$altitude)
   rx$observedValue <- as.character(rx$observedValue)
@@ -60,20 +59,20 @@ setMethod("as.geosamples", signature(obj = "SoilProfileCollection"),
   hors[,obj@depthcols[1]] <- NULL
   hors[,obj@depthcols[2]] <- NULL
   # add coordinates:
-  XYTh <- merge(data.frame(ID=obj@horizons[,obj@idcol], dtime=dtime), XYT, by=obj@idcol, all.x=TRUE)
+  XYTh <- merge(data.frame(ID=obj@horizons[,obj@idcol], dtime=dtime), XYT, by="ID", all.x=TRUE)
   
   # for each soil variable
   for(j in 1:length(names(hors))){
     ll <- length(hors[,names(hors)[j]])
-    sampleid = attr(hors[,names(hors)[j]], "IGSN")
-    if(is.null(sampleid)) { sampleid = rep(as.character(NA), ll) } 
+    observationid = attr(hors[,names(hors)[j]], "IGSN")
+    if(is.null(observationid)) { observationid = rep(as.character(NA), ll) } 
     measurementError = attr(hors[,names(hors)[j]], "measurementError")
     if(is.null(measurementError)) { measurementError = rep(as.character(NA), ll) }
-    y[[j]] <- data.frame(sampleid = sampleid, producerid = XYTh[,1], longitude = XYTh[,3], latitude = XYTh[,4], locationError = locationError, TimeSpan.begin = as.POSIXct(XYTh[,5]-XYTh[,2]/2, origin="1970-01-01"), TimeSpan.end = as.POSIXct(XYTh[,5]+XYTh[,2]/2, origin="1970-01-01"), altitude = depths, altitudeMode = rep("relativeToGround", ll), volume = vols, observedValue = hors[,names(hors)[j]], methodid = rep(names(hors)[j], ll), measurementError = measurementError) 
+    y[[j]] <- data.frame(observationid = observationid, sampleid = XYTh[,1], longitude = XYTh[,3], latitude = XYTh[,4], locationError = locationError, TimeSpan.begin = as.POSIXct(XYTh[,5]-XYTh[,2]/2, origin="1970-01-01"), TimeSpan.end = as.POSIXct(XYTh[,5]+XYTh[,2]/2, origin="1970-01-01"), altitude = depths, altitudeMode = rep("relativeToGround", ll), volume = vols, observedValue = hors[,names(hors)[j]], methodid = rep(names(hors)[j], ll), measurementError = measurementError) 
   }
   ry <- do.call(rbind, y)
   # reformat values:
-  ry$sampleid <- as.character(ry$sampleid)
+  ry$observationid <- as.character(ry$observationid)
   ry$locationError <- as.numeric(ry$locationError)
   ry$altitude <- as.numeric(ry$altitude)
   ry$observedValue <- as.character(ry$observedValue)
@@ -110,6 +109,7 @@ setMethod("show", signature(object = "geosamples"),
   cat("  Registry            :", object@registry, "\n")
   cat("  Variables           :", paste(levels(object@data$methodid), collapse=", "), "\n")
   cat("  Total samples       :", nrow(object@data), "\n")
+  # create :
   sp <- object@data
   coordinates(sp) <- ~longitude+latitude
   proj4string(sp) <- get("ref_CRS", envir = plotKML.opts)

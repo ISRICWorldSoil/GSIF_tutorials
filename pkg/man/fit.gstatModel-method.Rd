@@ -27,7 +27,7 @@ fit.gstatModel(observations, formulaString, covariates, \dots )
 \item Hengl, T. (2009) \href{http://spatial-analyst.net/book/}{A Practical Guide to Geostatistical Mapping}, 2nd Edt. University of Amsterdam, www.lulu.com, 291 p.
 }
 }
-\author{ Tomislav Hengl \& Gerard B.M. Heuvelink}
+\author{ Tomislav Hengl and Gerard B.M. Heuvelink}
 \seealso{ \code{\link{gstatModel-class}}, \code{stats::glm}, \code{gstat::fit.variogram}
 }
 \examples{

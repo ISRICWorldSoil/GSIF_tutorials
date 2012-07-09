@@ -14,6 +14,6 @@
   }
 }
 \author{ Tomislav Hengl }
-\seealso{ \code{\link{fkmeans}}, \code{\link{SpatialComponents-class}}
+\seealso{ \code{\link{spfkm}}, \code{\link{SpatialComponents-class}}
 }
 \keyword{classes}

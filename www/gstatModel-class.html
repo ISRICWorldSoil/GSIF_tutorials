@@ -20,9 +20,9 @@
 <dl>
 <dt><code>regModel</code>:</dt><dd><p>object of class <code>"glm"</code>; output of fitting a generalized linear model (GLM)</p>
 </dd>
-<dt><code>sp</code>:</dt><dd><p>object of class <code>"SpatialPointsDataFrame"</code>; observation locations</p>
+<dt><code>vgmModel</code>:</dt><dd><p>object of class <code>"data.frame"</code>; the fitted gstat variogram model parameters containing </p>
 </dd>
-<dt><code>vgmModel</code>:</dt><dd><p>object of class <code>"data.frame"</code>; the fitted gstat variogram model parameters</p>
+<dt><code>sp</code>:</dt><dd><p>object of class <code>"SpatialPointsDataFrame"</code>; observation locations</p>
 </dd>
 </dl>
 
@@ -81,12 +81,12 @@ proj4string(meuse.grid) &lt;- CRS("+init=epsg:28992")
 ## Not run: # fit a model:
 omm &lt;- fit.gstatModel(meuse, formulaString = om~dist, covariates = meuse.grid)
 show(omm@regModel)
-library(plotKML)
 # produce SpatialPredictions:
 om.rk &lt;- predict(omm, predictionLocations = meuse.grid)
 # overview of the prediction process:
 show(om.rk)
 # plot the whole project and open in Google Earth:
+library(plotKML)
 plotKML(om.rk)
 
 ## End(Not run)

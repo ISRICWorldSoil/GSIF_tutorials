@@ -1,9 +1,13 @@
-\name{fkmeans}
-\alias{fkmeans}
-\title{Supervised fuzzy \emph{k}-means on grids}
-\description{Runs supervised fuzzy \emph{k}-means using a list of covariates layers. If class centres and variances are not provided by the users, fits a multinomial logistic regression model (\code{nnet::multinom}) using the point data, then predicts the class centres and variances based on the output from the \code{nnet::multinom}.}
+\name{spfkm}
+\docType{methods}
+\alias{spfkm}
+\alias{spmultinom}
+\alias{spfkm,formula,SpatialPointsDataFrame,SpatialPixelsDataFrame-method}
+\alias{spmultinom,formula,matrix,SpatialPixelsDataFrame-method}
+\title{Supervised fuzzy \emph{k}-means on spatial pixels}
+\description{Runs supervised fuzzy \emph{k}-means using a list of covariates layers provided as \code{"SpatialPixelsDataFrame"}. If class centres and variances are not provided by the users, it first fits a multinomial logistic regression model (\code{spmultinom}) using the point data and a regression matrix, then predicts the class centres and variances based on the output from the \code{nnet::multinom}.}
 \usage{
-fkmeans(formulaString, observations, covariates, class.c  = NULL, class.sd = NULL, fuzzy.e = 1.2)
+spfkm(formulaString, observations, covariates, class.c  = NULL, class.sd = NULL, fuzzy.e = 1.2)
 }
 \arguments{
   \item{formulaString}{formula string}
@@ -23,9 +27,9 @@ fkmeans(formulaString, observations, covariates, class.c  = NULL, class.sd = NUL
 \item Nnet package (\url{http://CRAN.R-project.org/package=nnet})
 }
 }
-\seealso{ \code{nnet::multinom}}
+\seealso{ \code{nnet::multinom}, \code{\link{SpatialMemberships-class}}}
 \examples{
-# load data:
+\dontrun{# load data:
 library(plotKML)
 data(eberg)
 eberg <- eberg[runif(nrow(eberg))<.2,]
@@ -35,10 +39,18 @@ proj4string(eberg) <- CRS("+init=epsg:31467")
 gridded(eberg_grid) <- ~x+y
 proj4string(eberg_grid) <- CRS("+init=epsg:31467")
 # derive soil predictive components:
-eberg_spc <- spc(eberg_grid, as.formula("~ PRMGEO6+DEMSRT6+TWISRT6+TIRAST6"))
+eberg_spc <- spc(eberg_grid, ~PRMGEO6+DEMSRT6+TWISRT6+TIRAST6)
 # predict memberships:
 formulaString = soiltype ~ PC1+PC2+PC3+PC4+PC5+PC6+PC7+PC8+PC9+PC10
-eberg_sm <- fkmeans(formulaString, eberg, eberg_spc@predicted)
+eberg_sm <- spfkm(formulaString, eberg, eberg_spc@predicted)
+# plot memberships:
 pal = seq(0, 1, 1/50)
+pnts = list("sp.points", eberg, pch=paste(eberg$soiltype), col="black")
 spplot(eberg_sm@mu, at=pal, col.regions=rev(grey(pal)))
+# classes predicted:
+eberg_sm@predicted$soiltype <- as.factor(eberg_sm@predicted$soiltype)
+spplot(eberg_sm@predicted, sp.layout=pnts)
+spplot(eberg_sm@mu[2], at=pal, col.regions=rev(heat.colors(50)), sp.layout=pnts)
 }
+}
+\keyword{methods}

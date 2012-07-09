@@ -7,8 +7,8 @@
 \section{Slots}{
   \describe{
     \item{\code{regModel}:}{object of class \code{"glm"}; output of fitting a generalized linear model (GLM)}
+    \item{\code{vgmModel}:}{object of class \code{"data.frame"}; the fitted gstat variogram model parameters containing }
     \item{\code{sp}:}{object of class \code{"SpatialPointsDataFrame"}; observation locations}
-    \item{\code{vgmModel}:}{object of class \code{"data.frame"}; the fitted gstat variogram model parameters}
   }
 }
 \section{Methods}{
@@ -43,12 +43,12 @@ proj4string(meuse.grid) <- CRS("+init=epsg:28992")
 \dontrun{# fit a model:
 omm <- fit.gstatModel(meuse, formulaString = om~dist, covariates = meuse.grid)
 show(omm@regModel)
-library(plotKML)
 # produce SpatialPredictions:
 om.rk <- predict(omm, predictionLocations = meuse.grid)
 # overview of the prediction process:
 show(om.rk)
 # plot the whole project and open in Google Earth:
+library(plotKML)
 plotKML(om.rk)
 }
 }

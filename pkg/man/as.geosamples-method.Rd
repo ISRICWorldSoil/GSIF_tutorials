@@ -9,7 +9,7 @@ as.geosamples(obj, registry = as.character(NA), sample.area = 1, mxd = 2, dtime 
 }
 \arguments{
   \item{obj}{object of class \code{"SoilProfileCollection"}}
-  \item{registry}{URI specifying the metadata registry}
+  \item{registry}{URI specifying the metadata registry (web-service that carries all metadata connected to the certain method ID and/or sample ID)}
   \item{sample.area}{standard sample area in square meters}
   \item{mxd}{maximum depth of interest in meters}
   \item{dtime}{standard temporal support in seconds}
@@ -18,7 +18,7 @@ as.geosamples(obj, registry = as.character(NA), sample.area = 1, mxd = 2, dtime 
 \describe{
   \item{\code{"locationError"}}{can be used to attach location errors in meters to each spatial location}
   \item{\code{"measurementError"}}{can be used to attach specific measurement errors to each measurement in both site and horizons table}
-  \item{\code{"IGSN"}}{can be used to attach the unique identifier (\href{http://en.wikipedia.org/wiki/International_Geo_Sample_Number}{International Geo Sample Number}) to each specific measurement}  
+  \item{\code{"IGSN"}}{can be used to attach the unique identifier (\href{http://en.wikipedia.org/wiki/International_Geo_Sample_Number}{International Geo Sample Number}) to each specific observation (corresponds to the \code{"observationid"} column)}  
 }
 }
 \author{ Tomislav Hengl and Hannes I. Reuter }

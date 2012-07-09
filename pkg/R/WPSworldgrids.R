@@ -12,7 +12,7 @@ setMethod("show", signature(object = "WPS"), function(object){
   # convert to a table:
   ret <- data.frame(field=gsub("\\.", "_", attr(ret, "names")), value=paste(ret), stringsAsFactors = FALSE)
     cat("Raster layers", ":", object@inRastername, "\n")
-  for(i in 1:nrow(met)){
+  for(i in 1:nrow(ret)){
     cat(ret$field[i], ":", ret$value[i], "\n")
   }
 })
@@ -89,7 +89,8 @@ setMethod("subset", signature(x = "WPS"),
   else stop("Bounding box required as matrix with LatMin, LatMax, LonMin, LonMax")
 
   if(import == TRUE){
-   out <- raster(out)
+   out <- flipVertical(readGDAL(out))
+   names(out) <- x@inRastername
    return(out)
   }
   else {

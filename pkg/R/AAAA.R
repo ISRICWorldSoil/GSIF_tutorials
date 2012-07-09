@@ -8,7 +8,7 @@
 ################## NEW GSIF CLASSES ##############
 
 ## A new class for models fitted in gstat:
-setClass("gstatModel", representation(regModel = "glm", sp = "SpatialPoints", vgmModel = "data.frame"), validity = function(object) {
+setClass("gstatModel", representation(regModel = "glm", vgmModel = "data.frame", sp = "SpatialPoints"), validity = function(object) {
     cn = c("model", "psill", "range", "kappa", "ang1", "ang2", "ang3", "anis1", "anis2")
     if(any(!(names(object@vgmModel) %in% cn)))
       return(paste("Expecting only column names:", cn))
@@ -46,7 +46,7 @@ setClass("GlobalSoilMap", representation (varname = 'character', sd1 = 'SpatialP
 
 ## georecord class:
 setClass("geosamples", representation (registry = 'character', methods = 'data.frame', data = 'data.frame'), validity <- function(obj) {
-   cnames <- c("sampleid", "producerid", "longitude", "latitude", "locationError", "TimeSpan.begin", "TimeSpan.end", "altitude", "altitudeMode", "volume", "observedValue", "methodid", "measurementError")
+   cnames <- c("observationid", "sampleid", "longitude", "latitude", "locationError", "TimeSpan.begin", "TimeSpan.end", "altitude", "altitudeMode", "volume", "observedValue", "methodid", "measurementError")
    if(any(!(names(obj@data) %in% cnames)))
       return(paste("Expecting only column names:", cnames))
    mnames <- c("methodid", "description", "units", "detectionLimit")
@@ -157,6 +157,15 @@ if(!isGeneric("spc")){
 if (!isGeneric("fit.gstatModel")){
   setGeneric("fit.gstatModel", function(observations, formulaString, covariates, ...){standardGeneric("fit.gstatModel")})
 }
+
+if (!isGeneric("spmultinom")){
+  setGeneric("spmultinom", function(formulaString, rmatrix, newdata, ...){standardGeneric("spmultinom")})
+}
+
+if (!isGeneric("spfkm")){
+  setGeneric("spfkm", function(formulaString, observations, covariates, ...){standardGeneric("spfkm")})
+}
+
 
 ################## STANDARD ENVIRONMENTS ##############
 
