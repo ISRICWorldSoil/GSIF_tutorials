@@ -21,7 +21,7 @@
 <h3>Format</h3>
 
 
-<p>Sites table. Contains the following columns:
+<p>The <code>riodoce</code> data set contains two data frames &mdash; sites and horizons. Sites table contains the following columns:
 </p>
 
 <dl>
@@ -35,7 +35,7 @@
 </dd>
 </dl>
 
-<p>Horizons table. Contains the following columns:
+<p>Horizons table contains the following columns:
 </p>
 
 <dl>
@@ -71,11 +71,46 @@
 </dd>
 </dl>
 
+<p>The <code>riodoce.grids</code> data frame contains a list of soil covariates prepared for the Rio Doce catchment in Brazil (71,492 grid nodes):
+</p>
+
+<dl>
+<dt><code>TAXBRC3</code></dt><dd><p>factor; dominant soil class from a 1:600,000 scale polgyon map, and based on the <a href="http://www.cnps.embrapa.br/sibcs/">Brazilian Soil Classification System</a></p>
+</dd>
+<dt><code>GEOGLS3</code></dt><dd><p>factor; parent material class from the geological map</p>
+</dd>
+<dt><code>DEMSRT3</code></dt><dd><p>numeric; SRTM DEM</p>
+</dd>  
+<dt><code>SLPSRT3</code></dt><dd><p>numeric; slope in degrees based on the SRTM DEM</p>
+</dd>
+<dt><code>TWISRT2</code></dt><dd><p>numeric; SAGA Topographic Wetness Index based on the SRTM DEM</p>
+</dd>
+<dt><code>INSSRT3</code></dt><dd><p>numeric; potential incoming solar radiation derived in SAGA GIS</p>
+</dd>
+<dt><code>EV1MOD3</code></dt><dd><p>numeric; first principal component of the monthly MODIS EVI time series data</p>
+</dd>
+<dt><code>EV2MOD3</code></dt><dd><p>numeric; second principal component of the monthly MODIS EVI time series data</p>
+</dd>
+<dt><code>TD1MOD3</code></dt><dd><p>numeric; first principal component of the 8-day MODIS day-time LST time series data</p>
+</dd>         
+<dt><code>TN1MOD3</code></dt><dd><p>numeric; first principal component of the 8-day MODIS night-time LST time series data</p>
+</dd> 
+<dt><code>x</code></dt><dd><p>numeric; x-coordinate in the UTM 23S coordiante system with GRS67 ellipsoid</p>
+</dd>
+<dt><code>y</code></dt><dd><p>numeric; y-coordinate in the UTM 23S coordiante system with GRS67 ellipsoid</p>
+</dd>
+</dl>
+
+
+
+<h3>Note</h3>
+
+<p>Soil classes in <code>TAXBRC3</code> (&quot;AR&quot;, &quot;CH&quot;, &quot;CX&quot;, &quot;CY&quot;, &quot;LV&quot;, &quot;LVA&quot;, &quot;PV&quot;, &quot;PVA&quot;, &quot;RL&quot;; Brazilian Soil Classification System) were obtained from the General soil map of Minas Gerais at scale 1:600,000. Land surface parameters: potential incoming solar radiation, SAGA Topographic Wetness Index and slope map were derived in SAGA GIS using the 1 km resolution SRTM DEM obtained from the Consultative Group on International Agricultural Research (CGIAR). Principal components for the Enhanced Vegetation Index (EVI, MOD13A3 product) and Land Surface Temperature (LST, MOD11A2 product) images were derived using the 8-day and monthly time-series MODIS images. Listed gridded layers follow a standard naming convention used by WorlGrids.org (the standard 8.3 filename convention with at most eight characters): first three letter are used for the variable type e.g. <code>DEM</code> (digital elevation model); the next three letters represent the data source or collection method e.g. <code>SRT</code> (SRTM); the 6th character is the effective scale e.g. <code>3</code> indicates the 2nd standard scale i.e. 1/120 decimal degrees (about 1 km).</p>
 
 
 <h3>Author(s)</h3>
 
-<p>This soil profile data set has been prepared for the purpose of testing various soil mapping methods by Eliana de Souza and Tomislav Hengl. The processing steps are described in <a href="http://gsif.r-forge.r-project.org/rw_riodoce.R">this script</a>.</p>
+<p>This data set has been prepared for the purpose of testing various soil mapping methods by Eliana de Souza and Tomislav Hengl (see <a href="http://gsif.r-forge.r-project.org/rw_riodoce.R">processing steps</a> for more info).</p>
 
 
 <h3>References</h3>
@@ -86,6 +121,9 @@
 <li><p> Benedetti, M.M. and Curi, N. and Sparovek, G. and de Carvalho Filho, A. and Silva, S.H.G., (2011) Updated Brazilian's Georeferenced Soil Database &ndash; an Improvement for International Scientific Information Exchanging. In: Principles, Application and Assessment in Soil Science (Edited by E. Burcu Özkaraova Güngör), InTech, chapter 16, pp. 307-330.
 </p>
 </li>
+<li><p> EMBRAPA (2006) <a href="http://www.cnps.embrapa.br/sibcs/">Sistema Brasileiro de Classificação de Solos</a>. Centro Nacional de Pesquisa de Solos. 2nd Ed, Rio de Janeiro, Brasil.
+</p>
+</li>
 <li><p> Filho, E.F. et al. (2011) Levantamento de solos e aptidão agrícola das terras da bacia do Rio Doce, Estado de Minas Gerais. Belo Horizonte/MG, 453 p. <a href="www.meioambiente.mg.gov.br">www.meioambiente.mg.gov.br</a>
 </p>
 </li>
@@ -93,11 +131,6 @@
 </p>
 </ul>
 
-
-
-<h3>See Also</h3>
-
- <p><code><a href="riodoce.grids.html">riodoce.grids</a></code></p>
 
 
 <h3>Examples</h3>
@@ -116,7 +149,18 @@ site(riodoce) &lt;- ~ LONWGS84 + LATWGS84 + TAXBRC
 coordinates(riodoce) &lt;- ~ LONWGS84 + LATWGS84
 proj4string(riodoce) &lt;- "+proj=latlong +datum=WGS84"
 str(riodoce)
-plot(riodoce@sp, pch="+")
+# load the gridded data:
+download.file("http://worldgrids.org/rda/riodoce.grids.rda", "riodoce.grids.rda")
+load("riodoce.grids.rda")
+gridded(riodoce.grids) &lt;- ~x+y
+utm.csy &lt;- "+proj=utm +zone=23 +south +ellps=GRS67 +units=m +no_defs"
+proj4string(riodoce.grids) &lt;- CRS(utm.csy)
+# plot maps:
+names(riodoce.grids)
+image(riodoce.grids["DEMSRT3"])
+points(spTransform(riodoce@sp, CRS(utm.csy)), pch="+")
+# write to a GIS format:
+writeGDAL(riodoce.grids["EV1MOD3"], "EV1MOD3.tif", "GTiff", mvFlag=-99999)
 
 ## End(Not run)
 </pre>

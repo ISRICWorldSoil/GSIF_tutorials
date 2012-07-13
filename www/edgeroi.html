@@ -1,0 +1,179 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: The Edgeroi Data Set</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="R.css">
+</head><body>
+
+<table width="100%" summary="page for edgeroi {GSIF}"><tr><td>edgeroi {GSIF}</td><td align="right">R Documentation</td></tr></table>
+
+<h2>The Edgeroi Data Set</h2>
+
+<h3>Description</h3>
+
+<p>Soil samples and covariate layers for the Edgeroi area in NSW, Australia (ca 1500 square-km).</p>
+
+
+<h3>Usage</h3>
+
+<pre>data(edgeroi)</pre>
+
+
+<h3>Format</h3>
+
+
+<p>The <code>edgeroi</code> data set contains two data frames &mdash; sites and horizons. Sites table contains the following columns:
+</p>
+
+<dl>
+<dt><code>SOURCEID</code></dt><dd><p>factor; unique label to help a user identify a particular site (<code>user_site_id</code> in the <a href="http://www.asris.csiro.au/mapping/hyperdocs/NatSoil/">NatSoil</a>)</p>
+</dd>
+<dt><code>LONGDA94</code></dt><dd><p>numeric; longitude in decimal degrees on the GDA94 datum</p>
+</dd>
+<dt><code>LATGDA94</code></dt><dd><p>numeric; latitude in decimal degrees on the GDA94 datum</p>
+</dd>
+<dt><code>TAXGAUC</code></dt><dd><p>factor; <a href="http://www.clw.csiro.au/aclep/">Australian Great Soil Groups</a> (GSG; see details)</p>
+</dd>
+<dt><code>NOTEOBS</code></dt><dd><p>character; free-form observation notes</p>
+</dd>
+</dl>
+
+<p>Horizons table contains the following columns:
+</p>
+
+<dl>
+<dt><code>SOURCEID</code></dt><dd><p>factor; unique identifier used in the NatSoil DB</p>
+</dd>
+<dt><code>LSQINT</code></dt><dd><p>integer; a layer sequence number 1 to N</p>
+</dd>
+<dt><code>HZDUSD</code></dt><dd><p>factor; horizon designation (primary letter)</p>
+</dd>
+<dt><code>UHDICM</code></dt><dd><p>numeric; lower horizon depth from the surface in cm</p>
+</dd>
+<dt><code>LHDICM</code></dt><dd><p>numeric; upper horizon depth from the surface in cm</p>
+</dd>
+<dt><code>CLYPPT</code></dt><dd><p>numeric; weight percentage of the clay particles (&lt;0.0002 mm)</p>
+</dd>
+<dt><code>SNDPPT</code></dt><dd><p>numeric; weight percentage of the silt particles (0.0002&ndash;0.05 mm)</p>
+</dd>
+<dt><code>SLTPPT</code></dt><dd><p>numeric; weight percentage of the sand particles (0.05&ndash;2 mm)</p>
+</dd>
+<dt><code>PHIHO5</code></dt><dd><p>numeric; pH index measured in water solution(<code>ph_h2o</code> in the NSCD)</p>
+</dd>
+<dt><code>ORCDRC</code></dt><dd><p>numeric; soil organic carbon content in permille</p>
+</dd>
+</dl>
+
+<p>The <code>edgeroi.grids</code> data frame contains a list of covariates at 250 m resolution:
+</p>
+
+<dl>
+<dt><code>DEMSRT5</code></dt><dd><p>numeric; SRTM DEM</p>
+</dd>
+<dt><code>TWISRT5</code></dt><dd><p>numeric; SAGA Topographic Wetness Index based on the SRTM DEM</p>
+</dd>
+<dt><code>PMTGEO5</code></dt><dd><p>factor; parent material class based on the National Geological map at scale 1:250,000 &mdash; sand with minor silty sand (<code>"Qd"</code>), alluvium gravel, sand, silt, clay (<code>"Qrs"</code>), quartz sandstone obscured by quartenary sands (<code>"Qrt/Jp"</code>), quartz sandstone obscured by talus material (<code>"Qrt/Rn"</code>), basalt obscured by talus material (<code>"Qrt/Tv"</code>), mottled clay, silt, sandstone and gravel (<code>"Ts"</code>), and basalt, dolerite, trachyte, techenite (<code>"Tv"</code>)</p>
+</dd>
+<dt><code>EV1MOD5</code></dt><dd><p>numeric; first principal component of the MODIS EVI (MOD13Q1) time series data (year 2011)</p>
+</dd>
+<dt><code>EV2MOD5</code></dt><dd><p>numeric; second principal component of the MODIS EVI (MOD13Q1) time series data (year 2011)</p>
+</dd>  
+<dt><code>EV2MOD5</code></dt><dd><p>numeric; third principal component of the MODIS EVI (MOD13Q1) time series data (year 2011)</p>
+</dd>  
+<dt><code>x</code></dt><dd><p>numeric; x-coordinate in the GDA94 / MGA zone 55</p>
+</dd>
+<dt><code>y</code></dt><dd><p>numeric; y-coordinate in the GDA94 / MGA zone 55</p>
+</dd>
+</dl>
+
+<p>The <code>edgeroi.grids100</code> data frame contains a list of covariates at 100 m resolution prepared for the study area:
+</p>
+
+<dl>
+<dt><code>LNUABS6</code></dt><dd><p>factor; Australian National scale <a href="http://adl.brs.gov.au/landuse/">land use data</a></p>
+</dd>
+<dt><code>MVBSRT6</code></dt><dd><p>numeric; SAGA GIS Multi-resolution Index of Valley Bottom Flatness based on the SRTM DEM</p>
+</dd>
+<dt><code>TI1LAN6</code></dt><dd><p>numeric; principal component 1 for the Landsat band 7 (thermal) based on three periods of the Global Land Survey Landsat images (GLS1990, GLS2000, GLS2005)</p>
+</dd>
+<dt><code>TI2LAN6</code></dt><dd><p>numeric; principal component 2 for the Landsat band 7 (thermal) based on three periods of the Global Land Survey Landsat images (GLS1990, GLS2000, GLS2005)</p>
+</dd>
+<dt><code>PCKGAD6</code></dt><dd><p>numeric; percentage of Potassium estimated based on the gamma radiometrics radmap09 (GADDS)</p>
+</dd>
+<dt><code>RUTGAD6</code></dt><dd><p>numeric; ratio Uranium over Thorium estimated based on the gamma radiometrics radmap09 (GADDS)</p>
+</dd>
+<dt><code>PCTGAD6</code></dt><dd><p>numeric; parts per million of Thorium estimated based on the gamma radiometrics radmap09 (GADDS)</p>
+</dd>
+<dt><code>x</code></dt><dd><p>numeric; x-coordinate in the GDA94 / MGA zone 55</p>
+</dd>
+<dt><code>y</code></dt><dd><p>numeric; y-coordinate in the GDA94 / MGA zone 55</p>
+</dd>
+</dl>
+
+
+
+<h3>Details</h3>
+
+<p>The Edgeroi is one of the standard soil data sets used to test soil mapping methods in Australia. Out of 359 profiles, 210 sites were sampled on a systematic, equilateral triangular grid with a spacing of 2.8 km between sites, the other sites are distributed more irregularly or on transects. The data set is described in detail in <a href="http://dx.doi.org/10.1016/j.geoderma.2009.10.007">Malone et al. (2010)</a> and McGarry et al. (1989). This sample was generated by subsetting the <a href="http://www.asris.csiro.au/mapping/hyperdocs/NatSoil/">NatSoil</a> records. Observed soil classes are (alphabetically): Alluvial soil (<code>"A"</code>), Brown clay (<code>"BC"</code>), Black earth (<code>"BE"</code>), Earthy sand (<code>"ES"</code>), Grey clay (<code>"GC"</code>), Grey earth (<code>"GE"</code>), No suitable group (<code>"NSG"</code>), Prairie soil (<code>"PS"</code>), Rendzina (<code>"R"</code>), Red-brown earth (<code>"RBE"</code>), Red clay (<code>"RC"</code>), Red earth (<code>"RE"</code>), Red podzolic soil (<code>"RP"</code>), Solodic soil (<code>"SC"</code>), Soloth (<code>"SH"</code>), Solonchak (<code>"SK"</code>), Siliceous sand (<code>"SS"</code>), and Solonetz (<code>"SZ"</code>).</p>
+
+
+<h3>Note</h3>
+
+<p>The Landsat images and SRTM DEM have been obtained from the <a href="http://glcf.umiacs.umd.edu/">Global Land Cover Facility</a>. Scanned geology map (paper sheets) has been obtained from the <a href="http://www.geoscience.gov.au">Geoscience Australia</a>, then georeferenced and rasterized to 250 m resolution. The land use map has been obtained from the <a href="http://adl.brs.gov.au/landuse/">Australian Collaborative Land Use and Management program</a>. The Radiometric Map of Australia grids has been downloaded using the Geophysical Archive Data Delivery System (GADDS) on the Australian Government's Geoscience Portal (<a href="http://dx.doi.org/10.1071/EG09025">Mitny et al, 2009</a>).<br> 
+Listed gridded layers follow a standard naming convention used by WorlGrids.org (the standard 8.3 filename convention with at most eight characters): first three letter are used for the variable type e.g. <code>DEM</code> (digital elevation model); the next three letters represent the data source or collection method e.g. <code>SRT</code> (SRTM mission); the 6th character is the effective scale e.g. <code>5</code> indicates the 5th standard scale i.e. 1/600 decimal degrees (in this case 250 m).</p>
+
+
+<h3>Author(s)</h3>
+
+<p>The original detailed profile description and laboratory analysis was funded by a Cotton Research and Development Corporation project in the mid-late 1980's by the CSIRO Division of Soils and available via the <a href="http://www.asris.csiro.au/mapping/hyperdocs/NatSoil/">NatSoil</a> DB.</p>
+
+
+<h3>References</h3>
+
+
+
+<ul>
+<li><p> Malone, B.P., McBratney, A.B., Minasny, B. (2010) <a href="http://dx.doi.org/10.1016/j.geoderma.2009.10.007">Mapping continuous depth functions of soil carbon storage and available water capacity</a>. Geoderma 154, 138-152.
+</p>
+</li>
+<li><p> McGarry, D., Ward, W.T., McBratney, A.B. (1989) Soil Studies in the Lower Namoi Valley: Methods and Data. The Edgeroi Data Set. (2 vols) (CSIRO Division of Soils: Adelaide).
+</p>
+</li>
+<li><p> Minty, B., Franklin, R., Milligan, P., Richardson, L.M., and Wilford, J., (2009) <a href="http://dx.doi.org/10.1071/EG09025">The Radiometric Map of Australia</a>. Exploration Geophysics, 40(4), 325-333.
+</p>
+</ul>
+
+
+
+<h3>Examples</h3>
+
+<pre>
+data(edgeroi)
+# download.file("http://www.asris.csiro.au/mapping/hyperdocs/NatSoil/399%5EEDGEROI%5Eed095.pdf", "399%5EEDGEROI%5Eed095.pdf")
+# system("open 399%5EEDGEROI%5Eed095.pdf")
+edgeroi$sites[edgeroi$sites$SOURCEID=="399_EDGEROI_ed095_1",]
+edgeroi$horizons[edgeroi$horizons$SOURCEID=="399_EDGEROI_ed095_1",]
+# spPoints:
+sites &lt;- edgeroi$sites
+coordinates(sites) &lt;- ~ LONGDA94 + LATGDA94
+proj4string(sites) &lt;- CRS("+proj=longlat +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +no_defs")
+pnts &lt;- list("sp.points", spTransform(sites, CRS("+init=epsg:28355")), pch="+", col="black")
+
+## Not run: 
+# load the 250 m grids:
+download.file("http://worldgrids.org/rda/edgeroi.grids.rda", "edgeroi.grids.rda")
+load("edgeroi.grids.rda")
+gridded(edgeroi.grids) &lt;- ~x+y
+proj4string(edgeroi.grids) &lt;- CRS("+init=epsg:28355")
+spplot(edgeroi.grids[1], sp.layout=pnts)
+# load the 100 m grids:
+download.file("http://worldgrids.org/rda/edgeroi.grids100.rda", "edgeroi.grids100.rda")
+load("edgeroi.grids100.rda")
+gridded(edgeroi.grids100) &lt;- ~x+y
+proj4string(edgeroi.grids100) &lt;- CRS("+init=epsg:28355")
+spplot(edgeroi.grids100["TI1LAN6"], sp.layout=pnts)
+
+## End(Not run)
+</pre>
+
+<hr><div align="center">[Package <em>GSIF</em> version 0.2-0 <a href="00Index.html">Index</a>]</div>
+</body></html>

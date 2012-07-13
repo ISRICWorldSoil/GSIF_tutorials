@@ -10,7 +10,7 @@
 
 <h3>Description</h3>
 
-<p>Derives Soil Predictive Components for a given set of covariates. It wraps the <code>stats::prcomp</code> method and predicts a list principal components using the same grid system.</p>
+<p>Derives Soil Predictive Components for a given set of covariates. It wraps the <code>stats::prcomp</code> method and predicts a list principal components for an object of type <code>"SpatialPixelsDataFrame"</code>.</p>
 
 
 <h3>Usage</h3>
@@ -49,7 +49,7 @@ spc(obj, formulaString, scale.=TRUE, silent = FALSE, ...)
 
 <h3>Details</h3>
 
-<p>The output is a <code>"SpatialPixelsDataFrame"</code> object with generic names <code>PC1</code>,...,<code>PCp</code>, where <code>p</code> is the total number of input grids.</p>
+<p>The output of <code>spc</code> is a list of grids with generic names <code>PC1</code>,...,<code>PCp</code>, where <code>p</code> is the total number of input grids.</p>
 
 
 <h3>Value</h3>
@@ -61,7 +61,7 @@ spc(obj, formulaString, scale.=TRUE, silent = FALSE, ...)
 
 <h3>Note</h3>
 
-<p>This method assumes that the input covariates are cross-correlated and hence their overlap can be reduced. This method scales input variables by default and replaces all missing values with 0 values, to reduce loss of data due to missing pixels. This operation can be time consuming for large grids.</p>
+<p>This method assumes that the input covariates are cross-correlated and hence their overlap can be reduced. The input variables are scaled by default and the missing values will be replaced with 0 values to reduce loss of data due to missing pixels. This operation can be time consuming for large grids.</p>
 
 
 <h3>Author(s)</h3>
@@ -89,7 +89,8 @@ names(eberg_spc@sp) # 11 components on the end;
 rd = range(eberg_spc@sp@data[,1], na.rm=TRUE)
 spplot(eberg_spc@sp[1:4], at=seq(rd[1], rd[2], length.out=48), col.regions=pal)
 
-## End(Not run)</pre>
+## End(Not run)
+</pre>
 
 <hr><div align="center">[Package <em>GSIF</em> version 0.2-0 <a href="00Index.html">Index</a>]</div>
 </body></html>

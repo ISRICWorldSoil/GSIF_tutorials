@@ -3,11 +3,11 @@
 \alias{gstatModel-class}
 \alias{predict,gstatModel}
 \title{A class for a linear geostatistical model}
-\description{A class containing fitted parameters of a linear geostatistical model. It contains regression (GLM) and the kriging part (variogram).}
+\description{A class containing fitted parameters of a linear geostatistical model. It comprises regression model (GLM), variogram model, and observation locations of sampled values used to fit the model.}
 \section{Slots}{
   \describe{
     \item{\code{regModel}:}{object of class \code{"glm"}; output of fitting a generalized linear model (GLM)}
-    \item{\code{vgmModel}:}{object of class \code{"data.frame"}; the fitted gstat variogram model parameters containing }
+    \item{\code{vgmModel}:}{object of class \code{"data.frame"}; the fitted gstat variogram model parameters containing variogram model, nugget, sill, range and the five anisotropy parameters}
     \item{\code{sp}:}{object of class \code{"SpatialPointsDataFrame"}; observation locations}
   }
 }
@@ -23,7 +23,7 @@
 
 i.e. \emph{N} number of equiprobable realizations. To generate an object of type:\cr 
 
-\code{\link{SpatialPredictions-class}}\cr
+\code{plotKML::SpatialPredictions-class}\cr
 
 use \code{nsim = 0}. 
 }

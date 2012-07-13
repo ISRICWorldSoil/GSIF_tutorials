@@ -3,7 +3,7 @@
 \alias{spc}
 \alias{spc,SpatialPixelsDataFrame,formula-method}
 \title{Derive Soil Predictive Components}
-\description{Derives Soil Predictive Components for a given set of covariates. It wraps the \code{stats::prcomp} method and predicts a list principal components using the same grid system.}
+\description{Derives Soil Predictive Components for a given set of covariates. It wraps the \code{stats::prcomp} method and predicts a list principal components for an object of type \code{"SpatialPixelsDataFrame"}.}
 \usage{
 spc(obj, formulaString, scale.=TRUE, silent = FALSE, ...)
 }
@@ -17,8 +17,8 @@ spc(obj, formulaString, scale.=TRUE, silent = FALSE, ...)
 \value{
 \code{spc} returns an object of type \code{"SpatialComponents"}.
 }
-\details{The output is a \code{"SpatialPixelsDataFrame"} object with generic names \code{PC1},\dots,\code{PCp}, where \code{p} is the total number of input grids.}
-\note{This method assumes that the input covariates are cross-correlated and hence their overlap can be reduced. This method scales input variables by default and replaces all missing values with 0 values, to reduce loss of data due to missing pixels. This operation can be time consuming for large grids.}
+\details{The output of \code{spc} is a list of grids with generic names \code{PC1},\dots,\code{PCp}, where \code{p} is the total number of input grids.}
+\note{This method assumes that the input covariates are cross-correlated and hence their overlap can be reduced. The input variables are scaled by default and the missing values will be replaced with 0 values to reduce loss of data due to missing pixels. This operation can be time consuming for large grids.}
 \author{ Tomislav Hengl }
 \seealso{ \code{stats::prcomp}, \code{\link{SpatialComponents-class}}
 }
@@ -33,5 +33,6 @@ eberg_spc <- spc(eberg_grid, as.formula("~ PRMGEO6+DEMSRT6+TWISRT6+TIRAST6"))
 names(eberg_spc@sp) # 11 components on the end;
 rd = range(eberg_spc@sp@data[,1], na.rm=TRUE)
 spplot(eberg_spc@sp[1:4], at=seq(rd[1], rd[2], length.out=48), col.regions=pal)
-}}
+}
+}
 \keyword{methods}

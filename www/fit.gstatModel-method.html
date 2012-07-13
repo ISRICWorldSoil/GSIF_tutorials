@@ -10,13 +10,12 @@
 
 <h3>Description</h3>
 
-<p>Tries to automatically fit a 2D or 3D regression-kriging model for a given set of points and covariates (object of type <code>"SpatialPixelsDataFrame"</code>; 2-dimensional objects only applicable). It runs GLM following the <code>formulaString</code> model and then fits variogram for residuals usign the <code>fit.variogram</code> method from the package gstat. Creates an output object of class <code><a href="gstatModel-class.html">gstatModel-class</a></code>.</p>
+<p>Tries to automatically fit a 2D or 3D regression-kriging model for a given set of points and covariates (object of type <code>"SpatialPixelsDataFrame"</code>). It first runs GLM following the <code>formulaString</code> model, then fits variogram for residuals usign the <code>fit.variogram</code> method from the package gstat. Creates an output object of class <code><a href="gstatModel-class.html">gstatModel-class</a></code>.</p>
 
 
 <h3>Usage</h3>
 
-<pre>
-fit.gstatModel(observations, formulaString, covariates, ... )
+<pre> fit.gstatModel(observations, formulaString, covariates, ... )
 </pre>
 
 
@@ -45,7 +44,7 @@ fit.gstatModel(observations, formulaString, covariates, ... )
 
 <h3>Details</h3>
 
-<p>Optional arguments are <code>vgmFun</code> &mdash; variogram model type passed from gstat; <code>family</code> &mdash; character string defyning the GLM family (for more info see <code>stats::glm</code>); <code>stepwise</code> &mdash; specifies wether to run step-wise regression on top of GLM to get an optimal subset of predictors. The method by default assumes that the target variable follows a normal distribution <code>family = gaussian</code>. Possible distributions are:
+<p>Optional arguments are <code>vgmFun</code> &mdash; variogram model type passed from gstat; <code>family</code> &mdash; character string defyning the GLM family (for more info see <code>stats::glm</code>); <code>stepwise</code> &mdash; specifies whether to run step-wise regression on top of GLM to get an optimal subset of predictors. The method by default assumes that the target variable follows a normal distribution <code>family = gaussian</code>. Other possible families are:
 </p>
 
 <dl>
@@ -71,6 +70,9 @@ fit.gstatModel(observations, formulaString, covariates, ... )
 
 
 <ul>
+<li><p> Minasny, B., McBratney, A.B. (2007) <a href="http://dx.doi.org/10.1016/j.geoderma.2007.04.028">Spatial prediction of soil properties using EBLUP with the Matérn covariance function</a>. Geoderma, 140(4): 324-336.
+</p>
+</li>
 <li><p> Hengl, T. (2009) <a href="http://spatial-analyst.net/book/">A Practical Guide to Geostatistical Mapping</a>, 2nd Edt. University of Amsterdam, www.lulu.com, 291 p.
 </p>
 </ul>
@@ -95,7 +97,7 @@ gridded(meuse.grid) &lt;- TRUE
 # fit a model:
 omm &lt;- fit.gstatModel(observations = meuse, om~dist, covariates = meuse.grid,
   family = gaussian(log))
-show(omm@regModel)
+omm@regModel
 om.sp &lt;- SpatialPointsDataFrame(omm@sp, data = omm@regModel$model)
 ## Not run: # plot a variogram:
 plot(variogram(om~1, om.sp))

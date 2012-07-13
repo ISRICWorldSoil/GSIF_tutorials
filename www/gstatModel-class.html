@@ -10,7 +10,7 @@
 
 <h3>Description</h3>
 
-<p>A class containing fitted parameters of a linear geostatistical model. It contains regression (GLM) and the kriging part (variogram).</p>
+<p>A class containing fitted parameters of a linear geostatistical model. It comprises regression model (GLM), variogram model, and observation locations of sampled values used to fit the model.</p>
 
 
 <h3>Slots</h3>
@@ -20,7 +20,7 @@
 <dl>
 <dt><code>regModel</code>:</dt><dd><p>object of class <code>"glm"</code>; output of fitting a generalized linear model (GLM)</p>
 </dd>
-<dt><code>vgmModel</code>:</dt><dd><p>object of class <code>"data.frame"</code>; the fitted gstat variogram model parameters containing </p>
+<dt><code>vgmModel</code>:</dt><dd><p>object of class <code>"data.frame"</code>; the fitted gstat variogram model parameters containing variogram model, nugget, sill, range and the five anisotropy parameters</p>
 </dd>
 <dt><code>sp</code>:</dt><dd><p>object of class <code>"SpatialPointsDataFrame"</code>; observation locations</p>
 </dd>
@@ -49,7 +49,7 @@
 </p>
 <p>i.e. <EM>N</EM> number of equiprobable realizations. To generate an object of type:<br> 
 </p>
-<p><code><a href="../../plotKML/html/SpatialPredictions-class.html">SpatialPredictions-class</a></code><br>
+<p><code>plotKML::SpatialPredictions-class</code><br>
 </p>
 <p>use <code>nsim = 0</code>. 
 </p>
