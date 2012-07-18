@@ -16,7 +16,7 @@
 <h3>Usage</h3>
 
 <pre>
-spc(obj, formulaString, scale.=TRUE, silent = FALSE, ...)
+spc(obj, formulaString, scale. = TRUE, silent = FALSE, ...)
 </pre>
 
 
@@ -84,13 +84,14 @@ pal = rev(rainbow(65)[1:48])
 data(eberg_grid)
 gridded(eberg_grid) &lt;- ~x+y
 proj4string(eberg_grid) &lt;- CRS("+init=epsg:31467")
-eberg_spc &lt;- spc(eberg_grid, as.formula("~ PRMGEO6+DEMSRT6+TWISRT6+TIRAST6"))
-names(eberg_spc@sp) # 11 components on the end;
-rd = range(eberg_spc@sp@data[,1], na.rm=TRUE)
-spplot(eberg_spc@sp[1:4], at=seq(rd[1], rd[2], length.out=48), col.regions=pal)
+formulaString &lt;- ~ PRMGEO6+DEMSRT6+TWISRT6+TIRAST6
+eberg_spc &lt;- spc(eberg_grid, formulaString)
+names(eberg_spc@predicted) # 11 components on the end;
+rd = range(eberg_spc@predicted@data[,1], na.rm=TRUE)
+spplot(eberg_spc@predicted[1:4], at=seq(rd[1], rd[2], length.out=48), col.regions=pal)
 
 ## End(Not run)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.2-0 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.2-1 <a href="00Index.html">Index</a>]</div>
 </body></html>

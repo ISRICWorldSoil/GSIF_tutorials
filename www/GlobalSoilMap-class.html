@@ -76,7 +76,7 @@ horizons &lt;- getHorizons(eberg, idcol="ID", sel=c("UHDICM","LHDICM","SNDMHT","
 # create object of type "SoilProfileCollection"
 eberg.spc &lt;- join(horizons, sites, type='inner')
 depths(eberg.spc) &lt;- ID ~ UHDICM + LHDICM
-site(eberg.spc) &lt;- as.formula(paste("~", paste(sel.site[-1], collapse="+"), sep=""))
+site(eberg.spc) &lt;- as.formula(paste("~", paste(s.lst[-1], collapse="+"), sep=""))
 coordinates(eberg.spc) &lt;- ~X+Y
 proj4string(eberg.spc) &lt;- CRS("+init=epsg:31467")
 # convert to geosamples:
@@ -87,12 +87,12 @@ gridded(eberg_grid) &lt;- ~x+y
 proj4string(eberg_grid) &lt;- CRS("+init=epsg:31467")
 eberg_spc &lt;- spc(eberg_grid, as.formula("~ PRMGEO6+DEMSRT6+TWISRT6+TIRAST6"))
 # fit gstat Model:
-formulaString = as.formula(paste("observedValue ~ ", paste(names(eberg_spc@sp), collapse="+"), "+ ns(altitude, df=5)"))
+formulaString = as.formula(paste("observedValue ~ ", paste(names(eberg_spc@predicted), collapse="+"), "+ ns(altitude, df=5)"))
 SNDMHT.m &lt;- fit.gstatModel(eberg.geo, formulaString, covariates=eberg_spc, methodid="SNDMHT")
 summary(SNDMHT.m@regModel)
 
 ## End(Not run)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.2-0 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.2-1 <a href="00Index.html">Index</a>]</div>
 </body></html>

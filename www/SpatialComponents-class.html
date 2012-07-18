@@ -26,17 +26,6 @@
 
 
 
-<h3>Methods</h3>
-
-
-
-<dl>
-<dt>extract</dt><dd><p><code>signature(x = "SpatialComponents", y = "SpatialPoints", ...)</code>: extracts data from a list of components and creates a regression matrix (<code>"data.frame"</code>)</p>
-</dd>
-</dl>
-
-
-
 <h3>Author(s)</h3>
 
 <p> Tomislav Hengl </p>
@@ -44,7 +33,7 @@
 
 <h3>See Also</h3>
 
- <p><code>raster::extract</code>
+ <p><code><a href="spc-method.html">spc</a></code>
 </p>
 
 
@@ -64,7 +53,7 @@ horizons &lt;- getHorizons(eberg, idcol="ID", sel=c("UHDICM","LHDICM","SNDMHT","
 # create object of type "SoilProfileCollection"
 eberg.spc &lt;- join(horizons, sites, type='inner')
 depths(eberg.spc) &lt;- ID ~ UHDICM + LHDICM
-site(eberg.spc) &lt;- as.formula(paste("~", paste(sel.site[-1], collapse="+"), sep=""))
+site(eberg.spc) &lt;- as.formula(paste("~", paste(s.lst[-1], collapse="+"), sep=""))
 coordinates(eberg.spc) &lt;- ~X+Y
 proj4string(eberg.spc) &lt;- CRS("+init=epsg:31467")
 # convert to geosamples:
@@ -75,7 +64,7 @@ gridded(eberg_grid) &lt;- ~x+y
 proj4string(eberg_grid) &lt;- CRS("+init=epsg:31467")
 eberg_spc &lt;- spc(eberg_grid, as.formula("~ PRMGEO6+DEMSRT6+TWISRT6+TIRAST6"))
 # overlay with SPCs (create the regression matrix):
-SNDMHT.eberg &lt;- extract(eberg_spc, eberg.geo, methodid="SNDMHT")
+SNDMHT.eberg &lt;- overlay(eberg_spc@predicted, eberg.geo, methodid="SNDMHT")
 # fit a glm:
 SNDMHT.glm &lt;- glm(observedValue~PC1+PC2+PC3+PC4+PC5+PC6+PC7+PC8+PC9+PC10+PC11+ns(altitude, df=4), SNDMHT.eberg, family=gaussian())
 summary(SNDMHT.glm)
@@ -83,5 +72,5 @@ summary(SNDMHT.glm)
 ## End(Not run)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.2-0 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.2-1 <a href="00Index.html">Index</a>]</div>
 </body></html>

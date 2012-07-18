@@ -37,7 +37,7 @@ horizons <- getHorizons(eberg, idcol="ID", sel=c("UHDICM","LHDICM","SNDMHT","SLT
 # create object of type "SoilProfileCollection"
 eberg.spc <- join(horizons, sites, type='inner')
 depths(eberg.spc) <- ID ~ UHDICM + LHDICM
-site(eberg.spc) <- as.formula(paste("~", paste(sel.site[-1], collapse="+"), sep=""))
+site(eberg.spc) <- as.formula(paste("~", paste(s.lst[-1], collapse="+"), sep=""))
 coordinates(eberg.spc) <- ~X+Y
 proj4string(eberg.spc) <- CRS("+init=epsg:31467")
 # convert to geosamples:
@@ -48,7 +48,7 @@ gridded(eberg_grid) <- ~x+y
 proj4string(eberg_grid) <- CRS("+init=epsg:31467")
 eberg_spc <- spc(eberg_grid, as.formula("~ PRMGEO6+DEMSRT6+TWISRT6+TIRAST6"))
 # fit gstat Model:
-formulaString = as.formula(paste("observedValue ~ ", paste(names(eberg_spc@sp), collapse="+"), "+ ns(altitude, df=5)"))
+formulaString = as.formula(paste("observedValue ~ ", paste(names(eberg_spc@predicted), collapse="+"), "+ ns(altitude, df=5)"))
 SNDMHT.m <- fit.gstatModel(eberg.geo, formulaString, covariates=eberg_spc, methodid="SNDMHT")
 summary(SNDMHT.m@regModel)
 }

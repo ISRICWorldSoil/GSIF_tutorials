@@ -3,6 +3,10 @@
 \alias{geosamples-class}
 \alias{geosamples,subset-method}
 \alias{geosamples,show-method}
+\alias{geosamples,overlay-method}
+\alias{geosamples,write.data-method}
+\alias{write.data}
+\alias{write.data.geosamples}
 \title{A class for spatially and temporally referenced samples}
 \description{A class for spatially and temporally referenced samples with fixed column names (standardized geosamples). Corresponds to the point \code{"Placemark"} in the KML schema.}
 \section{Slots}{
@@ -17,6 +21,8 @@ The column names in the data slot largely reflect the KML schema elements. For m
   \describe{
 	\item{show}{\code{signature(obj = "geosamples")}: summarize object by listing methods, total number of observations, total area covered etc. }
 	\item{subset}{\code{signature(obj = "geosamples")}: subset to a single variable type; returns a data frame }
+  \item{overlay}{\code{signature(covariates = "SpatialPixelsDataFrame", observations = "geosamples")}: overlay geosamples and spatial pixels }
+  \item{write.data}{\code{signature(obj = "geosamples")}: write geosamples to an external format e.g. GeoEAS }
   }
 }
 \author{ Tomislav Hengl and Hannes I. Reuter }
@@ -26,7 +32,6 @@ The column names in the data slot largely reflect the KML schema elements. For m
 \item International Geo Sample Number (\url{http://en.wikipedia.org/wiki/International_Geo_Sample_Number})
 \item KML Reference (\url{https://developers.google.com/kml/documentation/kmlreference})
 \item SESAR, the System for Earth Sample Registration (\url{http://www.geosamples.org})
-\item Soil Information Standards (\url{http://soilinformationstandards.org})
 }
 }
 \seealso{ \code{\link{as.geosamples}} }

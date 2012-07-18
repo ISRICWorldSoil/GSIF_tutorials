@@ -5,7 +5,7 @@
 \title{Derive Soil Predictive Components}
 \description{Derives Soil Predictive Components for a given set of covariates. It wraps the \code{stats::prcomp} method and predicts a list principal components for an object of type \code{"SpatialPixelsDataFrame"}.}
 \usage{
-spc(obj, formulaString, scale.=TRUE, silent = FALSE, ...)
+spc(obj, formulaString, scale. = TRUE, silent = FALSE, ...)
 }
 \arguments{
   \item{obj}{object of class \code{"SpatialPixelsDataFrame"}; must contain at least two grids}
@@ -29,10 +29,11 @@ pal = rev(rainbow(65)[1:48])
 data(eberg_grid)
 gridded(eberg_grid) <- ~x+y
 proj4string(eberg_grid) <- CRS("+init=epsg:31467")
-eberg_spc <- spc(eberg_grid, as.formula("~ PRMGEO6+DEMSRT6+TWISRT6+TIRAST6"))
-names(eberg_spc@sp) # 11 components on the end;
-rd = range(eberg_spc@sp@data[,1], na.rm=TRUE)
-spplot(eberg_spc@sp[1:4], at=seq(rd[1], rd[2], length.out=48), col.regions=pal)
+formulaString <- ~ PRMGEO6+DEMSRT6+TWISRT6+TIRAST6
+eberg_spc <- spc(eberg_grid, formulaString)
+names(eberg_spc@predicted) # 11 components on the end;
+rd = range(eberg_spc@predicted@data[,1], na.rm=TRUE)
+spplot(eberg_spc@predicted[1:4], at=seq(rd[1], rd[2], length.out=48), col.regions=pal)
 }
 }
 \keyword{methods}

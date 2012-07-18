@@ -1,0 +1,107 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: Methods to prepare 3D prediction locations</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="R.css">
+</head><body>
+
+<table width="100%" summary="page for make.3Dgrid {GSIF}"><tr><td>make.3Dgrid {GSIF}</td><td align="right">R Documentation</td></tr></table>
+
+<h2>Methods to prepare 3D prediction locations</h2>
+
+<h3>Description</h3>
+
+<p>Generates a list of objects of type <code>"SpatialPixelsDataFrame"</code> with <code>longitude</code>, <code>latitude</code> and <code>altitude</code> coordinates (these names are used by default for compatibility with the <code><a href="geosamples-class.html">geosamples-class</a></code>).</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+make.3Dgrid(obj, proj4string = get("ref_CRS", envir = GSIF.opts), 
+    pixelsize = get("cellsize", envir = GSIF.opts)[1], 
+    resample = "bilinear", NAflag = get("NAflag", envir = GSIF.opts), 
+    stdepths = get("stdepths", envir = GSIF.opts), tmp.file = TRUE, 
+    show.output.on.console = FALSE, ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+
+<table summary="R argblock">
+<tr valign="top"><td><code>obj</code></td>
+<td>
+<p>object of class <code>"SpatialPixelsDataFrame"</code> or <code>"RasterBrick"</code></p>
+</td></tr> 
+<tr valign="top"><td><code>pixelsize</code></td>
+<td>
+<p>grid cell size in decimal degrees (set by default at 0.0008333333 or 100 m around equator)</p>
+</td></tr> 
+<tr valign="top"><td><code>resample</code></td>
+<td>
+<p>character; resampling method to be passed the reprojection algorithm</p>
+</td></tr>
+<tr valign="top"><td><code>NAflag</code></td>
+<td>
+<p>character; missing value flag</p>
+</td></tr>
+<tr valign="top"><td><code>stdepths</code></td>
+<td>
+<p>numeric; list of standard depths</p>
+</td></tr>                                              
+<tr valign="top"><td><code>tmp.file</code></td>
+<td>
+<p>logical; specifies whether a temporary file name should be generated</p>
+</td></tr>
+<tr valign="top"><td><code>show.output.on.console</code></td>
+<td>
+<p>logical; specifies whether to print out the progress</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>optional arguments that can be passed to the reprojetion algorithm</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>The output is list of objects of class <code>"SpatialPixelsDataFrame"</code> where the number of elements in the list corresponds to the number of standard depths.</p>
+
+
+<h3>Note</h3>
+
+<p>If the input object is of class <code>"SpatialPixelsDataFrame"</code>, the method by default uses <code>FWTools</code> (<code>gdalwarp</code> command) to resample grids, otherwise the <code>raster::projectRaster</code> command is passed. <a href="http://fwtools.maptools.org/">FWTools</a> is a separate application and must be installed separately. This operation can be time consuming for large areas (e.g. continents).</p>
+
+
+<h3>Author(s)</h3>
+
+<p> Tomislav Hengl </p>
+
+
+<h3>See Also</h3>
+
+ <p><code><a href="spc-method.html">spc</a></code>, <code><a href="geosamples-class.html">geosamples-class</a></code>, <code>plotKML::reproject</code> </p>
+
+
+<h3>Examples</h3>
+
+<pre>
+## Not run: # prepare prediction locations for Ebergotzen:
+library(plotKML)
+data(eberg_grid)
+gridded(eberg_grid) &lt;- ~x+y
+proj4string(eberg_grid) &lt;- CRS("+init=epsg:31467")
+# convert to spatial components:
+formulaString &lt;- ~ PRMGEO6+DEMSRT6+TWISRT6+TIRAST6
+eberg_spc &lt;- spc(eberg_grid, formulaString)
+# create 3D locations in the original coordinate system:
+eberg_3Dxy &lt;- sp3D(eberg_spc@predicted)
+# wrapper function to create 3D locations in the default system:
+eberg_3D &lt;- make.3Dgrid(eberg_spc@predicted)
+image(eberg_3D[[1]]["PC1"])
+
+## End(Not run)
+</pre>
+
+<hr><div align="center">[Package <em>GSIF</em> version 0.2-1 <a href="00Index.html">Index</a>]</div>
+</body></html>

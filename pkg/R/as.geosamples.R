@@ -8,7 +8,9 @@
 setMethod("as.geosamples", signature(obj = "SoilProfileCollection"), 
   function(obj, registry = as.character(NA), sample.area = 1, mxd = 2, dtime = 3600) 
   {
+
   # reproject if necessary:
+  require(aqp)
   require(plotKML)
   if(!check_projection(obj@sp)){
      obj@sp <- reproject(obj@sp)
@@ -24,15 +26,18 @@ setMethod("as.geosamples", signature(obj = "SoilProfileCollection"),
   } else {
     XYT <- data.frame(obj@sp@coords)
   }
+  names(XYT)[1:2] <- c("x", "y")
   XYT$ID <- profile_id(obj)
-
+  
   # convert site data to geosamples:
   x <- NULL
   site <- obj@site
   # remove columns that are not of interest:
   site[,obj@idcol] <- NULL
+  # add the location error:
   locationError = attr(obj@sp@coords, "locationError")
   if(is.null(locationError)) { locationError = rep(as.character(NA), nrow(obj@sp@coords)) }
+  XYT$locationError <- locationError
   
   # for each soil variable
   for(j in 1:length(names(site))){
@@ -41,7 +46,7 @@ setMethod("as.geosamples", signature(obj = "SoilProfileCollection"),
     if(is.null(observationid)) { observationid = rep(as.character(NA), ll) } 
     measurementError = attr(site[,names(site)[j]], "measurementError")
     if(is.null(measurementError)) { measurementError = rep(as.character(NA), ll) }
-    x[[j]] <- data.frame(observationid = observationid, sampleid = profile_id(obj), longitude = XYT[,1], latitude = XYT[,2], locationError = locationError, TimeSpan.begin = as.POSIXct(XYT[,3]-dtime/2, origin="1970-01-01"), TimeSpan.end = as.POSIXct(XYT[,3]+dtime/2, origin="1970-01-01"), altitude = rep("0", ll), altitudeMode = rep("relativeToGround", ll), volume = rep(mxd*sample.area, ll), observedValue = site[,names(site)[j]], methodid = rep(names(site)[j], ll), measurementError = measurementError) 
+    x[[j]] <- data.frame(observationid = observationid, sampleid = profile_id(obj), longitude = XYT[,1], latitude = XYT[,2], locationError = locationError, TimeSpan.begin = as.POSIXct(XYT[,3]-dtime/2, origin="1970-01-01"), TimeSpan.end = as.POSIXct(XYT[,3]+dtime/2, origin="1970-01-01"), altitude = rep(0, ll), altitudeMode = rep("relativeToGround", ll), volume = rep(mxd*sample.area, ll), observedValue = site[,names(site)[j]], methodid = rep(names(site)[j], ll), measurementError = measurementError) 
   }
   rx <- do.call(rbind, x)
   # reformat values:
@@ -68,7 +73,7 @@ setMethod("as.geosamples", signature(obj = "SoilProfileCollection"),
     if(is.null(observationid)) { observationid = rep(as.character(NA), ll) } 
     measurementError = attr(hors[,names(hors)[j]], "measurementError")
     if(is.null(measurementError)) { measurementError = rep(as.character(NA), ll) }
-    y[[j]] <- data.frame(observationid = observationid, sampleid = XYTh[,1], longitude = XYTh[,3], latitude = XYTh[,4], locationError = locationError, TimeSpan.begin = as.POSIXct(XYTh[,5]-XYTh[,2]/2, origin="1970-01-01"), TimeSpan.end = as.POSIXct(XYTh[,5]+XYTh[,2]/2, origin="1970-01-01"), altitude = depths, altitudeMode = rep("relativeToGround", ll), volume = vols, observedValue = hors[,names(hors)[j]], methodid = rep(names(hors)[j], ll), measurementError = measurementError) 
+    y[[j]] <- data.frame(observationid = observationid, sampleid = XYTh$ID, longitude = XYTh$x, latitude = XYTh$y, locationError = XYTh$locationError, TimeSpan.begin = as.POSIXct(XYTh$time-XYTh$dtime/2, origin="1970-01-01"), TimeSpan.end = as.POSIXct(XYTh$time+XYTh$dtime/2, origin="1970-01-01"), altitude = depths, altitudeMode = rep("relativeToGround", ll), volume = vols, observedValue = hors[,names(hors)[j]], methodid = rep(names(hors)[j], ll), measurementError = measurementError) 
   }
   ry <- do.call(rbind, y)
   # reformat values:
@@ -80,9 +85,20 @@ setMethod("as.geosamples", signature(obj = "SoilProfileCollection"),
   
   # merge the sites and horizons tables:
   tb <- rbind(rx, ry)
+
+  # check if the metadata comply with the geosamples standard:
+  mnames = c("methodid", "description", "units", "detectionLimit")
+  if(any(!(names(obj@metadata) %in% mnames))){ 
+    # warning(paste("Missing column names in the 'metadata' slot:", paste(mnames, collapse=", "))) 
+    tnames <- levels(tb$methodid)
+    metadata <- data.frame(tnames, rep(NA, length(tnames)), rep(NA, length(tnames)), rep(NA, length(tnames)))
+    names(metadata) <- mnames
+  } else {
+    metadata = obj@metadata
+  }
  
   # make geosamples:
-  gs <- new("geosamples", registry = registry, methods = obj@metadata, data = tb)
+  gs <- new("geosamples", registry = registry, methods = metadata, data = tb)
     
   return(gs)
 })
@@ -90,16 +106,17 @@ setMethod("as.geosamples", signature(obj = "SoilProfileCollection"),
 
 
 ## subsetting geosamples:
-setMethod("subset", signature(x = "geosamples"), 
-  function(x, method) 
-  {
-  
+subset.geosamples <- function(x, method){
   ret <- x@data[x@data$methodid==method,]
+  if(nrow(ret)){ warning("Empty object. Methodid possibly not available") }
   attr(ret$methodid, "description") <- x@methods[x@methods$methodid==method,"description"]
   attr(ret$methodid, "units") <- x@methods[x@methods$methodid==method,"units"]
   attr(ret$methodid, "detectionLimit") <- x@methods[x@methods$methodid==method,"detectionLimit"]
   return(ret)  
-})
+}
+
+setMethod("subset", signature(x = "geosamples"), subset.geosamples)
+setMethod("subset.default", signature(x = "geosamples"), subset.geosamples)
 
 
 ## summary values:
@@ -112,7 +129,7 @@ setMethod("show", signature(object = "geosamples"),
   # create :
   sp <- object@data
   coordinates(sp) <- ~longitude+latitude
-  proj4string(sp) <- get("ref_CRS", envir = plotKML.opts)
+  proj4string(sp) <- get("ref_CRS", envir = GSIF.opts)
   cat("  Unique locations    :", length(unique(sp@coords))/2, "\n")
   cat("  Mean location error :", mean(object@data$locationError, na.rm=TRUE), "\n")
   cat("  Min longitude       :", range(object@data$longitude)[1], "\n")  
@@ -125,5 +142,38 @@ setMethod("show", signature(object = "geosamples"),
   cat("  Total area          :", paste(Tarea), "(square-km)", "\n")
 })
 
+
+## Extract regression matrix:
+setMethod("overlay", signature(x = "SpatialPixelsDataFrame", y = "geosamples"), function(x, y, methodid, var.type = "numeric", ...){
+  require(raster)
+  require(plotKML)
+  
+  if(!any(y@data$altitudeMode == "relativeToGround")){
+    warning("AltitudeMode accepts only 'relativeToGround' values")
+  }
+  
+  pnts = subset(y, method=methodid)
+  # reformat observed values:
+  if(var.type=="numeric"){
+    pnts$observedValue = as.numeric(pnts$observedValue)
+  } else { 
+      if(var.type=="factor"){
+      pnts$observedValue = as.factor(pnts$observedValue)
+      }
+  }
+  
+  coordinates(pnts) <- ~longitude+latitude
+  proj4string(pnts) <- get("ref_CRS", envir = GSIF.opts) 
+  
+  index <- overlay(x, spTransform(pnts, x@proj4string))                    
+  sel <- !is.na(index)
+  out <- cbind(data.frame(pnts[sel,]), x[index[sel],])
+  if(nrow(out)==0){ 
+    warning("Overlay resulted in an empty table") 
+  }
+  
+  return(out)
+  
+})
 
 # end of script;

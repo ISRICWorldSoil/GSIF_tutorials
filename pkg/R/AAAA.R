@@ -11,10 +11,10 @@
 setClass("gstatModel", representation(regModel = "glm", vgmModel = "data.frame", sp = "SpatialPoints"), validity = function(object) {
     cn = c("model", "psill", "range", "kappa", "ang1", "ang2", "ang3", "anis1", "anis2")
     if(any(!(names(object@vgmModel) %in% cn)))
-      return(paste("Expecting only column names:", cn))
+      return(paste("Expecting only column names:", paste(cn, collapse=", ")))
     if(!all(cn %in% names(object@vgmModel))){
       x <- cn[!(cn %in% names(object@vgmModel))]
-      return(paste("Missing column names:", x)) 
+      return(paste("Missing column names:", paste(x, collapse=", "))) 
       }
 })
 
@@ -30,28 +30,32 @@ setClass("GlobalSoilMap", representation (varname = 'character', sd1 = 'SpatialP
       warning("Using <5 realizations can result in artifacts")
    # check the projection system:
    require(plotKML)
-   if(check_projection(obj@sd1)){
-      ref_CRS = get("ref_CRS", envir = plotKML.opts)
+   if(check_projection(obj@sd1)|check_projection(obj@sd2)|check_projection(obj@sd3)|check_projection(obj@sd4)|check_projection(obj@sd5)|check_projection(obj@sd6)){
+      ref_CRS = get("ref_CRS", envir = GSIF.opts)
       return(paste("The GlobalSoilMap object requires grids to be projected in the", ref_CRS, "projection"))
    }
    # check the target resolution:
-   grd.lst <- c(6/120,3/120,1/120,1/240,1/600,3/3600)
-   if(!(any(eberg_grid@grid@cellsize) %in% grd.lst))
-      warning(paste("Recommended grid cell size does not correspond to one of the following:", signif(grd.lst, 4))) 
+   grd.lst <- get("cellsize", envir = GSIF.opts)
+   if(!(any(obj@sd1@grid@cellsize) %in% grd.lst)|!(any(obj@sd2@grid@cellsize) %in% grd.lst)|!(any(obj@sd3@grid@cellsize) %in% grd.lst)|!(any(obj@sd4@grid@cellsize) %in% grd.lst)|!(any(obj@sd5@grid@cellsize) %in% grd.lst)|!(any(obj@sd6@grid@cellsize) %in% grd.lst))
+      return(paste("Recommended grid cell size does not correspond to one of the following:", paste(signif(grd.lst, 4), collapse=", "))) 
+   # check the bounding boxes:
+   if(!(any(obj@sd1@bbox %in% as.list(obj@sd2@bbox, obj@sd3@bbox, obj@sd4@bbox, obj@sd5@bbox, obj@sd6@bbox))))
+      return("The bounding box of all 'sd' slots is not standard") 
    # check if validation slot is complete:
-   ov <- extract(brick(obj@sd1), obj@validation)
+   ov <- overlay(obj@sd1, obj@validation)
    if(length(ov)==0)
       return("'sd1' and 'validation' do not overlap spatially")
 })
+
 
 ## georecord class:
 setClass("geosamples", representation (registry = 'character', methods = 'data.frame', data = 'data.frame'), validity <- function(obj) {
    cnames <- c("observationid", "sampleid", "longitude", "latitude", "locationError", "TimeSpan.begin", "TimeSpan.end", "altitude", "altitudeMode", "volume", "observedValue", "methodid", "measurementError")
    if(any(!(names(obj@data) %in% cnames)))
-      return(paste("Expecting only column names:", cnames))
+      return(paste("Expecting only column names:", paste(cnames, collapse=", ")))
    mnames <- c("methodid", "description", "units", "detectionLimit")
    if(any(!(names(obj@methods) %in% mnames)))
-      return(paste("Expecting only column names:", mnames))
+      return(paste("Expecting only column names:", paste(mnames, collapse=", ")))
    if(!length(levels(as.factor(paste(obj@methods$methodid))))==length(as.factor(paste(obj@data$methodid))))
       return("'methodid' levels in the methods table and data table do not match")
    if(!is.na(obj@data$TimeSpan.begin)){
@@ -82,7 +86,7 @@ setClass("geosamples", representation (registry = 'character', methods = 'data.f
 setClass("WPS", representation (server = 'list', inRastername = 'character'), validity <- function(obj) {
    cnames <- c("URI", "service.name", "version", "request", "identifier")
    if(any(!(names(obj@server) %in% cnames)))
-      return(paste("Expecting only column names:", cnames))
+      return(paste("Expecting only column names:", paste(cnames, collapse=", ")))
    # check if URI exists:
    uri = paste(paste(obj@server$URI, "?", sep=""), obj@server$version, obj@server$service, "request=GetCapabilities", sep="&") 
    require(RCurl)
@@ -146,12 +150,20 @@ if(!isGeneric("as.data.frame.default")) {
 	setGeneric("as.data.frame.default", function(x, ...){standardGeneric("as.data.frame.default")})
 }	
 
+if(!isGeneric("subset.default")) {
+	setGeneric("subset.default", function(x, ...){standardGeneric("subset.default")})
+}
+
 if(!isGeneric("describe")){
   setGeneric("describe", function(x, ...){standardGeneric("describe")})
 }
 
 if(!isGeneric("spc")){
   setGeneric("spc", function(obj, formulaString, ...){standardGeneric("spc")})
+}
+
+if(!isGeneric("make.3Dgrid")){
+  setGeneric("make.3Dgrid", function(obj, ...){standardGeneric("make.3Dgrid")})
 }
 
 if (!isGeneric("fit.gstatModel")){
@@ -166,6 +178,9 @@ if (!isGeneric("spfkm")){
   setGeneric("spfkm", function(formulaString, observations, covariates, ...){standardGeneric("spfkm")})
 }
 
+if (!isGeneric("write.data")){
+  setGeneric("write.data", function(obj, ...){standardGeneric("write.data")})
+}
 
 ################## STANDARD ENVIRONMENTS ##############
 
@@ -179,7 +194,10 @@ GSIF.env <- function(
     NAflag,
     license_url,
     project_url,
-    show.env = TRUE
+    show.env = TRUE,
+    stdepths,
+    stsize,
+    cellsize
     ){
     
     # require(plotKML)
@@ -188,15 +206,21 @@ GSIF.env <- function(
     if(missing(NAflag)) { NAflag <- -99999 }
     if(missing(license_url)) { license_url <- "http://creativecommons.org/licenses/by/3.0/" }
     if(missing(project_url)) { project_url <- "http://gsif.r-forge.r-project.org/" }
+    if(missing(stdepths)) { stdepths <- c(-2.5, -7.5, -22.5, -45, -80, -150)/100 }
+    if(missing(stsize)) { stsize <- c(5, 10, 15, 30, 40, 100)/100 }
+    if(missing(cellsize)) { cellsize <- rev(c(6/120, 3/120, 1/120, 1/240, 1/600, 3/3600)) }
  
     assign("wps.server", wps.server, envir=GSIF.opts)
     assign("ref_CRS", ref_CRS, envir=GSIF.opts)
     assign("NAflag", NAflag, envir=GSIF.opts)
     assign("license_url", license_url, envir=GSIF.opts)
     assign("project_url", project_url, envir=GSIF.opts)
+    assign("stdepths", stdepths, envir=GSIF.opts)
+    assign("stsize", stsize, envir=GSIF.opts)
+    assign("cellsize", cellsize, envir=GSIF.opts)
     
-    GSIF.opts <- list(wps.server, ref_CRS, NAflag, license_url, project_url)
-    names(GSIF.opts) <- c("location of the WPS", "referent CRS", "NA flag value", "lisence URL", "project home")
+    GSIF.opts <- list(wps.server, ref_CRS, NAflag, license_url, project_url, stdepths, stsize, cellsize)
+    names(GSIF.opts) <- c("location of the WPS", "referent CRS", "NA flag value", "lisence URL", "project home", "standard depths", "standard thicknesses", "grid cell size")
     
     if(show.env){  return(GSIF.opts)  }
  

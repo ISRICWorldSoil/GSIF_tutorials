@@ -1,0 +1,207 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: Make a gstat command script</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="R.css">
+</head><body>
+
+<table width="100%" summary="page for makeGstatCmd {GSIF}"><tr><td>makeGstatCmd {GSIF}</td><td align="right">R Documentation</td></tr></table>
+
+<h2>Make a gstat command script</h2>
+
+<h3>Description</h3>
+
+<p>Generates a command script based on the regression model and variogram. This can then be used to run predictions/simulations by using the pre-compiled binary <code>gstat.exe</code>.</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+makeGstatCmd(formString, vgmModel, outfile, easfile, 
+        nsim = 0, nmin = 20, nmax = 40, radius, zmap = 0, 
+        predictions = "var1.pred.hdr", variances = "var1.svar.hdr", 
+        xcol = 1, ycol = 2, zcol = 3, vcol = 4, Xcols)
+</pre>
+
+
+<h3>Arguments</h3>
+
+
+<table summary="R argblock">
+<tr valign="top"><td><code>formString</code></td>
+<td>
+<p>object of class <code>"formula"</code> &mdash; regression model</p>
+</td></tr> 
+<tr valign="top"><td><code>vgmModel</code></td>
+<td>
+<p>object of class <code>"vgmmodel"</code> or <code>"data.frame"</code></p>
+</td></tr> 
+<tr valign="top"><td><code>outfile</code></td>
+<td>
+<p>character; output file for the command script</p>
+</td></tr>
+<tr valign="top"><td><code>easfile</code></td>
+<td>
+<p>character; file name for the GeoEAS file with observed values</p>
+</td></tr>
+<tr valign="top"><td><code>nsim</code></td>
+<td>
+<p>integer; number of simulations</p>
+</td></tr>
+<tr valign="top"><td><code>nmin</code></td>
+<td>
+<p>integer; smallest number of points in the search radius (see gstat user's manual)</p>
+</td></tr>
+<tr valign="top"><td><code>nmax</code></td>
+<td>
+<p>integer; largest number of points in the search radius (see gstat user's manual)</p>
+</td></tr>
+<tr valign="top"><td><code>radius</code></td>
+<td>
+<p>numeric; search radius (see gstat user's manual)</p>
+</td></tr>
+<tr valign="top"><td><code>zmap</code></td>
+<td>
+<p>numeric; fixed value for the 3D dimension in the case of 3D kriging</p>
+</td></tr>
+<tr valign="top"><td><code>predictions</code></td>
+<td>
+<p>character; output file name for predictions</p>
+</td></tr>
+<tr valign="top"><td><code>variances</code></td>
+<td>
+<p>character; output file name for kriging variances</p>
+</td></tr>
+<tr valign="top"><td><code>xcol</code></td>
+<td>
+<p>integer; position of the x column in the GeoEAS file</p>
+</td></tr>
+<tr valign="top"><td><code>ycol</code></td>
+<td>
+<p>integer; position of the y column in the GeoEAS file</p>
+</td></tr>
+<tr valign="top"><td><code>zcol</code></td>
+<td>
+<p>integer; position of the z column in the GeoEAS file</p>
+</td></tr>
+<tr valign="top"><td><code>vcol</code></td>
+<td>
+<p>integer; position of the target variable column in the GeoEAS file</p>
+</td></tr>
+<tr valign="top"><td><code>Xcols</code></td>
+<td>
+<p>integer; column numbers for the list of covariates</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>To run the script under Windows OS you need to obtain the pre-compiled <code>gstat.exe</code> program from the www.gstat.org website, and put it in some directory e.g. <code>c:/gstat/</code>. Then add the program to your path (see environmental variable under Windows &gt; Control panel &gt; System &gt; Advanced &gt; Environmental variables), or copy the exe program directly to some windows system directory.</p>
+
+
+<h3>Note</h3>
+
+<p>The advantage of using <code>gstat.exe</code> is that it loads large grids much faster to memory than if you use gstat in R, hence it is potentially more suited for computing with large grids. The draw back is that you can only pass simple linear regression models to gstat.exe. The stand-alone gstat is not maintained by the author of gstat any more.</p>
+
+
+<h3>Author(s)</h3>
+
+<p> Tomislav Hengl </p>
+
+
+<h3>References</h3>
+
+
+
+<ul>
+<li><p> Bivand, R.S., Pebesma, E.J., and Gómez-Rubio, V., (2008) <a href="http://www.asdar-book.org/">Applied Spatial Data Analysis with R</a>. Springer, 378 p. 
+</p>
+</li>
+<li><p> Pebesma, E., (2003) <a href="http://www.gstat.org/gstat.pdf">Gstat user's manual</a>. Dept. of Physical Geography, Utrecht University, p. 100, www.gstat.org 
+</p>
+</ul>
+
+
+
+<h3>See Also</h3>
+
+ <p><code><a href="geosamples-class.html">write.data</a></code>, <code><a href="fit.gstatModel-method.html">fit.gstatModel</a></code>, <code>gstat::krige</code> </p>
+
+
+<h3>Examples</h3>
+
+<pre>
+# universal kriging with Meuse data:
+data(meuse)
+coordinates(meuse) &lt;- ~x+y
+proj4string(meuse) &lt;- CRS("+init=epsg:28992")
+data(meuse.grid)
+gridded(meuse.grid) &lt;- ~x+y
+proj4string(meuse.grid) &lt;- CRS("+init=epsg:28992")
+## Not run: # fit a model:
+library(GSIF)
+omm &lt;- fit.gstatModel(observations = meuse, formulaString = om~dist, 
+  family = gaussian(log), covariates = meuse.grid)
+str(omm@vgmModel)
+# write the regression matrix to GeoEAS:
+meuse$log_om &lt;- log1p(meuse$om)
+write.data(obj=meuse, covariates=meuse.grid["dist"], outfile="meuse.eas", methodid="log_om")
+writeGDAL(meuse.grid["dist"], "dist.rst", drivername="RST", mvFlag="-99999")
+makeGstatCmd(log_om~dist, vgmModel=omm@vgmModel, outfile="meuse_om_sims.cmd", easfile="meuse.eas", nsim=50, nmin=20, nmax=40, radius=1500)
+# compare the processing times:
+system.time(system("gstat meuse_om_sims.cmd"))
+vgmModel = omm@vgmModel
+class(vgmModel) &lt;- c("variogramModel", "data.frame")
+system.time(om.rk &lt;- krige(log_om~dist, meuse[!is.na(meuse$log_om),], meuse.grid, nmin=20, nmax=40, model=vgmModel, nsim=50))
+## 3D kriging:
+data(eberg)
+# subset data:
+eberg &lt;- eberg[runif(nrow(eberg)) &lt; .3,]
+# sites table:
+s.lst &lt;- c("ID", "soiltype", "TAXGRSC", "X", "Y")
+h.lst &lt;- c("UHDICM","LHDICM","SNDMHT","SLTMHT","CLYMHT")
+sites &lt;- eberg[,s.lst]
+# get horizons table:
+horizons &lt;- getHorizons(eberg, idcol="ID", sel=h.lst)
+# create object of type "SoilProfileCollection"
+eberg.spc &lt;- join(horizons, sites, type='inner')
+depths(eberg.spc) &lt;- ID ~ UHDICM + LHDICM
+site(eberg.spc) &lt;- as.formula(paste("~", paste(s.lst[-1], collapse="+"), sep=""))
+coordinates(eberg.spc) &lt;- ~X+Y
+proj4string(eberg.spc) &lt;- CRS("+init=epsg:31467")
+# convert to logits:
+eberg.spc@horizons$SNDMHT.t &lt;- log((eberg.spc@horizons$SNDMHT/100)/(1-eberg.spc@horizons$SNDMHT/100))
+# convert to geosamples:
+eberg.geo &lt;- as.geosamples(eberg.spc)
+# load gridded data:
+data(eberg_grid)
+gridded(eberg_grid) &lt;- ~x+y
+proj4string(eberg_grid) &lt;- CRS("+init=epsg:31467")
+# derive spc's:
+formulaString &lt;- ~ PRMGEO6+DEMSRT6+TWISRT6+TIRAST6
+eberg_spc &lt;- spc(eberg_grid, formulaString)
+# build a 3D "gstatModel": 
+glm.formulaString = as.formula(paste("observedValue ~ ", paste(names(eberg_spc@predicted), collapse="+"), "+ ns(altitude, df=4)"))
+SNDMHT.m &lt;- fit.gstatModel(observations=eberg.geo, glm.formulaString, covariates=eberg_spc, methodid="SNDMHT.t")
+# prepare new locations and make predictions: 
+new3D &lt;- sp3D(eberg_spc@predicted, stdepths=c(-.05, -.20))
+# make simulations (skip cross-validation):
+system.time(SNDMHT.sd1 &lt;- predict(SNDMHT.m, predictionLocations = new3D[[1]], nfold = 0, nmin=40, nmax=50))
+# same thing via the gstat.exe:
+masks = all.vars(SNDMHT.m@regModel$formula)[-1]
+for(i in masks){ writeGDAL(eberg_spc@predicted[i], paste(i, ".rst", sep=""), drivername="RST", mvFlag="-99999") }
+# altitude does not exist as a map!
+formString = SNDMHT.t ~ PC1+PC2+PC4+PC5+PC6+PC7+PC8+PC9+PC10
+masks = all.vars(formString)[-1]
+write.data(obj=eberg.geo, covariates=eberg_spc@predicted[masks], outfile="eberg.eas", methodid="SNDMHT.t")
+makeGstatCmd(formString, vgmModel=SNDMHT.m@vgmModel, outfile="eberg_SNDMHT_rk.cmd", easfile="eberg.eas", nmin=40, nmax=50, radius=2500, zmap=-.05)
+# compare the processing times:
+system.time(system("gstat eberg_SNDMHT_rk.cmd"))
+## Conclusion: gstat.exe takes more time with smaller maps and can result in artifacts;
+## Note also that we can not pass the "+ ns(altitude, df=4)" model to gstat.exe
+
+## End(Not run)
+</pre>
+
+<hr><div align="center">[Package <em>GSIF</em> version 0.2-1 <a href="00Index.html">Index</a>]</div>
+</body></html>

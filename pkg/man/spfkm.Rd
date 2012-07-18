@@ -45,11 +45,13 @@ formulaString = soiltype ~ PC1+PC2+PC3+PC4+PC5+PC6+PC7+PC8+PC9+PC10
 eberg_sm <- spfkm(formulaString, eberg, eberg_spc@predicted)
 # plot memberships:
 pal = seq(0, 1, 1/50)
-pnts = list("sp.points", eberg, pch=paste(eberg$soiltype), col="black")
-spplot(eberg_sm@mu, at=pal, col.regions=rev(grey(pal)))
+spplot(eberg_sm@mu, col.regions=pal)
+image(eberg_sm@mu[1], col=pal)
+text(eberg@coords, paste(eberg$soiltype), cex=.6, col="black")
 # classes predicted:
 eberg_sm@predicted$soiltype <- as.factor(eberg_sm@predicted$soiltype)
-spplot(eberg_sm@predicted, sp.layout=pnts)
+Ls = length(levels(eberg_sm@predicted$soiltype))
+spplot(eberg_sm@predicted, col.regions=rainbow(Ls)[rank(runif(Ls))], sp.layout=pnts)
 spplot(eberg_sm@mu[2], at=pal, col.regions=rev(heat.colors(50)), sp.layout=pnts)
 }
 }
