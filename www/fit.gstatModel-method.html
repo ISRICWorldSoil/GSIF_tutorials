@@ -10,7 +10,7 @@
 
 <h3>Description</h3>
 
-<p>Tries to automatically fit a 2D or 3D regression-kriging model for a given set of points and covariates (object of type <code>"SpatialPixelsDataFrame"</code>). It first runs GLM following the <code>formulaString</code> model, then fits variogram for residuals usign the <code>fit.variogram</code> method from the package gstat. Creates an output object of class <code><a href="gstatModel-class.html">gstatModel-class</a></code>.</p>
+<p>Tries to automatically fit a 2D or 3D regression-kriging model for a given set of points (object of type <code>"SpatialPointsDataFrame"</code> or <code>"geosamples"</code>) and covariates (object of type <code>"SpatialPixelsDataFrame"</code>). It first runs GLM following the <code>formulaString</code>, then fits variogram for residuals usign the <code>fit.variogram</code> method from the package gstat. Creates an output object of class <code><a href="gstatModel-class.html">gstatModel-class</a></code>.</p>
 
 
 <h3>Usage</h3>
@@ -44,7 +44,7 @@
 
 <h3>Details</h3>
 
-<p>Optional arguments are <code>vgmFun</code> &mdash; variogram model type passed from gstat; <code>family</code> &mdash; character string defyning the GLM family (for more info see <code>stats::glm</code>); <code>stepwise</code> &mdash; specifies whether to run step-wise regression on top of GLM to get an optimal subset of predictors. The method by default assumes that the target variable follows a normal distribution <code>family = gaussian</code>. Other possible families are:
+<p>Optional arguments are <code>rvgm</code> &mdash; residual variogram model can be passed from gstat, in which case <code>fit.gstatModel</code> will not try to fit the variogram; <code>vgmFun</code> &mdash; variogram function (<code>"Exp"</code> by default); <code>family</code> &mdash; character string defyning the GLM family (for more info see <code>stats::glm</code>); <code>stepwise</code> &mdash; specifies whether to run step-wise regression on top of GLM to get an optimal subset of predictors. The method by default assumes that the target variable follows a normal distribution <code>family = gaussian</code>. Other possible families are:
 </p>
 
 <dl>
@@ -94,7 +94,7 @@ coordinates(meuse) &lt;- ~x+y
 data(meuse.grid)
 coordinates(meuse.grid) &lt;- ~x+y
 gridded(meuse.grid) &lt;- TRUE
-# fit a model:
+# fit a model with a gaussian log-link:
 omm &lt;- fit.gstatModel(observations = meuse, om~dist, covariates = meuse.grid,
   family = gaussian(log))
 omm@regModel

@@ -4,8 +4,9 @@
 \alias{fit.gstatModel-method}
 \alias{fit.gstatModel}
 \alias{fit.gstatModel,SpatialPointsDataFrame,formula,SpatialPixelsDataFrame-method}
+\alias{fit.gstatModel,geosamples,formula,SpatialPixelsDataFrame-method}
 \title{Methods to fit a regression-kriging model}
-\description{Tries to automatically fit a 2D or 3D regression-kriging model for a given set of points and covariates (object of type \code{"SpatialPixelsDataFrame"}). It first runs GLM following the \code{formulaString} model, then fits variogram for residuals usign the \code{fit.variogram} method from the package gstat. Creates an output object of class \code{\link{gstatModel-class}}.}
+\description{Tries to automatically fit a 2D or 3D regression-kriging model for a given set of points (object of type \code{"SpatialPointsDataFrame"} or \code{"geosamples"}) and covariates (object of type \code{"SpatialPixelsDataFrame"}). It first runs GLM following the \code{formulaString}, then fits variogram for residuals usign the \code{fit.variogram} method from the package gstat. Creates an output object of class \code{\link{gstatModel-class}}.}
 \usage{ fit.gstatModel(observations, formulaString, covariates, \dots )
 }
 \arguments{
@@ -14,7 +15,7 @@
   \item{covariates}{object of type \code{"SpatialPixelsDataFrame"}}
   \item{\dots}{other optional arguments that can be passed to \code{glm} and/or \code{fit.variogram}}
 }
-\details{Optional arguments are \code{vgmFun} --- variogram model type passed from gstat; \code{family} --- character string defyning the GLM family (for more info see \code{stats::glm}); \code{stepwise} --- specifies whether to run step-wise regression on top of GLM to get an optimal subset of predictors. The method by default assumes that the target variable follows a normal distribution \code{family = gaussian}. Other possible families are:
+\details{Optional arguments are \code{rvgm} --- residual variogram model can be passed from gstat, in which case \code{fit.gstatModel} will not try to fit the variogram; \code{vgmFun} --- variogram function (\code{"Exp"} by default); \code{family} --- character string defyning the GLM family (for more info see \code{stats::glm}); \code{stepwise} --- specifies whether to run step-wise regression on top of GLM to get an optimal subset of predictors. The method by default assumes that the target variable follows a normal distribution \code{family = gaussian}. Other possible families are:
 \describe{
  \item{normal distribution}{\code{family = gaussian} (default setting)}
  \item{log-normal distribution}{\code{family = gaussian(log)}}
@@ -38,7 +39,7 @@ coordinates(meuse) <- ~x+y
 data(meuse.grid)
 coordinates(meuse.grid) <- ~x+y
 gridded(meuse.grid) <- TRUE
-# fit a model:
+# fit a model with a gaussian log-link:
 omm <- fit.gstatModel(observations = meuse, om~dist, covariates = meuse.grid,
   family = gaussian(log))
 omm@regModel

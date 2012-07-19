@@ -10,7 +10,7 @@
 
 <h3>Description</h3>
 
-<p>A class containing multiple realizations of soil properties following the <a href="http://globalsoilmap.net/specifications">GlobalSoilMap.net specifications</a>, i.e. predictions of some of the target global soil properties at six depths (<code>sd1</code> = 2.5 cm, <code>sd2</code> = 10 cm, <code>sd3</code> = 22.5 cm, <code>sd4</code> = 45 cm, <code>sd5</code> = 80 cm, <code>sd6</code> = 150 cm).</p>
+<p>A class containing multiple realizations of soil properties following the <a href="http://globalsoilmap.net/specifications">GlobalSoilMap.net specifications</a>, i.e. predictions of some of the target global soil property at six standard depths: <code>sd1</code> = 2.5 cm (0&ndash;5), <code>sd2</code> = 10 cm (5&ndash;15), <code>sd3</code> = 22.5 cm (15&ndash;30), <code>sd4</code> = 45 cm (30&ndash;60), <code>sd5</code> = 80 cm (60&ndash;100), <code>sd6</code> = 150 cm (100&ndash;200).</p>
 
 
 <h3>Slots</h3>
@@ -20,19 +20,17 @@
 <dl>
 <dt><code>varname</code>:</dt><dd><p>object of class <code>"character"</code>; abbreviated variable name registered in the Global Soil Data registry</p>
 </dd>
-<dt><code>sd1</code>:</dt><dd><p>object of class <code>"SpatialPixelsDataFrame"</code>; number of realizations of the target variable at depth 2.5 cm</p>
+<dt><code>sd1</code>:</dt><dd><p>object of class <code>"SpatialPixelsDataFrame"</code>; predictions and variances, or number of realizations of the target variable at depth 2.5 cm</p>
 </dd>
-<dt><code>sd2</code>:</dt><dd><p>object of class <code>"SpatialPixelsDataFrame"</code>; number of realizations of the target variable at depth 10 cm</p>
+<dt><code>sd2</code>:</dt><dd><p>object of class <code>"SpatialPixelsDataFrame"</code>; predictions and variances, or number of realizations of the target variable at depth 10 cm</p>
 </dd>
-<dt><code>sd3</code>:</dt><dd><p>object of class <code>"SpatialPixelsDataFrame"</code>; number of realizations of the target variable at depth 22.5 cm</p>
+<dt><code>sd3</code>:</dt><dd><p>object of class <code>"SpatialPixelsDataFrame"</code>; predictions and variances, or number of realizations of the target variable at depth 22.5 cm</p>
 </dd>
-<dt><code>sd4</code>:</dt><dd><p>object of class <code>"SpatialPixelsDataFrame"</code>; number of realizations of the target variable at depth 45 cm</p>
+<dt><code>sd4</code>:</dt><dd><p>object of class <code>"SpatialPixelsDataFrame"</code>; predictions and variances, or number of realizations of the target variable at depth 45 cm</p>
 </dd>
-<dt><code>sd5</code>:</dt><dd><p>object of class <code>"SpatialPixelsDataFrame"</code>; number of realizations of the target variable at depth 80 cm</p>
+<dt><code>sd5</code>:</dt><dd><p>object of class <code>"SpatialPixelsDataFrame"</code>; predictions and variances, or number of realizations of the target variable at depth 80 cm</p>
 </dd>
-<dt><code>sd6</code>:</dt><dd><p>object of class <code>"SpatialPixelsDataFrame"</code>; number of realizations of the target variable at depth 150 cm</p>
-</dd>
-<dt><code>validation</code>:</dt><dd><p>object of class <code>"SpatialPointsDataFrame"</code>; cross-validation data set with values of the target variable at six depths</p>
+<dt><code>sd6</code>:</dt><dd><p>object of class <code>"SpatialPixelsDataFrame"</code>; predictions and variances, or number of realizations of the target variable at depth 150 cm</p>
 </dd>
 </dl>
 
@@ -66,30 +64,56 @@
 ## Not run: # load soil samples from the plotKML package: 
 library(plotKML)
 data(eberg)
-# 30 percent subsample:
+# subset data:
 eberg &lt;- eberg[runif(nrow(eberg)) &lt; .3,]
 # sites table:
 s.lst &lt;- c("ID", "soiltype", "TAXGRSC", "X", "Y")
+h.lst &lt;- c("UHDICM","LHDICM","SNDMHT","SLTMHT","CLYMHT")
 sites &lt;- eberg[,s.lst]
 # get horizons table:
-horizons &lt;- getHorizons(eberg, idcol="ID", sel=c("UHDICM","LHDICM","SNDMHT","SLTMHT","CLYMHT"))
+horizons &lt;- getHorizons(eberg, idcol="ID", sel=h.lst)
 # create object of type "SoilProfileCollection"
 eberg.spc &lt;- join(horizons, sites, type='inner')
 depths(eberg.spc) &lt;- ID ~ UHDICM + LHDICM
 site(eberg.spc) &lt;- as.formula(paste("~", paste(s.lst[-1], collapse="+"), sep=""))
 coordinates(eberg.spc) &lt;- ~X+Y
 proj4string(eberg.spc) &lt;- CRS("+init=epsg:31467")
+# convert to logits:
+eberg.spc@horizons$SNDMHT.t &lt;- log((eberg.spc@horizons$SNDMHT/100)/(1-eberg.spc@horizons$SNDMHT/100))
 # convert to geosamples:
 eberg.geo &lt;- as.geosamples(eberg.spc)
-# prepare covariates:
+# load gridded data:
 data(eberg_grid)
 gridded(eberg_grid) &lt;- ~x+y
 proj4string(eberg_grid) &lt;- CRS("+init=epsg:31467")
-eberg_spc &lt;- spc(eberg_grid, as.formula("~ PRMGEO6+DEMSRT6+TWISRT6+TIRAST6"))
-# fit gstat Model:
-formulaString = as.formula(paste("observedValue ~ ", paste(names(eberg_spc@predicted), collapse="+"), "+ ns(altitude, df=5)"))
-SNDMHT.m &lt;- fit.gstatModel(eberg.geo, formulaString, covariates=eberg_spc, methodid="SNDMHT")
+# derive spc's:
+formulaString &lt;- ~ PRMGEO6+DEMSRT6+TWISRT6+TIRAST6
+eberg_spc &lt;- spc(eberg_grid, formulaString)
+# build a 3D "gstatModel": 
+glm.formulaString = as.formula(paste("observedValue ~ ", paste(names(eberg_spc@predicted), collapse="+"), "+ ns(altitude, df=4)"))
+SNDMHT.m &lt;- fit.gstatModel(observations=eberg.geo, glm.formulaString, covariates=eberg_spc@predicted, methodid="SNDMHT.t")
 summary(SNDMHT.m@regModel)
+SNDMHT.m@vgmModel
+# prepare new locations (6 standard depths): 
+new3D &lt;- sp3D(eberg_spc@predicted)
+# Make predictions at six depths:
+sd.l &lt;- lapply(new3D, FUN=function(x){predict(SNDMHT.m, predictionLocations=x, nfold=0)})
+# back-transform values from logits:
+for(j in 1:length(sd.l)){ sd.l[[j]]@predicted$observedValue &lt;- exp(sd.l[[j]]@predicted$observedValue)/(1+exp(sd.l[[j]]@predicted$observedValue))*100 }
+# reproject to WGS84 system (100 m resolution):
+p = get("cellsize", envir = GSIF.opts)[1]
+s = get("stdepths", envir = GSIF.opts)
+sd.ll &lt;- sapply(1:length(sd.l), FUN=function(x){make.3Dgrid(sd.l[[x]]@predicted[3:4], pixelsize=p, stdepths=s[x])})
+# save to a "GlobalSoilMap" object:
+SNDMHT.gsm &lt;- GlobalSoilMap(varname="SNDMHT", sd.ll)
+# visualize all maps in Google Earth:
+library(plotKML)
+data(R_pal)
+z = mean(eberg_grid$DEMSRT6, na.rm=TRUE)
+# export grids:
+for(j in 1:length(sd.ll)){
+  kml(slot(SNDMHT.gsm, paste("sd", j, sep="")), folder.name = paste("eberg_sd", j, sep=""), file = paste("SNDMHT_sd", j, ".kml", sep=""), colour = observedValue, zlim=c(10,85), raster_name = paste("SNDMHT_sd", j, ".png", sep=""), altitude = z+5000+(s[j]*2500))
+}
 
 ## End(Not run)
 </pre>

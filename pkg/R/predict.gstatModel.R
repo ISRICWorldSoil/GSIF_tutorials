@@ -7,7 +7,7 @@
 
 
 # Fit a RK model and return an object of class "gsm":
-setMethod("fit.gstatModel", signature(observations = "geosamples", formulaString = "formula", covariates = "SpatialPixelsDataFrame"), function(observations, formulaString, covariates, methodid, family = gaussian, stepwise = TRUE, vgmFun = "Exp", ...){
+setMethod("fit.gstatModel", signature(observations = "geosamples", formulaString = "formula", covariates = "SpatialPixelsDataFrame"), function(observations, formulaString, covariates, methodid, family = gaussian, stepwise = TRUE, vgmFun = "Exp", rvgm = NULL, ...){
 
   require(gstat)
   require(splines)
@@ -19,12 +19,13 @@ setMethod("fit.gstatModel", signature(observations = "geosamples", formulaString
   }
    
   # prepare regression matrix:
-  ov <- overlay(x=covariates, y=observations, methodid, var.type = "numeric")
+  ov <- overlay(x=covariates, y=observations, method=methodid, var.type = "numeric")
   if(nrow(ov)==0|is.null(ov$observedValue)) {
     warning("The overlay operations resulted in an empty set. Check 'methodid' column.")
   }
   # geostats only possible with numeric variables:
   ov$observedValue = as.numeric(ov$observedValue)
+  
   # fit/filter the regression model:
   rgm <- glm(formulaString, data=ov, family=family, ...)
   if(stepwise == TRUE){
@@ -36,36 +37,42 @@ setMethod("fit.gstatModel", signature(observations = "geosamples", formulaString
   # extract the residuals in the transformed space:
   linkfun <- rgm$family$linkfun
   ov$residual <- linkfun(ov$observedValue) - rgm$linear.predictors
-  # 3D object now:
+  # create a 3D object:
   coordinates(ov) <- ~ longitude + latitude + altitude
   proj4string(ov) = get("ref_CRS", envir = GSIF.opts)
-  ov <- spTransform(ov, covariates@predicted@proj4string)
+  suppressWarnings(ov <- spTransform(ov, covariates@proj4string))
   
-  # estimate area extent:
-  Range = sqrt(areaSpatialGrid(covariates@predicted))/2
-  # estimate anisotropy parameters:
-  ## TH: This is the most simple implementation - fitting of 3D variograms needs to be improved;
-  dr <- 1/(Range/2)
-  anis = c(0, 0, 0, 1, dr)
-  ivgm <- vgm(nugget=0, model=vgmFun, range=Range, psill=var(ov$residual), anis = anis)
-  # fit the variogram:
-  try(rv.fit <- gstat::fit.variogram(variogram(residual ~ 1, ov), ivgm, ...))
-  if(diff(rv.fit$range)==0|diff(rv.fit$psill)==0){
-    warning("Variogram shows no spatial dependence")    
+  # if the residual variogram is unknown:
+  if(is.null(rvgm)){
+    # estimate area extent:
+    Range = sqrt(areaSpatialGrid(covariates))/3
+    # estimate initial range in the vertical direction:
+    dr <- abs(diff(range(ov@coords[,3], na.rm=TRUE)))/3
+    a2 = 2*dr/Range
+
+    # estimate anisotropy parameters:
+    anis = c(0, 0, 0, 1, a2)    
+    ivgm <- vgm(nugget=0, model=vgmFun, range=Range, psill=var(ov$residual), anis = anis)
+    # fit the 3D variogram:
+    try(rvgm <- gstat::fit.variogram(variogram(residual ~ 1, ov), ivgm, ...))
+    if(diff(rvgm$range)==0|diff(rvgm$psill)==0){
+      warning("Variogram shows no spatial dependence")    
+    }
+    ## TH: This is the most simple implementation - fitting of 3D variograms needs to be improved!
+
   }
   
   # save the fitted model:
-  rkm <- new("gstatModel", regModel = rgm, vgmModel = as.data.frame(rv.fit), sp = as(ov, "SpatialPoints"))
+  rkm <- new("gstatModel", regModel = rgm, vgmModel = as.data.frame(rvgm), sp = as(ov, "SpatialPoints"))
   return(rkm)  
 
 })
 
 
 ## Fit a 'simple' RK model (2D points):
-setMethod("fit.gstatModel", signature(observations = "SpatialPointsDataFrame", formulaString = "formula", covariates = "SpatialPixelsDataFrame"), function(observations, formulaString, covariates, vgmFun = "Exp", family = gaussian, stepwise = TRUE, ...){
+setMethod("fit.gstatModel", signature(observations = "SpatialPointsDataFrame", formulaString = "formula", covariates = "SpatialPixelsDataFrame"), function(observations, formulaString, covariates, family = gaussian, stepwise = TRUE, vgmFun = "Exp", rvgm = NULL, ...){
 
   require(gstat)
-  require(stats)
   
   # the function only works with 2D maps:
   if(length(attr(coordinates(observations), "dimnames")[[2]])>2){
@@ -77,15 +84,15 @@ setMethod("fit.gstatModel", signature(observations = "SpatialPointsDataFrame", f
     formulaString <- as.formula(paste(names(observations)[1], "~", paste(names(covariates), collapse="+"), sep=""))
   }
   
-  fullgrid(covariates) <- TRUE
-  ov <- overlay(covariates, observations)
+  index <- overlay(covariates, observations)
+  # all variables of interest:
   tv = all.vars(formulaString)[1]
+  xyn = attr(coordinates(observations), "dimnames")[[2]]
   sel = names(covariates) %in% all.vars(formulaString)[-1]
   if(length(sel)==0){
       stop("None of the covariates in the 'formulaString' do not match the names in the'covariates' object")
   }
-  xyn = attr(coordinates(observations), "dimnames")[[2]]
-  x <- cbind(data.frame(observations[,tv]), ov[sel]@data)
+  x <- cbind(data.frame(observations[,tv]), covariates[index,])
   # fit the regression model:
   rgm <- glm(formulaString, data=x, family=family, ...)
   if(stepwise == TRUE){
@@ -99,34 +106,36 @@ setMethod("fit.gstatModel", signature(observations = "SpatialPointsDataFrame", f
   coordinates(x) <- as.formula(paste("~", paste(xyn, collapse = "+"), sep=""))
   proj4string(x) = observations@proj4string
   
-  # fit the variogram:
-  if(!is.na(proj4string(covariates))){
-  if(!is.projected(covariates)){
-    require(fossil)  # Haversine Formula for Great Circle distance
-    p.1 <- matrix(c(covariates@bbox[1,1], covariates@bbox[1,2]), ncol=2, dimnames=list(1,c("lon","lat")))  
-    p.2 <- matrix(c(covariates@bbox[2,1], covariates@bbox[2,2]), ncol=2, dimnames=list(1,c("lon","lat")))  
-    Range = deg.dist(lat1=p.1[,2], long1=p.1[,1], lat2=p.2[,2], long2=p.2[,1])/2
-  } else{
-    Range = sqrt(areaSpatialGrid(covariates))/2
-  }}
-  else{
-    Range = sqrt(areaSpatialGrid(covariates))/2
-  }
+  if(is.null(rvgm)){
+    # fit the variogram:
+    if(!is.na(proj4string(covariates))){
+    if(!is.projected(covariates)){
+      require(fossil)  # Haversine Formula for Great Circle distance
+      p.1 <- matrix(c(covariates@bbox[1,1], covariates@bbox[1,2]), ncol=2, dimnames=list(1,c("lon","lat")))  
+      p.2 <- matrix(c(covariates@bbox[2,1], covariates@bbox[2,2]), ncol=2, dimnames=list(1,c("lon","lat")))  
+      Range = deg.dist(lat1=p.1[,2], long1=p.1[,1], lat2=p.2[,2], long2=p.2[,1])/2
+    } else{
+      Range = sqrt(areaSpatialGrid(covariates))/2
+    }}
+    else{
+      Range = sqrt(areaSpatialGrid(covariates))/2
+    }
 
-  ivgm <- vgm(nugget=0, model=vgmFun, range=Range, psill=var(x$residual))
-  try(rv.fit <- gstat::fit.variogram(variogram(residual ~ 1, x), ivgm, ...))
-  if(diff(rv.fit$range)==0|diff(rv.fit$psill)==0){
-    warning("Variogram shows no spatial dependence")    
+    ivgm <- vgm(nugget=0, model=vgmFun, range=Range, psill=var(x$residual))
+    try(rvgm <- gstat::fit.variogram(variogram(residual ~ 1, x), ivgm, ...))
+    if(diff(rvgm$range)==0|diff(rvgm$psill)==0){
+      warning("Variogram shows no spatial dependence")    
+    }
   }
   
   # save the fitted model:
-  rkm <- new("gstatModel", regModel = rgm, sp = as(x, "SpatialPoints"), vgmModel = as.data.frame(rv.fit))
+  rkm <- new("gstatModel", regModel = rgm, sp = as(x, "SpatialPoints"), vgmModel = as.data.frame(rvgm))
   return(rkm)
 })
 
 
 # predict values using a RK model:
-predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30, debug.level = -1, method = c("KED", "RK")[1], nfold = 5, verbose = FALSE, nsim = 0, ...){
+predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30, debug.level = -1, method = c("KED", "RK")[1], nfold = 5, verbose = FALSE, nsim = 0, mask.extra = TRUE, ...){
 
   if(nsim<0|!is.numeric(nsim)){
    stop("To invoke conditional simulations set 'nsim' argument to a positive integer number")
@@ -134,7 +143,6 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
   nsim <- as.integer(nsim)
 
   require(gstat)
-  require(stats)
   require(raster)
   
   # check the projection system:
@@ -169,9 +177,23 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
   observed@data[,paste(variable, "glmfit", sep=".")] <- object@regModel$linear.predictors
   observed@data[,paste(variable, "link", sep=".")] <- linkfun(observed@data[,variable])
   observed@data[,paste(variable, "residual", sep=".")] <- linkfun(observed@data[,variable]) - object@regModel$linear.predictors 
+  
+  # skip cross-validation in nfold = 0
+  if(nfold==0){ 
+    cv <- remove.duplicates(observed[variable])
+    names(cv) <- "observed"
+    cv$var1.pred <- rep(NA, length(cv$observed))
+    cv$var1.var <- rep(NA, length(cv$observed))
+    cv$residual <- rep(NA, length(cv$observed))
+    cv$zscore <- rep(NA, length(cv$observed))
+    cv$fold <- rep(1, length(cv$observed))
+    cv <- cv[,c("var1.pred","var1.var","observed","residual","zscore","fold")]
+  }
+  
   # model summary:
   sum.glm = summary(object@regModel)
   class(sum.glm) = "list"
+  
   # copy GLM predictions to the predictionLocations
   predictionLocations@data[, paste(variable, "glmfit", sep=".")] <- rp$fit
   
@@ -182,13 +204,13 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
         rk <- gstat::krige(formula=formString, locations=remove.duplicates(observed), newdata=predictionLocations, model = vgmmodel, nmin = nmin, nmax = nmax, debug.level = debug.level, ...)
         # mask extrapolation areas:
         rk@data[,paste(variable, "svar", sep=".")] <- rk$var1.var / var(observed@data[,paste(variable, "link", sep=".")], na.rm=TRUE)
-        rk$var1.pred <- ifelse(rk@data[,paste(variable, "svar", sep=".")] > 1, NA, rk$var1.pred) 
+        if(mask.extra==TRUE){
+          rk$var1.pred <- ifelse(rk@data[,paste(variable, "svar", sep=".")] > 1, NA, rk$var1.pred) 
+        }
         # back-transform the values:
         rk@data[,variable] = invfun(rk$var1.pred)
-        # run cross-validation:
-        if(nfold==0){
-          cv <- remove.duplicates(observed)
-        } else {
+        # skip cross-validation:
+        if(nfold>0){      
           message(paste("Running ", nfold, "-fold cross validation...", sep=""))
           cv <- gstat::krige.cv(formString, locations=remove.duplicates(observed), model = vgmmodel, nfold = nfold, verbose = verbose)
           proj4string(cv) = observed@proj4string
@@ -199,7 +221,7 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
         rk <- gstat::krige(formString, locations=remove.duplicates(observed), newdata=predictionLocations, model = vgmmodel, nmin = nmin, nmax = nmax, debug.level = debug.level, nsim = nsim, ...)
         # back-transform the values:
         for(i in 1:nsim){
-        rk@data[,i] = invfun(rk@data[,i])
+          rk@data[,i] = invfun(rk@data[,i])
         }    
       }
   }
@@ -211,28 +233,62 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
       formString <- as.formula(paste(paste(variable, "residual", sep="."), "~", 1, sep=""))
       if(nsim==0){
         message("Generating predictions using the trend model (RK method)...")
-        rk <- gstat::krige(formString, locations=remove.duplicates(observed), newdata=predictionLocations, model = vgmmodel, nmin = nmin, nmax = nmax, debug.level = debug.level, ...) 
-        # sum regression and kriging and back-transform the values:
-        rk@data[,variable] <- invfun(predictionLocations@data[,paste(variable, "glmfit", sep=".")] + rk@data[,"var1.pred"])
-        rk@data[,paste(variable, "svar", sep=".")] <- ( predictionLocations$se.fit + rk@data[,"var1.var"] ) / var(observed@data[,paste(variable, "link", sep=".")], na.rm=TRUE)  ## This formula assumes that the trend and residuals are independent; which is probably not true
-        # run cross-validation:      
-        if(nfold==0){
-          cv <- remove.duplicates(observed)
+        # TH: if the vgmmodel is null leave the inverse distance interpolation out?
+        if(is.null(vgmmodel)){
+          # generate empty grid:
+          rk = predictionLocations["se.fit"]
+          rk@data[,variable] <- invfun(predictionLocations@data[,paste(variable, "glmfit", sep=".")]) 
+          rk@data[,paste(variable, "svar", sep=".")] <- rp$se.fit/var(observed@data[,paste(variable, "link", sep=".")], na.rm=TRUE)
+          rk@data[,1] <- NULL
+          # cross-validation using GLM:
+          if(nfold>0){
+            require(boot)
+            cv.err <- boot::glm.diag(object@regModel)
+            # cv.err <- boot::cv.glm(data=object@regModel$data, glmfit=object@regModel, K=nfold) 
+            # TH: This one fails for unknow reason? 
+            cv <- observed[variable]
+            names(cv) <- "observed"
+            cv$var1.pred <- object@regModel$linear.predictors
+            cv$var1.var <- stats::predict.glm(object@regModel, newdata=object@regModel$data, type="link", se.fit = TRUE)$se.fit[-object@regModel$na.action]
+            cv$residual <- cv.err$res
+            cv$zscore <- cv.err$rd
+            cv$fold <- rep(1, length(cv$observed))
+            # print warning:
+            warning("Reporting cross-validation results using 'boot::glm.diag'")
+            cv <- cv[,c("var1.pred","var1.var","observed","residual","zscore","fold")]
+          }
         } else {
-        formString <- as.formula(paste(paste(variable, "link", sep="."), "~", paste(variable, "glmfit", sep="."), sep=""))
-        message(paste("Running ", nfold, "-fold cross validation...", sep=""))
-        cv <- gstat::krige.cv(formString, locations=remove.duplicates(observed), model = vgmmodel, nfold = nfold, verbose = verbose)
-        proj4string(cv) = observed@proj4string
+          observed <- remove.duplicates(observed)
+          rk <- gstat::krige(formString, locations=observed, newdata=predictionLocations, model = vgmmodel, nmin = nmin, nmax = nmax, debug.level = debug.level, ...) 
+          # sum regression and kriging and back-transform the values:
+          rk@data[,variable] <- invfun(predictionLocations@data[,paste(variable, "glmfit", sep=".")] + rk@data[,"var1.pred"])
+          rk@data[,paste(variable, "svar", sep=".")] <- ( predictionLocations$se.fit + rk@data[,"var1.var"] ) / var(observed@data[,paste(variable, "link", sep=".")], na.rm=TRUE)  ## This formula assumes that the trend and residuals are independent; which is probably not true
+          if(nfold>0){
+          formString <- as.formula(paste(paste(variable, "link", sep="."), "~", paste(variable, "glmfit", sep="."), sep=""))
+          message(paste("Running ", nfold, "-fold cross validation...", sep=""))
+          cv <- gstat::krige.cv(formString, locations=observed, model = vgmmodel, nfold = nfold, verbose = verbose)
+          proj4string(cv) = observed@proj4string
+          }
         }
       } 
       else {
-      message(paste("Generating", nsim, "conditional simulations using the trend model (RK method)..."))
-      rk <- gstat::krige(formString, locations=remove.duplicates(observed), newdata=predictionLocations, model = vgmmodel, nmin = nmin, nmax = nmax, debug.level = debug.level, nsim = nsim, ...)
-      # back-transform the values:
+        if(is.null(vgmmodel)){
+        message(paste("Generating", nsim, "'rnorm' simulations using the trend model (RK method)..."))
+        # simple rnorm simulations:
+        rk = predictionLocations["se.fit"]
+        for(i in 1:nsim){ 
+          xsim <- rnorm(length(predictionLocations$se.fit), mean=predictionLocations@data[,paste(variable, "glmfit", sep=".")], sd=predictionLocations$se.fit)
+          rk@data[,i] = invfun(xsim)
+          }
+          names(rk) <- paste("sim", 1:nsim, sep="")
+        } else {
+        message(paste("Generating", nsim, "conditional simulations using the trend model (RK method)..."))
         for(i in 1:nsim){
-        xsim <- rnorm(length(predictionLocations$se.fit), mean=predictionLocations@data[,paste(variable, "glmfit", sep=".")], sd=predictionLocations$se.fit)  
-        rk@data[,i] = invfun(xsim + rk@data[,i])  # this is inexpensive but it assumes that the trend and residuals are independent!
-        }                
+          rk <- gstat::krige(formString, locations=remove.duplicates(observed), newdata=predictionLocations, model = vgmmodel, nmin = nmin, nmax = nmax, debug.level = debug.level, nsim = nsim, ...)
+          # back-transform the values:
+          rk@data[,i] = invfun(xsim + rk@data[,i])  # this is inexpensive but it assumes that the trend and residuals are independent!        
+        }
+        }
       }
       }
   }

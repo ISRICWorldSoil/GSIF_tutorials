@@ -46,15 +46,9 @@ setMethod("as.geosamples", signature(obj = "SoilProfileCollection"),
     if(is.null(observationid)) { observationid = rep(as.character(NA), ll) } 
     measurementError = attr(site[,names(site)[j]], "measurementError")
     if(is.null(measurementError)) { measurementError = rep(as.character(NA), ll) }
-    x[[j]] <- data.frame(observationid = observationid, sampleid = profile_id(obj), longitude = XYT[,1], latitude = XYT[,2], locationError = locationError, TimeSpan.begin = as.POSIXct(XYT[,3]-dtime/2, origin="1970-01-01"), TimeSpan.end = as.POSIXct(XYT[,3]+dtime/2, origin="1970-01-01"), altitude = rep(0, ll), altitudeMode = rep("relativeToGround", ll), volume = rep(mxd*sample.area, ll), observedValue = site[,names(site)[j]], methodid = rep(names(site)[j], ll), measurementError = measurementError) 
+    x[[j]] <- data.frame(observationid = as.character(observationid), sampleid = profile_id(obj), longitude = XYT[,1], latitude = XYT[,2], locationError = as.numeric(locationError), TimeSpan.begin = as.POSIXct(XYT[,3]-dtime/2, origin="1970-01-01"), TimeSpan.end = as.POSIXct(XYT[,3]+dtime/2, origin="1970-01-01"), altitude = as.numeric(rep(0, ll)), altitudeMode = rep("relativeToGround", ll), volume = rep(mxd*sample.area, ll), observedValue = as.character(site[,names(site)[j]]), methodid = rep(names(site)[j], ll), measurementError = as.numeric(measurementError), stringsAsFactors = FALSE) 
   }
   rx <- do.call(rbind, x)
-  # reformat values:
-  rx$observationid <- as.character(rx$observationid)
-  rx$locationError <- as.numeric(rx$locationError)
-  rx$altitude <- as.numeric(rx$altitude)
-  rx$observedValue <- as.character(rx$observedValue)
-  rx$measurementError <- as.numeric(rx$measurementError)
     
   # convert horizon data to geosamples:
   y <- NULL
@@ -73,18 +67,13 @@ setMethod("as.geosamples", signature(obj = "SoilProfileCollection"),
     if(is.null(observationid)) { observationid = rep(as.character(NA), ll) } 
     measurementError = attr(hors[,names(hors)[j]], "measurementError")
     if(is.null(measurementError)) { measurementError = rep(as.character(NA), ll) }
-    y[[j]] <- data.frame(observationid = observationid, sampleid = XYTh$ID, longitude = XYTh$x, latitude = XYTh$y, locationError = XYTh$locationError, TimeSpan.begin = as.POSIXct(XYTh$time-XYTh$dtime/2, origin="1970-01-01"), TimeSpan.end = as.POSIXct(XYTh$time+XYTh$dtime/2, origin="1970-01-01"), altitude = depths, altitudeMode = rep("relativeToGround", ll), volume = vols, observedValue = hors[,names(hors)[j]], methodid = rep(names(hors)[j], ll), measurementError = measurementError) 
+    y[[j]] <- data.frame(observationid = as.character(observationid), sampleid = XYTh$ID, longitude = XYTh$x, latitude = XYTh$y, locationError = as.numeric(XYTh$locationError), TimeSpan.begin = as.POSIXct(XYTh$time-XYTh$dtime/2, origin="1970-01-01"), TimeSpan.end = as.POSIXct(XYTh$time+XYTh$dtime/2, origin="1970-01-01"), altitude = as.numeric(depths), altitudeMode = rep("relativeToGround", ll), volume = vols, observedValue = as.character(hors[,names(hors)[j]]), methodid = rep(names(hors)[j], ll), measurementError = as.numeric(measurementError), stringsAsFactors = FALSE) 
   }
   ry <- do.call(rbind, y)
-  # reformat values:
-  ry$observationid <- as.character(ry$observationid)
-  ry$locationError <- as.numeric(ry$locationError)
-  ry$altitude <- as.numeric(ry$altitude)
-  ry$observedValue <- as.character(ry$observedValue)
-  ry$measurementError <- as.numeric(ry$measurementError)
   
   # merge the sites and horizons tables:
   tb <- rbind(rx, ry)
+  tb$methodid <- as.factor(tb$methodid)
 
   # check if the metadata comply with the geosamples standard:
   mnames = c("methodid", "description", "units", "detectionLimit")
@@ -104,11 +93,10 @@ setMethod("as.geosamples", signature(obj = "SoilProfileCollection"),
 })
 
 
-
 ## subsetting geosamples:
 subset.geosamples <- function(x, method){
   ret <- x@data[x@data$methodid==method,]
-  if(nrow(ret)){ warning("Empty object. Methodid possibly not available") }
+  if(nrow(ret)==0){ warning("Empty object. Methodid possibly not available") }
   attr(ret$methodid, "description") <- x@methods[x@methods$methodid==method,"description"]
   attr(ret$methodid, "units") <- x@methods[x@methods$methodid==method,"units"]
   attr(ret$methodid, "detectionLimit") <- x@methods[x@methods$methodid==method,"detectionLimit"]

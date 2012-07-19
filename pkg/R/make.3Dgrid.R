@@ -9,14 +9,15 @@
 setMethod("make.3Dgrid", signature(obj = "SpatialPixelsDataFrame"),  function(obj, proj4s = get("ref_CRS", envir = GSIF.opts), pixelsize = get("cellsize", envir = GSIF.opts)[1], resample = "bilinear", NAflag = get("NAflag", envir = GSIF.opts), stdepths = get("stdepths", envir = GSIF.opts), tmp.file = TRUE, show.output.on.console = FALSE, ...){   
   
   # look for FWTools path:  
+  require(plotKML)
+  gdalwarp <- get("gdalwarp", envir = plotKML.opts)
   if(nchar(gdalwarp)==0){
       plotKML.env(silent = FALSE)
       gdalwarp <- get("gdalwarp", envir = plotKML.opts)
   }
   
   if(!nchar(gdalwarp)==0){
-  
-    message(paste("Resampling all layers to", proj4s, "with grid cell size of", pixelsize, "..."))
+    message(paste("Resampling", length(names(obj)), "layers to", proj4s, "with grid cell size of", pixelsize, "..."))
     pb <- txtProgressBar(min=0, max=ncol(obj), style=3)
     for(i in 1:ncol(obj)){
   
@@ -120,6 +121,15 @@ sp3D <- function(obj, proj4s = proj4string(obj), stdepths = get("stdepths", envi
     out[[j]] <- XYD
   }
   
+  return(out)
+}
+
+# make GlobalSoilMap class:
+GlobalSoilMap <- function(obj, varname = as.character("NA")){
+  if(!class(obj)=="list"){
+    stop("Object of class 'list' required")
+  }
+  out = new("GlobalSoilMap", varname = varname, sd1=obj[[1]], sd2=obj[[2]], sd3=obj[[3]], sd4=obj[[4]], sd5=obj[[5]], sd6=obj[[6]])
   return(out)
 }
 

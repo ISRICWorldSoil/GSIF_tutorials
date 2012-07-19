@@ -19,15 +19,13 @@ setClass("gstatModel", representation(regModel = "glm", vgmModel = "data.frame",
 })
 
 ### GSIF soil property maps class:
-setClass("GlobalSoilMap", representation (varname = 'character', sd1 = 'SpatialPixelsDataFrame', sd2 = 'SpatialPixelsDataFrame', sd3 = 'SpatialPixelsDataFrame', sd4 = 'SpatialPixelsDataFrame', sd5 = 'SpatialPixelsDataFrame', sd6 = 'SpatialPixelsDataFrame', model = 'list', validation = 'SpatialPointsDataFrame'), validity <- function(obj) {
+setClass("GlobalSoilMap", representation (varname = 'character', sd1 = 'SpatialPixelsDataFrame', sd2 = 'SpatialPixelsDataFrame', sd3 = 'SpatialPixelsDataFrame', sd4 = 'SpatialPixelsDataFrame', sd5 = 'SpatialPixelsDataFrame', sd6 = 'SpatialPixelsDataFrame'), validity <- function(obj) {
    # Check column names:
    soilvars = read.csv(system.file("soilvars.csv", package="GSIF"))
    if(obj@varname %in% soilvars$varname)
       warning(paste("'property'", obj@property, "not specified in the Soil Reference Library.", "See", system.file("soilvars.csv", package="GSIF"), "for more details."))
    if(ncol(obj@sd1)<2)
-      return("Object in slot 'sd' with at least two realizations required")
-   if(ncol(obj@sd1)<5)
-      warning("Using <5 realizations can result in artifacts")
+      return("Object in slot 'sd' with at least two realizations (or predictions and variances) required")
    # check the projection system:
    require(plotKML)
    if(check_projection(obj@sd1)|check_projection(obj@sd2)|check_projection(obj@sd3)|check_projection(obj@sd4)|check_projection(obj@sd5)|check_projection(obj@sd6)){
@@ -41,10 +39,6 @@ setClass("GlobalSoilMap", representation (varname = 'character', sd1 = 'SpatialP
    # check the bounding boxes:
    if(!(any(obj@sd1@bbox %in% as.list(obj@sd2@bbox, obj@sd3@bbox, obj@sd4@bbox, obj@sd5@bbox, obj@sd6@bbox))))
       return("The bounding box of all 'sd' slots is not standard") 
-   # check if validation slot is complete:
-   ov <- overlay(obj@sd1, obj@validation)
-   if(length(ov)==0)
-      return("'sd1' and 'validation' do not overlap spatially")
 })
 
 
@@ -75,8 +69,6 @@ setClass("geosamples", representation (registry = 'character', methods = 'data.f
       if(obj@data$volume < 0)
        return("'volume' must be positive numbers")
    }
-   if(!(obj@data$dimension == 0|obj@data$dimension == 1|obj@data$dimension == 2|obj@data$dimension == 3))
-      return("'dimension' must be an integer number: 0, 1, 2, or 3")
    # test if it is a longlat object:
    if(any(obj@data$longitude>180|obj@data$longitude< -180|obj@data$latitude< -90|obj@data$latitude> 90))
       return("longitude and latitude values in the range -180 to 180 and -90 to 90 required") 

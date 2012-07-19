@@ -59,52 +59,6 @@ system.time(system("gstat meuse_om_sims.cmd"))
 vgmModel = omm@vgmModel
 class(vgmModel) <- c("variogramModel", "data.frame")
 system.time(om.rk <- krige(log_om~dist, meuse[!is.na(meuse$log_om),], meuse.grid, nmin=20, nmax=40, model=vgmModel, nsim=50))
-## 3D kriging:
-data(eberg)
-# subset data:
-eberg <- eberg[runif(nrow(eberg)) < .3,]
-# sites table:
-s.lst <- c("ID", "soiltype", "TAXGRSC", "X", "Y")
-h.lst <- c("UHDICM","LHDICM","SNDMHT","SLTMHT","CLYMHT")
-sites <- eberg[,s.lst]
-# get horizons table:
-horizons <- getHorizons(eberg, idcol="ID", sel=h.lst)
-# create object of type "SoilProfileCollection"
-eberg.spc <- join(horizons, sites, type='inner')
-depths(eberg.spc) <- ID ~ UHDICM + LHDICM
-site(eberg.spc) <- as.formula(paste("~", paste(s.lst[-1], collapse="+"), sep=""))
-coordinates(eberg.spc) <- ~X+Y
-proj4string(eberg.spc) <- CRS("+init=epsg:31467")
-# convert to logits:
-eberg.spc@horizons$SNDMHT.t <- log((eberg.spc@horizons$SNDMHT/100)/(1-eberg.spc@horizons$SNDMHT/100))
-# convert to geosamples:
-eberg.geo <- as.geosamples(eberg.spc)
-# load gridded data:
-data(eberg_grid)
-gridded(eberg_grid) <- ~x+y
-proj4string(eberg_grid) <- CRS("+init=epsg:31467")
-# derive spc's:
-formulaString <- ~ PRMGEO6+DEMSRT6+TWISRT6+TIRAST6
-eberg_spc <- spc(eberg_grid, formulaString)
-# build a 3D "gstatModel": 
-glm.formulaString = as.formula(paste("observedValue ~ ", paste(names(eberg_spc@predicted), collapse="+"), "+ ns(altitude, df=4)"))
-SNDMHT.m <- fit.gstatModel(observations=eberg.geo, glm.formulaString, covariates=eberg_spc, methodid="SNDMHT.t")
-# prepare new locations and make predictions: 
-new3D <- sp3D(eberg_spc@predicted, stdepths=c(-.05, -.20))
-# make simulations (skip cross-validation):
-system.time(SNDMHT.sd1 <- predict(SNDMHT.m, predictionLocations = new3D[[1]], nfold = 0, nmin=40, nmax=50))
-# same thing via the gstat.exe:
-masks = all.vars(SNDMHT.m@regModel$formula)[-1]
-for(i in masks){ writeGDAL(eberg_spc@predicted[i], paste(i, ".rst", sep=""), drivername="RST", mvFlag="-99999") }
-# altitude does not exist as a map!
-formString = SNDMHT.t ~ PC1+PC2+PC4+PC5+PC6+PC7+PC8+PC9+PC10
-masks = all.vars(formString)[-1]
-write.data(obj=eberg.geo, covariates=eberg_spc@predicted[masks], outfile="eberg.eas", methodid="SNDMHT.t")
-makeGstatCmd(formString, vgmModel=SNDMHT.m@vgmModel, outfile="eberg_SNDMHT_rk.cmd", easfile="eberg.eas", nmin=40, nmax=50, radius=2500, zmap=-.05)
-# compare the processing times:
-system.time(system("gstat eberg_SNDMHT_rk.cmd"))
-## Conclusion: gstat.exe takes more time with smaller maps and can result in artifacts;
-## Note also that we can not pass the "+ ns(altitude, df=4)" model to gstat.exe
 }
 }
 \keyword{methods}
