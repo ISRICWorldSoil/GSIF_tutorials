@@ -17,7 +17,7 @@
 
 <pre>
 make.3Dgrid(obj, proj4string = get("ref_CRS", envir = GSIF.opts), 
-    pixelsize = get("cellsize", envir = GSIF.opts)[1], 
+    pixelsize = get("cellsize", envir = GSIF.opts)[2], 
     resample = "bilinear", NAflag = get("NAflag", envir = GSIF.opts), 
     stdepths = get("stdepths", envir = GSIF.opts), tmp.file = TRUE, 
     show.output.on.console = FALSE, ...)
@@ -34,7 +34,7 @@ make.3Dgrid(obj, proj4string = get("ref_CRS", envir = GSIF.opts),
 </td></tr> 
 <tr valign="top"><td><code>pixelsize</code></td>
 <td>
-<p>grid cell size in decimal degrees (set by default at 0.0008333333 or 100 m around equator)</p>
+<p>grid cell size in decimal degrees (set by default at 1/1200 (0.0008333333 or 100 m around equator)</p>
 </td></tr> 
 <tr valign="top"><td><code>resample</code></td>
 <td>

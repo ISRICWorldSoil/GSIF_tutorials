@@ -6,7 +6,7 @@
 
 
 ## make prediction locations in WGS84 (from point to grid):
-setMethod("make.3Dgrid", signature(obj = "SpatialPixelsDataFrame"),  function(obj, proj4s = get("ref_CRS", envir = GSIF.opts), pixelsize = get("cellsize", envir = GSIF.opts)[1], resample = "bilinear", NAflag = get("NAflag", envir = GSIF.opts), stdepths = get("stdepths", envir = GSIF.opts), tmp.file = TRUE, show.output.on.console = FALSE, ...){   
+setMethod("make.3Dgrid", signature(obj = "SpatialPixelsDataFrame"),  function(obj, proj4s = get("ref_CRS", envir = GSIF.opts), pixelsize = get("cellsize", envir = GSIF.opts)[2], resample = "bilinear", NAflag = get("NAflag", envir = GSIF.opts), stdepths = get("stdepths", envir = GSIF.opts), tmp.file = TRUE, show.output.on.console = FALSE, ...){   
   
   # look for FWTools path:  
   require(plotKML)
@@ -125,11 +125,11 @@ sp3D <- function(obj, proj4s = proj4string(obj), stdepths = get("stdepths", envi
 }
 
 # make GlobalSoilMap class:
-GlobalSoilMap <- function(obj, varname = as.character("NA")){
+GlobalSoilMap <- function(obj, varname, period = c(Sys.Date()-1, Sys.Date())){
   if(!class(obj)=="list"){
     stop("Object of class 'list' required")
   }
-  out = new("GlobalSoilMap", varname = varname, sd1=obj[[1]], sd2=obj[[2]], sd3=obj[[3]], sd4=obj[[4]], sd5=obj[[5]], sd6=obj[[6]])
+  out = new("GlobalSoilMap", varname = varname, TimeSpan.begin = as.POSIXct(period[1]), TimeSpan.end = as.POSIXct(period[2]), sd1=as(obj[[1]], "SpatialPixelsDataFrame"), sd2=as(obj[[2]], "SpatialPixelsDataFrame"), sd3=as(obj[[3]], "SpatialPixelsDataFrame"), sd4=as(obj[[4]], "SpatialPixelsDataFrame"), sd5=as(obj[[5]], "SpatialPixelsDataFrame"), sd6=as(obj[[6]], "SpatialPixelsDataFrame"))
   return(out)
 }
 

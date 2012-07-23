@@ -8,14 +8,14 @@
 \description{Generates a list of objects of type \code{"SpatialPixelsDataFrame"} with \code{longitude}, \code{latitude} and \code{altitude} coordinates (these names are used by default for compatibility with the \code{\link{geosamples-class}}).}
 \usage{
 make.3Dgrid(obj, proj4string = get("ref_CRS", envir = GSIF.opts), 
-    pixelsize = get("cellsize", envir = GSIF.opts)[1], 
+    pixelsize = get("cellsize", envir = GSIF.opts)[2], 
     resample = "bilinear", NAflag = get("NAflag", envir = GSIF.opts), 
     stdepths = get("stdepths", envir = GSIF.opts), tmp.file = TRUE, 
     show.output.on.console = FALSE, ...)
 }
 \arguments{
   \item{obj}{object of class \code{"SpatialPixelsDataFrame"} or \code{"RasterBrick"}} 
-  \item{pixelsize}{grid cell size in decimal degrees (set by default at 0.0008333333 or 100 m around equator)} 
+  \item{pixelsize}{grid cell size in decimal degrees (set by default at 1/1200 (0.0008333333 or 100 m around equator)} 
   \item{resample}{character; resampling method to be passed the reprojection algorithm}
   \item{NAflag}{character; missing value flag}
   \item{stdepths}{numeric; list of standard depths}                                              

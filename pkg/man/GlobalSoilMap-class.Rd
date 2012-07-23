@@ -7,6 +7,8 @@
 \section{Slots}{
   \describe{    
     \item{\code{varname}:}{object of class \code{"character"}; abbreviated variable name registered in the Global Soil Data registry}
+    \item{\code{TimeSpan.begin}:}{object of class \code{"POSIXct"}; begin of the sampling period}
+    \item{\code{TimeSpan.end}:}{object of class \code{"POSIXct"}; end of the sampling period}
     \item{\code{sd1}:}{object of class \code{"SpatialPixelsDataFrame"}; predictions and variances, or number of realizations of the target variable at depth 2.5 cm}
     \item{\code{sd2}:}{object of class \code{"SpatialPixelsDataFrame"}; predictions and variances, or number of realizations of the target variable at depth 10 cm}
     \item{\code{sd3}:}{object of class \code{"SpatialPixelsDataFrame"}; predictions and variances, or number of realizations of the target variable at depth 22.5 cm}
@@ -14,6 +16,13 @@
     \item{\code{sd5}:}{object of class \code{"SpatialPixelsDataFrame"}; predictions and variances, or number of realizations of the target variable at depth 80 cm}
     \item{\code{sd6}:}{object of class \code{"SpatialPixelsDataFrame"}; predictions and variances, or number of realizations of the target variable at depth 150 cm}
   }
+Gridded data that is submitted to \code{sd*} slots of the \code{"GlobalSoilMap"} class must satisfy some minimum requirements (class validity):
+  \itemize{
+   \item All grids submitted must have the same grid topology (\code{grid} slot in the object of class \code{"SpatialPixelsDataFrame"});
+   \item All grids must be projected in the referent coordinate system WGS84 (geographical coordinates), with 3D dimension (altitude) expressed as distance from the land surface in meters (e.g. \code{-.025} for 2.5 cm depth);
+   \item The grid cell size must correspond to some standard resolution e.g. 0.0008333333 (3/3600 or about 100 m), 0.0016666667 (1/600 or about 250 m) or similar;
+   \item Only standard abbreviated names registered in the Global Soil Data registry can be used in the \code{varname} slot; 
+  } 
 }
 \section{Methods}{
   \describe{
@@ -27,7 +36,7 @@
 \dontrun{# load soil samples from the plotKML package: 
 library(plotKML)
 data(eberg)
-# subset data:
+# subset data to 30%:
 eberg <- eberg[runif(nrow(eberg)) < .3,]
 # sites table:
 s.lst <- c("ID", "soiltype", "TAXGRSC", "X", "Y")
@@ -68,9 +77,8 @@ p = get("cellsize", envir = GSIF.opts)[1]
 s = get("stdepths", envir = GSIF.opts)
 sd.ll <- sapply(1:length(sd.l), FUN=function(x){make.3Dgrid(sd.l[[x]]@predicted[3:4], pixelsize=p, stdepths=s[x])})
 # save to a "GlobalSoilMap" object:
-SNDMHT.gsm <- GlobalSoilMap(varname="SNDMHT", sd.ll)
+SNDMHT.gsm <- GlobalSoilMap(varname="SNDMHT", sd.ll, period=c("", ""))
 # visualize all maps in Google Earth:
-library(plotKML)
 data(R_pal)
 z = mean(eberg_grid$DEMSRT6, na.rm=TRUE)
 # export grids:

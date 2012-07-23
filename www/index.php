@@ -63,7 +63,7 @@ echo $contents; } ?>
 </table>
 <p class="style1">Contact: <a href="http://www.wewur.wur.nl/popups/vcard.aspx?id=HENGL001" target="_blank">Tomislav Hengl</a></p>
 
-<p> The <strong>project summary page</strong> you can find <a href="http://<?php echo $domain; ?>/projects/<?php echo $group_name; ?>/"><strong>here</strong></a>. See the complete list of <strong><a href="00Index.html">functions</a></strong> available in this package. GSIF provides access to several case studies. A tutorial to analyze soil property and soil class data with the Ebergotzen data is available <strong>here</strong>. </p>
+<p> The <strong>project summary page</strong> you can find <a href="http://<?php echo $domain; ?>/projects/<?php echo $group_name; ?>/"><strong>here</strong></a>. See the complete list of <strong><a href="00Index.html">functions</a></strong> available in this package. GSIF provides access to several case studies. A tutorial to analyze soil property and soil class data with the Ebergotzen data is available <strong><a href="tutorial_eberg.php">here</a></strong>. </p>
 
 <p><strong>Installation:</strong></p>
 <p>To install this package from R-forge use (works only on<strong> &gt;= R 2.14!</strong>):</p>
@@ -75,7 +75,7 @@ echo $contents; } ?>
 &gt; system(&quot;R CMD INSTALL GSIF_0.2-1.tar.gz&quot;) </p>
 <p><strong>News:</strong></p>
 <ul>
-  <li>July 2012: added functionality for 3D regression-kriging and soil-class mapping; </li>
+  <li>July 2012: added functionality for <a href="tutorial_eberg.php">3D regression-kriging and soil-class mapping</a>; </li>
   <li>Apr 2012: first meeting of the package development team at the <a href="http://www.pedometrics.org/dsm_oz/" target="_blank">DSM conference</a> in Sydney; </li>
   <li>Mar 2012: first version of the package on R-forge; </li>
 </ul>

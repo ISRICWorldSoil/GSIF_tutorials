@@ -19,12 +19,14 @@ setClass("gstatModel", representation(regModel = "glm", vgmModel = "data.frame",
 })
 
 ### GSIF soil property maps class:
-setClass("GlobalSoilMap", representation (varname = 'character', sd1 = 'SpatialPixelsDataFrame', sd2 = 'SpatialPixelsDataFrame', sd3 = 'SpatialPixelsDataFrame', sd4 = 'SpatialPixelsDataFrame', sd5 = 'SpatialPixelsDataFrame', sd6 = 'SpatialPixelsDataFrame'), validity <- function(obj) {
+setClass("GlobalSoilMap", representation (varname = 'character', TimeSpan.begin = 'POSIXct', TimeSpan.end = 'POSIXct', sd1 = 'SpatialPixelsDataFrame', sd2 = 'SpatialPixelsDataFrame', sd3 = 'SpatialPixelsDataFrame', sd4 = 'SpatialPixelsDataFrame', sd5 = 'SpatialPixelsDataFrame', sd6 = 'SpatialPixelsDataFrame'), validity <- function(obj) {
    # Check column names:
    soilvars = read.csv(system.file("soilvars.csv", package="GSIF"))
    if(obj@varname %in% soilvars$varname)
-      warning(paste("'property'", obj@property, "not specified in the Soil Reference Library.", "See", system.file("soilvars.csv", package="GSIF"), "for more details."))
-   if(ncol(obj@sd1)<2)
+      return(paste("'property'", obj@property, "not specified in the Soil Reference Library.", "See", system.file("soilvars.csv", package="GSIF"), "for more details."))
+   if(obj@TimeSpan.begin > obj@TimeSpan.end)
+      return("'TimeSpan.begin' must indicate time before or equal to 'TimeSpan.end'") 
+   if(ncol(obj@sd1)<2|ncol(obj@sd2)<2|ncol(obj@sd3)<2|ncol(obj@sd4)<2|ncol(obj@sd5)<2|ncol(obj@sd6)<2)
       return("Object in slot 'sd' with at least two realizations (or predictions and variances) required")
    # check the projection system:
    require(plotKML)
@@ -174,6 +176,10 @@ if (!isGeneric("write.data")){
   setGeneric("write.data", function(obj, ...){standardGeneric("write.data")})
 }
 
+if (!isGeneric("MaxEnt")){
+  setGeneric("MaxEnt", function(occurrences, covariates, ...){standardGeneric("MaxEnt")})
+}
+
 ################## STANDARD ENVIRONMENTS ##############
 
 ## setup the plotKML environment:
@@ -200,7 +206,7 @@ GSIF.env <- function(
     if(missing(project_url)) { project_url <- "http://gsif.r-forge.r-project.org/" }
     if(missing(stdepths)) { stdepths <- c(-2.5, -7.5, -22.5, -45, -80, -150)/100 }
     if(missing(stsize)) { stsize <- c(5, 10, 15, 30, 40, 100)/100 }
-    if(missing(cellsize)) { cellsize <- rev(c(6/120, 3/120, 1/120, 1/240, 1/600, 3/3600)) }
+    if(missing(cellsize)) { cellsize <- rev(c(6/120, 3/120, 1/120, 1/240, 1/600, 1/1200, 1/3600)) }
  
     assign("wps.server", wps.server, envir=GSIF.opts)
     assign("ref_CRS", ref_CRS, envir=GSIF.opts)

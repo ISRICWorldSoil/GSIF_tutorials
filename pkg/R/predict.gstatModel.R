@@ -85,14 +85,15 @@ setMethod("fit.gstatModel", signature(observations = "SpatialPointsDataFrame", f
   }
   
   index <- overlay(covariates, observations)
+  sel <- !is.na(index)
   # all variables of interest:
   tv = all.vars(formulaString)[1]
   xyn = attr(coordinates(observations), "dimnames")[[2]]
-  sel = names(covariates) %in% all.vars(formulaString)[-1]
-  if(length(sel)==0){
+  seln = names(covariates) %in% all.vars(formulaString)[-1]
+  if(length(seln)==0){
       stop("None of the covariates in the 'formulaString' do not match the names in the'covariates' object")
   }
-  x <- cbind(data.frame(observations[,tv]), covariates[index,])
+  x <- cbind(data.frame(observations[sel,tv]), covariates[index[sel],])
   # fit the regression model:
   rgm <- glm(formulaString, data=x, family=family, ...)
   if(stepwise == TRUE){

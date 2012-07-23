@@ -10,7 +10,7 @@
 
 <h3>Description</h3>
 
-<p>Tries to automatically fit a 2D or 3D regression-kriging model for a given set of points (object of type <code>"SpatialPointsDataFrame"</code> or <code>"geosamples"</code>) and covariates (object of type <code>"SpatialPixelsDataFrame"</code>). It first runs GLM following the <code>formulaString</code>, then fits variogram for residuals usign the <code>fit.variogram</code> method from the package gstat. Creates an output object of class <code><a href="gstatModel-class.html">gstatModel-class</a></code>.</p>
+<p>Tries to automatically fit a 2D or 3D regression-kriging model for a given set of points (object of type <code>"SpatialPointsDataFrame"</code> or <code>"geosamples"</code>) and covariates (object of type <code>"SpatialPixelsDataFrame"</code>). It first fits a Generalized Linear Model (GLM) following the <code>formulaString</code>, then fits variogram for residuals usign the <code>fit.variogram</code> method from the <a href="http://www.gstat.org">gstat</a> package. Creates an output object of class <code><a href="gstatModel-class.html">gstatModel-class</a></code>.</p>
 
 
 <h3>Usage</h3>

@@ -6,7 +6,7 @@
 \alias{fit.gstatModel,SpatialPointsDataFrame,formula,SpatialPixelsDataFrame-method}
 \alias{fit.gstatModel,geosamples,formula,SpatialPixelsDataFrame-method}
 \title{Methods to fit a regression-kriging model}
-\description{Tries to automatically fit a 2D or 3D regression-kriging model for a given set of points (object of type \code{"SpatialPointsDataFrame"} or \code{"geosamples"}) and covariates (object of type \code{"SpatialPixelsDataFrame"}). It first runs GLM following the \code{formulaString}, then fits variogram for residuals usign the \code{fit.variogram} method from the package gstat. Creates an output object of class \code{\link{gstatModel-class}}.}
+\description{Tries to automatically fit a 2D or 3D regression-kriging model for a given set of points (object of type \code{"SpatialPointsDataFrame"} or \code{"geosamples"}) and covariates (object of type \code{"SpatialPixelsDataFrame"}). It first fits a Generalized Linear Model (GLM) following the \code{formulaString}, then fits variogram for residuals usign the \code{fit.variogram} method from the \href{http://www.gstat.org}{gstat} package. Creates an output object of class \code{\link{gstatModel-class}}.}
 \usage{ fit.gstatModel(observations, formulaString, covariates, \dots )
 }
 \arguments{

@@ -113,6 +113,7 @@ text(eberg@coords, paste(eberg$soiltype), cex=.6, col="black")
 # classes predicted:
 eberg_sm@predicted$soiltype &lt;- as.factor(eberg_sm@predicted$soiltype)
 Ls = length(levels(eberg_sm@predicted$soiltype))
+pnts = list("sp.points", eberg, pch="+", cex=.6, col="black")
 spplot(eberg_sm@predicted, col.regions=rainbow(Ls)[rank(runif(Ls))], sp.layout=pnts)
 spplot(eberg_sm@mu[2], at=pal, col.regions=rev(heat.colors(50)), sp.layout=pnts)
 
