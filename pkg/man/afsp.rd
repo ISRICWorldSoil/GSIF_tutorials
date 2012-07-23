@@ -1,5 +1,6 @@
 \name{afsp}
 \docType{data}
+\encoding{latin1}
 \alias{afsp}
 \alias{mw.grids}
 \title{Africa Soil Profiles Database}
@@ -54,7 +55,7 @@ The \code{mw.grids} data frame contains a list of soil covariates prepared for M
 \author{The Africa Soil Profiles Database have been prepared by Johan Leenaars <johan.leenaars@wur.nl>. This is a subset of the original database that can be downloaded via \href{http://www.isric.org/sites/default/files/private/datasets/AfSP01Qry_ISRIC.zip}{www.isric.org}. The processing steps used to prepare this data are described in \href{http://gsif.r-forge.r-project.org/rw_AFSP.R}{this script}.}
 \references{
 \itemize{
-\item Leenaars, J.G.B. (2012) \href{http://www.isric.org/content/publications}{Africa Soil Profiles Database, Version 1.0. A compilation of geo-referenced and standardized legacy soil profile data for Sub Saharan Africa (with dataset)}. ISRIC report 2012/03. Africa Soil Information Service (AfSIS) project and ISRIC – World Soil Information, Wageningen, the Netherlands.
+\item Leenaars, J.G.B. (2012) \href{http://www.isric.org/content/publications}{Africa Soil Profiles Database, Version 1.0. A compilation of geo-referenced and standardized legacy soil profile data for Sub Saharan Africa (with dataset)}. ISRIC report 2012/03. Africa Soil Information Service (AfSIS) project and ISRIC --- World Soil Information, Wageningen, the Netherlands.
 \item Ministry of Agriculture Malawi / FAO, (1992) Soils map of Malawi. Land Resources Evaluation Project /MLW/85/011. Land Resources Conservation Board, Lilongwe.
 \item Africa Soil Information Service (\url{http://africasoils.net}) 
 }

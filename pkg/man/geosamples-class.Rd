@@ -1,12 +1,14 @@
 \name{geosamples-class}
 \docType{class}
 \alias{geosamples-class}
-\alias{geosamples,subset-method}
-\alias{geosamples,show-method}
-\alias{geosamples,overlay-method}
-\alias{geosamples,write.data-method}
+\alias{subset,geosamples-method}
+\alias{show,geosamples-method}
+\alias{overlay,geosamples-method}
 \alias{write.data}
+\alias{write.data,geosamples-method}
 \alias{write.data.geosamples}
+\alias{write.data,SpatialPointsDataFrame-method}
+\alias{write.data.SpatialPoints}
 \title{A class for spatially and temporally referenced samples}
 \description{A class for spatially and temporally referenced samples with fixed column names (standardized geosamples). Corresponds to the point \code{"Placemark"} in the KML schema.}
 \section{Slots}{

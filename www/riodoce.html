@@ -136,10 +136,9 @@
 <h3>Examples</h3>
 
 <pre>
-## Not run: 
 library(aqp)
 data(riodoce)
-# Promote to SoilProfileCollection
+## Not run: # Promote to SoilProfileCollection
 riodoce &lt;- join(riodoce$horizons, riodoce$sites, type='inner')
 # specify point IDs and depths:
 depths(riodoce) &lt;- SOURCEID ~ UHDICM + LHDICM

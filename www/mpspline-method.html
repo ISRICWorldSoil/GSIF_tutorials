@@ -16,8 +16,7 @@
 <h3>Usage</h3>
 
 <pre>
-mpspline(obj, var.name, mxd = 200, lam = 0.1, d = t(c(0,5,15,30,60,100,200)), 
-          vlow = 0, vhigh = 1000)
+mpspline(obj, ...)
 </pre>
 
 
@@ -29,34 +28,37 @@ mpspline(obj, var.name, mxd = 200, lam = 0.1, d = t(c(0,5,15,30,60,100,200)),
 <td>
 <p>object of class <code>"SoilProfileCollection"</code></p>
 </td></tr> 
-<tr valign="top"><td><code>var.name</code></td>
+<tr valign="top"><td><code>...</code></td>
 <td>
-<p>character; target variable name (must be a numeric variable)</p>
-</td></tr>
-<tr valign="top"><td><code>mxd</code></td>
-<td>
-<p>numeric; maximum depth to which spline should be fitted</p>
-</td></tr>        
-<tr valign="top"><td><code>lam</code></td>
-<td>
-<p>numeric; lambda the smoothing parameter</p>
-</td></tr>
-<tr valign="top"><td><code>d</code></td>
-<td>
-<p>numeric; standard depths</p>
-</td></tr>
-<tr valign="top"><td><code>vlow</code></td>
-<td>
-<p>numeric; smallest value of the target variable (smaller values will be replaced)</p>
-</td></tr> 
-<tr valign="top"><td><code>vhigh</code></td>
-<td>
-<p>numeric; highest value of the target variable (larger values will be replaced)</p>
+<p>optional arguments</p>
 </td></tr>
 </table>
 
 
 <h3>Details</h3>
+
+
+<p>Optional arguments include:
+</p>
+
+<dl>
+<dt>var.name</dt><dd><p>character; target variable name (must be a numeric variable)</p>
+</dd>
+<dt>mxd</dt><dd><p>numeric; maximum depth to which spline should be fitted</p>
+</dd>        
+<dt>lam</dt><dd><p>numeric; lambda the smoothing parameter</p>
+</dd>
+<dt>d</dt><dd><p>numeric; standard depths</p>
+</dd>
+<dt>vlow</dt><dd><p>numeric; smallest value of the target variable (smaller values will be replaced)</p>
+</dd> 
+<dt>vhigh</dt><dd><p>numeric; highest value of the target variable (larger values will be replaced)</p>
+</dd>
+</dl>
+
+
+
+<h3>Value</h3>
 
 <p>Returns a list with four elements:
 </p>
@@ -74,7 +76,8 @@ mpspline(obj, var.name, mxd = 200, lam = 0.1, d = t(c(0,5,15,30,60,100,200)),
 </dd>   
 </dl>
 
-<p>All detphs are commonly expressed in centimeters. The returned values refer to point support and can be used to construct a <code>"SpatialPointsDataFrame"</code> (3-dimensional).</p>
+<p>All detphs are commonly expressed in centimeters. The returned values refer to point support and can be used to construct a <code>"SpatialPointsDataFrame"</code> (3-dimensional).
+</p>
 
 
 <h3>Note</h3>
@@ -122,9 +125,11 @@ depths(prof1) &lt;- id ~ top + bottom
 site(prof1) &lt;- ~ lon + lat + FAO1988 
 coordinates(prof1) &lt;- ~ lon + lat
 proj4string(prof1) &lt;- CRS("+proj=longlat +datum=WGS84")
-# fit a spline:
-ORCDRC.s &lt;- mpspline(prof1, "ORCDRC")
+## Not run: # fit a spline:
+ORCDRC.s &lt;- mpspline(prof1, var.name="ORCDRC")
 ORCDRC.s
+
+## End(Not run)
 </pre>
 
 <hr><div align="center">[Package <em>GSIF</em> version 0.2-1 <a href="00Index.html">Index</a>]</div>

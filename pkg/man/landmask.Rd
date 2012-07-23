@@ -20,7 +20,7 @@ Data frame with the following columns:
 \references{
 \itemize{
 \item Wessel, P., Smith, W.H.F., (1996) \href{http://dx.doi.org/10.1029/96JB00104}{A Global Self-consistent, Hierarchical, High-resolution Shoreline Database}. Journal of Geophysical Research, 101, 8741-8743.
-\item Savtchenko, A., D. Ouzounov, S. Ahmad, J. Acker, G. Leptoukh, J. Koziana, and D. Nickless, (2004) \href{http://dx.doi.org/10.1016/j.asr.2004.03.012}{Terra and Aqua MODIS products available from NASA GES DAAC}. Advances in Space Research 34(4), 710–714.
+\item Savtchenko, A., D. Ouzounov, S. Ahmad, J. Acker, G. Leptoukh, J. Koziana, and D. Nickless, (2004) \href{http://dx.doi.org/10.1016/j.asr.2004.03.012}{Terra and Aqua MODIS products available from NASA GES DAAC}. Advances in Space Research 34(4), 710-714.
 \item Global Self-consistent, Hierarchical, High-resolution Shoreline Database (\url{http://en.wikipedia.org/wiki/GSHHS})
 }
 }

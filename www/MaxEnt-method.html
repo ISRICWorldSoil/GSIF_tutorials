@@ -1,23 +1,22 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><head><title>R: Maximum Entropy</title>
+<html><head><title>R: Prediction and cross-validation Maximum Entropy</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <link rel="stylesheet" type="text/css" href="R.css">
 </head><body>
 
 <table width="100%" summary="page for MaxEnt {GSIF}"><tr><td>MaxEnt {GSIF}</td><td align="right">R Documentation</td></tr></table>
 
-<h2>Maximum Entropy </h2>
+<h2>Prediction and cross-validation Maximum Entropy</h2>
 
 <h3>Description</h3>
 
-<p>Runs <a href="http://www.cs.princeton.edu/~schapire/maxent/">MaxEnt</a> algorithm on a set of observations (<code>"ppp"</code> class) and environmental covariates (of class <code>"SpatialPixelsDataFrame"</code>) and returns predicted probability of occurrence and cross-validation of models with presence/absence data.</p>
+<p>Runs <a href="http://www.cs.princeton.edu/~schapire/maxent/">MaxEnt</a> algorithm on a set of observations (<code>"ppp"</code> class from the <a href="http://www.spatstat.org">spatstat</a> package) and environmental covariates (of class <code>"SpatialPixelsDataFrame"</code>) and returns predicted probability of occurrence and cross-validation of models with presence/absence data.</p>
 
 
 <h3>Usage</h3>
 
 <pre>
-MaxEnt(occurrences, covariates, nfold = 5, Npoints = 1000, 
-      sciname = as.character(NA), period = c(Sys.Date()-1, Sys.Date()),  ...)
+MaxEnt(occurrences, covariates, ...)
 </pre>
 
 
@@ -33,33 +32,41 @@ MaxEnt(occurrences, covariates, nfold = 5, Npoints = 1000,
 <td>
 <p>object of type <code>"SpatialPixelsData"</code>; list of covariate layers</p>
 </td></tr>
-<tr valign="top"><td><code>Npoints</code></td>
-<td>
-<p>object of type <code>"integer"</code>; number of points used for cross-validation of the model (see <code>dismo::randomPoints</code>)</p>
-</td></tr>
-<tr valign="top"><td><code>sciname</code></td>
-<td>
-<p>object of type <code>"character"</code>; usually species latin name (it can also be a surveyor's team name or a sampling design)</p>
-</td></tr>
-<tr valign="top"><td><code>period</code></td>
-<td>
-<p>object of type <code>"Date"</code>; sampling period</p>
-</td></tr>
 <tr valign="top"><td><code>...</code></td>
 <td>
-<p>additional arguments that can be passed to <code>dismo::predict</code></p>
+<p>optional arguments</p>
 </td></tr>
 </table>
 
 
+<h3>Details</h3>
+
+<p>Optional arguments include:
+</p>
+
+<dl>
+<dt>nfold</dt><dd><p>object of type <code>"integer"</code>; number of folds used for cross-validation (see <code>dismo::randomPoints</code>)</p>
+</dd>
+<dt>Npoints</dt><dd><p>object of type <code>"integer"</code>; number of points used for cross-validation (see <code>dismo::randomPoints</code>)</p>
+</dd>
+<dt>sciname</dt><dd><p>object of type <code>"character"</code>; usually species latin name (it can also be a surveyor's team name or a sampling design)</p>
+</dd>
+<dt>period</dt><dd><p>object of type <code>"Date"</code>; sampling period</p>
+</dd>
+<dt>...</dt><dd><p>additional arguments that can be passed to <code>dismo::predict</code></p>
+</dd>
+</dl>
+
+
+
 <h3>Value</h3>
 
-<p>Returns an object of type <code>"SpatialMaxEntOutput"</code> with following slots: <code>sciname</code> (usually latin &quot;genus&quot; and &quot;species&quot; name), <code>occurrences</code> (occurrence-only records), <code>TimeSpan.begin</code> (begin of sampling), <code>TimeSpan.end</code> (end of sampling), <code>maxent</code> (object of class <code>"MaxEnt"</code> produced as an output of the <code>dismo::maxent</code> function), <code>sp.domain</code> (assumed spatial domain), and <code>predicted</code> (results of prediction produced using the MaxEnt software).</p>
+<p>Returns an object of type <code>"SpatialMaxEntOutput"</code> with the following slots: <code>sciname</code> (usually latin &quot;genus&quot; and &quot;species&quot; name), <code>occurrences</code> (occurrence-only records), <code>TimeSpan.begin</code> (begin of sampling), <code>TimeSpan.end</code> (end of sampling), <code>maxent</code> (object of class <code>"MaxEnt"</code> produced as an output of the <code>dismo::maxent</code> function), <code>sp.domain</code> (assumed spatial domain), and <code>predicted</code> (results of prediction produced using the MaxEnt software).</p>
 
 
 <h3>Note</h3>
 
-<p>MaxEnt is one of the standard tools used in ecology for Niche analysis and species distribution modelling. What makes it especially robust is the fact that it can take both continuous and factor data as inputs, and has no requirements considering the distribution of covariates (<a href="http://dx.doi.org/10.1016/j.ecolmodel.2005.03.026">Phillips et al., 2006</a>). In the example below, I use MaxEnt to analyze sampling bias (mis-representation) in feature space for a given soil sampling design. For more information on how to install MaxEnt and use it in R, see dismo package documentation.</p>
+<p>MaxEnt is one of the standard tools used in ecology for Niche analysis and species distribution modelling. What makes it especially robust is the fact that it can take both continuous and factor data as inputs, and has no requirements considering the distribution of covariates (<a href="http://dx.doi.org/10.1016/j.ecolmodel.2005.03.026">Phillips et al., 2006</a>). In the example below, I use MaxEnt to analyze sampling bias (i.e. mis-representation of feature space, or sampling preference) for a given soil sampling design. For more information on how to install MaxEnt and use it in R, see <a href="http://CRAN.R-project.org/package=dismo">dismo</a> package documentation.</p>
 
 
 <h3>Author(s)</h3>

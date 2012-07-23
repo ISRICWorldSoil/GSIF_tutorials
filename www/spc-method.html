@@ -1,22 +1,22 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><head><title>R: Derive Soil Predictive Components</title>
+<html><head><title>R: Derive Spatial Predictive Components</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <link rel="stylesheet" type="text/css" href="R.css">
 </head><body>
 
 <table width="100%" summary="page for spc {GSIF}"><tr><td>spc {GSIF}</td><td align="right">R Documentation</td></tr></table>
 
-<h2>Derive Soil Predictive Components</h2>
+<h2>Derive Spatial Predictive Components</h2>
 
 <h3>Description</h3>
 
-<p>Derives Soil Predictive Components for a given set of covariates. It wraps the <code>stats::prcomp</code> method and predicts a list principal components for an object of type <code>"SpatialPixelsDataFrame"</code>.</p>
+<p>Derives Spatial Predictive Components for a given set of covariates. It wraps the <code>stats::prcomp</code> method and predicts a list principal components for an object of type <code>"SpatialPixelsDataFrame"</code>.</p>
 
 
 <h3>Usage</h3>
 
 <pre>
-spc(obj, formulaString, scale. = TRUE, silent = FALSE, ...)
+spc(obj, formulaString, ...)
 </pre>
 
 
@@ -32,14 +32,6 @@ spc(obj, formulaString, scale. = TRUE, silent = FALSE, ...)
 <td>
 <p>object of class <code>"formula"</code></p>
 </td></tr>
-<tr valign="top"><td><code>scale.</code></td>
-<td>
-<p>object of class <code>"logical"</code>; specifies whether covariates need to be scaled</p>
-</td></tr>
-<tr valign="top"><td><code>silent</code></td>
-<td>
-<p>object of class <code>"logical"</code>; specifies whether to print the progress</p>
-</td></tr>
 <tr valign="top"><td><code>...</code></td>
 <td>
 <p>additional arguments that can be passed to <code>stats::prcomp</code></p>
@@ -49,13 +41,21 @@ spc(obj, formulaString, scale. = TRUE, silent = FALSE, ...)
 
 <h3>Details</h3>
 
-<p>The output of <code>spc</code> is a list of grids with generic names <code>PC1</code>,...,<code>PCp</code>, where <code>p</code> is the total number of input grids.</p>
+<p>Optional arguments include:
+</p>
+
+<dl>
+<dt>scale.</dt><dd><p>object of class <code>"logical"</code>; specifies whether covariates need to be scaled</p>
+</dd>
+<dt>silent</dt><dd><p>object of class <code>"logical"</code>; specifies whether to print the progress</p>
+</dd>
+</dl>
+
 
 
 <h3>Value</h3>
 
-
-<p><code>spc</code> returns an object of type <code>"SpatialComponents"</code>.
+<p><code>spc</code> returns an object of type <code>"SpatialComponents"</code>. This is a list of grids with generic names <code>PC1</code>,...,<code>PCp</code>, where <code>p</code> is the total number of input grids.
 </p>
 
 

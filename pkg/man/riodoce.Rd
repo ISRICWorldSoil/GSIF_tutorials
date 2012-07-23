@@ -59,10 +59,9 @@ The \code{riodoce.grids} data frame contains a list of soil covariates prepared 
 }
 }
 \examples{
-\dontrun{
 library(aqp)
 data(riodoce)
-# Promote to SoilProfileCollection
+\dontrun{# Promote to SoilProfileCollection
 riodoce <- join(riodoce$horizons, riodoce$sites, type='inner')
 # specify point IDs and depths:
 depths(riodoce) <- SOURCEID ~ UHDICM + LHDICM

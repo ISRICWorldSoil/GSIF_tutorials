@@ -5,11 +5,15 @@
 \title{Fits a mass preserving spline}
 \description{Fits a mass preserving spline to a soil profile data. Target variable needs to be a numeric vector measured at least 3 horizons. It is assumed that soil variables collected per horizon refer to block support i.e. they represent composite values for the whole horizon.}
 \usage{
-mpspline(obj, var.name, mxd = 200, lam = 0.1, d = t(c(0,5,15,30,60,100,200)), 
-          vlow = 0, vhigh = 1000)
+mpspline(obj, ...)
 }
 \arguments{
   \item{obj}{object of class \code{"SoilProfileCollection"}} 
+  \item{\dots}{optional arguments}
+}
+\details{
+Optional arguments include:
+\describe{
   \item{var.name}{character; target variable name (must be a numeric variable)}
   \item{mxd}{numeric; maximum depth to which spline should be fitted}        
   \item{lam}{numeric; lambda the smoothing parameter}
@@ -17,15 +21,17 @@ mpspline(obj, var.name, mxd = 200, lam = 0.1, d = t(c(0,5,15,30,60,100,200)),
   \item{vlow}{numeric; smallest value of the target variable (smaller values will be replaced)} 
   \item{vhigh}{numeric; highest value of the target variable (larger values will be replaced)}
 }
-\details{Returns a list with four elements:
+}
+\value{Returns a list with four elements:
   \describe{
    \item{\code{idcol}}{site ID column}
    \item{\code{depth}}{matrix; are observed depths of horizon boundaries}
    \item{\code{var.fitted}}{matrix; are are spline-estimated values of the target variable at observed depths}
    \item{\code{var.std}}{matrix; are spline-estimated values of the target variable at standard depths} 
    \item{\code{var.1cm}}{matrix; are spline-estimated values of the target variable using the 1 cm increments}   
-  }
-All detphs are commonly expressed in centimeters. The returned values refer to point support and can be used to construct a \code{"SpatialPointsDataFrame"} (3-dimensional).}
+}
+All detphs are commonly expressed in centimeters. The returned values refer to point support and can be used to construct a \code{"SpatialPointsDataFrame"} (3-dimensional).
+}
 \note{This operation can be time-consuming for large data sets.}
 \author{ Brendan Malone and Tomislav Hengl }
 \references{
@@ -49,8 +55,9 @@ depths(prof1) <- id ~ top + bottom
 site(prof1) <- ~ lon + lat + FAO1988 
 coordinates(prof1) <- ~ lon + lat
 proj4string(prof1) <- CRS("+proj=longlat +datum=WGS84")
-# fit a spline:
-ORCDRC.s <- mpspline(prof1, "ORCDRC")
+\dontrun{# fit a spline:
+ORCDRC.s <- mpspline(prof1, var.name="ORCDRC")
 ORCDRC.s
+}
 }
 \keyword{methods}

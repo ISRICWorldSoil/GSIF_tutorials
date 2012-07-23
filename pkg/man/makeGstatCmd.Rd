@@ -1,5 +1,6 @@
 \name{makeGstatCmd}
 \alias{makeGstatCmd}
+\encoding{latin1}
 \title{Make a gstat command script}
 \description{Generates a command script based on the regression model and variogram. This can then be used to run predictions/simulations by using the pre-compiled binary \code{gstat.exe}.}
 \usage{

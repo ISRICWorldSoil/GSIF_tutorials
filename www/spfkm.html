@@ -16,7 +16,7 @@
 <h3>Usage</h3>
 
 <pre>
-spfkm(formulaString, observations, covariates, class.c  = NULL, class.sd = NULL, fuzzy.e = 1.2)
+spfkm(formulaString, observations, covariates, ...)
 </pre>
 
 
@@ -36,19 +36,27 @@ spfkm(formulaString, observations, covariates, class.c  = NULL, class.sd = NULL,
 <td>
 <p>object of type <code>"SpatialPixelsData"</code> or <code>"RasterBrick"</code>; list of covariate layers</p>
 </td></tr>
-<tr valign="top"><td><code>class.c</code></td>
+<tr valign="top"><td><code>...</code></td>
 <td>
-<p>object of type <code>"matrix"</code>; class centres (see examples below)</p>
-</td></tr>
-<tr valign="top"><td><code>class.sd</code></td>
-<td>
-<p>object of type <code>"matrix"</code>; class deviations (see examples below)</p>
-</td></tr>
-<tr valign="top"><td><code>fuzzy.e</code></td>
-<td>
-<p>object of type <code>"numeric"</code>; fuzzy exponent</p>
+<p>optional arguments</p>
 </td></tr>
 </table>
+
+
+<h3>Details</h3>
+
+<p>Optional arguments include:
+</p>
+
+<dl>
+<dt>class.c</dt><dd><p>object of type <code>"matrix"</code>; class centres (see examples below)</p>
+</dd>
+<dt>class.sd</dt><dd><p>object of type <code>"matrix"</code>; class deviations (see examples below)</p>
+</dd>
+<dt>fuzzy.e</dt><dd><p>object of type <code>"numeric"</code>; fuzzy exponent</p>
+</dd>
+</dl>
+
 
 
 <h3>Value</h3>

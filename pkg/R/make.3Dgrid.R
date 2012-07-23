@@ -6,7 +6,7 @@
 
 
 ## make prediction locations in WGS84 (from point to grid):
-setMethod("make.3Dgrid", signature(obj = "SpatialPixelsDataFrame"),  function(obj, proj4s = get("ref_CRS", envir = GSIF.opts), pixelsize = get("cellsize", envir = GSIF.opts)[2], resample = "bilinear", NAflag = get("NAflag", envir = GSIF.opts), stdepths = get("stdepths", envir = GSIF.opts), tmp.file = TRUE, show.output.on.console = FALSE, ...){   
+setMethod("make.3Dgrid", signature(obj = "SpatialPixelsDataFrame"),  function(obj, proj4s = get("ref_CRS", envir = GSIF.opts), pixsize = get("cellsize", envir = GSIF.opts)[2], resample = "bilinear", NAflag = get("NAflag", envir = GSIF.opts), stdepths = get("stdepths", envir = GSIF.opts), tmp.file = TRUE, show.output.on.console = FALSE, ...){   
   
   # look for FWTools path:  
   require(plotKML)
@@ -17,7 +17,7 @@ setMethod("make.3Dgrid", signature(obj = "SpatialPixelsDataFrame"),  function(ob
   }
   
   if(!nchar(gdalwarp)==0){
-    message(paste("Resampling", length(names(obj)), "layers to", proj4s, "with grid cell size of", pixelsize, "..."))
+    message(paste("Resampling", length(names(obj)), "layers to", proj4s, "with grid cell size of", pixsize, "..."))
     pb <- txtProgressBar(min=0, max=ncol(obj), style=3)
     for(i in 1:ncol(obj)){
   
@@ -40,10 +40,10 @@ setMethod("make.3Dgrid", signature(obj = "SpatialPixelsDataFrame"),  function(ob
         
         # resample to WGS84 system:
         if(is.factor(obj@data[,i])){
-          system(paste(gdalwarp, ' ', tf, '.tif', ' -t_srs \"', proj4s, '\" ', tf, '_ll.tif -dstnodata \"', NAflag, '\" -r near', ' -tr ', pixelsize, ' ', pixelsize, sep=""), show.output.on.console = show.output.on.console)
+          system(paste(gdalwarp, ' ', tf, '.tif', ' -t_srs \"', proj4s, '\" ', tf, '_ll.tif -dstnodata \"', NAflag, '\" -r near', ' -tr ', pixsize, ' ', pixsize, sep=""), show.output.on.console = show.output.on.console)
         }
         else {
-          system(paste(gdalwarp, ' ', tf, '.tif', ' -t_srs \"', proj4s, '\" ', tf, '_ll.tif -dstnodata \"', NAflag, '\" -r ', resample, ' -tr ', pixelsize, ' ', pixelsize, sep=""), show.output.on.console = show.output.on.console)
+          system(paste(gdalwarp, ' ', tf, '.tif', ' -t_srs \"', proj4s, '\" ', tf, '_ll.tif -dstnodata \"', NAflag, '\" -r ', resample, ' -tr ', pixsize, ' ', pixsize, sep=""), show.output.on.console = show.output.on.console)
         }
         # read images back to R:
         if(i==1){
@@ -72,7 +72,7 @@ setMethod("make.3Dgrid", signature(obj = "SpatialPixelsDataFrame"),  function(ob
 
 
 ## make prediction locations in WGS84 (from point to grid):
-setMethod("make.3Dgrid", signature(obj = "RasterBrick"),  function(obj, proj4s = get("ref_CRS", envir = GSIF.opts), pixelsize = get("cellsize", envir = GSIF.opts)[1], resample = "bilinear", NAflag = get("NAflag", envir = GSIF.opts), stdepths = get("stdepths", envir = GSIF.opts), tmp.file = TRUE, show.output.on.console = FALSE, ...){
+setMethod("make.3Dgrid", signature(obj = "RasterBrick"),  function(obj, proj4s = get("ref_CRS", envir = GSIF.opts), pixsize = get("cellsize", envir = GSIF.opts)[1], resample = "bilinear", NAflag = get("NAflag", envir = GSIF.opts), stdepths = get("stdepths", envir = GSIF.opts), tmp.file = TRUE, show.output.on.console = FALSE, ...){
     
     library(plotKML)
     # for each layer layers:

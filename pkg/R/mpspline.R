@@ -6,13 +6,13 @@
 
 
 # Spline fitting for horizon data (created by Brandon Malone; adjusted by T. Hengl)
-setMethod("mpspline", signature(obj = "SoilProfileCollection"), 
-  function(obj, var.name, mxd = 200, lam = 0.1, d = t(c(0,5,15,30,60,100,200)), vlow = 0, vhigh = 1000)
-  {
+setMethod('mpspline', signature(obj = "SoilProfileCollection"), 
+  function(obj, var.name, mxd = 200, lam = 0.1, d = t(c(0,5,15,30,60,100,200)), vlow = 0, vhigh = 1000){
 
   depthcols = obj@depthcols
   idcol = obj@idcol
-  objd <- as.data.frame.SoilProfileCollection(obj)
+  # convert to a data frame:
+  objd <- as.data.frame(x=obj)
   # organize the data:
   ndata <- nrow(objd)
   # Matrix in which the averaged values of the spline are fitted. The depths are specified in the (d) object:
@@ -257,6 +257,7 @@ setMethod("mpspline", signature(obj = "SoilProfileCollection"),
   
   return(retval)
   }
+  
 })
 
 # end of script;

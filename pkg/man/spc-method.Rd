@@ -2,22 +2,24 @@
 \docType{methods}
 \alias{spc}
 \alias{spc,SpatialPixelsDataFrame,formula-method}
-\title{Derive Soil Predictive Components}
-\description{Derives Soil Predictive Components for a given set of covariates. It wraps the \code{stats::prcomp} method and predicts a list principal components for an object of type \code{"SpatialPixelsDataFrame"}.}
+\title{Derive Spatial Predictive Components}
+\description{Derives Spatial Predictive Components for a given set of covariates. It wraps the \code{stats::prcomp} method and predicts a list principal components for an object of type \code{"SpatialPixelsDataFrame"}.}
 \usage{
-spc(obj, formulaString, scale. = TRUE, silent = FALSE, ...)
+spc(obj, formulaString, ...)
 }
 \arguments{
   \item{obj}{object of class \code{"SpatialPixelsDataFrame"}; must contain at least two grids}
   \item{formulaString}{object of class \code{"formula"}}
-  \item{scale.}{object of class \code{"logical"}; specifies whether covariates need to be scaled}
-  \item{silent}{object of class \code{"logical"}; specifies whether to print the progress}
   \item{\dots}{additional arguments that can be passed to \code{stats::prcomp}} 
 }
-\value{
-\code{spc} returns an object of type \code{"SpatialComponents"}.
+\details{Optional arguments include:
+\describe{
+  \item{scale.}{object of class \code{"logical"}; specifies whether covariates need to be scaled}
+  \item{silent}{object of class \code{"logical"}; specifies whether to print the progress}
 }
-\details{The output of \code{spc} is a list of grids with generic names \code{PC1},\dots,\code{PCp}, where \code{p} is the total number of input grids.}
+}
+\value{\code{spc} returns an object of type \code{"SpatialComponents"}. This is a list of grids with generic names \code{PC1},\dots,\code{PCp}, where \code{p} is the total number of input grids.
+}
 \note{This method assumes that the input covariates are cross-correlated and hence their overlap can be reduced. The input variables are scaled by default and the missing values will be replaced with 0 values to reduce loss of data due to missing pixels. This operation can be time consuming for large grids.}
 \author{ Tomislav Hengl }
 \seealso{ \code{stats::prcomp}, \code{\link{SpatialComponents-class}}

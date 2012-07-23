@@ -244,7 +244,7 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
           # cross-validation using GLM:
           if(nfold>0){
             require(boot)
-            cv.err <- boot::glm.diag(object@regModel)
+            cv.err <- glm.diag(object@regModel)
             # cv.err <- boot::cv.glm(data=object@regModel$data, glmfit=object@regModel, K=nfold) 
             # TH: This one fails for unknow reason? 
             cv <- observed[variable]
@@ -295,6 +295,7 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
   }
    
   # save the output file:
+  require(plotKML)
   if(nsim == 0){
     rkp <- new("SpatialPredictions", variable = variable, observed = observed, glm = sum.glm, vgmModel = object@vgmModel, predicted = rk, validation = cv)
   } 

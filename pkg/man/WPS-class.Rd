@@ -1,11 +1,13 @@
 \name{WPS-class}
 \docType{class}
 \alias{WPS-class}
-\alias{WPS,SpatialPoints,overlay-method}
-\alias{WPS,describe-method}
-\alias{WPS,getProcess-method}
-\alias{WPS,show-method}
-\alias{WPS,subset-method}
+\alias{overlay,WPS,SpatialPoints-method}
+\alias{describe,WPS-method}
+\alias{getProcess,WPS-method}
+\alias{getProcess}
+\alias{describe}
+\alias{show,WPS-method}
+\alias{subset,WPS-method}
 \title{A class for a Web Processing Service}
 \description{A class for a Web Processing Service. Can be used to overlay points or fetch grid values for rasters located remotely on a server and specified via the \code{inRastername} slot.}
 \section{Slots}{

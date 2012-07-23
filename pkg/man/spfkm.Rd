@@ -1,21 +1,27 @@
 \name{spfkm}
 \docType{methods}
 \alias{spfkm}
-\alias{spmultinom}
+\alias{spmultinom,formula,data.frame,SpatialPixelsDataFrame-method}
 \alias{spfkm,formula,SpatialPointsDataFrame,SpatialPixelsDataFrame-method}
 \alias{spmultinom,formula,matrix,SpatialPixelsDataFrame-method}
+\alias{spmultinom}
 \title{Supervised fuzzy \emph{k}-means on spatial pixels}
 \description{Runs supervised fuzzy \emph{k}-means using a list of covariates layers provided as \code{"SpatialPixelsDataFrame"}. If class centres and variances are not provided by the users, it first fits a multinomial logistic regression model (\code{spmultinom}) using the point data and a regression matrix, then predicts the class centres and variances based on the output from the \code{nnet::multinom}.}
 \usage{
-spfkm(formulaString, observations, covariates, class.c  = NULL, class.sd = NULL, fuzzy.e = 1.2)
+spfkm(formulaString, observations, covariates, ...)
 }
 \arguments{
   \item{formulaString}{formula string}
   \item{observations}{object of type \code{"SpatialPointsData"}; occurrences of factors}
   \item{covariates}{object of type \code{"SpatialPixelsData"} or \code{"RasterBrick"}; list of covariate layers}
+  \item{\dots}{optional arguments}
+}
+\details{Optional arguments include:
+\describe{
   \item{class.c}{object of type \code{"matrix"}; class centres (see examples below)}
   \item{class.sd}{object of type \code{"matrix"}; class deviations (see examples below)}
   \item{fuzzy.e}{object of type \code{"numeric"}; fuzzy exponent}
+}
 }
 \value{Returns an object of type \code{"SpatialMemberships"} with following slots: \code{predicted} (classes predicted either by the multinomial logistic regression or fuzzy \emph{k}-means), \code{model} (the multinomial logistic regression model; if available), \code{mu} (memberships derived using the fuzzy \emph{k}-means), \code{class.c} (submitted or derived class centres), \code{class.sd} (submitted or derived class deviations), \code{confusion} (confusion matrix).}
 \note{Although \code{nnet::multinom} is consider to be robust and suited for large data sets, function might not converge in some cases or result in artifacts. If this happens try setting up the class centres and variances manually.}

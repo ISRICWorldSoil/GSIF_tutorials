@@ -4,10 +4,9 @@
 # Status         : pre-alpha
 # Note           : see also "join" operation;
 
-# Converts a SoilProfileCollection to a data frame:
 
-as.data.frame.SoilProfileCollection <- function(x) 
-  {
+# Converts a SoilProfileCollection to a data frame:
+setMethod('as.data.frame', signature(x = "SoilProfileCollection"), function(x, row.names = NULL, optional = FALSE, ...){
  
   # derive layer sequence:
   s1 <- unlist(by(x@horizons[,x@depthcols[1]], x@horizons[,paste(x@idcol)], order))
@@ -37,15 +36,14 @@ as.data.frame.SoilProfileCollection <- function(x)
   # Finally, merge all profile tables to one single table:
   sel <- which(names(tmp) %in% paste(x@idcol))[-1] # delete copies of IDs:
   tmp2 <- cbind(coordinates(x@sp), x@site)
-  fdb <- merge(tmp2, tmp[,-sel], all.x=TRUE, by=paste(x@idcol)) 
+  fdb <- merge(tmp2, tmp[,-sel], all.x=TRUE, by=paste(x@idcol), ...)
+  if(optional==TRUE){
+    row.names(fdb) <- row.names
+  }
    
   return(fdb)
 
-}
-
-setMethod("as.data.frame", signature(x = "SoilProfileCollection"), as.data.frame.SoilProfileCollection)
-
-setMethod("as.data.frame.default", signature(x = "SoilProfileCollection"), as.data.frame.SoilProfileCollection)
+})
 
 
 # Reverse function -- extract horizons from a data.frame:

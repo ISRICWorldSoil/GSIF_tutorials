@@ -123,17 +123,17 @@ $ CLYMHT_E: num  NA 37.6 NA NA NA NA NA 37.6 NA NA ... </p>
 <p class="R_code">&gt; library(StatDA)<br />
   &gt; par(mar=c(2.5,2.5,0.5,0.5), oma=c(0,0,0,0))<br />
   &gt; edaplot(eberg$SNDMHT_A[!is.na(eberg$SNDMHT_A)], H.freq=TRUE, box=FALSE, S.pch=3, S.cex=0.5, D.lwd=1.5, P.ylab=&quot;&quot;, P.log=FALSE, P.logfine=c(5,10), P.main=&quot;&quot;, P.xlab=&quot;&quot;, B.pch=3, B.cex=0.5)</p>
-<table width="650" border="0" cellspacing="2" cellpadding="4">
+<table width="350" border="0" cellspacing="2" cellpadding="4">
   <caption class="caption" align="bottom">
     Fig: Histogram for sand content.
   </caption>
   <tr>
-    <th scope="col"><img src="Fig_eberg_hist_SNDMHT.png" alt="Fig_eberg_hist_SNDMHT.png" width="634" height="638" /></th>
+    <th scope="col"><img src="Fig_eberg_hist_SNDMHT.png" alt="Fig_eberg_hist_SNDMHT.png" width="350" /></th>
   </tr>
 </table>
 <p>From the plot above, we can also observe that many numbers are in fact overlapping. It seems that there is only a clusters of<br />
   values possible for <span class="R_code">SNDMHT</span>. Going 
-  back to the origin of this dataset, we can notice that the sand, silt and clay values have 
+  back to the origin of this data set, we can notice that the sand, silt and clay values have 
   been determined by using the so-called texture by hand method, i.e. via texture classes. The literature (<a href="https://www.soils.org/publications/sssaj/articles/65/4/1038" target="_blank">Skaggs
   et al., 2001</a>) reports that the this technique can be used to determine the content of soil
 earth fractions only to an accuracy of ±5–10%. This means that we should not plan to map any of the texture fractions to a precision better than ±5% (detection limit), because it would exceed the measurement error.</p>
@@ -149,7 +149,7 @@ earth fractions only to an accuracy of ±5–10%. This means that we should not 
   is soil profile data, we can run some basic analysis of the point geometry and<br />
   then overlap the points with predictors to see how well are the environmental features 
   represented. First, we can test if the points represent the geographical space:</p>
-<p class="R_code">&gt; libary(spatstat) <br />
+<p class="R_code">&gt; library(spatstat) <br />
 &gt; eberg.ppp &lt;- ppp(x=coordinates(eberg.xy)[,1], y=coordinates(eberg.xy)[,2], marks=eberg.xy$zinc, window=mg_owin)<br />
 &gt; summary(nndist(eberg.ppp))</p>
 <p class="R_env">Min. 1st Qu.  Median    Mean 3rd Qu.    Max. <br />
@@ -170,27 +170,27 @@ Done.</p>
   theo   2   2 theo G[theo](r)                 theoretical value of G(r) for CSR<br />
   hi     1   8   hi   G[hi](r) upper pointwise envelope of G(r) from simulations<br />
   lo     1   8   lo   G[lo](r) lower pointwise envelope of G(r) from simulations</p>
-<table width="650" border="0" cellspacing="2" cellpadding="4">
+<table width="350" border="0" cellspacing="2" cellpadding="4">
   <caption class="caption" align="bottom">
     Fig: The results of the Complete Spatial Randomness test (based on spatstat) for the Eberg&ouml;tzen case study.
   </caption>
   <tr>
-    <th scope="col"><img src="Fig_eberg_CRS_test.png" alt="Fig_eberg_CRS_test.png" width="678" height="657" /></th>
+    <th scope="col"><img src="Fig_eberg_CRS_test.png" alt="Fig_eberg_CRS_test.png" width="350" /></th>
   </tr>
 </table>
-<p>which shows that the point samples do not exactly satisfy the Complete Spatial Randomness test &#8212; samples at larger distances have a lower spatial density than a completely random design, which usually means that large parts of the case study are undersampled (see also figure below).</p>
+<p>which shows that the point samples do not exactly satisfy the Complete Spatial Randomness test &#8212; samples at larger distances have a lower spatial density than a completely random design, which usually means that large parts of the case study are under-sampled (see also figure below).</p>
 <p>To see how representative is the point data considering the coverage of feature space, we use the maxent function, available via the dismo package:</p>
 <p class="R_code">&gt; me.eberg &lt;- MaxEnt(occurrences=eberg.ppp, covariates=eberg_grid)<br />
   &gt; par(mfrow=c(1,2), mar=c(0.5,0.5,0.5,0.5), oma=c(0,0,0,0))<br />
   &gt; image(as(me.eberg@predicted, &quot;SpatialPixelsDataFrame&quot;), col=rev(heat.colors(25)), xlab=&quot;&quot;, ylab=&quot;&quot;)<br />
   &gt; points(me.eberg@occurrences, pch=&quot;+&quot;, cex=.7)<br />
   &gt; image(me.eberg@sp.domain, col=&quot;grey&quot;, xlab=&quot;&quot;, ylab=&quot;&quot;)</p>
-<table width="800" border="0" cellspacing="2" cellpadding="4">
+<table width="500" border="0" cellspacing="2" cellpadding="4">
   <caption class="caption" align="bottom">
     Fig: Niche analysis (sampling likelihood in feature space) based on MaxEnt (left; dark red indicates higher values) and areas fully represented by the current samples following the cross-validation (right).
   </caption>
   <tr>
-    <th scope="col"><img src="Fig_eberg_MaxEnt_test.png" alt="Fig_eberg_MaxEnt_test.png" width="857" height="533" /></th>
+    <th scope="col"><img src="Fig_eberg_MaxEnt_test.png" alt="Fig_eberg_MaxEnt_test.png" width="500" /></th>
   </tr>
 </table>
 <p>Which shows that, some parts of the study area (higher elevations, specific land cover types) have been systematically omitted from sampling. The map on the right shows which pixels (grey) are actually valid to run predictions as the probability of occurrence of sampling points at these locations is statistically significant. This is nothing that should worry us too much, but something we need to be aware when doing the interpretation of produced maps. To learn  more about MaxEnt, refer to the <a href="http://cran.r-project.org/web/packages/dismo/vignettes/sdm.pdf" target="_blank">dismo package vignette</a>. </p>
@@ -213,7 +213,7 @@ converting IDs from factor to character</p>
 &gt; # convert to logits: <br />
 &gt; eberg.spc@horizons$SNDMHT.t &lt;- log((eberg.spc@horizons$SNDMHT/100)/(1-eberg.spc@horizons$SNDMHT/100))</p>
 <p>where <span class="R_code">SNDMHT.t</span> is the logit-transformed value of the target variable. Logit transformation is required to prevent from making predictions outside the 0-1 range. </p>
-<p>GSIF package by default works with geosamples as the main class for point observations. Convertion of the SPC class data to geosamples is straight forward:</p>
+<p>GSIF package by default works with geosamples as the main class for point observations. Conversion of the SPC class data to geosamples is straight forward:</p>
 <p class="R_code">&gt; eberg.geo &lt;- as.geosamples(eberg.spc)</p>
 <p class="R_env">  Reprojecting to +proj=longlat +datum=WGS84 ...</p>
 <p class="R_code">&gt; str(eberg.geo)</p>
@@ -241,8 +241,8 @@ converting IDs from factor to character</p>
 <p class="R_code">&gt; levels(eberg.geo@data$methodid)</p>
 <p class="R_env">  [1] &quot;CLYMHT&quot;   &quot;SLTMHT&quot;   &quot;SNDMHT&quot;   &quot;SNDMHT.t&quot; &quot;soiltype&quot;<br />
   [6] &quot;TAXGRSC&quot;</p>
-<p>Geosamples-class can be considered the most plain (standard) format for any space-time observations, and main advantage of using this class in R is that it can be easily manipulated and converted to spatial and aqp classes. The column names in the <span class="R_code">@data</span> slot correspond to the tag names used in the KML schema, which makes it easier to export such data to some GIS or Google Earth. The dissadvantage of using geosamples is that the object size can easily grow because each observation gets a separate row.</p>
-<p>Prior to geostatistical modelling, it is also probably a good idea to convert all covariates to independent components. This way, it will be easier to subset to the optimal number of predictors during the regression analysis. PCA helps also reducing the prediction bias, assuming that the covariates are cross-correlated. A wrapped function <a href="spc-method.html">spc</a> will convert all factor variables to indicators and run PCA on a stack of grids: </p>
+<p>Geosamples-class can be considered the most plain (standard) format for any space-time observations, and main advantage of using this class in R is that it can be easily manipulated and converted to spatial and aqp classes. The column names in the <span class="R_code">@data</span> slot correspond to the tag names used in the KML schema, which makes it easier to export such data to some GIS or Google Earth. The disadvantage of using geosamples is that the object size can easily grow because each observation gets a separate row.</p>
+<p>Prior to geostatistical modeling, it is also probably a good idea to convert all covariates to independent components. This way, it will be easier to subset to the optimal number of predictors during the regression analysis. PCA helps also reducing the prediction bias, assuming that the covariates are cross-correlated. A wrapped function <a href="spc-method.html">spc</a> will convert all factor variables to indicators and run PCA on a stack of grids: </p>
 <p class="R_code">&gt; formulaString &lt;- ~ PRMGEO6+DEMSRT6+TWISRT6+TIRAST6<br />
 &gt; eberg_spc &lt;- spc(eberg_grid, formulaString)</p>
 <p class="R_env">Converting PRMGEO6 to indicators...<br />
@@ -252,12 +252,12 @@ converting IDs from factor to character</p>
 &gt; pal = rev(rainbow(65)[1:48])<br />
   &gt; rd = range(eberg_spc@predicted@data[,1], na.rm=TRUE)<br />
 &gt; spplot(eberg_spc@predicted[1:4], at=seq(rd[1], rd[2], length.out=48), col.regions=pal)</p>
-<table width="600" border="0" cellspacing="2" cellpadding="4">
+<table width="500" border="0" cellspacing="2" cellpadding="4">
   <caption class="caption" align="bottom">
     Fig: First four components derived using the eberg_grid data.
   </caption>
   <tr>
-    <th scope="col"><img src="Fig_eberg_SPCs1_4.png" alt="Fig_eberg_SPCs1_4.png" width="587" height="537" /></th>
+    <th scope="col"><img src="Fig_eberg_SPCs1_4.png" alt="Fig_eberg_SPCs1_4.png" width="500" /></th>
   </tr>
 </table>
 <h3>1. Soil properties </h3>
@@ -266,7 +266,7 @@ converting IDs from factor to character</p>
 &gt; glm.formulaString</p>
 <p class="R_env">  observedValue ~ PC1 + PC2 + PC3 + PC4 + PC5 + PC6 + PC7 + PC8 + <br />
 PC9 + PC10 + PC11 + ns(altitude, df = 4)</p>
-<p>In other words the observed values will be modelled as a function of PCs and altitude (natural splines). 3D GLM-kriging model can now be fitted at once: </p>
+<p>In other words the observed values will be modeled as a function of PCs and altitude (natural splines). 3D GLM-kriging model can now be fitted at once: </p>
 <p class="R_code">&gt; SNDMHT.m &lt;- fit.gstatModel(observations=eberg.geo, glm.formulaString, covariates=eberg_spc@predicted, methodid=&quot;SNDMHT.t&quot;)<br />
  &gt; summary(SNDMHT.m@regModel)</p>
 <p class="R_env">... </p>
@@ -318,7 +318,7 @@ PC9 + PC10 + PC11 + ns(altitude, df = 4)</p>
   anis2<br />
   1 1.00000<br />
   2 0.00015</p>
-<p>These result show that the model is significant, both the GLM and the variogram. Note however that it we do not actually have values of PCs at different depths (in fact, most of PCs relate only to the surface), so that many values of covariates are basically copied to all depths. This does not represent any problem for the GLM modelling, however, you should be aware that, because values of covariates are fixed with the different depths, the 3D patterns will be mainly controlled by the surface patterns.</p>
+<p>These result show that the model is significant, both the GLM and the variogram. Note however that it we do not actually have values of PCs at different depths (in fact, most of PCs relate only to the surface), so that many values of covariates are basically copied to all depths. This does not represent any problem for the GLM modeling, however, you should be aware that, because values of covariates are fixed with the different depths, the 3D patterns will be mainly controlled by the surface patterns.</p>
 <p>Now that we have fitted a <a href="gstatModel-class.html">gstatModel</a>, we can basically generate predictions and estimate the associated uncertainty at any depth. In the last step, we need to prepare the 3D prediction locations i.e. grid cells that need to be mapped. In GSIF package, this can be done by using the <a href="make.3Dgrid-method.html">sp3D</a> function:</p>
 <p class="R_code">&gt; new3D &lt;- sp3D(eberg_spc@predicted)</p>
 <p>This will prepare the existing SPCs for 3D predictions (6 standard depths) by adding the altitude column:</p>
@@ -373,16 +373,17 @@ PC9 + PC10 + PC11 + ns(altitude, df = 4)</p>
   KML file header opened for parsing...<br />
   Parsing to KML...<br />
   Closing  SNDMHT_sd6.kml</p>
-<table width="600" border="0" cellspacing="2" cellpadding="4">
+<table width="500" border="0" cellspacing="2" cellpadding="4">
   <caption class="caption" align="bottom">
-    Fig: Predicted sand content using 3D GLM-kriging as visualized in Google Earth (<a href="eberg_SNDMHT_6depths.kmz">kmz</a>). 
+    Fig: Predicted sand content using 3D GLM-kriging as visualized in Google Earth (<a href="eberg_SNDMHT_6depths.zip">zip</a>). 
+  When visualizing this data, make sure that the relief exaggeration in Google Earth has been set at 1. 
   </caption>
   <tr>
-    <th scope="col"><a href="eberg_SNDMHT_6depths.kmz"><img src="Fig_GSIF_predicted_layers.jpg" alt="Fig_GSIF_predicted_layers.jpg" width="600" border="0" /></a></th>
+    <th scope="col"><a href="eberg_SNDMHT_6depths.kmz"><img src="Fig_GSIF_predicted_layers.jpg" alt="Fig_GSIF_predicted_layers.jpg" width="500" border="0" /></a></th>
   </tr>
 </table>
 <h3>2. Soil Classes </h3>
-<p>GSIF package also provides functionality for pedometric mapping of soil classes. Soil types can be mapped using a wrapper function   <a href="spfkm.html">spfkm</a>. This will   run supervised fuzzy <em>k</em>-means using a list of covariates layers provided as <span class="R_code">&quot;SpatialPixelsDataFrame&quot;</span> object, and optional classe centres and class variances. As in the case of continuous/numeric variables, the process consists of model fitting and predictions, which is in this case wrapped into a single function: </p>
+<p>GSIF package also provides functionality for pedometric mapping of soil classes. Soil types can be mapped using a wrapper function   <a href="spfkm.html">spfkm</a>. This will   run supervised fuzzy <em>k</em>-means using a list of covariates layers provided as <span class="R_code">&quot;SpatialPixelsDataFrame&quot;</span> object, and optional class centers and class variances. As in the case of continuous/numeric variables, the process consists of model fitting and predictions, which is in this case wrapped into a single function: </p>
 <p class="R_code">&gt; eberg_sm &lt;- spfkm(formulaString, eberg.xy, eberg_spc@predicted)</p>
   <span class="R_env">Loading required package: nnet<br />
 Fitting a multinomial logistic regression model...<br />
@@ -405,7 +406,7 @@ Loading required package: class</span>
 <p class="R_env">The following object(s) are masked from ‘package:reshape’:</p>
 <p class="R_env"> condense</p>
 <p class="R_env">Estimated prediction error: 0.5932</p>
-<p>The output is an object of class <a href="SpatialMemberships-class.html">SpatialMemberships</a>. In the case above,  the class centres and variances were not specified, hence spfkm tries to estimate them via the multinomial logistic regression model (nnet::multinom). They could have also been passed via the <span class="R_code">class.c</span> and <span class="R_code">class.sd</span> arguments i.e. based on the expert judgement. To see the actual class centres use:</p>
+<p>The output is an object of class <a href="SpatialMemberships-class.html">SpatialMemberships</a>. In the case above,  the class centers and variances were not specified, hence spfkm tries to estimate them via the multinomial logistic regression model (nnet::multinom). They could have also been passed via the <span class="R_code">class.c</span> and <span class="R_code">class.sd</span> arguments i.e. based on the expert judgment. To see the actual class centers use:</p>
 <p class="R_code">&gt; eberg_sm@class.c[1,]</p>
 <p class="R_env"> PC1        PC2        PC3        PC4        PC5        PC6        PC7        PC8 <br />
 3.1607835  1.7982977  0.2260035 -0.5133303 -0.9440280 -0.2689071  0.4962124  1.9947157 <br />
@@ -413,13 +414,13 @@ PC9       PC10 <br />
 0.8995294 -0.3908947</p>
 <p class="R_code">&gt; row.names(eberg_sm@class.c) </p>
 <p class="R_env">[1] &quot;A&quot;  &quot;B&quot;  &quot;D&quot;  &quot;G&quot;  &quot;Hw&quot; &quot;L&quot;  &quot;N&quot;  &quot;Q&quot;  &quot;R&quot;  &quot;S&quot;  &quot;Z&quot;</p>
-<table width="600" border="0" cellspacing="2" cellpadding="4">
+<table width="500" border="0" cellspacing="2" cellpadding="4">
   <caption class="caption" align="bottom">
     Fig: Predicted soil types for the Eberg&ouml;tzen case study.
-  See <a href="spfkm.html">spfkm</a> for more detatils.
+  See <a href="spfkm.html">spfkm</a> for more details.
   </caption>
   <tr>
-    <th scope="col"><img src="Fig_eberg_Soiltypes_spfkm.png" alt="Fig_eberg_Soiltypes_spfkm.png" width="514" height="476" /></th>
+    <th scope="col"><img src="Fig_eberg_Soiltypes_spfkm.png" alt="Fig_eberg_Soiltypes_spfkm.png" width="500" /></th>
   </tr>
 </table>
 <p>Mapped soil class memberships can also be used to map soil properties. The regression model changes to e.g.:</p>
@@ -455,8 +456,8 @@ Z - 1, family = family, data = x)</p>
 <p class="R_env">Number of Fisher Scoring iterations: 2</p>
 <p>Note that intercept needs to be taken out, so that the best predictor of the sand content for some soil type is basically the mean value of the sand for that soil type (for example class B is expected to have an average sand content of about 50.1%). If you compare the model based on soil classes and model fitted in the previous section (<span class="R_code">SNDMHT.m</span>), you can see that fitting data using a 3D model results in a slightly better fit. Nevertheless, soil classes are in this case study significant estimators of sand content. </p>
 <hr />
-<h2>Multiscale modelling</h2>
-<p>In the next examples we demonstrate how to produce predictions using multiscale / multisource data. Multiscale data implies that covariates are available at 2 or more distinctly different resolutions, but then cover the same area of interest (different resolutions, same extent). Multisource data is a more general case of covariate data. Multisource data can have: (1) variable scale, (2) variable extent, (3) variable accuracy. </p>
+<h2>Predicting with multiscale data </h2>
+<p>In the next examples we demonstrate how to produce predictions using multi-scale / multi-source data. By multiscale data we imply that covariates used for geostatistical mapping are available at 2 or more (distinctly different) resolutions, but then cover the same area of interest. Or in other words, we model with covariates at different resolutions, but with the same extent. A generalization of the multiscale modeling, is modeling with multisource data. In the case of the multisource data, covariates can be of any scale, they can have a variable extent, and variable accuracy.</p>
 <h3>1. All covariates available at all grid nodes</h3>
 <p>&nbsp;</p>
 <h3>2. Merging multisource data </h3>

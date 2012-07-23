@@ -16,8 +16,7 @@
 <h3>Usage</h3>
 
 <pre>
-getID(obj, pixsize = 3/3600, empty.tif = FALSE, compress = FALSE, 
-        zipname = set.file.extension(tempfile(tmpdir = getwd()), "zip"))
+getID(obj, ...)
 </pre>
 
 
@@ -28,29 +27,38 @@ getID(obj, pixsize = 3/3600, empty.tif = FALSE, compress = FALSE,
 <tr valign="top"><td><code>obj</code></td>
 <td>
 <p>object of class <code>"SpatialPolygons"</code>; must be in geographical coordinates (WGS84)</p>
-</td></tr> 
-<tr valign="top"><td><code>pixelsize</code></td>
-<td>
-<p>grid cell size in decimal degrees (set at 0.0008333333 or 100 m around equator)</p>
-</td></tr> 
-<tr valign="top"><td><code>empty.tif</code></td>
-<td>
-<p>logical; specify whether an empty GeoTiff should be created (TRUE/FALSE)</p>
 </td></tr>
-<tr valign="top"><td><code>compress</code></td>
+<tr valign="top"><td><code>...</code></td>
 <td>
-<p>logical; specify whether to compress GeoTiffs</p>
+<p>optional arguments</p>
 </td></tr>
-<tr valign="top"><td><code>zipname</code></td>
-<td>
-<p>(optional); zip archive file name</p>
-</td></tr>                                                    
 </table>
 
 
 <h3>Details</h3>
 
-<p>The output is a vector of grid cell ID names e.g. <code>W79_N83</code>. These can be further used to automate digital soil mapping for large areas.</p>
+
+<p>Optional arguments include:
+</p>
+ 
+<dl>
+<dt>pixsize</dt><dd><p>grid cell size in decimal degrees (set at 0.0008333333 or 100 m around equator)</p>
+</dd> 
+<dt>empty.tif</dt><dd><p>logical; specify whether an empty GeoTiff should be created (TRUE/FALSE)</p>
+</dd>
+<dt>compress</dt><dd><p>logical; specify whether to compress GeoTiffs</p>
+</dd>
+<dt>zipname</dt><dd><p>(optional); zip archive file name</p>
+</dd>      
+</dl>
+
+
+
+<h3>Value</h3>
+
+
+<p>The output is a vector of grid cell ID names e.g. <code>W79_N83</code>. These can be further used to automate digital soil mapping for large areas.
+</p>
 
 
 <h3>Note</h3>

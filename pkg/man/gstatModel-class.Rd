@@ -2,6 +2,7 @@
 \docType{class}
 \alias{gstatModel-class}
 \alias{predict,gstatModel}
+\alias{predict.gstatModel}
 \title{A class for a linear geostatistical model}
 \description{A class containing fitted parameters of a linear geostatistical model. It comprises regression model (GLM), variogram model, and observation locations of sampled values used to fit the model.}
 \section{Slots}{

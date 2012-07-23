@@ -16,11 +16,7 @@
 <h3>Usage</h3>
 
 <pre>
-make.3Dgrid(obj, proj4string = get("ref_CRS", envir = GSIF.opts), 
-    pixelsize = get("cellsize", envir = GSIF.opts)[2], 
-    resample = "bilinear", NAflag = get("NAflag", envir = GSIF.opts), 
-    stdepths = get("stdepths", envir = GSIF.opts), tmp.file = TRUE, 
-    show.output.on.console = FALSE, ...)
+make.3Dgrid(obj, ...)
 </pre>
 
 
@@ -32,38 +28,34 @@ make.3Dgrid(obj, proj4string = get("ref_CRS", envir = GSIF.opts),
 <td>
 <p>object of class <code>"SpatialPixelsDataFrame"</code> or <code>"RasterBrick"</code></p>
 </td></tr> 
-<tr valign="top"><td><code>pixelsize</code></td>
-<td>
-<p>grid cell size in decimal degrees (set by default at 1/1200 (0.0008333333 or 100 m around equator)</p>
-</td></tr> 
-<tr valign="top"><td><code>resample</code></td>
-<td>
-<p>character; resampling method to be passed the reprojection algorithm</p>
-</td></tr>
-<tr valign="top"><td><code>NAflag</code></td>
-<td>
-<p>character; missing value flag</p>
-</td></tr>
-<tr valign="top"><td><code>stdepths</code></td>
-<td>
-<p>numeric; list of standard depths</p>
-</td></tr>                                              
-<tr valign="top"><td><code>tmp.file</code></td>
-<td>
-<p>logical; specifies whether a temporary file name should be generated</p>
-</td></tr>
-<tr valign="top"><td><code>show.output.on.console</code></td>
-<td>
-<p>logical; specifies whether to print out the progress</p>
-</td></tr>
 <tr valign="top"><td><code>...</code></td>
 <td>
 <p>optional arguments that can be passed to the reprojetion algorithm</p>
-</td></tr>
+</td></tr>  
 </table>
 
 
 <h3>Details</h3>
+
+<p>Optional arguments include:
+</p>
+
+<dl>
+<dt>proj4s</dt><dd><p>character; proj4string describing the target coordinate system</p>
+</dd>
+<dt>pixsize</dt><dd><p>grid cell size in decimal degrees (set by default at 1/1200 (0.0008333333 or 100 m around equator)</p>
+</dd> 
+<dt>resample</dt><dd><p>character; resampling method to be passed the reprojection algorithm</p>
+</dd>
+<dt>NAflag</dt><dd><p>character; missing value flag</p>
+</dd>
+<dt>stdepths</dt><dd><p>numeric; list of standard depths</p>
+</dd>                                             
+<dt>tmp.file</dt><dd><p>logical; specifies whether a temporary file name should be generated</p>
+</dd>
+<dt>show.output.on.console</dt><dd><p>logical; specifies whether to print out the progress</p>
+</dd>
+</dl>
 
 <p>The output is list of objects of class <code>"SpatialPixelsDataFrame"</code> where the number of elements in the list corresponds to the number of standard depths.</p>
 
@@ -76,6 +68,17 @@ make.3Dgrid(obj, proj4string = get("ref_CRS", envir = GSIF.opts),
 <h3>Author(s)</h3>
 
 <p> Tomislav Hengl </p>
+
+
+<h3>References</h3>
+
+
+
+<ul>
+<li><p> Bivand, R.S., Pebesma, E.J., and Gómez-Rubio, V., (2008) <a href="http://www.asdar-book.org/">Applied Spatial Data Analysis with R</a>. Springer, 378 p.
+</p>
+</ul>
+
 
 
 <h3>See Also</h3>

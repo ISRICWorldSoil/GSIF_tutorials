@@ -75,7 +75,7 @@ for(j in 1:length(sd.l)){ sd.l[[j]]@predicted$observedValue <- exp(sd.l[[j]]@pre
 # reproject to WGS84 system (100 m resolution):
 p = get("cellsize", envir = GSIF.opts)[1]
 s = get("stdepths", envir = GSIF.opts)
-sd.ll <- sapply(1:length(sd.l), FUN=function(x){make.3Dgrid(sd.l[[x]]@predicted[3:4], pixelsize=p, stdepths=s[x])})
+sd.ll <- sapply(1:length(sd.l), FUN=function(x){make.3Dgrid(sd.l[[x]]@predicted[3:4], pixsize=p, stdepths=s[x])})
 # save to a "GlobalSoilMap" object:
 SNDMHT.gsm <- GlobalSoilMap(varname="SNDMHT", sd.ll, period=c("", ""))
 # visualize all maps in Google Earth:
