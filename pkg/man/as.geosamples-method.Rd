@@ -14,14 +14,15 @@ as.geosamples(obj, ...)
 \details{Optional arguments include:
 \describe{
   \item{registry}{URI specifying the metadata registry (web-service that carries all metadata connected to the certain method ID and/or sample ID)}
-  \item{sample.area}{standard sample area in square meters}
+  \item{sample.area}{standard sample area in square meters (assumed to be 1 by 1 m)}
   \item{mxd}{maximum depth of interest in meters}
   \item{dtime}{standard temporal support in seconds}
 }
 }
-\value{Returns an object of type \code{"geosamples"}. Many columns required by the \code{"geosamples"} class might be not available and will result in \code{NA} values. To ensure compatibility, when building an object of type \code{"SoilProfilesCollection"}, use some standard naming convention to attach attributes:
+\value{Returns an object of type \code{"geosamples"}. Many columns required by the \code{"geosamples"} class might be not available and will result in \code{NA} values. To ensure compatibility, when building an object of type \code{"SoilProfilesCollection"}, use some standard naming convention to attach attributes to each measurement (horizons and sites slots in the \code{"SoilProfileCollection-class"}):
 \describe{
   \item{\code{"locationError"}}{can be used to attach location errors in meters to each spatial location}
+  \item{\code{"sampleArea"}}{can be used to attach spatial support to each measurement (usually 1 by 1 meter)}
   \item{\code{"measurementError"}}{can be used to attach specific measurement errors to each measurement in both site and horizons table}
   \item{\code{"IGSN"}}{can be used to attach the unique identifier (\href{http://en.wikipedia.org/wiki/International_Geo_Sample_Number}{International Geo Sample Number}) to each specific observation (corresponds to the \code{"observationid"} column)}  
 }

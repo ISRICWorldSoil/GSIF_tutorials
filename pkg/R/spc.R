@@ -58,4 +58,18 @@ setMethod("spc", signature(obj = "SpatialPixelsDataFrame", formulaString = "form
 }) 
 
 
+setMethod("spc", signature(obj = "list", formulaString = "list"), function(obj, formulaString, scale. = TRUE, silent = FALSE, ...){
+    if(!length(obj)==length(formulaString)){
+      stop("'obj' and 'formulaString' lists of same size expected")
+    }
+    
+    pcs.l <- list(NULL)
+    for(l in 1:length(obj)){
+      pcs.l[[l]] <- spc(obj = obj[[l]], formulaString = formulaString[[l]], ...)
+    }
+    
+    return(pcs.l)
+})
+
+
 # end of script;

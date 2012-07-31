@@ -25,7 +25,7 @@
 <table summary="R argblock">
 <tr valign="top"><td><code>observations</code></td>
 <td>
-<p>object of type <code>"SpatialPointsDataFrame"</code></p>
+<p>object of type <code>"SpatialPointsDataFrame"</code> or <code>"geosamples-class"</code></p>
 </td></tr>
 <tr valign="top"><td><code>formulaString</code></td>
 <td>
@@ -33,7 +33,7 @@
 </td></tr>
 <tr valign="top"><td><code>covariates</code></td>
 <td>
-<p>object of type <code>"SpatialPixelsDataFrame"</code></p>
+<p>object of type <code>"SpatialPixelsDataFrame"</code>, or list of grids at various resolutions</p>
 </td></tr>
 <tr valign="top"><td><code>...</code></td>
 <td>
@@ -81,7 +81,7 @@
 
 <h3>See Also</h3>
 
- <p><code><a href="gstatModel-class.html">gstatModel-class</a></code>, <code>stats::glm</code>, <code>gstat::fit.variogram</code>
+ <p><code><a href="gstatModel-class.html">gstatModel-class</a></code>, <code><a href="glm.sp.html">glm.sp</a></code>, <code><a href="geosamples-class.html">geosamples-class</a></code>, <code>stats::glm</code>, <code>gstat::fit.variogram</code>
 </p>
 
 
@@ -95,8 +95,7 @@ data(meuse.grid)
 coordinates(meuse.grid) &lt;- ~x+y
 gridded(meuse.grid) &lt;- TRUE
 # fit a model with a gaussian log-link:
-omm &lt;- fit.gstatModel(observations = meuse, om~dist, covariates = meuse.grid,
-  family = gaussian(log))
+omm &lt;- fit.gstatModel(meuse, om~dist, meuse.grid, family = gaussian(log))
 omm@regModel
 om.sp &lt;- SpatialPointsDataFrame(omm@sp, data = omm@regModel$model)
 ## Not run: # plot a variogram:

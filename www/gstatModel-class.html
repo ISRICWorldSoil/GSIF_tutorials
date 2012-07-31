@@ -35,7 +35,7 @@
 <dl>
 <dt>summary</dt><dd><p><code>signature(obj = "gstatModel")</code>: summarize object by showing the mapping accuracy (cross-validation) and the amount of variation explained by the model </p>
 </dd>
-<dt>predict</dt><dd><p><code>signature(obj = "gstatModel")</code>: makes predictions for a set of given predictionLocations (gridded maps) </p>
+<dt>predict</dt><dd><p><code>signature(obj = "gstatModel")</code>: makes predictions for a set of given predictionLocations (gridded maps) at block support corresponding to the <code>cellsize</code> slot in the object of class <code>"SpatialPixelsDataFrame"</code> </p>
 </dd>
 </dl>
 
@@ -51,13 +51,13 @@
 </p>
 <p><code>plotKML::SpatialPredictions-class</code><br>
 </p>
-<p>use <code>nsim = 0</code>. 
+<p>set <code>nsim = 0</code>. 
 </p>
 
 
 <h3>Author(s)</h3>
 
-<p> Tomislav Hengl </p>
+<p> Tomislav Hengl and Gerard B.M. Heuvelink </p>
 
 
 <h3>See Also</h3>
@@ -79,7 +79,7 @@ coordinates(meuse.grid) &lt;- ~x+y
 gridded(meuse.grid) &lt;- TRUE
 proj4string(meuse.grid) &lt;- CRS("+init=epsg:28992")
 ## Not run: # fit a model:
-omm &lt;- fit.gstatModel(meuse, formulaString = om~dist, covariates = meuse.grid)
+omm &lt;- fit.gstatModel(meuse, formulaString = om~dist, family=gaussian(link="log"), covariates = meuse.grid)
 show(omm@regModel)
 # produce SpatialPredictions:
 om.rk &lt;- predict(omm, predictionLocations = meuse.grid)
@@ -88,6 +88,8 @@ show(om.rk)
 # plot the whole project and open in Google Earth:
 library(plotKML)
 plotKML(om.rk)
+# simulations (by default at block support):
+om.rksim &lt;- predict(omm, predictionLocations = meuse.grid, nsim=2)
 
 ## End(Not run)
 </pre>

@@ -16,7 +16,7 @@
 <h3>Usage</h3>
 
 <pre>
-as.data.frame(x, ...)
+as.data.frame(x, row.names = NULL, optional = FALSE, ...)
 </pre>
 
 
@@ -27,6 +27,14 @@ as.data.frame(x, ...)
 <tr valign="top"><td><code>x</code></td>
 <td>
 <p>object of class <code>"SoilProfileCollection"</code></p>
+</td></tr>
+<tr valign="top"><td><code>row.names</code></td>
+<td>
+<p>character; giving the row names for the data frame (missing values are not allowed)</p>
+</td></tr>
+<tr valign="top"><td><code>optional</code></td>
+<td>
+<p>logical; if &lsquo;TRUE&rsquo;, setting row names and converting column names (to syntactic names: see &lsquo;make.names&rsquo;) is optional</p>
 </td></tr>
 <tr valign="top"><td><code>...</code></td>
 <td>

@@ -29,13 +29,13 @@ setClass("GlobalSoilMap", representation (varname = 'character', TimeSpan.begin 
       return("Object in slot 'sd' with at least two realizations (or predictions and variances) required")
    # check the projection system:
    require(plotKML)
-   if(check_projection(object@sd1)|check_projection(object@sd2)|check_projection(object@sd3)|check_projection(object@sd4)|check_projection(object@sd5)|check_projection(object@sd6)){
+   if(!all(check_projection(object@sd1)|check_projection(object@sd2)|check_projection(object@sd3)|check_projection(object@sd4)|check_projection(object@sd5)|check_projection(object@sd6))){
       ref_CRS = get("ref_CRS", envir = GSIF.opts)
       return(paste("The GlobalSoilMap object requires grids to be projected in the", ref_CRS, "projection"))
    }
    # check the target resolution:
    grd.lst <- get("cellsize", envir = GSIF.opts)
-   if(!(any(object@sd1@grid@cellsize) %in% grd.lst)|!(any(object@sd2@grid@cellsize) %in% grd.lst)|!(any(object@sd3@grid@cellsize) %in% grd.lst)|!(any(object@sd4@grid@cellsize) %in% grd.lst)|!(any(object@sd5@grid@cellsize) %in% grd.lst)|!(any(object@sd6@grid@cellsize) %in% grd.lst))
+   if(!any(object@sd1@grid@cellsize %in% grd.lst)|!any(object@sd2@grid@cellsize %in% grd.lst)|!any(object@sd3@grid@cellsize %in% grd.lst)|!any(object@sd4@grid@cellsize %in% grd.lst)|!any(object@sd5@grid@cellsize %in% grd.lst)|!any(object@sd6@grid@cellsize %in% grd.lst))
       return(paste("Recommended grid cell size does not correspond to one of the following:", paste(signif(grd.lst, 4), collapse=", "))) 
    # check the bounding boxes:
    if(!(any(object@sd1@bbox %in% as.list(object@sd2@bbox, object@sd3@bbox, object@sd4@bbox, object@sd5@bbox, object@sd6@bbox))))
@@ -45,7 +45,7 @@ setClass("GlobalSoilMap", representation (varname = 'character', TimeSpan.begin 
 
 ## georecord class:
 setClass("geosamples", representation (registry = 'character', methods = 'data.frame', data = 'data.frame'), validity = function(object) {
-   cnames <- c("observationid", "sampleid", "longitude", "latitude", "locationError", "TimeSpan.begin", "TimeSpan.end", "altitude", "altitudeMode", "volume", "observedValue", "methodid", "measurementError")
+   cnames <- c("observationid", "sampleid", "longitude", "latitude", "locationError", "TimeSpan.begin", "TimeSpan.end", "altitude", "altitudeMode", "sampleArea", "sampleThickness", "observedValue", "methodid", "measurementError")
    if(any(!(names(object@data) %in% cnames)))
       return(paste("Expecting only column names:", paste(cnames, collapse=", ")))
    mnames <- c("methodid", "description", "units", "detectionLimit")
@@ -53,23 +53,20 @@ setClass("geosamples", representation (registry = 'character', methods = 'data.f
       return(paste("Expecting only column names:", paste(mnames, collapse=", ")))
    if(any(!(levels(as.factor(paste(object@methods$methodid))) %in% levels(as.factor(paste(object@data$methodid))))))
       return("'methodid' levels in the methods table and data table do not match")
-   if(!is.na(object@data$TimeSpan.begin)){
-      if(!any(class(object@data$TimeSpan.begin) %in% "POSIXct") | !any(class(object@data$TimeSpan.end) %in% "POSIXct")){
-        return("'TimeSpan.begin' and 'TimeSpan.end' of class 'POSIXct' required")
+   if(!any(class(object@data$TimeSpan.begin) %in% "POSIXct") | !any(class(object@data$TimeSpan.end) %in% "POSIXct")) {
+      return("'TimeSpan.begin' and 'TimeSpan.end' of class 'POSIXct' required")
       } 
-      else {  
-        if((object@data$TimeSpan.end - object@data$TimeSpan.begin)<0)
-        return("'TimeSpan.end' must have positive time difference from 'TimeSpan.begin'")
+      else {
+      sel <- !is.na(object@data$TimeSpan.begin)&!is.na(object@data$TimeSpan.end)  
+      if(any(object@data$TimeSpan.begin[sel] > object@data$TimeSpan.end[sel]))
+        return("'TimeSpan.begin' must indicate time before or equal to 'TimeSpan.end'")      
       }
-   }
-   if(!is.na(object@data$measurementError)){ 
-      if(object@data$measurementError < 0)
+   if(any(object@data$measurementError[!is.na(object@data$measurementError)] < 0))
        return("'measurementError' must be positive numbers")
-   }
-   if(!is.na(object@data$volume)){ 
-      if(object@data$volume < 0)
-       return("'volume' must be positive numbers")
-   }
+   if(any(object@data$sampleArea[!is.na(object@data$sampleArea)] < 0))
+       return("'sampleArea' must be positive numbers")
+   if(any(object@data$sampleThickness[!is.na(object@data$sampleThickness)] < 0))
+       return("'sampleThickness' must be positive numbers")
    # test if it is a longlat object:
    if(any(object@data$longitude>180|object@data$longitude< -180|object@data$latitude< -90|object@data$latitude> 90))
       return("longitude and latitude values in the range -180 to 180 and -90 to 90 required") 
@@ -109,10 +106,10 @@ setClass("SpatialMemberships", representation (predicted = "SpatialPixelsDataFra
       return("Row names in the 'class.c' slot and 'predicted' slots do not match")
    if(!all(levels(object@predicted@data[,1]) %in% row.names(object@class.sd)))
       return("Row names in the 'class.sd' slot and 'predicted' slots do not match")
-   if(ncol(object@mu)<2)
+   if(ncol(object@mu@data)<2)
       return("A minimum of two membership maps required")   
-   # check if all mu's sum to 1:
-   if(!all(rowSums(object@mu)==1))
+   # check if all mu's sum to 1 (plus minus 1%):
+   if(!all(rowSums(object@mu@data)>.99&rowSums(object@mu@data)<1.01))
       return("Some rows in the 'mu' slot do not sum up to 1")
    # check if the confusion matrix has kappa > 0
    if(length(object@confusion)==0|attr(object@confusion, "error")==0)
@@ -143,6 +140,10 @@ if(!isGeneric("describe")){
   setGeneric("describe", function(x, ...){standardGeneric("describe")})
 }
 
+if(!isGeneric("merge")){
+  setGeneric("merge", function(x, y, ...){standardGeneric("merge")})
+}
+
 if(!isGeneric("spc")){
   setGeneric("spc", function(obj, formulaString, ...){standardGeneric("spc")})
 }
@@ -163,8 +164,20 @@ if (!isGeneric("spfkm")){
   setGeneric("spfkm", function(formulaString, observations, covariates, ...){standardGeneric("spfkm")})
 }
 
+if (!isGeneric("sp3D")){
+  setGeneric("sp3D", function(obj, ...){standardGeneric("sp3D")})
+}
+
 if (!isGeneric("write.data")){
   setGeneric("write.data", function(obj, ...){standardGeneric("write.data")})
+}
+
+if (!isGeneric("as.data.frame")){
+  setGeneric("as.data.frame", function(x, row.names = NULL, optional = FALSE, ...){standardGeneric("as.data.frame")})
+}
+
+if (!isGeneric("gdalwarp")){
+  setGeneric("gdalwarp", function(obj, ...){standardGeneric("gdalwarp")})
 }
 
 if (!isGeneric("MaxEnt")){

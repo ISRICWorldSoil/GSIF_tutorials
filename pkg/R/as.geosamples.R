@@ -16,8 +16,11 @@ setMethod("as.geosamples", signature(obj = "SoilProfileCollection"),
      obj@sp <- reproject(obj@sp)
   }
  
-  # estimate volume in m^3 and depths:
-  vols <- abs(obj@horizons[,obj@depthcols[2]] - obj@horizons[,obj@depthcols[1]])/100 * sample.area
+  # sample area (geographical support):
+
+
+  # estimate thickness in m and depths:
+  sampleThickness <- abs(obj@horizons[,obj@depthcols[2]] - obj@horizons[,obj@depthcols[1]])/100 
   depths <- - (obj@horizons[,obj@depthcols[1]] + (obj@horizons[,obj@depthcols[2]] - obj@horizons[,obj@depthcols[1]])/2)/100
 
   # add the time coordinate if missing:
@@ -46,7 +49,9 @@ setMethod("as.geosamples", signature(obj = "SoilProfileCollection"),
     if(is.null(observationid)) { observationid = rep(as.character(NA), ll) } 
     measurementError = attr(site[,names(site)[j]], "measurementError")
     if(is.null(measurementError)) { measurementError = rep(as.character(NA), ll) }
-    x[[j]] <- data.frame(observationid = as.character(observationid), sampleid = profile_id(obj), longitude = XYT[,1], latitude = XYT[,2], locationError = as.numeric(locationError), TimeSpan.begin = as.POSIXct(XYT[,3]-dtime/2, origin="1970-01-01"), TimeSpan.end = as.POSIXct(XYT[,3]+dtime/2, origin="1970-01-01"), altitude = as.numeric(rep(0, ll)), altitudeMode = rep("relativeToGround", ll), volume = rep(mxd*sample.area, ll), observedValue = as.character(site[,names(site)[j]]), methodid = rep(names(site)[j], ll), measurementError = as.numeric(measurementError), stringsAsFactors = FALSE) 
+    sampleArea = attr(site[,names(site)[j]], "sampleArea")
+    if(is.null(sampleArea)) { sampleArea = rep(sample.area, ll) }    
+    x[[j]] <- data.frame(observationid = as.character(observationid), sampleid = profile_id(obj), longitude = XYT[,1], latitude = XYT[,2], locationError = as.numeric(locationError), TimeSpan.begin = as.POSIXct(XYT[,3]-dtime/2, origin="1970-01-01"), TimeSpan.end = as.POSIXct(XYT[,3]+dtime/2, origin="1970-01-01"), altitude = as.numeric(rep(0, ll)), altitudeMode = rep("relativeToGround", ll), sampleArea = sampleArea, sampleThickness = rep(mxd*sample.area, ll), observedValue = as.character(site[,names(site)[j]]), methodid = rep(names(site)[j], ll), measurementError = as.numeric(measurementError), stringsAsFactors = FALSE) 
   }
   rx <- do.call(rbind, x)
     
@@ -67,7 +72,9 @@ setMethod("as.geosamples", signature(obj = "SoilProfileCollection"),
     if(is.null(observationid)) { observationid = rep(as.character(NA), ll) } 
     measurementError = attr(hors[,names(hors)[j]], "measurementError")
     if(is.null(measurementError)) { measurementError = rep(as.character(NA), ll) }
-    y[[j]] <- data.frame(observationid = as.character(observationid), sampleid = XYTh$ID, longitude = XYTh$x, latitude = XYTh$y, locationError = as.numeric(XYTh$locationError), TimeSpan.begin = as.POSIXct(XYTh$time-XYTh$dtime/2, origin="1970-01-01"), TimeSpan.end = as.POSIXct(XYTh$time+XYTh$dtime/2, origin="1970-01-01"), altitude = as.numeric(depths), altitudeMode = rep("relativeToGround", ll), volume = vols, observedValue = as.character(hors[,names(hors)[j]]), methodid = rep(names(hors)[j], ll), measurementError = as.numeric(measurementError), stringsAsFactors = FALSE) 
+    sampleArea = attr(hors[,names(hors)[j]], "sampleArea")
+    if(is.null(sampleArea)) { sampleArea = rep(sample.area, ll) }
+    y[[j]] <- data.frame(observationid = as.character(observationid), sampleid = XYTh$ID, longitude = XYTh$x, latitude = XYTh$y, locationError = as.numeric(XYTh$locationError), TimeSpan.begin = as.POSIXct(XYTh$time-XYTh$dtime/2, origin="1970-01-01"), TimeSpan.end = as.POSIXct(XYTh$time+XYTh$dtime/2, origin="1970-01-01"), altitude = as.numeric(depths), altitudeMode = rep("relativeToGround", ll), sampleArea = sampleArea, sampleThickness = sampleThickness, observedValue = as.character(hors[,names(hors)[j]]), methodid = rep(names(hors)[j], ll), measurementError = as.numeric(measurementError), stringsAsFactors = FALSE) 
   }
   ry <- do.call(rbind, y)
   
@@ -128,7 +135,7 @@ setMethod("show", signature(object = "geosamples"),
 
 
 ## Extract regression matrix:
-setMethod("overlay", signature(x = "SpatialPixelsDataFrame", y = "geosamples"), function(x, y, methodid, var.type = "numeric", ...){
+setMethod("overlay", signature(x = "SpatialPixelsDataFrame", y = "geosamples"), function(x, y, methodid, var.type = "numeric"){
   require(raster)
   require(plotKML)
   
@@ -136,7 +143,7 @@ setMethod("overlay", signature(x = "SpatialPixelsDataFrame", y = "geosamples"), 
     warning("AltitudeMode accepts only 'relativeToGround' values")
   }
   
-  pnts = subset(y, method=methodid)
+  pnts = subset.geosamples(y, method=methodid)
   # reformat observed values:
   if(var.type=="numeric"){
     pnts$observedValue = as.numeric(pnts$observedValue)

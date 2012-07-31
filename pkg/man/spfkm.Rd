@@ -6,7 +6,7 @@
 \alias{spmultinom,formula,matrix,SpatialPixelsDataFrame-method}
 \alias{spmultinom}
 \title{Supervised fuzzy \emph{k}-means on spatial pixels}
-\description{Runs supervised fuzzy \emph{k}-means using a list of covariates layers provided as \code{"SpatialPixelsDataFrame"}. If class centres and variances are not provided by the users, it first fits a multinomial logistic regression model (\code{spmultinom}) using the point data and a regression matrix, then predicts the class centres and variances based on the output from the \code{nnet::multinom}.}
+\description{Runs supervised fuzzy \emph{k}-means (\href{http://dx.doi.org/10.1080/13658810310001620924}{Hengl et al., 2004}) using a list of covariates layers provided as \code{"SpatialPixelsDataFrame-class"} object. If class centres and variances are not provided by the users, it first fits a multinomial logistic regression model (\code{spmultinom}) using the point data and a regression matrix, then predicts the class centres and variances based on the output from the \code{nnet::multinom}.}
 \usage{
 spfkm(formulaString, observations, covariates, ...)
 }
@@ -29,6 +29,7 @@ spfkm(formulaString, observations, covariates, ...)
 \references{
 \itemize{
 \item Burrough, P. A., Gaans, P.F.M., and Van Hootsmans, R., (1997) \href{http://dx.doi.org/10.1016/S0016-7061(97)00018-9}{Continuous classification in soil survey: spatial correlation, confusion and boundaries}. Geoderma, 77(2-4), 115--135.
+\item Hengl T., Walvoort D.J.J., Brown, A., (2004) \href{http://dx.doi.org/10.1080/13658810310001620924}{A double continuous approach to visualisation and analysis of categorical maps}. Int. Jou. of Geographical Information Science, 18(2): 183-202.
 \item Multinomial logistic regression (\url{http://en.wikipedia.org/wiki/Multinomial_logit})
 \item Nnet package (\url{http://CRAN.R-project.org/package=nnet})
 }
@@ -38,6 +39,7 @@ spfkm(formulaString, observations, covariates, ...)
 \dontrun{# load data:
 library(plotKML)
 data(eberg)
+# subset to 20%:
 eberg <- eberg[runif(nrow(eberg))<.2,]
 data(eberg_grid)
 coordinates(eberg) <- ~X+Y

@@ -62,7 +62,8 @@ make.3Dgrid(obj, ...)
 
 <h3>Note</h3>
 
-<p>If the input object is of class <code>"SpatialPixelsDataFrame"</code>, the method by default uses <code>FWTools</code> (<code>gdalwarp</code> command) to resample grids, otherwise the <code>raster::projectRaster</code> command is passed. <a href="http://fwtools.maptools.org/">FWTools</a> is a separate application and must be installed separately. This operation can be time consuming for large areas (e.g. continents).</p>
+<p>If the input object is of class <code>"SpatialPixelsDataFrame"</code>, the method by default uses <code>FWTools</code> (<code>gdalwarp</code> command) to resample grids, otherwise the <code>raster::projectRaster</code> command is passed. <a href="http://fwtools.maptools.org/">FWTools</a> must be installed separately. <br> 
+This operation can be time consuming for large areas (e.g. continents).</p>
 
 
 <h3>Author(s)</h3>
@@ -77,8 +78,14 @@ make.3Dgrid(obj, ...)
 <ul>
 <li><p> Bivand, R.S., Pebesma, E.J., and Gómez-Rubio, V., (2008) <a href="http://www.asdar-book.org/">Applied Spatial Data Analysis with R</a>. Springer, 378 p.
 </p>
+</li>
+<li><p> FWTools (<a href="http://fwtools.maptools.org">http://fwtools.maptools.org</a>)
+</p>
+</li>
+<li><p> Raster package (<a href="http://CRAN.R-project.org/package=raster">http://CRAN.R-project.org/package=raster</a>)
+</p>
 </ul>
-
+                 
 
 
 <h3>See Also</h3>
@@ -89,7 +96,7 @@ make.3Dgrid(obj, ...)
 <h3>Examples</h3>
 
 <pre>
-## Not run: # prepare prediction locations for Ebergotzen:
+## Not run: # grids Ebergotzen:
 library(plotKML)
 data(eberg_grid)
 gridded(eberg_grid) &lt;- ~x+y
@@ -102,6 +109,12 @@ eberg_3Dxy &lt;- sp3D(eberg_spc@predicted)
 # wrapper function to create 3D locations in the default system:
 eberg_3D &lt;- make.3Dgrid(eberg_spc@predicted)
 image(eberg_3D[[1]]["PC1"])
+# downscale 100 m resolution imagery to 25 m:
+data(eberg_grid25)
+gridded(eberg_grid25) &lt;- ~x+y
+proj4string(eberg_grid25) &lt;- CRS("+init=epsg:31467")
+eberg_grid25@data &lt;- cbind(eberg_grid25@data, gdalwarp(eberg_grid, pixsize=eberg_grid25@grid@cellsize[1], GridTopology=eberg_grid25@grid, resampling_method="cubicspline")@data)
+# this function requires FWTools!
 
 ## End(Not run)
 </pre>

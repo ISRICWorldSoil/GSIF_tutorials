@@ -1,26 +1,27 @@
 \name{GlobalSoilMap-class}
 \docType{class}
+\encoding{latin1}
 \alias{GlobalSoilMap-class}
 \alias{GlobalSoilMap}
 \title{A class for GlobalSoilMap soil property maps}
-\description{A class containing multiple realizations of soil properties following the \href{http://globalsoilmap.net/specifications}{GlobalSoilMap.net specifications}, i.e. predictions of some of the target global soil property at six standard depths: \code{sd1} = 2.5 cm (0--5), \code{sd2} = 10 cm (5--15), \code{sd3} = 22.5 cm (15--30), \code{sd4} = 45 cm (30--60), \code{sd5} = 80 cm (60--100), \code{sd6} = 150 cm (100--200).}
+\description{A class containing predictions and prediction error (or multiple realizations) of some of the target global soil property at six standard depths following the \href{http://globalsoilmap.net/specifications}{GlobalSoilMap.net specifications}: \code{sd1} = 2.5 cm (0--5), \code{sd2} = 10 cm (5--15), \code{sd3} = 22.5 cm (15--30), \code{sd4} = 45 cm (30--60), \code{sd5} = 80 cm (60--100), \code{sd6} = 150 cm (100--200).}
 \section{Slots}{
   \describe{    
-    \item{\code{varname}:}{object of class \code{"character"}; abbreviated variable name registered in the Global Soil Data registry}
+    \item{\code{varname}:}{object of class \code{"character"}; abbreviated variable name registered in the \href{https://www.google.com/fusiontables/DataSource?docid=1VVfBtsRijz_cRM8p5nj5hnijx6AQB9hbYzfRIZQ}{Global Soil Data registry}}
     \item{\code{TimeSpan.begin}:}{object of class \code{"POSIXct"}; begin of the sampling period}
     \item{\code{TimeSpan.end}:}{object of class \code{"POSIXct"}; end of the sampling period}
-    \item{\code{sd1}:}{object of class \code{"SpatialPixelsDataFrame"}; predictions and variances, or number of realizations of the target variable at depth 2.5 cm}
-    \item{\code{sd2}:}{object of class \code{"SpatialPixelsDataFrame"}; predictions and variances, or number of realizations of the target variable at depth 10 cm}
-    \item{\code{sd3}:}{object of class \code{"SpatialPixelsDataFrame"}; predictions and variances, or number of realizations of the target variable at depth 22.5 cm}
-    \item{\code{sd4}:}{object of class \code{"SpatialPixelsDataFrame"}; predictions and variances, or number of realizations of the target variable at depth 45 cm}
-    \item{\code{sd5}:}{object of class \code{"SpatialPixelsDataFrame"}; predictions and variances, or number of realizations of the target variable at depth 80 cm}
-    \item{\code{sd6}:}{object of class \code{"SpatialPixelsDataFrame"}; predictions and variances, or number of realizations of the target variable at depth 150 cm}
+    \item{\code{sd1}:}{object of class \code{"SpatialPixelsDataFrame"}; predictions and variances, or number of realizations of the target variable at depth 2.5 cm (0--5)}
+    \item{\code{sd2}:}{object of class \code{"SpatialPixelsDataFrame"}; predictions and variances, or number of realizations of the target variable at depth 10 cm (5--15)}
+    \item{\code{sd3}:}{object of class \code{"SpatialPixelsDataFrame"}; predictions and variances, or number of realizations of the target variable at depth 22.5 cm (15--30)}
+    \item{\code{sd4}:}{object of class \code{"SpatialPixelsDataFrame"}; predictions and variances, or number of realizations of the target variable at depth 45 cm (30--60)}
+    \item{\code{sd5}:}{object of class \code{"SpatialPixelsDataFrame"}; predictions and variances, or number of realizations of the target variable at depth 80 cm (60--100)}
+    \item{\code{sd6}:}{object of class \code{"SpatialPixelsDataFrame"}; predictions and variances, or number of realizations of the target variable at depth 150 cm (100--200)}
   }
-Gridded data that is submitted to \code{sd*} slots of the \code{"GlobalSoilMap"} class must satisfy some minimum requirements (class validity):
+Gridded data submitted to \code{sd*} slots of the \code{"GlobalSoilMap"} class must satisfy all of the following requirements (class validity):
   \itemize{
-   \item All grids submitted must have the same grid topology (\code{grid} slot in the object of class \code{"SpatialPixelsDataFrame"});
-   \item All grids must be projected in the referent coordinate system WGS84 (geographical coordinates), with 3D dimension (altitude) expressed as distance from the land surface in meters (e.g. \code{-.025} for 2.5 cm depth);
-   \item The grid cell size must correspond to some standard resolution e.g. 0.0008333333 (3/3600 or about 100 m), 0.0016666667 (1/600 or about 250 m) or similar;
+   \item All grids submitted must have the same grid topology (identical \code{grid} slot in the object of class \code{"SpatialPixelsDataFrame"});
+   \item All grids must be projected in the referent coordinate system \href{http://spatialreference.org/ref/epsg/4326/}{WGS84} (geographical coordinates), with 3D dimension (altitude) expressed as distance from the land surface in meters (e.g. altitude of \code{-.025} corresponds to the 2.5 cm depth);
+   \item The grid cell size must correspond to some standard resolution e.g. 0.0008333333 (1/1200 or about 100 m), 0.0016666667 (1/600 or about 250 m) or similar;
    \item Only standard abbreviated names registered in the Global Soil Data registry can be used in the \code{varname} slot; 
   } 
 }
@@ -29,8 +30,13 @@ Gridded data that is submitted to \code{sd*} slots of the \code{"GlobalSoilMap"}
 	\item{summary}{\code{signature(x = "GlobalSoilMap")}: generates summary statistics for the object}
   }
 }
+\references{
+\itemize{
+  \item Sanchez, P. A., S. Ahamed, F. Carre, A. E. Hartemink, J. Hempel, J. Huising, P. Lagacherie, A. B. McBratney, N. J. McKenzie, M L. de \enc{Mendonça}{Mendonca}-Santos, et al., (2009) \href{http://dx.doi.org/10.1126/science.1175084}{Digital Soil Map of the World}. Science, 325(5941): 680-681.
+}
+}
 \author{ Tomislav Hengl and Robert A. MacMillan }
-\seealso{ \code{\link{SpatialComponents-class}}
+\seealso{ \code{\link{SpatialComponents-class}}, \code{\link{geosamples-class}} 
 }
 \examples{
 \dontrun{# load soil samples from the plotKML package: 
@@ -80,10 +86,10 @@ sd.ll <- sapply(1:length(sd.l), FUN=function(x){make.3Dgrid(sd.l[[x]]@predicted[
 SNDMHT.gsm <- GlobalSoilMap(varname="SNDMHT", sd.ll, period=c("", ""))
 # visualize all maps in Google Earth:
 data(R_pal)
-z = mean(eberg_grid$DEMSRT6, na.rm=TRUE)
+z0 = mean(eberg_grid$DEMSRT6, na.rm=TRUE)
 # export grids:
 for(j in 1:length(sd.ll)){
-  kml(slot(SNDMHT.gsm, paste("sd", j, sep="")), folder.name = paste("eberg_sd", j, sep=""), file = paste("SNDMHT_sd", j, ".kml", sep=""), colour = observedValue, zlim=c(10,85), raster_name = paste("SNDMHT_sd", j, ".png", sep=""), altitude = z+5000+(s[j]*2500))
+  kml(slot(SNDMHT.gsm, paste("sd", j, sep="")), folder.name = paste("eberg_sd", j, sep=""), file = paste("SNDMHT_sd", j, ".kml", sep=""), colour = observedValue, zlim=c(10,85), raster_name = paste("SNDMHT_sd", j, ".png", sep=""), altitude = z0+5000+(s[j]*2500))
 }
 }
 }

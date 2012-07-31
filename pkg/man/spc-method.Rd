@@ -2,6 +2,7 @@
 \docType{methods}
 \alias{spc}
 \alias{spc,SpatialPixelsDataFrame,formula-method}
+\alias{spc,list,list-method}
 \title{Derive Spatial Predictive Components}
 \description{Derives Spatial Predictive Components for a given set of covariates. It wraps the \code{stats::prcomp} method and predicts a list principal components for an object of type \code{"SpatialPixelsDataFrame"}.}
 \usage{

@@ -13,6 +13,7 @@
 
 library(plotKML)
 library(GSIF)
+library(raster)
 
 # load data:
 data(eberg)
@@ -27,7 +28,8 @@ edaplot(eberg$SNDMHT_A[!is.na(eberg$SNDMHT_A)], H.freq=TRUE, box=FALSE, S.pch=3,
 ## http://gsif.r-forge.r-project.org/Fig_eberg_hist_SNDMHT.png
 
 # prepare data for spatial analysis:
-eberg.xy <- eberg[runif(nrow(eberg)) < .3,]
+sel <- runif(nrow(eberg)) < .3
+eberg.xy <- eberg[sel,]
 coordinates(eberg.xy) <- ~X+Y
 proj4string(eberg.xy) <- CRS("+init=epsg:31467")
 
@@ -62,9 +64,9 @@ image(me.eberg@sp.domain, col="grey", xlab="", ylab="")
 s.lst <- c("ID", "soiltype", "TAXGRSC", "X", "Y")
 h.lst <- c("UHDICM","LHDICM","SNDMHT","SLTMHT","CLYMHT")
 # get sites table:
-sites <- eberg[,s.lst]
+sites <- eberg[sel,s.lst]
 # get horizons table:
-horizons <- getHorizons(eberg, idcol="ID", sel=h.lst)
+horizons <- getHorizons(eberg[sel,], idcol="ID", sel=h.lst)
 # create object of type "SoilProfileCollection"
 eberg.spc <- join(horizons, sites, type='inner')
 depths(eberg.spc) <- ID ~ UHDICM + LHDICM
@@ -77,6 +79,8 @@ eberg.spc@horizons$SNDMHT.t <- log((eberg.spc@horizons$SNDMHT/100)/(1-eberg.spc@
 eberg.geo <- as.geosamples(eberg.spc)
 str(eberg.geo)
 levels(eberg.geo@data$methodid)
+# the observationid is missing, so we make our own:
+eberg.geo@data$observationid <- paste("eberg", 1:length(eberg.geo@data$observationid), sep="")
 
 # Derive SPCs:
 formulaString <- ~ PRMGEO6+DEMSRT6+TWISRT6+TIRAST6
@@ -107,7 +111,7 @@ s = get("stdepths", envir = GSIF.opts)
 s
 sd.ll <- sapply(1:length(sd.l), FUN=function(x){make.3Dgrid(sd.l[[x]]@predicted[3:4], pixelsize=p, stdepths=s[x])})
 # save to a "GlobalSoilMap" object:
-SNDMHT.gsm <- GlobalSoilMap(varname="SNDMHT", sd.ll, period=c("1999-02-01", "2001-07-01"))
+SNDMHT.gsm <- GlobalSoilMap(sd.ll, varname="SNDMHT", period=c("1999-02-01", "2001-07-01"))
 save(SNDMHT.gsm, file="SNDMHT.rda", compress="xz") 
 
 # visualize all maps in Google Earth:
@@ -146,8 +150,67 @@ SNDMHT.m2 <- fit.gstatModel(observations=eberg.xy, glm.formulaString2, covariate
 summary(SNDMHT.m2@regModel)
 
 ## Predicting with multiscale data:
+eberg_grids <- list(eberg_grid, eberg_grid25)
+unlist(sapply(eberg_grids, names))
+glm.formulaString3 = observedValue ~ PRMGEO6+DEMSRT6+TWISRT6+TIRAST6+LNCCOR6+TWITOPx+NVILANx+ns(altitude, df=4)
+SNDMHT.m3 <- fit.gstatModel(observations=eberg.geo, glm.formulaString3, covariates=eberg_grids, methodid="SNDMHT.t")  # this takes slightly more time...
+summary(SNDMHT.m3@regModel)
+# new3D2s <- sp3D(eberg_grids, stdepths=-0.025)
+# sd.l2 <- predict(SNDMHT.m3, predictionLocations=new3D2s[[1]], nfold=0)
+## using original covariates will often lead to problems as not all classes have been sampled; 
 
+## instead, we can downscale the 100 m resolution grids:
+eberg_grid25p <- eberg_grid25
+eberg_grid25p@data <- cbind(eberg_grid25@data, gdalwarp(eberg_grid, pixsize=eberg_grid25@grid@cellsize[1], GridTopology=eberg_grid25@grid, resampling_method="cubicspline")@data)
+# and now we can again run spc:
+formulaString2 <- ~ TWITOPx+NVILANx+PRMGEO6+DEMSRT6+TWISRT6+TIRAST6
+eberg_spc25 <- spc(eberg_grid25p, formulaString2)
+# rd2 = range(eberg_spc25@predicted@data[,1], na.rm=TRUE)
+# spplot(eberg_spc25@predicted[1:4], at=seq(rd2[1], rd2[2], length.out=48), col.regions=pal)
+## http://gsif.r-forge.r-project.org/Fig_eberg_SPCs2_4.png
+
+## fit the model:
+glm.formulaString3 = as.formula(paste("observedValue ~ ", paste(names(eberg_spc25@predicted), collapse="+"), "+ ns(altitude, df=4)"))
+glm.formulaString3
+SNDMHT.m3 <- fit.gstatModel(observations=eberg.geo, glm.formulaString3, covariates=eberg_spc25@predicted, methodid="SNDMHT.t")
+summary(SNDMHT.m3@regModel)
+## Prepare prediction locations (this requires downscaling!):
+new3D2s <- sp3D(eberg_spc25@predicted, stdepths=-0.025)
+sd.l2 <- predict(SNDMHT.m3, predictionLocations=new3D2s[[1]], nfold=0)
+sd.l2@predicted$observedValue <- exp(sd.l2@predicted$observedValue)/(1+exp(sd.l2@predicted$observedValue))*100
+## compare predictions at two scales:
+data(SAGA_pal)
+rg <- range(sd.l2@predicted$observedValue, na.rm=TRUE)
+rx <- rev(as.character(round(c(round(rg[1], 0), NA, round(mean(rg), 0), NA, round(rg[2], 0)), 2))) 
+par(mfrow=c(1,2), mar=c(.5,.5,3.5,0.5), oma=c(0,0,0,0))
+image(raster(sd.l2@predicted["observedValue"]), col=SAGA_pal[[1]], main="25 m", axes = FALSE, xlab="", ylab="", zlim=rg, asp=1)
+points(eberg.xy, pch="+", cex=.5)
+image(raster(sd.l[[1]]@predicted["observedValue"]), col=SAGA_pal[[1]], main="100 m", axes = FALSE, xlab="", ylab="", zlim=rg, asp=1)
+points(eberg.xy, pch="+", cex=.5)
+## http://gsif.r-forge.r-project.org/Fig_eberg_comparison_25_100_m.png
 
 ## Predicting with multisource data:
+formulaString.l <- list(~ PRMGEO6+DEMSRT6+TWISRT6+TIRAST6, ~ DEMTOPx+TWITOPx+NVILANx)
+eberg_grids_spc <- spc(eberg_grids, formulaString.l)
+## fit a list of models:
+glm.formulaString.l <- lapply(eberg_grids_spc, FUN=function(x){as.formula(paste("observedValue ~ ", paste(names(x@predicted), collapse="+"), "+ ns(altitude, df=4)"))})
+glm.formulaString.l
+## focus on the regression model (this returns a list of models):
+SNDMHT.ml <- fit.gstatModel(observations=eberg.geo, glm.formulaString.l, lapply(eberg_grids_spc, slot, "predicted"), methodid="SNDMHT.t", rvgm=NULL)
+# summary(SNDMHT.ml[[1]]@regModel)
+new3D.ml <- sapply(eberg_grids_spc, FUN=function(x){sp3D(x@predicted, stdepths=-0.025)})
+## create predictions using a list of gstatModels:
+sd.ml <- predict(SNDMHT.ml, predictionLocations=new3D.ml, nfold=2, verbose=TRUE, mask.extra=FALSE)
+sd.mlc <- merge(sd.ml[[1]], sd.ml[[2]])
+sd.mlc@data[,1] <- exp(sd.mlc@data[,1])/(1+exp(sd.mlc@data[,1]))*100
+par(mar=c(.5,.5,3.5,0.5), oma=c(0,0,0,0))
+image(raster(sd.mlc["observedValue"]), col=SAGA_pal[[1]], main="25 m + 100 m", axes = FALSE, xlab="", ylab="", zlim=rg, asp=1)
+points(eberg.xy, pch="+", cex=.5)
+## http://gsif.r-forge.r-project.org/Fig_eberg_merge_25_100_m.png
+
+## simulations:
+# sd.mls <- predict(SNDMHT.ml, predictionLocations=new3D.ml, nsim=2, method="RK")
+## TH: this is very time-consuming; geostat simulations on a block support in gstat -> not a good idea!
+
 
 # end of script;

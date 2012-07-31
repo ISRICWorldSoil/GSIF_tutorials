@@ -43,7 +43,7 @@ as.geosamples(obj, ...)
 <dl>
 <dt>registry</dt><dd><p>URI specifying the metadata registry (web-service that carries all metadata connected to the certain method ID and/or sample ID)</p>
 </dd>
-<dt>sample.area</dt><dd><p>standard sample area in square meters</p>
+<dt>sample.area</dt><dd><p>standard sample area in square meters (assumed to be 1 by 1 m)</p>
 </dd>
 <dt>mxd</dt><dd><p>maximum depth of interest in meters</p>
 </dd>
@@ -55,11 +55,13 @@ as.geosamples(obj, ...)
 
 <h3>Value</h3>
 
-<p>Returns an object of type <code>"geosamples"</code>. Many columns required by the <code>"geosamples"</code> class might be not available and will result in <code>NA</code> values. To ensure compatibility, when building an object of type <code>"SoilProfilesCollection"</code>, use some standard naming convention to attach attributes:
+<p>Returns an object of type <code>"geosamples"</code>. Many columns required by the <code>"geosamples"</code> class might be not available and will result in <code>NA</code> values. To ensure compatibility, when building an object of type <code>"SoilProfilesCollection"</code>, use some standard naming convention to attach attributes to each measurement (horizons and sites slots in the <code>"SoilProfileCollection-class"</code>):
 </p>
 
 <dl>
 <dt><code>"locationError"</code></dt><dd><p>can be used to attach location errors in meters to each spatial location</p>
+</dd>
+<dt><code>"sampleArea"</code></dt><dd><p>can be used to attach spatial support to each measurement (usually 1 by 1 meter)</p>
 </dd>
 <dt><code>"measurementError"</code></dt><dd><p>can be used to attach specific measurement errors to each measurement in both site and horizons table</p>
 </dd>

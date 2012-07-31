@@ -3,6 +3,7 @@
 \alias{gstatModel-class}
 \alias{predict,gstatModel}
 \alias{predict.gstatModel}
+\alias{predict.gstatModelList}
 \title{A class for a linear geostatistical model}
 \description{A class containing fitted parameters of a linear geostatistical model. It comprises regression model (GLM), variogram model, and observation locations of sampled values used to fit the model.}
 \section{Slots}{
@@ -15,7 +16,7 @@
 \section{Methods}{
   \describe{
 	\item{summary}{\code{signature(obj = "gstatModel")}: summarize object by showing the mapping accuracy (cross-validation) and the amount of variation explained by the model }
-	\item{predict}{\code{signature(obj = "gstatModel")}: makes predictions for a set of given predictionLocations (gridded maps) }
+	\item{predict}{\code{signature(obj = "gstatModel")}: makes predictions for a set of given predictionLocations (gridded maps) at block support corresponding to the \code{cellsize} slot in the object of class \code{"SpatialPixelsDataFrame"} }
   }
 }
 \note{ \code{"SpatialPredictions"} saves results of predictions for a single target variable, which can be of type numeric or factor. Multiple variables can be combined into a list. When using \code{nsim} argument with the \code{predict} method, the output result will be of type:\cr
@@ -26,9 +27,9 @@ i.e. \emph{N} number of equiprobable realizations. To generate an object of type
 
 \code{plotKML::SpatialPredictions-class}\cr
 
-use \code{nsim = 0}. 
+set \code{nsim = 0}. 
 }
-\author{ Tomislav Hengl }
+\author{ Tomislav Hengl and Gerard B.M. Heuvelink }
 \seealso{ \code{plotKML::SpatialPredictions-class}, \code{plotKML::RasterBrickSimulations-class}, \code{gstat::gstat}, \code{stats::glm}
 }
 \examples{ 
@@ -42,7 +43,7 @@ coordinates(meuse.grid) <- ~x+y
 gridded(meuse.grid) <- TRUE
 proj4string(meuse.grid) <- CRS("+init=epsg:28992")
 \dontrun{# fit a model:
-omm <- fit.gstatModel(meuse, formulaString = om~dist, covariates = meuse.grid)
+omm <- fit.gstatModel(meuse, formulaString = om~dist, family=gaussian(link="log"), covariates = meuse.grid)
 show(omm@regModel)
 # produce SpatialPredictions:
 om.rk <- predict(omm, predictionLocations = meuse.grid)
@@ -51,6 +52,8 @@ show(om.rk)
 # plot the whole project and open in Google Earth:
 library(plotKML)
 plotKML(om.rk)
+# simulations (by default at block support):
+om.rksim <- predict(omm, predictionLocations = meuse.grid, nsim=2)
 }
 }
 \keyword{classes}

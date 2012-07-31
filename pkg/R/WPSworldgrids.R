@@ -65,10 +65,8 @@ setMethod("overlay", signature(x = "WPS", y = "SpatialPoints"),
 })
 
 ## subset grid
-setMethod("subset", signature(x = "WPS"), 
-  function(x, bbox, import = TRUE) 
-  {
-
+ 
+setMethod("subset", signature(x = "WPS"), function(x, bbox, import = TRUE){
   require(raster)
   require(RCurl)
   require(rgdal)
@@ -89,7 +87,8 @@ setMethod("subset", signature(x = "WPS"),
   else stop("Bounding box required as matrix with LatMin, LatMax, LonMin, LonMax")
 
   if(import == TRUE){
-   out <- flipVertical(readGDAL(out))
+   out <- readGDAL(out)
+   if(grep(pattern="examine data for flipping", names(warnings()))>0){  out <- flipVertical(out) }
    names(out) <- x@inRastername
    return(out)
   }
@@ -97,5 +96,6 @@ setMethod("subset", signature(x = "WPS"),
     GDALinfo(out)    
   }
 })
+
 
 # end of the script;

@@ -6,10 +6,12 @@
 \title{Converts an object of class \code{"SoilProfileCollection"} to a data frame}
 \description{Converts an object of class \code{"SoilProfileCollection"} to an object of class \code{"data.frame"} with both site and horizon data sorted in one row. Each original column name in the horizons table receives a sufix \code{*_A, B, \dots, Z} where alphabetic letters represent horizon sequence. }
 \usage{
-as.data.frame(x, ...)
+as.data.frame(x, row.names = NULL, optional = FALSE, ...)
 }
 \arguments{
   \item{x}{object of class \code{"SoilProfileCollection"}}
+  \item{row.names}{character; giving the row names for the data frame (missing values are not allowed)}
+  \item{optional}{logical; if `TRUE', setting row names and converting column names (to syntactic names: see `make.names') is optional}
   \item{\dots}{optional arguments}                                   
 }
 \details{The advantage of converting the \code{"SoilProfileCollection"} data to a single table is that, once both tables have been merged to a single data frame, it can be more easily exported and visualized in a GIS and/or imported into a data base.}

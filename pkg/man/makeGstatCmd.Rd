@@ -46,7 +46,6 @@ data(meuse.grid)
 gridded(meuse.grid) <- ~x+y
 proj4string(meuse.grid) <- CRS("+init=epsg:28992")
 \dontrun{# fit a model:
-library(GSIF)
 omm <- fit.gstatModel(observations = meuse, formulaString = om~dist, 
   family = gaussian(log), covariates = meuse.grid)
 str(omm@vgmModel)

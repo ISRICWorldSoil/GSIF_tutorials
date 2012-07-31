@@ -3,12 +3,16 @@
 \encoding{latin1}
 \alias{make.3Dgrid}
 \alias{sp3D}
+\alias{sp3D,SpatialPixelsDataFrame-method}
+\alias{sp3D,list-method}
+\alias{gdalwarp}
+\alias{gdalwarp,SpatialPixelsDataFrame-method}
 \alias{make.3Dgrid,SpatialPixelsDataFrame-method}
 \alias{make.3Dgrid,RasterBrick-method}
 \title{Methods to prepare 3D prediction locations}
 \description{Generates a list of objects of type \code{"SpatialPixelsDataFrame"} with \code{longitude}, \code{latitude} and \code{altitude} coordinates (these names are used by default for compatibility with the \code{\link{geosamples-class}}).}
 \usage{
-make.3Dgrid(obj, ...)
+make.3Dgrid(obj, \dots)
 }
 \arguments{
   \item{obj}{object of class \code{"SpatialPixelsDataFrame"} or \code{"RasterBrick"}} 
@@ -25,16 +29,19 @@ make.3Dgrid(obj, ...)
   \item{show.output.on.console}{logical; specifies whether to print out the progress}
 }
 The output is list of objects of class \code{"SpatialPixelsDataFrame"} where the number of elements in the list corresponds to the number of standard depths.}
-\note{If the input object is of class \code{"SpatialPixelsDataFrame"}, the method by default uses \code{FWTools} (\code{gdalwarp} command) to resample grids, otherwise the \code{raster::projectRaster} command is passed. \href{http://fwtools.maptools.org/}{FWTools} is a separate application and must be installed separately. This operation can be time consuming for large areas (e.g. continents).}
+\note{If the input object is of class \code{"SpatialPixelsDataFrame"}, the method by default uses \code{FWTools} (\code{gdalwarp} command) to resample grids, otherwise the \code{raster::projectRaster} command is passed. \href{http://fwtools.maptools.org/}{FWTools} must be installed separately. \cr 
+This operation can be time consuming for large areas (e.g. continents).}
 \references{
 \itemize{
   \item Bivand, R.S., Pebesma, E.J., and \enc{Gómez}{Gomez}-Rubio, V., (2008) \href{http://www.asdar-book.org/}{Applied Spatial Data Analysis with R}. Springer, 378 p.
-}
+  \item FWTools (\url{http://fwtools.maptools.org})
+  \item Raster package (\url{http://CRAN.R-project.org/package=raster})
+}                 
 }
 \author{ Tomislav Hengl }
 \seealso{ \code{\link{spc}}, \code{\link{geosamples-class}}, \code{plotKML::reproject} }
 \examples{
-\dontrun{# prepare prediction locations for Ebergotzen:
+\dontrun{# grids Ebergotzen:
 library(plotKML)
 data(eberg_grid)
 gridded(eberg_grid) <- ~x+y
@@ -47,6 +54,12 @@ eberg_3Dxy <- sp3D(eberg_spc@predicted)
 # wrapper function to create 3D locations in the default system:
 eberg_3D <- make.3Dgrid(eberg_spc@predicted)
 image(eberg_3D[[1]]["PC1"])
+# downscale 100 m resolution imagery to 25 m:
+data(eberg_grid25)
+gridded(eberg_grid25) <- ~x+y
+proj4string(eberg_grid25) <- CRS("+init=epsg:31467")
+eberg_grid25@data <- cbind(eberg_grid25@data, gdalwarp(eberg_grid, pixsize=eberg_grid25@grid@cellsize[1], GridTopology=eberg_grid25@grid, resampling_method="cubicspline")@data)
+# this function requires FWTools!
 }
 }
 \keyword{methods}

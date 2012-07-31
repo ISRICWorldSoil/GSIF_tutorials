@@ -5,14 +5,16 @@
 \alias{fit.gstatModel}
 \alias{fit.gstatModel,SpatialPointsDataFrame,formula,SpatialPixelsDataFrame-method}
 \alias{fit.gstatModel,geosamples,formula,SpatialPixelsDataFrame-method}
+\alias{fit.gstatModel,geosamples,formula,list-method}
+\alias{fit.gstatModel,geosamples,list,list-method}
 \title{Methods to fit a regression-kriging model}
 \description{Tries to automatically fit a 2D or 3D regression-kriging model for a given set of points (object of type \code{"SpatialPointsDataFrame"} or \code{"geosamples"}) and covariates (object of type \code{"SpatialPixelsDataFrame"}). It first fits a Generalized Linear Model (GLM) following the \code{formulaString}, then fits variogram for residuals usign the \code{fit.variogram} method from the \href{http://www.gstat.org}{gstat} package. Creates an output object of class \code{\link{gstatModel-class}}.}
 \usage{ fit.gstatModel(observations, formulaString, covariates, \dots )
 }
 \arguments{
-  \item{observations}{object of type \code{"SpatialPointsDataFrame"}}
+  \item{observations}{object of type \code{"SpatialPointsDataFrame"} or \code{"geosamples-class"}}
   \item{formulaString}{object of type \code{"formula"} or a character}
-  \item{covariates}{object of type \code{"SpatialPixelsDataFrame"}}
+  \item{covariates}{object of type \code{"SpatialPixelsDataFrame"}, or list of grids at various resolutions}
   \item{\dots}{other optional arguments that can be passed to \code{glm} and/or \code{fit.variogram}}
 }
 \details{Optional arguments are \code{rvgm} --- residual variogram model can be passed from gstat, in which case \code{fit.gstatModel} will not try to fit the variogram; \code{vgmFun} --- variogram function (\code{"Exp"} by default); \code{family} --- character string defyning the GLM family (for more info see \code{stats::glm}); \code{stepwise} --- specifies whether to run step-wise regression on top of GLM to get an optimal subset of predictors. The method by default assumes that the target variable follows a normal distribution \code{family = gaussian}. Other possible families are:
@@ -30,7 +32,7 @@
 }
 }
 \author{ Tomislav Hengl and Gerard B.M. Heuvelink}
-\seealso{ \code{\link{gstatModel-class}}, \code{stats::glm}, \code{gstat::fit.variogram}
+\seealso{ \code{\link{gstatModel-class}}, \code{\link{glm.sp}}, \code{\link{geosamples-class}}, \code{stats::glm}, \code{gstat::fit.variogram}
 }
 \examples{
 data(meuse)
@@ -40,8 +42,7 @@ data(meuse.grid)
 coordinates(meuse.grid) <- ~x+y
 gridded(meuse.grid) <- TRUE
 # fit a model with a gaussian log-link:
-omm <- fit.gstatModel(observations = meuse, om~dist, covariates = meuse.grid,
-  family = gaussian(log))
+omm <- fit.gstatModel(meuse, om~dist, meuse.grid, family = gaussian(log))
 omm@regModel
 om.sp <- SpatialPointsDataFrame(omm@sp, data = omm@regModel$model)
 \dontrun{# plot a variogram:

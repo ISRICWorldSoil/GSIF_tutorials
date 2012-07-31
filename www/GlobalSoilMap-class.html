@@ -10,7 +10,7 @@
 
 <h3>Description</h3>
 
-<p>A class containing multiple realizations of soil properties following the <a href="http://globalsoilmap.net/specifications">GlobalSoilMap.net specifications</a>, i.e. predictions of some of the target global soil property at six standard depths: <code>sd1</code> = 2.5 cm (0&ndash;5), <code>sd2</code> = 10 cm (5&ndash;15), <code>sd3</code> = 22.5 cm (15&ndash;30), <code>sd4</code> = 45 cm (30&ndash;60), <code>sd5</code> = 80 cm (60&ndash;100), <code>sd6</code> = 150 cm (100&ndash;200).</p>
+<p>A class containing predictions and prediction error (or multiple realizations) of some of the target global soil property at six standard depths following the <a href="http://globalsoilmap.net/specifications">GlobalSoilMap.net specifications</a>: <code>sd1</code> = 2.5 cm (0&ndash;5), <code>sd2</code> = 10 cm (5&ndash;15), <code>sd3</code> = 22.5 cm (15&ndash;30), <code>sd4</code> = 45 cm (30&ndash;60), <code>sd5</code> = 80 cm (60&ndash;100), <code>sd6</code> = 150 cm (100&ndash;200).</p>
 
 
 <h3>Slots</h3>
@@ -18,37 +18,37 @@
 
     
 <dl>
-<dt><code>varname</code>:</dt><dd><p>object of class <code>"character"</code>; abbreviated variable name registered in the Global Soil Data registry</p>
+<dt><code>varname</code>:</dt><dd><p>object of class <code>"character"</code>; abbreviated variable name registered in the <a href="https://www.google.com/fusiontables/DataSource?docid=1VVfBtsRijz_cRM8p5nj5hnijx6AQB9hbYzfRIZQ">Global Soil Data registry</a></p>
 </dd>
 <dt><code>TimeSpan.begin</code>:</dt><dd><p>object of class <code>"POSIXct"</code>; begin of the sampling period</p>
 </dd>
 <dt><code>TimeSpan.end</code>:</dt><dd><p>object of class <code>"POSIXct"</code>; end of the sampling period</p>
 </dd>
-<dt><code>sd1</code>:</dt><dd><p>object of class <code>"SpatialPixelsDataFrame"</code>; predictions and variances, or number of realizations of the target variable at depth 2.5 cm</p>
+<dt><code>sd1</code>:</dt><dd><p>object of class <code>"SpatialPixelsDataFrame"</code>; predictions and variances, or number of realizations of the target variable at depth 2.5 cm (0&ndash;5)</p>
 </dd>
-<dt><code>sd2</code>:</dt><dd><p>object of class <code>"SpatialPixelsDataFrame"</code>; predictions and variances, or number of realizations of the target variable at depth 10 cm</p>
+<dt><code>sd2</code>:</dt><dd><p>object of class <code>"SpatialPixelsDataFrame"</code>; predictions and variances, or number of realizations of the target variable at depth 10 cm (5&ndash;15)</p>
 </dd>
-<dt><code>sd3</code>:</dt><dd><p>object of class <code>"SpatialPixelsDataFrame"</code>; predictions and variances, or number of realizations of the target variable at depth 22.5 cm</p>
+<dt><code>sd3</code>:</dt><dd><p>object of class <code>"SpatialPixelsDataFrame"</code>; predictions and variances, or number of realizations of the target variable at depth 22.5 cm (15&ndash;30)</p>
 </dd>
-<dt><code>sd4</code>:</dt><dd><p>object of class <code>"SpatialPixelsDataFrame"</code>; predictions and variances, or number of realizations of the target variable at depth 45 cm</p>
+<dt><code>sd4</code>:</dt><dd><p>object of class <code>"SpatialPixelsDataFrame"</code>; predictions and variances, or number of realizations of the target variable at depth 45 cm (30&ndash;60)</p>
 </dd>
-<dt><code>sd5</code>:</dt><dd><p>object of class <code>"SpatialPixelsDataFrame"</code>; predictions and variances, or number of realizations of the target variable at depth 80 cm</p>
+<dt><code>sd5</code>:</dt><dd><p>object of class <code>"SpatialPixelsDataFrame"</code>; predictions and variances, or number of realizations of the target variable at depth 80 cm (60&ndash;100)</p>
 </dd>
-<dt><code>sd6</code>:</dt><dd><p>object of class <code>"SpatialPixelsDataFrame"</code>; predictions and variances, or number of realizations of the target variable at depth 150 cm</p>
+<dt><code>sd6</code>:</dt><dd><p>object of class <code>"SpatialPixelsDataFrame"</code>; predictions and variances, or number of realizations of the target variable at depth 150 cm (100&ndash;200)</p>
 </dd>
 </dl>
 
-<p>Gridded data that is submitted to <code>sd*</code> slots of the <code>"GlobalSoilMap"</code> class must satisfy some minimum requirements (class validity):
+<p>Gridded data submitted to <code>sd*</code> slots of the <code>"GlobalSoilMap"</code> class must satisfy all of the following requirements (class validity):
 </p>
 
 <ul>
-<li><p> All grids submitted must have the same grid topology (<code>grid</code> slot in the object of class <code>"SpatialPixelsDataFrame"</code>);
+<li><p> All grids submitted must have the same grid topology (identical <code>grid</code> slot in the object of class <code>"SpatialPixelsDataFrame"</code>);
 </p>
 </li>
-<li><p> All grids must be projected in the referent coordinate system WGS84 (geographical coordinates), with 3D dimension (altitude) expressed as distance from the land surface in meters (e.g. <code>-.025</code> for 2.5 cm depth);
+<li><p> All grids must be projected in the referent coordinate system <a href="http://spatialreference.org/ref/epsg/4326/">WGS84</a> (geographical coordinates), with 3D dimension (altitude) expressed as distance from the land surface in meters (e.g. altitude of <code>-.025</code> corresponds to the 2.5 cm depth);
 </p>
 </li>
-<li><p> The grid cell size must correspond to some standard resolution e.g. 0.0008333333 (3/3600 or about 100 m), 0.0016666667 (1/600 or about 250 m) or similar;
+<li><p> The grid cell size must correspond to some standard resolution e.g. 0.0008333333 (1/1200 or about 100 m), 0.0016666667 (1/600 or about 250 m) or similar;
 </p>
 </li>
 <li><p> Only standard abbreviated names registered in the Global Soil Data registry can be used in the <code>varname</code> slot; 
@@ -73,9 +73,20 @@
 <p> Tomislav Hengl and Robert A. MacMillan </p>
 
 
+<h3>References</h3>
+
+
+
+<ul>
+<li><p> Sanchez, P. A., S. Ahamed, F. Carre, A. E. Hartemink, J. Hempel, J. Huising, P. Lagacherie, A. B. McBratney, N. J. McKenzie, M L. de Mendonça-Santos, et al., (2009) <a href="http://dx.doi.org/10.1126/science.1175084">Digital Soil Map of the World</a>. Science, 325(5941): 680-681.
+</p>
+</ul>
+
+
+
 <h3>See Also</h3>
 
- <p><code><a href="SpatialComponents-class.html">SpatialComponents-class</a></code>
+ <p><code><a href="SpatialComponents-class.html">SpatialComponents-class</a></code>, <code><a href="geosamples-class.html">geosamples-class</a></code> 
 </p>
 
 
@@ -129,10 +140,10 @@ sd.ll &lt;- sapply(1:length(sd.l), FUN=function(x){make.3Dgrid(sd.l[[x]]@predict
 SNDMHT.gsm &lt;- GlobalSoilMap(varname="SNDMHT", sd.ll, period=c("", ""))
 # visualize all maps in Google Earth:
 data(R_pal)
-z = mean(eberg_grid$DEMSRT6, na.rm=TRUE)
+z0 = mean(eberg_grid$DEMSRT6, na.rm=TRUE)
 # export grids:
 for(j in 1:length(sd.ll)){
-  kml(slot(SNDMHT.gsm, paste("sd", j, sep="")), folder.name = paste("eberg_sd", j, sep=""), file = paste("SNDMHT_sd", j, ".kml", sep=""), colour = observedValue, zlim=c(10,85), raster_name = paste("SNDMHT_sd", j, ".png", sep=""), altitude = z+5000+(s[j]*2500))
+  kml(slot(SNDMHT.gsm, paste("sd", j, sep="")), folder.name = paste("eberg_sd", j, sep=""), file = paste("SNDMHT_sd", j, ".kml", sep=""), colour = observedValue, zlim=c(10,85), raster_name = paste("SNDMHT_sd", j, ".png", sep=""), altitude = z0+5000+(s[j]*2500))
 }
 
 ## End(Not run)
