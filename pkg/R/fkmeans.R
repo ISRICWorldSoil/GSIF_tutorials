@@ -1,8 +1,8 @@
 # Purpose        : Fit/predict distribution of soil types (memberships);
 # Maintainer     : Tomislav Hengl (tom.hengl@wur.nl)
-# Contributions  : ; 
+# Contributions  : Bas Kempen; 
 # Dev Status     : Pre-Alpha
-# Note           : if the regression model is difficult to fit, it might lead to artifacts;
+# Note           : if the regression model is difficult to fit, it might lead to artifacts (see also "mlogit" package);
 
 
 # Fit a supervised fuzzy kmeans model and predict memberships:

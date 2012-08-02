@@ -132,7 +132,7 @@ echo $contents; } ?>
    4.062  18.800  20.000  30.260  42.300  92.500   3.000 </pre>
 <pre class="R_code">&gt; library(StatDA)
 &gt; par(mar=c(2.5,2.5,0.5,0.5), oma=c(0,0,0,0))
-&gt; edaplot(eberg$SNDMHT_A[!is.na(eberg$SNDMHT_A)], H.freq=TRUE, box=FALSE, S.pch=3, S.cex=0.5, D.lwd=1.5, P.ylab=&quot;&quot;, P.log=FALSE, P.logfine=c(5,10), P.main=&quot;&quot;, P.xlab=&quot;&quot;, B.pch=3, B.cex=0.5)</pre>
+&gt; edaplot(eberg$SNDMHT_A[!is.na(eberg$SNDMHT_A)], H.freq=TRUE, box=FALSE, S.pch=3, S.cex=0.5,<br />+  D.lwd=1.5, P.ylab=&quot;&quot;, P.log=FALSE, P.logfine=c(5,10), P.main=&quot;&quot;, P.xlab=&quot;&quot;, B.pch=3, B.cex=0.5)</pre>
 <table width="350" border="0" cellspacing="2" cellpadding="4">
   <caption class="caption" align="bottom">
     Fig: Histogram for sand content.
@@ -293,9 +293,8 @@ converting IDs from factor to character</pre>
  PC9 + PC10 + PC11 + ns(altitude, df = 4)</pre>
 <p>In other words the observed values will be modeled as a function of PCs and altitude (natural splines via the <a href="http://stat.ethz.ch/R-manual/R-devel/library/splines/html/ns.html">ns</a> function). In the GSIF package, the 3D GLM-kriging model can be fitted at once by running: </p>
 <pre class="R_code">&gt; SNDMHT.m &lt;- fit.gstatModel(observations=eberg.geo, glm.formulaString, covariates=eberg_spc@predicted, methodid=&quot;SNDMHT.t&quot;)<br />&gt; summary(SNDMHT.m@regModel)</pre>
-<pre>
-<span class="R_env">   Call:
-   glm(formula = observedValue ~ PC1 + PC2 + PC4 + PC5 + PC6 + PC7 + 
+<pre><span class="R_env">Call:
+ glm(formula = observedValue ~ PC1 + PC2 + PC4 + PC5 + PC6 + PC7 + 
    PC8 + PC9 + PC10 + PC11 + ns(altitude, df = 4), family = family, 
    data = rmatrix)</span></pre>
 <pre class="R_env">Deviance Residuals: 
@@ -327,12 +326,8 @@ converting IDs from factor to character</pre>
    AIC: 8908.8</pre>
 <pre class="R_env">Number of Fisher Scoring iterations: 2</pre>
 <pre class="R_code">&gt; SNDMHT.m@vgmModel</pre>
-<pre class="R_env">  model     psill    range kappa ang1 ang2 ang3 anis1<br />
-  1   Nug 0.2771894   0.0000   0.0    0    0    0     1<br />
-  2   Exp 0.4396340 145.4435   0.5    0    0    0     1<br />
-  anis2<br />
-  1 1.00000<br />
-  2 0.00015</pre>
+<pre class="R_env">model     psill    range kappa ang1 ang2 ang3 anis1<br />1   Nug 0.2771894   0.0000   0.0    0    0    0     1<br />2   Exp 0.4396340 145.4435   0.5    0    0    0     1<br />
+anis2<br />1 1.00000<br />2 0.00015</pre>
 <p>These result show that the model is significant, and this is valid for both GLM and the variogram. Note however that this is not completely a 3D regression-krging, as we do not actually have values of PCs at different depths (in fact, most of PCs relate only to the surface), so that many values of covariates are basically copied to all depths. This does not represent any problem for the GLM modeling, however, you should be aware that, because values of covariates are fixed with the different depths, the resulting 3D patterns in the target variable will be mainly controlled by the surface patterns.</p>
 <p>Once we have fitted a <a href="gstatModel-class.html">gstatModel</a>, we can generate predictions and estimate the associated uncertainty at any depth. In the last step, we need to prepare the 3D prediction locations i.e. grid cells that need to be mapped. In GSIF package, this can be done by using the <a href="make.3Dgrid-method.html">sp3D</a> function:</p>
 <pre class="R_code">&gt; new3D &lt;- sp3D(eberg_spc@predicted)</pre>
@@ -352,7 +347,7 @@ converting IDs from factor to character</pre>
 <pre class="R_env">...</pre>
 <p>This operation can take time depending on the size of the grids and number of 3D points used to generate predictions. </p>
 <p>Finally, we can prepare the produced predictions and export them as <a href="GlobalSoilMap-class.html">GlobalSoilMap-class</a> object. First, we back-transform the predictions to the 0-100% scale:</p>
-<pre class="R_code">&gt; for(j in 1:length(sd.l)){ sd.l[[j]]@predicted$observedValue &lt;- exp(sd.l[[j]]@predicted$observedValue)/(1+exp(sd.l[[j]]@predicted$observedValue))*100 }</pre>
+<pre class="R_code">&gt; for(j in 1:length(sd.l)){ sd.l[[j]]@predicted$observedValue &lt;- exp(sd.l[[j]]@predicted$observedValue)/<br />+  (1+exp(sd.l[[j]]@predicted$observedValue))*100 }</pre>
 <p>and then  reproject the produced predictions to  geographical coordinates (<a href="http://spatialreference.org/ref/epsg/4326/" target="_blank">WGS84</a>) using the <a href="make.3Dgrid-method.html">make.3Dgrid</a> function: </p>
 <pre class="R_code">&gt; p = get(&quot;cellsize&quot;, envir = GSIF.opts)[2]
 &gt; s = get(&quot;stdepths&quot;, envir = GSIF.opts)
