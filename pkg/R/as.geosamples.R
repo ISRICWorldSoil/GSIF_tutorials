@@ -143,7 +143,7 @@ setMethod("overlay", signature(x = "SpatialPixelsDataFrame", y = "geosamples"), 
     warning("AltitudeMode accepts only 'relativeToGround' values")
   }
   
-  pnts = subset.geosamples(y, method=methodid)
+  pnts = subset(y, method=methodid)
   # reformat observed values:
   if(var.type=="numeric"){
     pnts$observedValue = as.numeric(pnts$observedValue)
