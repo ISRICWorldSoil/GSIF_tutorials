@@ -4,7 +4,7 @@
 \alias{riodoce}
 \alias{riodoce.grids}
 \title{Soil samples for the Rio Doce basin}
-\description{Soil samples (456) collected for the Rio Doce basin in Brazil.}
+\description{Soil samples (421 profiles) collected for the Rio Doce basin in Brazil.}
 \usage{data(riodoce)}
 \format{
 The \code{riodoce} data set contains two data frames --- sites and horizons. Sites table contains the following columns:
@@ -13,6 +13,7 @@ The \code{riodoce} data set contains two data frames --- sites and horizons. Sit
   \item{\code{LATWGS84}}{numeric; latitude in decimal degrees on the NAD83 datum}
   \item{\code{LONWGS84}}{numeric; longitude in decimal degrees on the NAD83 datum}
   \item{\code{TAXBRC}}{factor; original soil class based on the \href{http://www.cnps.embrapa.br/sibcs/}{Brazilian Soil Classification System}}
+  \item{\code{legend}}{factor; abbreviated soil class name}
 }
 Horizons table contains the following columns:
   \describe{
@@ -32,10 +33,9 @@ Horizons table contains the following columns:
   \item{\code{AWAIMM}}{total available water capacity in mm}
   \item{\code{HORUID}}{factor; unique name that identifies a particular horizon}
 }
-The \code{riodoce.grids} data frame contains a list of soil covariates prepared for the Rio Doce catchment in Brazil (71,492 grid nodes):
+The \code{riodoce.grids} data frame contains a list of soil covariates prepared for the Rio Doce catchment in Brazil (122,855 grid nodes):
   \describe{
   \item{\code{TAXBRC3}}{factor; dominant soil class from a 1:600,000 scale polgyon map, and based on the \href{http://www.cnps.embrapa.br/sibcs/}{Brazilian Soil Classification System}}
-  \item{\code{GEOGLS3}}{factor; parent material class from the geological map}
   \item{\code{DEMSRT3}}{numeric; SRTM DEM}  
   \item{\code{SLPSRT3}}{numeric; slope in degrees based on the SRTM DEM}
   \item{\code{TWISRT2}}{numeric; SAGA Topographic Wetness Index based on the SRTM DEM}
@@ -44,11 +44,12 @@ The \code{riodoce.grids} data frame contains a list of soil covariates prepared 
   \item{\code{EV2MOD3}}{numeric; second principal component of the monthly MODIS EVI time series data}
   \item{\code{TD1MOD3}}{numeric; first principal component of the 8-day MODIS day-time LST time series data}         
   \item{\code{TN1MOD3}}{numeric; first principal component of the 8-day MODIS night-time LST time series data} 
+  \item{\code{mask}}{logical; mask map specifying the borders of the watershed}
   \item{\code{x}}{numeric; x-coordinate in the UTM 23S coordiante system with GRS67 ellipsoid}
   \item{\code{y}}{numeric; y-coordinate in the UTM 23S coordiante system with GRS67 ellipsoid}
 }
 }
-\note{Soil classes (orders, sub-orders and great groups) in \code{TAXBRC}: \code{"AR"} (bare rock), \code{"CH"} (Cambissolo \enc{Húmico}{Humico}), \code{"CX"} (Cambissolo \enc{Háplico}{Haplico}), \code{"CY"} (Cambissolo \enc{Flúvico}{Fluvico}), \code{"E"} (Espodossolo), \code{"G"} (Gleissolo), \code{"LAd"} (Latossolo Amarelo \enc{Distrófico}{Distrofico}), \code{"LV"} (Latossolo Vermelho), \code{"LVA"} (Latossolo Vermelho Amarelo), \code{"M"} (Chernossolo), \code{"NV"} (Nitossolo), \code{"O"} (Organossolo), \code{"PAd"} (Argissolo Amarelo \enc{Distrófico}{Distrofico}), \code{"PVAd"} (Argissolo Vermelho Amarelo \enc{Distrófico}{Distrofico}), \code{"PVAe"} (Argissolo Vermelho Amarelo \enc{Eutrófico}{Eutrofico}), \code{"PV"} (Argissolo Vermelho), \code{"PVA"} (Argissolo Vermelho Amarelo), \code{"PVd"} (Argissolo Vermelho \enc{Distrófico}{Distrofico}), \code{"PVe"} (Argissolo Vermelho \enc{Distrófico}{Distrofico}), \code{"RL"} (Neossolo \enc{Litólico}{Litolico}), \code{"RQ"} (Neossolo Quartzarenico), \code{"RR"} (Neossolo \enc{Regolítico}{Regolitico}), \code{"RY"} (Neossolo \enc{Flúvico}{Fluvico}), \code{"T"} (Luvissolo \enc{abrúptico}{abruptico}), \code{"V"} (Vertissolo); Brazilian Soil Classification System. Soil polygon map was derived from the General soil map of Minas Gerais at scale 1:600,000. Land surface parameters: potential incoming solar radiation, SAGA Topographic Wetness Index and slope map were derived in SAGA GIS using the 1 km resolution SRTM DEM obtained from the Consultative Group on International Agricultural Research (CGIAR). Principal components for the Enhanced Vegetation Index (EVI, MOD13A3 product) and Land Surface Temperature (LST, MOD11A2 product) images were derived using the 8-day and monthly time-series MODIS images. Listed gridded layers follow a standard naming convention used by WorlGrids.org (the standard 8.3 filename convention with at most eight characters): first three letter are used for the variable type e.g. \code{DEM} (digital elevation model); the next three letters represent the data source or collection method e.g. \code{SRT} (SRTM); the 6th character is the effective scale e.g. \code{3} indicates the 2nd standard scale i.e. 1/120 decimal degrees (about 1 km).}
+\note{Soil classes (orders, sub-orders and great groups) in \code{legend}: \code{"CH"} (Cambissolo \enc{Húmico}{Humico}), \code{"CX"} (Cambissolo \enc{Háplico}{Haplico}), \code{"CY"} (Cambissolo \enc{Flúvico}{Fluvico}), \code{"E"} (Espodossolo), \code{"G"} (Gleissolo), \code{"LAd"} (Latossolo Amarelo \enc{Distrófico}{Distrofico}), \code{"LVAd"} (Latossolo Vermelho Amarelo), \code{"LVd"} (Latossolo Vermelho \enc{Distrófico}{Distrofico}), \code{"NV"} (Nitossolo), \code{"O"} (Organossolo), \code{"PVAd"} (Argissolo Vermelho Amarelo \enc{Distrófico}{Distrofico}), \code{"PVAe"} (Argissolo Vermelho Amarelo \enc{Eutrófico}{Eutrofico}), \code{"PV"} (Argissolo Vermelho), \code{"PVAd"} (Argissolo Vermelho Amarelo \enc{Distrófico}{Distrofico}), \code{"PVe"} (Argissolo Vermelho \enc{Distrófico}{Distrofico}), \code{"RL"} (Neossolo \enc{Litólico}{Litolico}), \code{"RQ"} (Neossolo Quartzarenico), \code{"RY"} (Neossolo \enc{Flúvico}{Fluvico}), \code{"T"} (Luvissolo \enc{abrúptico}{abruptico}), \code{"V"} (Vertissolo); Brazilian Soil Classification System. Soil polygon map was derived from the General soil map of Minas Gerais at scale 1:600,000. Land surface parameters: potential incoming solar radiation, SAGA Topographic Wetness Index and slope map were derived in SAGA GIS using the 1 km resolution SRTM DEM obtained from the Consultative Group on International Agricultural Research (CGIAR). Principal components for the Enhanced Vegetation Index (EVI, MOD13A3 product) and Land Surface Temperature (LST, MOD11A2 product) images were derived using the 8-day and monthly time-series MODIS images. Listed gridded layers follow a standard naming convention used by WorlGrids.org (the standard 8.3 filename convention with at most eight characters): first three letter are used for the variable type e.g. \code{DEM} (digital elevation model); the next three letters represent the data source or collection method e.g. \code{SRT} (SRTM); the 6th character is the effective scale e.g. \code{3} indicates the 2nd standard scale i.e. 1/120 decimal degrees (about 1 km).}
 \author{This data set has been prepared for the purpose of testing various soil mapping methods by Eliana de Souza and Tomislav Hengl (see \href{http://gsif.r-forge.r-project.org/rw_riodoce.R}{processing steps} for more info).}
 \references{
 \itemize{

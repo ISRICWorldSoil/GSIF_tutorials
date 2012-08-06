@@ -10,7 +10,7 @@
 
 <h3>Description</h3>
 
-<p>Soil samples (456) collected for the Rio Doce basin in Brazil.</p>
+<p>Soil samples (421 profiles) collected for the Rio Doce basin in Brazil.</p>
 
 
 <h3>Usage</h3>
@@ -32,6 +32,8 @@
 <dt><code>LONWGS84</code></dt><dd><p>numeric; longitude in decimal degrees on the NAD83 datum</p>
 </dd>
 <dt><code>TAXBRC</code></dt><dd><p>factor; original soil class based on the <a href="http://www.cnps.embrapa.br/sibcs/">Brazilian Soil Classification System</a></p>
+</dd>
+<dt><code>legend</code></dt><dd><p>factor; abbreviated soil class name</p>
 </dd>
 </dl>
 
@@ -71,13 +73,11 @@
 </dd>
 </dl>
 
-<p>The <code>riodoce.grids</code> data frame contains a list of soil covariates prepared for the Rio Doce catchment in Brazil (71,492 grid nodes):
+<p>The <code>riodoce.grids</code> data frame contains a list of soil covariates prepared for the Rio Doce catchment in Brazil (122,855 grid nodes):
 </p>
 
 <dl>
 <dt><code>TAXBRC3</code></dt><dd><p>factor; dominant soil class from a 1:600,000 scale polgyon map, and based on the <a href="http://www.cnps.embrapa.br/sibcs/">Brazilian Soil Classification System</a></p>
-</dd>
-<dt><code>GEOGLS3</code></dt><dd><p>factor; parent material class from the geological map</p>
 </dd>
 <dt><code>DEMSRT3</code></dt><dd><p>numeric; SRTM DEM</p>
 </dd>  
@@ -95,6 +95,8 @@
 </dd>         
 <dt><code>TN1MOD3</code></dt><dd><p>numeric; first principal component of the 8-day MODIS night-time LST time series data</p>
 </dd> 
+<dt><code>mask</code></dt><dd><p>logical; mask map specifying the borders of the watershed</p>
+</dd>
 <dt><code>x</code></dt><dd><p>numeric; x-coordinate in the UTM 23S coordiante system with GRS67 ellipsoid</p>
 </dd>
 <dt><code>y</code></dt><dd><p>numeric; y-coordinate in the UTM 23S coordiante system with GRS67 ellipsoid</p>
@@ -105,7 +107,7 @@
 
 <h3>Note</h3>
 
-<p>Soil classes (orders, sub-orders and great groups) in <code>TAXBRC</code>: <code>"AR"</code> (bare rock), <code>"CH"</code> (Cambissolo Húmico), <code>"CX"</code> (Cambissolo Háplico), <code>"CY"</code> (Cambissolo Flúvico), <code>"E"</code> (Espodossolo), <code>"G"</code> (Gleissolo), <code>"LAd"</code> (Latossolo Amarelo Distrófico), <code>"LV"</code> (Latossolo Vermelho), <code>"LVA"</code> (Latossolo Vermelho Amarelo), <code>"M"</code> (Chernossolo), <code>"NV"</code> (Nitossolo), <code>"O"</code> (Organossolo), <code>"PAd"</code> (Argissolo Amarelo Distrófico), <code>"PVAd"</code> (Argissolo Vermelho Amarelo Distrófico), <code>"PVAe"</code> (Argissolo Vermelho Amarelo Eutrófico), <code>"PV"</code> (Argissolo Vermelho), <code>"PVA"</code> (Argissolo Vermelho Amarelo), <code>"PVd"</code> (Argissolo Vermelho Distrófico), <code>"PVe"</code> (Argissolo Vermelho Distrófico), <code>"RL"</code> (Neossolo Litólico), <code>"RQ"</code> (Neossolo Quartzarenico), <code>"RR"</code> (Neossolo Regolítico), <code>"RY"</code> (Neossolo Flúvico), <code>"T"</code> (Luvissolo abrúptico), <code>"V"</code> (Vertissolo); Brazilian Soil Classification System. Soil polygon map was derived from the General soil map of Minas Gerais at scale 1:600,000. Land surface parameters: potential incoming solar radiation, SAGA Topographic Wetness Index and slope map were derived in SAGA GIS using the 1 km resolution SRTM DEM obtained from the Consultative Group on International Agricultural Research (CGIAR). Principal components for the Enhanced Vegetation Index (EVI, MOD13A3 product) and Land Surface Temperature (LST, MOD11A2 product) images were derived using the 8-day and monthly time-series MODIS images. Listed gridded layers follow a standard naming convention used by WorlGrids.org (the standard 8.3 filename convention with at most eight characters): first three letter are used for the variable type e.g. <code>DEM</code> (digital elevation model); the next three letters represent the data source or collection method e.g. <code>SRT</code> (SRTM); the 6th character is the effective scale e.g. <code>3</code> indicates the 2nd standard scale i.e. 1/120 decimal degrees (about 1 km).</p>
+<p>Soil classes (orders, sub-orders and great groups) in <code>legend</code>: <code>"CH"</code> (Cambissolo Húmico), <code>"CX"</code> (Cambissolo Háplico), <code>"CY"</code> (Cambissolo Flúvico), <code>"E"</code> (Espodossolo), <code>"G"</code> (Gleissolo), <code>"LAd"</code> (Latossolo Amarelo Distrófico), <code>"LVAd"</code> (Latossolo Vermelho Amarelo), <code>"LVd"</code> (Latossolo Vermelho Distrófico), <code>"NV"</code> (Nitossolo), <code>"O"</code> (Organossolo), <code>"PVAd"</code> (Argissolo Vermelho Amarelo Distrófico), <code>"PVAe"</code> (Argissolo Vermelho Amarelo Eutrófico), <code>"PV"</code> (Argissolo Vermelho), <code>"PVAd"</code> (Argissolo Vermelho Amarelo Distrófico), <code>"PVe"</code> (Argissolo Vermelho Distrófico), <code>"RL"</code> (Neossolo Litólico), <code>"RQ"</code> (Neossolo Quartzarenico), <code>"RY"</code> (Neossolo Flúvico), <code>"T"</code> (Luvissolo abrúptico), <code>"V"</code> (Vertissolo); Brazilian Soil Classification System. Soil polygon map was derived from the General soil map of Minas Gerais at scale 1:600,000. Land surface parameters: potential incoming solar radiation, SAGA Topographic Wetness Index and slope map were derived in SAGA GIS using the 1 km resolution SRTM DEM obtained from the Consultative Group on International Agricultural Research (CGIAR). Principal components for the Enhanced Vegetation Index (EVI, MOD13A3 product) and Land Surface Temperature (LST, MOD11A2 product) images were derived using the 8-day and monthly time-series MODIS images. Listed gridded layers follow a standard naming convention used by WorlGrids.org (the standard 8.3 filename convention with at most eight characters): first three letter are used for the variable type e.g. <code>DEM</code> (digital elevation model); the next three letters represent the data source or collection method e.g. <code>SRT</code> (SRTM); the 6th character is the effective scale e.g. <code>3</code> indicates the 2nd standard scale i.e. 1/120 decimal degrees (about 1 km).</p>
 
 
 <h3>Author(s)</h3>

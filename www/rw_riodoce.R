@@ -1,4 +1,3 @@
-
 # title         : rw_riodoce.R
 # purpose       : preparation of the Rio Doce dataset for DSM;
 # reference     : [http://gsif.r-forge.r-project.org/rw_riodoce.R];
@@ -27,14 +26,15 @@ utm.csy <- "+proj=utm +zone=23 +south +ellps=GRS67 +units=m +no_defs"
 # -------------------------------------
 
 library(gdata)
-perl <- gdata:::findPerl("perl")
-# perl = "C:/Perl64/bin/perl.exe"
+# perl <- gdata:::findPerl("perl")
+perl = "C:/Perl64/bin/perl.exe"
 perfis <- read.xls("soil_profile_sad69_20_maio.xls", perl=perl)
-plyr:::nunique(perfis$identif)  ## 461 profiles
+plyr:::nunique(perfis$identif)  ## 413 profiles
 perfis$SOURCEID <- as.factor(paste("UFV", perfis$identif, sep=""))
 # rename columns:
 names(perfis)[which(names(perfis)=="Horiz")] <- "HRDLOC" # horizon designation
-names(perfis)[which(names(perfis)=="legend")] <- "TAXBRC" # Taxonomy Brasilian Soil classification
+names(perfis)[which(names(perfis)=="legend")] <- "legend" # Taxonomy Brasilian Soil classification
+names(perfis)[which(names(perfis)=="classe")] <- "TAXBRC" # Taxonomy Brasilian Soil classification full name
 names(perfis)[which(names(perfis)=="x")] <- "LONWGS84" # longitude
 names(perfis)[which(names(perfis)=="y")] <- "LATWGS84" # latitude
 names(perfis)[which(names(perfis)=="Prof_top")] <- "UHDICM"
@@ -49,7 +49,7 @@ perfis$BSABCL <- ifelse(perfis$BSABCL == 0, NA, perfis$BSABCL)
 names(perfis)[which(names(perfis)=="CTC_T1")] <- "CEXBCL" # effective Cations Exchange capacity;
 perfis$CEXBCL <- ifelse(perfis$CEXBCL == 0, NA, perfis$CEXBCL)
 names(perfis)[which(names(perfis)=="MO")] <- "ORCDRC" # Organic carbon in permilles;
-perfis$ORCDRC <- ifelse(perfis$ORCDRC == 0, NA, perfis$ORCDRC)
+perfis$ORCDRC <- ifelse(perfis$ORCDRC == 0, NA, perfis$ORCDRC*10/1.724)
 names(perfis)[which(names(perfis)=="Total_sand")] <- "SNDPPT" # total sand;
 names(perfis)[which(names(perfis)=="Silt")] <- "SLTPPT" # total silt;
 names(perfis)[which(names(perfis)=="clay")] <- "CLYPPT" # total clay;
@@ -60,19 +60,27 @@ perfis$AWAIMM <- ifelse(perfis$AWAIMM==0, NA, perfis$AWAIMM)
 
 depths(perfis) <- SOURCEID ~ UHDICM + LHDICM
 # extract site data
-site(perfis) <- ~ LONWGS84 + LATWGS84 + TAXBRC  
-# generate SpatialPoints
+site(perfis) <- ~ LONWGS84 + LATWGS84 + TAXBRC + legend
+## generate SpatialPoints
 # coordinates(perfis) <- ~ LONWGS84 + LATWGS84
-# assign CRS data
+## assign CRS data
 # proj4string(perfis) <- "+proj=latlong +datum=WGS84"
-## some can be duplicated:
-# perfis@site$SOURCEID[duplicated(perfis@site$SOURCEID)]
-str(perfis)
-perfis@sp@bbox
+# str(perfis)
+# perfis@sp@bbox
 
+## some can be duplicated:
+perfis@site$SOURCEID[duplicated(perfis@site$SOURCEID)]
+
+# prepare the dataset:
 riodoce <- list(sites=perfis@site, horizons=perfis@horizons[,c("SOURCEID","HRDLOC","UHDICM","LHDICM","PHIHO5","PHIKCL","ORCDRC","SNDPPT","SLTPPT","CLYPPT","BSABCL","CEXBCL","BLDVOL","AWAIMM")])
 str(riodoce)
+riodoce$horizons$HRDLOC <- as.factor(iconv(riodoce$horizons$HRDLOC, to="ASCII", sub="byte"))
+riodoce$sites$TAXBRC <- as.factor(iconv(riodoce$sites$TAXBRC, to="ASCII", sub="byte"))
+levels(riodoce$sites$TAXBRC)
+x = strsplit(paste(riodoce$sites$TAXBRC), " ")
+summary(riodoce$sites$legend)
 save(riodoce, file="riodoce.rda", compress="xz")
+# summary(riodoce$horizons$ORCDRC)
 
 # -------------------------------------
 # Grids
@@ -80,13 +88,16 @@ save(riodoce, file="riodoce.rda", compress="xz")
 
 # read the soil map (study area):
 mapas <- readShapePoly("mapa_solos_wgs.shp")
+mapas.L <- readShapePoly("mapa_solos.shp")
 bbox <- mapas@bbox
 # extend for ca 20 km or 20 pixels:
 bbox[,"min"] <- bbox[,"min"]-.2
 bbox[,"max"] <- bbox[,"max"]+.2
 proj4string(mapas) <- "+proj=longlat +datum=WGS84"
-mapas.xy <- spTransform(mapas, CRS(utm.csy))
-mapas.xy$legendm <- as.integer(mapas.xy$Legend_RD)
+proj4string(mapas.L) <- "+proj=longlat +datum=WGS84"
+mapas.xy <- spTransform(mapas.L, CRS(utm.csy))
+# revised soil map:
+mapas.xy$legendm <- as.integer(mapas.L$soil_class)
 writePolyShape(mapas.xy["legendm"], "mapa_solos_xy.shp")
 
 # read the geology shape:
@@ -201,15 +212,15 @@ writeRaster(lstngrid[["PC2"]], file="ST2MODN.tif", format="GTiff")
 
 riodoce.grid <- readGDAL("TAXBRC3a_utm.sdat")
 names(riodoce.grid) <- "TAXBRC3"
-riodoce.grid$GEOGLS3 <- readGDAL("GEOGLS3a_utm.sdat")$band1
+# riodoce.grid$GEOGLS3 <- readGDAL("GEOGLS3a_utm.sdat")$band1
 riodoce.grid$TAXBRC3 <- ifelse(riodoce.grid$TAXBRC3==129, NA, riodoce.grid$TAXBRC3)
-riodoce.grid$GEOGLS3 <- ifelse(riodoce.grid$GEOGLS3==129, NA, riodoce.grid$GEOGLS3)
+# riodoce.grid$GEOGLS3 <- ifelse(riodoce.grid$GEOGLS3==129, NA, riodoce.grid$GEOGLS3)
 riodoce.grid$TAXBRC3 <- as.factor(riodoce.grid$TAXBRC3)
-riodoce.grid$GEOGLS3 <- as.factor(riodoce.grid$GEOGLS3)
+# riodoce.grid$GEOGLS3 <- as.factor(riodoce.grid$GEOGLS3)
 # attach the original names:
-levels(riodoce.grid$TAXBRC3) <- levels(mapas$Legend_RD)
+levels(riodoce.grid$TAXBRC3) <- levels(mapas.L$soil_class)
 # iconv(levels(geol$Litologia), "latin1", to="ASCII", "?") ## problems with non-standard names
-levels(riodoce.grid$GEOGLS3) <- c("AGL","ANF","ARC","ARM","DIO","END","FER","GNA","GRA","KIN","MTB","MTR","QUR","ROC","ROP","SOL","TON","TUR")
+# levels(riodoce.grid$GEOGLS3) <- c("AGL","ANF","ARC","ARM","DIO","END","FER","GNA","GRA","KIN","MTB","MTR","QUR","ROC","ROP","SOL","TON","TUR")
 riodoce.grid$DEMSRT3 <- round(readGDAL("DEMSRT3a_utm.sdat")$band1, 0)
 riodoce.grid$SLPSRT3 <- round(readGDAL("SLPSRT3a_utm.sdat")$band1, 2)
 riodoce.grid$TWISRT3 <- round(readGDAL("TWISRT3a_utm.sdat")$band1, 1)
@@ -220,7 +231,7 @@ riodoce.grid$EV1MOD3 <- round(readGDAL("EV1MODD.tif")$band1, 1)
 riodoce.grid$EV2MOD3 <- round(readGDAL("EV2MODD.tif")$band1, 1)
 riodoce.grid$TD1MOD3 <- round(readGDAL("ST1MODD.tif")$band1, 1)
 # riodoce.grid$TD2MOD3 <- round(readGDAL("ST2MODD.tif")$band1, 1)
-riodoce.grid$TN1MOD3a <- round(readGDAL("ST1MODN.tif")$band1, 1)
+riodoce.grid$TN1MOD3 <- round(readGDAL("ST1MODN.tif")$band1, 1)
 # riodoce.grid$TN2MOD3 <- round(readGDAL("ST2MODN.tif")$band1, 1)
 riodoce.grid@bbox <- gridxy@bbox
 # spplot(riodoce.grid[8], col.regions=bpy.colors(30))
