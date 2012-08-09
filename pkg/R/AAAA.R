@@ -144,6 +144,10 @@ if(!isGeneric("merge")){
   setGeneric("merge", function(x, y, ...){standardGeneric("merge")})
 }
 
+if(!isGeneric("subset")){
+  setGeneric("subset", function(x, y, ...){standardGeneric("subset")})
+}
+
 if(!isGeneric("spc")){
   setGeneric("spc", function(obj, formulaString, ...){standardGeneric("spc")})
 }

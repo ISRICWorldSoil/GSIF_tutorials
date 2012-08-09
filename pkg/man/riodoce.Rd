@@ -4,7 +4,7 @@
 \alias{riodoce}
 \alias{riodoce.grids}
 \title{Soil samples for the Rio Doce basin}
-\description{Soil samples (421 profiles) collected for the Rio Doce basin in Brazil.}
+\description{Soil samples (413 profiles) collected for the Rio Doce basin in Brazil.}
 \usage{data(riodoce)}
 \format{
 The \code{riodoce} data set contains two data frames --- sites and horizons. Sites table contains the following columns:

@@ -1,6 +1,6 @@
 # Purpose        : Fit/predict distribution of soil types (memberships);
 # Maintainer     : Tomislav Hengl (tom.hengl@wur.nl)
-# Contributions  : Bas Kempen; 
+# Contributions  : Bas Kempen (bas.kempen@wur.nl); 
 # Dev Status     : Pre-Alpha
 # Note           : if the regression model is difficult to fit, it might lead to artifacts (see also "mlogit" package);
 
@@ -29,7 +29,8 @@ setMethod("spfkm", signature(formulaString = "formula", observations = "SpatialP
   ov <- cbind(data.frame(observations[tv]), covariates@data[index,sel])
    
   # if available, use class centres:
-  if(!is.null(class.c)&!is.null(class.sd)){
+  check_tc <- !is.null(class.c)&!is.null(class.sd)
+  if(check_tc){
     if(!class(class.c)=="matrix"){ stop("Object of type 'matrix' with column names for covariates and row names correspodning to the class names required") }
     if(!class(class.sd)=="matrix"){ stop("Object of type 'matrix' with column names for covariates and row names correspodning to the class names required") }
     mout = list(NULL)
@@ -70,7 +71,7 @@ setMethod("spfkm", signature(formulaString = "formula", observations = "SpatialP
   mm@data[,names(covariates)[1]] <- NULL
   
   # if required, derive the dominant class:
-  if(!is.null(class.c)&!is.null(class.sd)){
+  if(check_tc){
     # highest membership:
     maxm <- sapply(data.frame(t(as.matrix(mm@data))), FUN=function(x){max(x, na.rm=TRUE)})
     # class having the highest membership

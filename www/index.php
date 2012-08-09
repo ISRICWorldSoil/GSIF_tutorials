@@ -70,11 +70,19 @@ echo $contents; } ?>
 <p class="R_code">&gt; install.packages(c(&quot;RCurl&quot;, &quot;XML&quot;, &quot;rgdal&quot;, &quot;raster&quot;, &quot;sp&quot;, &quot;aqp&quot;,  &quot;mda&quot;, &quot;gstat&quot;, &quot;plotKML&quot;, &quot;dismo&quot;))<br />
 &gt; install.packages(&quot;GSIF&quot;, repos=c(&quot;http://R-Forge.R-project.org&quot;)) </p>
 <p>Alternatively, you can install the most recent snapshot of the package directly from the source by using e.g.:</p>
-<p class="R_code">&gt; install.packages(c(&quot;RCurl&quot;, &quot;XML&quot;, &quot;rgdal&quot;, &quot;raster&quot;, &quot;sp&quot;, &quot;aqp&quot;,  &quot;mda&quot;, &quot;gstat&quot;, &quot;plotKML&quot;))<br />
-  &gt; download.file(&quot;http://gsif.r-forge.r-project.org/GSIF_0.2-1.tar.gz&quot;, &quot;GSIF_0.2-1.tar.gz&quot;)<br />
-&gt; system(&quot;R CMD INSTALL GSIF_0.2-1.tar.gz&quot;) </p>
+<pre class="R_code">&gt; install.packages(c(&quot;RCurl&quot;, &quot;XML&quot;, &quot;rgdal&quot;, &quot;raster&quot;, &quot;sp&quot;, &quot;aqp&quot;,  &quot;mda&quot;, &quot;gstat&quot;, &quot;plotKML&quot;))
+&gt; download.file(&quot;http://gsif.r-forge.r-project.org/GSIF_0.2-2.tar.gz&quot;, &quot;GSIF_0.2-2.tar.gz&quot;)
+&gt; system(&quot;R CMD INSTALL GSIF_0.2-2.tar.gz&quot;) </pre>
+<p>GSIF package extensively uses a number of external software, hence it is highly recommended that, prior to starting GSIF, you first download and install:</p>
+<ol>
+  <li><a href="http://fwtools.maptools.org" target="_blank">FWTools</a> (<em>required</em>) &#8212; this software is called by several functions (e.g. <a href="make.3Dgrid-method.html">make.3Dgrid</a>);</li>
+  <li><a href="http://www.saga-gis.org" target="_blank">SAGA GIS</a> (<em>optional</em>) &#8212; this software is highly recommend but not required;</li>
+  <li><a href="http://www.python.org/getit/" target="_blank">Python</a> (<em>optional</em>) &#8212; this allows processing of large data;</li>
+</ol>
+<p>Read more:  installation and first steps with <strong><a href="http://plotkml.r-forge.r-project.org/">plotKML</a></strong>.</p>
 <p><strong>News:</strong></p>
 <ul>
+  <li>Aug 2012: added examples of how to <a href="http://plotkml.r-forge.r-project.org/tutorial.php">visualize</a> various (spatial) soil data; </li>
   <li>July 2012: added functionality for <a href="tutorial_eberg.php">3D regression-kriging and soil-class mapping</a>; </li>
   <li>Apr 2012: first meeting of the package development team at the <a href="http://www.pedometrics.org/dsm_oz/" target="_blank">DSM conference</a> in Sydney; </li>
   <li>Mar 2012: first version of the package on R-forge; </li>

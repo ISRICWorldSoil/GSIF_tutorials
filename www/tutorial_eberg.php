@@ -69,9 +69,9 @@ echo $contents; } ?>
   <h1><strong>Tutorial: from soil profile data to 3D soil property and class maps</strong> (<a href="http://plotkml.r-forge.r-project.org/eberg.html">Eberg&ouml;tzen</a> case study)</h1>
 </div>
 <hr />
-<p class="style1">Prepared by: <a href="http://www.wewur.wur.nl/popups/vcard.aspx?id=HENGL001" target="_blank">Tomislav Hengl</a>, <a href="http://www.wewur.wur.nl/popups/vcard.aspx?id=HEUVE015">Gerard B.M. Heuvelink</a> <br />
+<p class="style1">Prepared by: <a href="http://www.wewur.wur.nl/popups/vcard.aspx?id=HENGL001" target="_blank">Tomislav Hengl</a>, <a href="http://www.wewur.wur.nl/popups/vcard.aspx?id=HEUVE015" target="_blank">Gerard B.M. Heuvelink,</a> <a href="http://www.wewur.wur.nl/popups/vcard.aspx?id=KEMPE001" target="_blank">Bas Kempen</a> <br />
   Last update:
-  <!-- #BeginDate format:Am1 -->August 2, 2012<!-- #EndDate -->
+  <!-- #BeginDate format:Am1 -->August 9, 2012<!-- #EndDate -->
 </p>
 <p>The purpose of this tutorial is to demonstrate major processing steps used within the GSIF framework for generating soil property and soil class maps from point data, and with the help of multi-scale covariates. The GSIF (R package) <strong>project summary page</strong> you can find <a href="http://<?php echo $domain; ?>/projects/<?php echo $group_name; ?>/"><strong>here</strong></a>. To learn more about the <strong>Global Soil Information Facilities</strong> (GSIF), visit the <a href="http://www.isric.org/projects/global-soil-information-facilities-gsif" target="_blank">main project page</a>. See also the complete list of <strong><a href="00Index.html">functions</a></strong> available via the GSIF package.</p>
 <p>Download the tutorial as <a href="tutorial_eberg.R">R script</a>. </p>
@@ -114,8 +114,8 @@ echo $contents; } ?>
 <pre class="R_code">&gt; sessionInfo()</pre>
 <pre class="R_env">R version 2.14.1 (2011-12-22)<br />Platform: x86_64-pc-mingw32/x64 (64-bit)</pre>
 <pre class="R_code">&gt; library(plotKML)
-&gt; library(G&gt; sessionInfo()SIF)</pre>
-<pre class="R_env">Loading required package: RCurl<br />Loading required package: bitops<br />GSIF version 0.2-1 (2012-07-19)<br />URL: http://gsif.r-forge.r-project.org/</pre>
+&gt; library(GSIF)</pre>
+<pre class="R_env">Loading required package: RCurl<br />Loading required package: bitops<br />GSIF version 0.2-2 (2012-08-09)<br />URL: http://gsif.r-forge.r-project.org/</pre>
 <p>load the input data:</p>
 <pre class="R_code">> data(eberg)
 > data(eberg_grid)
@@ -161,8 +161,7 @@ earth fractions only to an accuracy of ±5–10%. This means that we should not 
   then overlap the points with predictors to see how well are the environmental features 
   represented. First, we can test if the points represent the geographical space in an unbiased way (see chapter 7, in <a href="http://asdar-book.org">Bivand et al., 2008</a>):</p>
 <pre class="R_code">&gt; library(spatstat)
-&gt; mg_owin &lt;- as.owin(eberg_grid[1])  
-&gt; eberg.ppp &lt;- ppp(x=coordinates(eberg.xy)[,1], y=coordinates(eberg.xy)[,2], marks=eberg.xy$zinc, window=mg_owin)
+&gt; mg_owin &lt;- as.owin(data.frame(x=as.data.frame(eberg_grid)[,&quot;x&quot;], y=as.data.frame(eberg_grid)[,&quot;y&quot;], window = TRUE))<br />&gt; eberg.ppp &lt;- ppp(x=coordinates(eberg.xy)[,1], y=coordinates(eberg.xy)[,2], marks=eberg.xy$zinc, window=mg_owin)
 &gt; env.eberg.xy &lt;- envelope(eberg.ppp, fun=Gest)</pre>
 <pre class="R_env">Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 17.80   78.22  120.70  140.00  186.80  741.10 &gt; env.eberg.xy &lt;- envelope(eberg.ppp, fun=Gest)
@@ -194,11 +193,12 @@ lo     1   8   lo   G[lo](r) lower pointwise envelope of G(r) from simulations</
 <p>which shows that the point samples do not exactly satisfy the Complete Spatial Randomness test (<a href="http://cran.r-project.org/web/packages/spatstat/spatstat.pdf" target="_blank">spatstat</a> package) &#8212; samples at larger distances have a lower spatial density than a completely random design, which usually means that some parts of the case study are under-sampled (see also figure below). On the other hand, points at shorter distances (&lt;75 m) would pass the CSR test, which indicates that, at least at shorter distances, there is no clustering in geographical space. </p>
 <h3><a name="MaxEnt_analysis" id="MaxEnt_analysis"></a>Testing the feature space coverage</h3>
 <p>To see how representative is the point data considering the coverage of feature space, we use the <a href="MaxEnt-method.html">MaxEnt</a> function that extends methods available via the <a href="http://cran.r-project.org/web/packages/dismo/">dismo</a> package:</p>
-<pre class="R_code">&gt; me.eberg &lt;- MaxEnt(occurrences=eberg.ppp, covariates=eberg_grid)
-&gt; par(mfrow=c(1,2), mar=c(0.5,0.5,0.5,0.5), oma=c(0,0,0,0))
-&gt; image(as(me.eberg@predicted, &quot;SpatialPixelsDataFrame&quot;), col=rev(heat.colors(25)), xlab=&quot;&quot;, ylab=&quot;&quot;)
-&gt; points(me.eberg@occurrences, pch=&quot;+&quot;, cex=.7)
-&gt; image(me.eberg@sp.domain, col=&quot;grey&quot;, xlab=&quot;&quot;, ylab=&quot;&quot;)</pre>
+<pre class="R_code">&gt; jar &lt;- paste(system.file(package=&quot;dismo&quot;), &quot;/java/maxent.jar&quot;, sep='')<br />&gt; if (file.exists(jar)) {<br />+  me.eberg &lt;- MaxEnt(occurrences=eberg.ppp, covariates=eberg_grid)
++  par(mfrow=c(1,2), mar=c(0.5,0.5,0.5,0.5), oma=c(0,0,0,0))
++  image(as(me.eberg@predicted, &quot;SpatialPixelsDataFrame&quot;), col=rev(heat.colors(25)), xlab=&quot;&quot;, ylab=&quot;&quot;)
++  points(me.eberg@occurrences, pch=&quot;+&quot;, cex=.7)
++  image(me.eberg@sp.domain, col=&quot;grey&quot;, xlab=&quot;&quot;, ylab=&quot;&quot;)<br />+  }
+</pre>
 <table width="500" border="0" cellspacing="2" cellpadding="4">
   <caption class="caption" align="bottom">
     Fig: Feature space analysis: sampling likelihood in feature space based on MaxEnt (left; dark red indicates higher values), and areas fully represented by the current samples following the cross-validation (right). See code examples for more details.
@@ -207,7 +207,8 @@ lo     1   8   lo   G[lo](r) lower pointwise envelope of G(r) from simulations</
     <th scope="col"><img src="Fig_eberg_MaxEnt_test.png" alt="Fig_eberg_MaxEnt_test.png" width="500" /></th>
   </tr>
 </table>
-<p>Which shows that, some parts of the study area (higher elevations, specific land cover types) have been systematically omitted from sampling. The map on the right shows which pixels (grey) are actually valid to run predictions as the probability of occurrence of sampling points at these locations (at least based on the feature space defined by the covariates) is statistically significant. Ideally, the whole map should be gray, which means none of the areas in feature space have been under-represented. This is nothing that should worry us too much, but something we need to be aware when doing the interpretation of produced maps. To learn  more about <a href="http://www.cs.princeton.edu/~schapire/maxent/" target="_blank">MaxEnt</a>, refer to the dismo package vignette (<a href="http://cran.r-project.org/web/packages/dismo/vignettes/sdm.pdf" target="_blank">Hijmans and Elith, 2012</a>). </p>
+<p>Which shows that, some parts of the study area (higher elevations, specific land cover types) have been systematically omitted from sampling. The map on the right shows which pixels (grey) are actually valid to run predictions as the probability of occurrence of sampling points at these locations (at least based on the feature space defined by the covariates) is statistically significant. Ideally, the whole map should be gray, which means none of the areas in feature space have been under-represented. This is nothing that should worry us too much, but something we need to be aware when doing the interpretation of produced maps. </p>
+<p>Note: To run MaxEnt, you will first need to obtain the maxent.jar and place it somewhere where dismo can find it e.g. under <span class="R_code">library/dismo/java/maxent.jar</span>. To learn  more about <a href="http://www.cs.princeton.edu/~schapire/maxent/" target="_blank">MaxEnt</a>, refer to the dismo package vignette (<a href="http://cran.r-project.org/web/packages/dismo/vignettes/sdm.pdf" target="_blank">Hijmans and Elith, 2012</a>). </p>
 <hr />
 <table width="100%" border="0" cellpadding="10" cellspacing="0">
   <tr>
@@ -265,7 +266,7 @@ converting IDs from factor to character</pre>
 <pre class="R_code">&gt; levels(eberg.geo@data$methodid)</pre>
 <pre class="R_env">[1] &quot;CLYMHT&quot;   &quot;SLTMHT&quot;   &quot;SNDMHT&quot;   &quot;SNDMHT.t&quot; &quot;soiltype&quot;
 [6] &quot;TAXGRSC&quot;</pre>
-<p><a href="geosamples-class.html">Geosamples-class</a> can be considered the most plain (standard) format for any space-time observations and, as such, highly suitable for storing free-form geosamples. Main advantage of using this class in R is that it can be easily manipulated and converted to spatial and aqp classes. Likewise, the column names in the <span class="R_code">@data</span> slot correspond to the tag names used in the KML schema, which makes it easier to export such data to some GIS or Google Earth. Note also that the idea of using <a href="geosamples-class.html">geosamples</a> is to allow users to extend possibilities of geostatistical analysis with data parameters such as horizontal and vertical support (<span class="R_code">sampleArea</span> and <span class="R_code">sampleThikness</span>) and uncertainty measures (<span class="R_code">locationError</span> and <span class="R_code">measurementError</span>).</p>
+<p><a href="geosamples-class.html">Geosamples-class</a> can be considered the most plain (standard) format for any space-time observations and, as such, highly suitable for storing free-form geosamples. Main advantage of using this class in R is that it can be easily manipulated and converted to spatial and aqp classes. Likewise, the column names in the <span class="R_code">@data</span> slot correspond to the tag names used in the KML schema, which makes it easier to export such data to some GIS or <a href="http://www.google.com/earth/" target="_blank">Google Earth</a>. Note also that the idea of using <a href="geosamples-class.html">geosamples</a> is to allow users to extend possibilities of geostatistical analysis with data parameters such as horizontal and vertical support (<span class="R_code">sampleArea</span> and <span class="R_code">sampleThikness</span>) and uncertainty measures (<span class="R_code">locationError</span> and <span class="R_code">measurementError</span>).</p>
 <h3><a name="generating_SPCs" id="generating_SPCs"></a>Generating soil predictive components</h3>
 <p>Prior to geostatistical modeling, it is also probably a good idea to convert all covariates to independent components. This way, it will be easier to subset to the optimal number of predictors during the regression analysis. PCA helps reducing the prediction bias, which might happen if the covariates are cross-correlated. A wrapper function <a href="spc-method.html">spc</a> will convert all factor variables to indicators and run PCA on a stack of grids: </p>
 <pre class="R_code">&gt; formulaString &lt;- ~ PRMGEO6+DEMSRT6+TWISRT6+TIRAST6

@@ -53,7 +53,7 @@ MaxEnt(occurrences, covariates, ...)
 </dd>
 <dt>period</dt><dd><p>object of type <code>"Date"</code>; sampling period</p>
 </dd>
-<dt>...</dt><dd><p>additional arguments that can be passed to <code>dismo::predict</code></p>
+<dt>...</dt><dd><p>for more additional arguments see <code>dismo::predict</code></p>
 </dd>
 </dl>
 
@@ -66,7 +66,7 @@ MaxEnt(occurrences, covariates, ...)
 
 <h3>Note</h3>
 
-<p>MaxEnt is one of the standard tools used in ecology for Niche analysis and species distribution modelling. What makes it especially robust is the fact that it can take both continuous and factor data as inputs, and has no requirements considering the distribution of covariates (<a href="http://dx.doi.org/10.1016/j.ecolmodel.2005.03.026">Phillips et al., 2006</a>). In the example below, I use MaxEnt to analyze sampling bias (i.e. mis-representation of feature space, or sampling preference) for a given soil sampling design. For more information on how to install MaxEnt and use it in R, see <a href="http://CRAN.R-project.org/package=dismo">dismo</a> package documentation.</p>
+<p>MaxEnt is one of the standard tools used in ecology for Niche analysis and species distribution modelling. What makes it especially robust is the fact that it can take both continuous and factor data as inputs, and has no requirements considering the distribution of covariates (<a href="http://dx.doi.org/10.1016/j.ecolmodel.2005.03.026">Phillips et al., 2006</a>). In the example below, I use MaxEnt to analyze representation of feature space by a given soil sampling pattern (i.e. mis-representation or the sampling preference by the surveyors). For more information on how to install MaxEnt and use it in R, see <a href="http://CRAN.R-project.org/package=dismo">dismo</a> package documentation.</p>
 
 
 <h3>Author(s)</h3>
@@ -115,6 +115,8 @@ library(spatstat)
 mg_owin &lt;- as.owin(eberg_grid[1])
 eberg.ppp &lt;- ppp(x=coordinates(eberg.xy)[,1], y=coordinates(eberg.xy)[,2], window=mg_owin)
 # run MaxEnt analysis (we are interested in possible sampling bias or mis-representation):
+jar &lt;- paste(system.file(package="dismo"), "/java/maxent.jar", sep='')
+if (file.exists(jar)) {
 me.eberg &lt;- MaxEnt(occurrences=eberg.ppp, covariates=eberg_grid)
 ## NOTE: MaxEnt can be time-consuming!
 # plot the results:
@@ -122,9 +124,10 @@ par(mfrow=c(1,2), mar=c(0.5,0.5,0.5,0.5), oma=c(0,0,0,0))
 image(as(me.eberg@predicted, "SpatialPixelsDataFrame"), col=rev(heat.colors(25)), xlab="", ylab="")
 points(me.eberg@occurrences, pch="+", cex=.7)
 image(me.eberg@sp.domain, col="grey", xlab="", ylab="")
+}
 
 ## End(Not run)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.2-1 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.2-2 <a href="00Index.html">Index</a>]</div>
 </body></html>

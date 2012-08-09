@@ -26,6 +26,8 @@ setMethod("spc", signature(obj = "SpatialPixelsDataFrame", formulaString = "form
   # convert every factor to indicators:
   for(j in 1:length(vars)){
     if(is.factor(obj@data[,vars[j]])){
+      # remove classes without pixels:
+      obj@data[,vars[j]] <- as.factor(paste(obj@data[,vars[j]]))
       ln <- levels(obj@data[,vars[j]])
       for(k in 1:length(ln)){
         vn <- paste(vars[j], k, sep="_")
