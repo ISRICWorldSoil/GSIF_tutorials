@@ -2,8 +2,10 @@
 \docType{methods}
 \alias{MaxEnt}
 \alias{MaxEnt,ppp,SpatialPixelsDataFrame-method}
-\title{Prediction and cross-validation Maximum Entropy}
-\description{Runs \href{http://www.cs.princeton.edu/~schapire/maxent/}{MaxEnt} algorithm on a set of observations (\code{"ppp"} class from the \href{http://www.spatstat.org}{spatstat} package) and environmental covariates (of class \code{"SpatialPixelsDataFrame"}) and returns predicted probability of occurrence and cross-validation of models with presence/absence data.}
+\alias{predict.MaxEnt}
+\alias{predict,MaxEnt-method}
+\title{Prediction and cross-validation using the Maximum Entropy}
+\description{Runs \href{http://www.cs.princeton.edu/~schapire/maxent/}{MaxEnt} algorithm on a set of observations (\code{"ppp"} class from the \href{http://www.spatstat.org}{spatstat} package) and environmental covariates (of \code{"SpatialPixelsDataFrame"} class) and returns predicted probability of occurrence and cross-validation of models with presence/absence data.}
 \usage{
 MaxEnt(occurrences, covariates, \dots)
 }
@@ -46,18 +48,18 @@ gridded(eberg_grid) <- ~x+y
 proj4string(eberg_grid) <- CRS("+init=epsg:31467")
 # convert to a "ppp" object:
 library(spatstat)
-mg_owin <- as.owin(eberg_grid[1])
-eberg.ppp <- ppp(x=coordinates(eberg.xy)[,1], y=coordinates(eberg.xy)[,2], window=mg_owin)
-# run MaxEnt analysis (we are interested in possible sampling bias or mis-representation):
+eberg.ppp <- as.ppp(eberg.xy)
+# run MaxEnt analysis (evaluates sampling bias or mis-representation):
 jar <- paste(system.file(package="dismo"), "/java/maxent.jar", sep='')
-if (file.exists(jar)) {
-me.eberg <- MaxEnt(occurrences=eberg.ppp, covariates=eberg_grid)
-## NOTE: MaxEnt can be time-consuming!
-# plot the results:
-par(mfrow=c(1,2), mar=c(0.5,0.5,0.5,0.5), oma=c(0,0,0,0))
-image(as(me.eberg@predicted, "SpatialPixelsDataFrame"), col=rev(heat.colors(25)), xlab="", ylab="")
-points(me.eberg@occurrences, pch="+", cex=.7)
-image(me.eberg@sp.domain, col="grey", xlab="", ylab="")
+if(file.exists(jar)){
+  me.eberg <- MaxEnt(occurrences=eberg.ppp, covariates=eberg_grid)
+  ## NOTE: MaxEnt can be time-consuming!
+  # plot the results:
+  par(mfrow=c(1,2), mar=c(0.5,0.5,0.5,0.5), oma=c(0,0,0,0))
+  image(as(me.eberg@predicted, "SpatialPixelsDataFrame"), 
+    col=rev(heat.colors(25)), xlab="", ylab="")
+  points(me.eberg@occurrences, pch="+", cex=.7)
+  image(me.eberg@sp.domain, col="grey", xlab="", ylab="")
 }
 }
 }

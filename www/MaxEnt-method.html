@@ -1,16 +1,16 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><head><title>R: Prediction and cross-validation Maximum Entropy</title>
+<html><head><title>R: Prediction and cross-validation using the Maximum Entropy</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <link rel="stylesheet" type="text/css" href="R.css">
 </head><body>
 
 <table width="100%" summary="page for MaxEnt {GSIF}"><tr><td>MaxEnt {GSIF}</td><td align="right">R Documentation</td></tr></table>
 
-<h2>Prediction and cross-validation Maximum Entropy</h2>
+<h2>Prediction and cross-validation using the Maximum Entropy</h2>
 
 <h3>Description</h3>
 
-<p>Runs <a href="http://www.cs.princeton.edu/~schapire/maxent/">MaxEnt</a> algorithm on a set of observations (<code>"ppp"</code> class from the <a href="http://www.spatstat.org">spatstat</a> package) and environmental covariates (of class <code>"SpatialPixelsDataFrame"</code>) and returns predicted probability of occurrence and cross-validation of models with presence/absence data.</p>
+<p>Runs <a href="http://www.cs.princeton.edu/~schapire/maxent/">MaxEnt</a> algorithm on a set of observations (<code>"ppp"</code> class from the <a href="http://www.spatstat.org">spatstat</a> package) and environmental covariates (of <code>"SpatialPixelsDataFrame"</code> class) and returns predicted probability of occurrence and cross-validation of models with presence/absence data.</p>
 
 
 <h3>Usage</h3>
@@ -112,18 +112,18 @@ gridded(eberg_grid) &lt;- ~x+y
 proj4string(eberg_grid) &lt;- CRS("+init=epsg:31467")
 # convert to a "ppp" object:
 library(spatstat)
-mg_owin &lt;- as.owin(eberg_grid[1])
-eberg.ppp &lt;- ppp(x=coordinates(eberg.xy)[,1], y=coordinates(eberg.xy)[,2], window=mg_owin)
-# run MaxEnt analysis (we are interested in possible sampling bias or mis-representation):
+eberg.ppp &lt;- as.ppp(eberg.xy)
+# run MaxEnt analysis (evaluates sampling bias or mis-representation):
 jar &lt;- paste(system.file(package="dismo"), "/java/maxent.jar", sep='')
-if (file.exists(jar)) {
-me.eberg &lt;- MaxEnt(occurrences=eberg.ppp, covariates=eberg_grid)
-## NOTE: MaxEnt can be time-consuming!
-# plot the results:
-par(mfrow=c(1,2), mar=c(0.5,0.5,0.5,0.5), oma=c(0,0,0,0))
-image(as(me.eberg@predicted, "SpatialPixelsDataFrame"), col=rev(heat.colors(25)), xlab="", ylab="")
-points(me.eberg@occurrences, pch="+", cex=.7)
-image(me.eberg@sp.domain, col="grey", xlab="", ylab="")
+if(file.exists(jar)){
+  me.eberg &lt;- MaxEnt(occurrences=eberg.ppp, covariates=eberg_grid)
+  ## NOTE: MaxEnt can be time-consuming!
+  # plot the results:
+  par(mfrow=c(1,2), mar=c(0.5,0.5,0.5,0.5), oma=c(0,0,0,0))
+  image(as(me.eberg@predicted, "SpatialPixelsDataFrame"), 
+    col=rev(heat.colors(25)), xlab="", ylab="")
+  points(me.eberg@occurrences, pch="+", cex=.7)
+  image(me.eberg@sp.domain, col="grey", xlab="", ylab="")
 }
 
 ## End(Not run)

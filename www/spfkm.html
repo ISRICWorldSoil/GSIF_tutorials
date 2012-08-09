@@ -10,7 +10,7 @@
 
 <h3>Description</h3>
 
-<p>Runs supervised fuzzy <EM>k</EM>-means (<a href="http://dx.doi.org/10.1080/13658810310001620924">Hengl et al., 2004</a>) using a list of covariates layers provided as <code>"SpatialPixelsDataFrame-class"</code> object. If class centres and variances are not provided by the users, it first fits a multinomial logistic regression model (<code>spmultinom</code>) using the point data and a regression matrix, then predicts the class centres and variances based on the output from the <code>nnet::multinom</code>.</p>
+<p>Runs supervised fuzzy <EM>k</EM>-means (<a href="http://dx.doi.org/10.1080/13658810310001620924">Hengl et al., 2004</a>) using a list of covariates layers provided as <code>"SpatialPixelsDataFrame-class"</code> object. If class centres and variances are not provided, it first fits a multinomial logistic regression model (<code><a href="spmultinom.html">spmultinom</a></code>), then predicts the class centres and variances based on the output from the <code>nnet::multinom</code>.</p>
 
 
 <h3>Usage</h3>
@@ -84,19 +84,13 @@ spfkm(formulaString, observations, covariates, ...)
 </li>
 <li><p> Hengl T., Walvoort D.J.J., Brown, A., (2004) <a href="http://dx.doi.org/10.1080/13658810310001620924">A double continuous approach to visualisation and analysis of categorical maps</a>. Int. Jou. of Geographical Information Science, 18(2): 183-202.
 </p>
-</li>
-<li><p> Multinomial logistic regression (<a href="http://en.wikipedia.org/wiki/Multinomial_logit">http://en.wikipedia.org/wiki/Multinomial_logit</a>)
-</p>
-</li>
-<li><p> Nnet package (<a href="http://CRAN.R-project.org/package=nnet">http://CRAN.R-project.org/package=nnet</a>)
-</p>
 </ul>
 
 
 
 <h3>See Also</h3>
 
- <p><code>nnet::multinom</code>, <code><a href="SpatialMemberships-class.html">SpatialMemberships-class</a></code></p>
+ <p><code><a href="spmultinom.html">spmultinom</a></code>, <code><a href="SpatialMemberships-class.html">SpatialMemberships-class</a></code>, <code>nnet::multinom</code></p>
 
 
 <h3>Examples</h3>
@@ -120,14 +114,10 @@ eberg_sm &lt;- spfkm(formulaString, eberg, eberg_spc@predicted)
 # plot memberships:
 pal = seq(0, 1, 1/50)
 spplot(eberg_sm@mu, col.regions=pal)
-image(eberg_sm@mu[1], col=pal)
-text(eberg@coords, paste(eberg$soiltype), cex=.6, col="black")
-# classes predicted:
-eberg_sm@predicted$soiltype &lt;- as.factor(eberg_sm@predicted$soiltype)
-Ls = length(levels(eberg_sm@predicted$soiltype))
-pnts = list("sp.points", eberg, pch="+", cex=.6, col="black")
-spplot(eberg_sm@predicted, col.regions=rainbow(Ls)[rank(runif(Ls))], sp.layout=pnts)
-spplot(eberg_sm@mu[2], at=pal, col.regions=rev(heat.colors(50)), sp.layout=pnts)
+# predict soil properties using memberships:
+glm.formulaString = as.formula(paste("SNDMHT_A ~ ", paste(names(eberg_sm@mu), collapse="+"), "-1"))
+SNDMHT.m2 &lt;- fit.gstatModel(observations=eberg, glm.formulaString, covariates=eberg_sm@mu)
+summary(SNDMHT.m2@regModel)
 
 ## End(Not run)
 </pre>

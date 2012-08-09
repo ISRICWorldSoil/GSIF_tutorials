@@ -99,12 +99,12 @@ setClass("SpatialComponents", representation (predicted = "SpatialPixelsDataFram
 ## SpatialMemberships class
 setClass("SpatialMemberships", representation (predicted = "SpatialPixelsDataFrame", model = "list", mu = "SpatialPixelsDataFrame", class.c = "matrix", class.sd = "matrix", confusion = "matrix"), validity = function(object) {
    # check if column names match:
-   if(!all(levels(object@predicted@data[,1]) %in% names(object@mu)))
+   if(!all(names(object@mu) %in% levels(object@predicted@data[,1])))
       return("Class names in the 'predicted' and 'mu' slots do not match")
    # check if the row names in the class.sd, class.c match:
-   if(!all(levels(object@predicted@data[,1]) %in% row.names(object@class.c)))
+   if(!all(row.names(object@class.c) %in% levels(object@predicted@data[,1])))
       return("Row names in the 'class.c' slot and 'predicted' slots do not match")
-   if(!all(levels(object@predicted@data[,1]) %in% row.names(object@class.sd)))
+   if(!all(row.names(object@class.sd) %in% levels(object@predicted@data[,1])))
       return("Row names in the 'class.sd' slot and 'predicted' slots do not match")
    if(ncol(object@mu@data)<2)
       return("A minimum of two membership maps required")   
@@ -145,7 +145,7 @@ if(!isGeneric("merge")){
 }
 
 if(!isGeneric("subset")){
-  setGeneric("subset", function(x, y, ...){standardGeneric("subset")})
+  setGeneric("subset", function(x, ...){standardGeneric("subset")})
 }
 
 if(!isGeneric("spc")){
@@ -161,7 +161,7 @@ if (!isGeneric("fit.gstatModel")){
 }
 
 if (!isGeneric("spmultinom")){
-  setGeneric("spmultinom", function(formulaString, rmatrix, newdata, ...){standardGeneric("spmultinom")})
+  setGeneric("spmultinom", function(formulaString, observations, covariates, ...){standardGeneric("spmultinom")})
 }
 
 if (!isGeneric("spfkm")){

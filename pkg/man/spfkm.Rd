@@ -1,14 +1,11 @@
 \name{spfkm}
 \docType{methods}
 \alias{spfkm}
-\alias{spmultinom,formula,data.frame,SpatialPixelsDataFrame-method}
 \alias{spfkm,formula,SpatialPointsDataFrame,SpatialPixelsDataFrame-method}
-\alias{spmultinom,formula,matrix,SpatialPixelsDataFrame-method}
-\alias{spmultinom}
 \title{Supervised fuzzy \emph{k}-means on spatial pixels}
-\description{Runs supervised fuzzy \emph{k}-means (\href{http://dx.doi.org/10.1080/13658810310001620924}{Hengl et al., 2004}) using a list of covariates layers provided as \code{"SpatialPixelsDataFrame-class"} object. If class centres and variances are not provided by the users, it first fits a multinomial logistic regression model (\code{spmultinom}) using the point data and a regression matrix, then predicts the class centres and variances based on the output from the \code{nnet::multinom}.}
+\description{Runs supervised fuzzy \emph{k}-means (\href{http://dx.doi.org/10.1080/13658810310001620924}{Hengl et al., 2004}) using a list of covariates layers provided as \code{"SpatialPixelsDataFrame-class"} object. If class centres and variances are not provided, it first fits a multinomial logistic regression model (\code{\link{spmultinom}}), then predicts the class centres and variances based on the output from the \code{nnet::multinom}.}
 \usage{
-spfkm(formulaString, observations, covariates, ...)
+spfkm(formulaString, observations, covariates, \dots)
 }
 \arguments{
   \item{formulaString}{formula string}
@@ -30,11 +27,9 @@ spfkm(formulaString, observations, covariates, ...)
 \itemize{
 \item Burrough, P. A., Gaans, P.F.M., and Van Hootsmans, R., (1997) \href{http://dx.doi.org/10.1016/S0016-7061(97)00018-9}{Continuous classification in soil survey: spatial correlation, confusion and boundaries}. Geoderma, 77(2-4), 115--135.
 \item Hengl T., Walvoort D.J.J., Brown, A., (2004) \href{http://dx.doi.org/10.1080/13658810310001620924}{A double continuous approach to visualisation and analysis of categorical maps}. Int. Jou. of Geographical Information Science, 18(2): 183-202.
-\item Multinomial logistic regression (\url{http://en.wikipedia.org/wiki/Multinomial_logit})
-\item Nnet package (\url{http://CRAN.R-project.org/package=nnet})
 }
 }
-\seealso{ \code{nnet::multinom}, \code{\link{SpatialMemberships-class}}}
+\seealso{ \code{\link{spmultinom}}, \code{\link{SpatialMemberships-class}}, \code{nnet::multinom}}
 \examples{
 \dontrun{# load data:
 library(plotKML)
@@ -54,14 +49,10 @@ eberg_sm <- spfkm(formulaString, eberg, eberg_spc@predicted)
 # plot memberships:
 pal = seq(0, 1, 1/50)
 spplot(eberg_sm@mu, col.regions=pal)
-image(eberg_sm@mu[1], col=pal)
-text(eberg@coords, paste(eberg$soiltype), cex=.6, col="black")
-# classes predicted:
-eberg_sm@predicted$soiltype <- as.factor(eberg_sm@predicted$soiltype)
-Ls = length(levels(eberg_sm@predicted$soiltype))
-pnts = list("sp.points", eberg, pch="+", cex=.6, col="black")
-spplot(eberg_sm@predicted, col.regions=rainbow(Ls)[rank(runif(Ls))], sp.layout=pnts)
-spplot(eberg_sm@mu[2], at=pal, col.regions=rev(heat.colors(50)), sp.layout=pnts)
+# predict soil properties using memberships:
+glm.formulaString = as.formula(paste("SNDMHT_A ~ ", paste(names(eberg_sm@mu), collapse="+"), "-1"))
+SNDMHT.m2 <- fit.gstatModel(observations=eberg, glm.formulaString, covariates=eberg_sm@mu)
+summary(SNDMHT.m2@regModel)
 }
 }
 \keyword{methods}

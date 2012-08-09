@@ -6,7 +6,7 @@
 \title{Converts an object of class \code{"SoilProfileCollection"} to a data frame}
 \description{Converts an object of class \code{"SoilProfileCollection"} to an object of class \code{"data.frame"} with both site and horizon data sorted in one row. Each original column name in the horizons table receives a sufix \code{*_A, B, \dots, Z} where alphabetic letters represent horizon sequence. }
 \usage{
-as.data.frame(x, row.names = NULL, optional = FALSE, ...)
+as.data.frame(x, row.names = NULL, optional = FALSE, \dots)
 }
 \arguments{
   \item{x}{object of class \code{"SoilProfileCollection"}}

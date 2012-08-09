@@ -2,7 +2,7 @@
 # Maintainer     : Tomislav Hengl (tom.hengl@wur.nl)
 # Contributions  : Bas Kempen (bas.kempen@wur.nl); 
 # Dev Status     : Pre-Alpha
-# Note           : if the regression model is difficult to fit, it might lead to artifacts (see also "mlogit" package);
+# Note           : if the regression model is difficult to fit, it might lead to artifacts;
 
 
 # Fit a supervised fuzzy kmeans model and predict memberships:
@@ -38,7 +38,7 @@ setMethod("spfkm", signature(formulaString = "formula", observations = "SpatialP
   # otherwise, estimate class centres using the multinomial logistic regression:
   else {
     # multinomial logistic regression:
-    rout <- spmultinom(formulaString=formulaString, rmatrix=ov, newdata=covariates)
+    rout <- spmultinom(formulaString=formulaString, observations, covariates, class.stats=TRUE, predict.probs=FALSE)
     mout = rout$model
     if(length(unique(rout$fit))<2){ stop("Predictions result in <2 classes. See ?multinom for more info") }
     cout = rout$fit
@@ -83,8 +83,13 @@ setMethod("spfkm", signature(formulaString = "formula", observations = "SpatialP
   
   # kappa statistics:
   require(mda)
-  cf <- confusion(as.character(ov[which(!is.na(index)),tv]), cout[index][which(!is.na(index))])
-  message(paste("Estimated prediction error:", signif(attr(cf, "error"), 4)))
+  require(psych)
+  cf <- confusion(cout[index][which(!is.na(index))], as.character(ov[which(!is.na(index)),tv]))
+  # remove missing classes:
+  a = attr(cf, "dimnames")[[1]] %in% attr(cf, "dimnames")[[2]] 
+  b = attr(cf, "dimnames")[[2]] %in% attr(cf, "dimnames")[[1]]
+  c.kappa = cohen.kappa(cf[a,b])
+  message(paste("Estimated Cohen Kappa (weighted):", signif(c.kappa$weighted.kappa, 4)))
   
   # construct a map:
   pm <- covariates[1]
@@ -95,33 +100,6 @@ setMethod("spfkm", signature(formulaString = "formula", observations = "SpatialP
   out <- new("SpatialMemberships", predicted = pm, model = mout, mu = mm, class.c = class.c, class.sd = class.sd, confusion = cf)
   return(out)
 
-})
-
-
-## fit a multinomial logistic regression and make predictions:
-setMethod("spmultinom", signature(formulaString = "formula", rmatrix = "data.frame", newdata = "SpatialPixelsDataFrame"), function(formulaString, rmatrix, newdata, class.stats = TRUE, ...){
-
-    require(nnet)
-    message("Fitting a multinomial logistic regression model...")
-    sel = names(newdata) %in% all.vars(formulaString)[-1]
-    mout <- multinom(formulaString, rmatrix, ...)
-    cout <- as.factor(predict(mout, newdata=newdata))
-    class(mout) = "list"
-    # estimate class centres using the results of multinom:
-    if(class.stats == TRUE){
-      ca <- aggregate(newdata@data[,sel], by=list(cout), FUN="mean")
-      class.c <- as.matrix(ca[-1]); attr(class.c, "dimnames")[[1]] <- ca[,1]
-      ca <- aggregate(newdata@data[,sel], by=list(cout), FUN="sd")
-      class.sd <- as.matrix(ca[-1]); attr(class.sd, "dimnames")[[1]] <- ca[,1]
-      # mask out classes that result in NA:
-      for(j in length(nrow(class.c))){ if(any(is.na(class.c[j,]))|any(is.na(class.sd[j,]))){ class.c <- class.c[-j,]; class.sd <- class.sd[-j,] } }
-    } else {
-      class.c = NULL; class.sd = NULL
-    }
-
-    # return the outputs
-    out <- list(model=mout, fit=cout, class.c=class.c, class.sd=class.sd)
-    return(out)
 })
 
 # end of script;

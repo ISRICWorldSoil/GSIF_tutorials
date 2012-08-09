@@ -1,8 +1,9 @@
 \name{gstatModel-class}
 \docType{class}
 \alias{gstatModel-class}
-\alias{predict,gstatModel}
+\alias{predict,gstatModel-method}
 \alias{predict.gstatModel}
+\alias{predict,list-method}
 \alias{predict.gstatModelList}
 \title{A class for a linear geostatistical model}
 \description{A class containing fitted parameters of a linear geostatistical model. It comprises regression model (GLM), variogram model, and observation locations of sampled values used to fit the model.}

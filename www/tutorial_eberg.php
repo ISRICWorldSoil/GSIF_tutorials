@@ -274,8 +274,32 @@ converting IDs from factor to character</pre>
 <pre class="R_env">Converting PRMGEO6 to indicators...<br />Converting covariates to principal components...</pre>
 
 <p>The output is a stack of independent components, all numeric and all scaled around 0 value. To see which inputs define any of the components, we can look at the rotation table or plot the images: </p>
-<pre class="R_code">&gt; eberg_spc@pca$rotation
-&gt; pal = rev(rainbow(65)[1:48])
+<pre class="R_code">&gt; eberg_spc@pca$rotation</pre>
+<pre class="R_env">PC1         PC2         PC3         PC4         PC5         PC6           PC7         PC8
+DEMSRT6   -0.55711093  0.20819653 -0.03119766  0.06485905 -0.04919198  0.04583550 -2.166881e-02 -0.11850187
+TWISRT6    0.45829444  0.23870553 -0.22013669 -0.05930392 -0.05772050  0.05289886  4.749496e-02  0.16709268
+TIRAST6    0.31720111  0.23411688  0.21194747  0.22670979 -0.06911383  0.01606945 -5.050788e-02 -0.86045157
+PRMGEO6_1 -0.14135533 -0.03765647  0.60672337  0.34711053  0.49254843  0.02022393  1.512718e-01  0.12762671
+PRMGEO6_2 -0.43416755  0.28698148 -0.47280406  0.01002071  0.02500768 -0.10026014  3.879591e-02 -0.21151385
+PRMGEO6_3  0.07971922  0.06542432 -0.07672724 -0.04496406 -0.06289324  0.35365015  8.983826e-01 -0.02270445
+PRMGEO6_4  0.36654086  0.41740804 -0.16408783 -0.03037150  0.41383444 -0.11009869 -1.480861e-01  0.18050170
+PRMGEO6_5 -0.02765866  0.09015600  0.01774654  0.06338709 -0.08345800  0.89976730 -3.708044e-01  0.07892063
+PRMGEO6_6 -0.01705511 -0.01720833  0.38970849 -0.80790529 -0.16623181 -0.01556903 -3.792439e-02 -0.11209884
+PRMGEO6_7  0.16045128 -0.72535140 -0.26755675  0.17295113 -0.06543613  0.01762360 -4.878972e-02 -0.14541877
+PRMGEO6_8  0.05464832  0.21913031  0.23958662  0.36153522 -0.72948460 -0.19250233 -6.541899e-05  0.28913001
+<br />PC9        PC10          PC11
+DEMSRT6   -0.062531842  0.78623052  1.419406e-15
+TWISRT6   -0.773340893  0.21597904 -7.371827e-16
+TIRAST6    0.004370069  0.01648279  3.410741e-16
+PRMGEO6_1 -0.311806003 -0.06650597  3.258389e-01
+PRMGEO6_2 -0.210767393 -0.44338968  4.555854e-01
+PRMGEO6_3  0.186242372  0.05142616  8.656808e-02
+PRMGEO6_4  0.452668089  0.23662602  4.059308e-01
+PRMGEO6_5  0.035319735 -0.10118848  1.225425e-01
+PRMGEO6_6 -0.067946642  0.04174463  3.828709e-01
+PRMGEO6_7 -0.024254803  0.25057179  5.051019e-01
+PRMGEO6_8  0.101594844 -0.02238362  3.118692e-01</pre>
+<pre class="R_code">&gt; pal = rev(rainbow(65)[1:48])
 &gt; rd = range(eberg_spc@predicted@data[,1], na.rm=TRUE)
 &gt; spplot(eberg_spc@predicted[1:4], at=seq(rd[1], rd[2], length.out=48), col.regions=pal)</pre>
 <table width="500" border="0" cellspacing="2" cellpadding="4">
@@ -405,78 +429,66 @@ Closing  SNDMHT_sd6.kml</pre>
   </tr>
 </table>
 <h3><a name="predicting_soil_classes" id="predicting_soil_classes"></a>Predicting soil classes</h3>
-<p>GSIF package also provides functionality for pedometric mapping of soil classes. Soil types can be mapped using a wrapper function   <a href="spfkm.html">spfkm</a>. This will   run supervised fuzzy <em>k</em>-means using a list of covariates layers provided as <span class="R_code">&quot;SpatialPixelsDataFrame&quot;</span> object, and optional class centers and class variances. As in the case of continuous/numeric variables, the process consists of model fitting and predictions. In GSIF package, the two are wrapped into a single function: </p>
-<pre class="R_code">&gt; eberg_sm &lt;- spfkm(formulaString, eberg.xy, eberg_spc@predicted)</pre>
-  <pre class="R_env">Loading required package: nnet
-Fitting a multinomial logistic regression model...
-# weights:  144 (121 variable)
-initial  value 1856.225267 
-iter  10 value 1196.619912
-iter  20 value 1166.971099
-iter  30 value 1156.198652
-iter  40 value 1150.212361
-iter  50 value 1145.896491
-iter  60 value 1142.037781
-iter  70 value 1141.479941
-iter  80 value 1140.839636
-iter  90 value 1140.699639
-final  value 1140.698143 
-converged
-Loading required package: mda
-Loading required package: class </pre>
-<pre class="R_env">Attaching package: ‘class’</pre>
-<pre class="R_env">The following object(s) are masked from ‘package:reshape’:</pre>
-<pre class="R_env">condense</pre>
-<pre class="R_env">Estimated prediction error: 0.5932</pre>
-<p>The output is an object of class <a href="SpatialMemberships-class.html">SpatialMemberships</a>, which contains predictions, the model parameters, class centres and variances, and membership maps derived per class. In the case above,  the class centers and variances were not specified, hence <a href="spfkm.html">spfkm</a> tries to estimate them by fitting a multinomial logistic regression model (<a href="http://stat.ethz.ch/R-manual/R-devel/library/nnet/html/multinom.html" target="_blank">multinom</a>) available via the package <a href="http://cran.r-project.org/package=nnet" target="_blank">nnet</a> (<a href="http://www.stats.ox.ac.uk/pub/MASS4/">Venables and Ripley, 2002</a>). Class centres and variances can also be passed via the <span class="R_code">class.c</span> and <span class="R_code">class.sd</span> arguments. in which case <a href="spfkm.html">spfkm</a> will directly derived supervised fuzzy <em>k</em>-means. To see the estimated class centers use e.g.:</p>
-<pre class="R_code">&gt; eberg_sm@class.c[1,]</pre>
-<pre class="R_env"> PC1        PC2        PC3        PC4        PC5        PC6        PC7        PC8 
- 3.1607835  1.7982977  0.2260035 -0.5133303 -0.9440280 -0.2689071  0.4962124  1.9947157 
- PC9       PC10 
- 0.8995294 -0.3908947</pre>
+<p>GSIF package also provides functionality for pedometric mapping of soil classes. Soil types can be mapped using the wrapper functions <a href="spmultinom.html">spmultinom</a> and <a href="spfkm.html">spfkm</a>. This will   run supervised fuzzy <em>k</em>-means using a list of covariates layers provided as <span class="R_code">&quot;SpatialPixelsDataFrame&quot;</span> object, and optional class centers and class variances. As in the case of continuous/numeric variables, the process consists of model fitting and predictions. In GSIF package, the two are wrapped into a single function: </p>
+<pre class="R_code">&gt; formulaString = soiltype ~ PC1+PC2+PC3+PC4+PC5+PC6+PC7+PC8+PC9+PC10<br />&gt; eberg_sm &lt;- spmultinom(formulaString, eberg.xy, eberg_spc@predicted)</pre>
+  <pre class="R_env">Fitting a multinomial logistic regression model...<br /># weights:  144 (121 variable)<br />initial  value 1853.740361 <br />iter  10 value 1200.197532<br />iter  20 value 1167.479984<br />iter  30 value 1156.517152<br />iter  40 value 1150.287170<br />iter  50 value 1146.787227<br />iter  60 value 1144.369824<br />iter  70 value 1144.156270<br />iter  80 value 1143.913263<br />iter  90 value 1143.907377<br />final  value 1143.907359 <br />converged<br />Estimated Cohen Kappa (weighted): 0.3116<br />Warning message:<br />In multinom(formulaString, ov, ...) : group ‘Hw’ is empty</pre>
+<p> The <a href="spmultinom.html">spmultinom</a> tries to estimate distribution of soil types by fitting a multinomial logistic regression model (<a href="http://stat.ethz.ch/R-manual/R-devel/library/nnet/html/multinom.html" target="_blank">multinom</a>) available via the package <a href="http://cran.r-project.org/package=nnet" target="_blank">nnet</a> (<a href="http://www.stats.ox.ac.uk/pub/MASS4/">Venables and Ripley, 2002</a>). The output is an object of class <a href="SpatialMemberships-class.html">SpatialMemberships</a>, which contains predictions, the model parameters, class centres and variances, and membership maps derived per class. The resulting Kappa statistics shows that the predicted classes match with ca 31% observed classes, which is a standardly low value for soil taxonomic data.</p>
+<p>Class centres and variances can also be passed via the <span class="R_code">class.c</span> and <span class="R_code">class.sd</span> arguments via the  <a href="spfkm.html">spfkm</a> function (alternative to spmultinom),  in which case <a href="spfkm.html">spfkm</a> will directly derived supervised fuzzy <em>k</em>-means.</p>
+<p>To see the estimated class centers:</p>
+<pre class="R_code">&gt; eberg_sm@class.c</pre>
+<pre class="R_env">          PC1         PC2        PC3         PC4         PC5         PC6         PC7          PC8         PC9<br />A  -1.9136970  0.42290575 -0.8199637  0.06929519  0.14254910 -0.29501667  0.04445353 -0.569246722  0.59515829<br />B   0.1451428  0.05149812  1.0232911 -1.38193489 -0.88743587 -0.15377161 -0.07627217 -0.077118762 -0.05831949<br />D  -0.4773107  0.33677264  1.5855751  1.21311891 -0.20838896 -0.24014369  0.29626729  0.816515294 -0.34327845<br />G   3.1222982  1.48675002 -0.9355987 -0.37516028  1.06098275 -0.21828971 -0.22613231  1.241218926 -0.71454825<br />Ha -2.0722482  0.87009506 -1.0655838  0.03860135 -0.02849083  0.41575214  0.20629221 -0.233234399 -0.16586679<br />L   1.8885517  0.03098325 -0.4946663  0.10999082  0.51145092 -0.12456134 -0.21485459  0.006779172  0.06215298<br />Q   0.4974576 -1.57456661 -0.2174762  0.53124815 -0.14682206  0.01991976 -0.15147949 -0.951987328  0.45050045<br />R  -2.1043180  0.50564145 -1.0560584 -0.05346994  0.12978516 -0.25752102  0.08547869 -0.075669733  0.18523146<br />S   0.7410611 -1.00398803 -0.6111388  0.14103309  0.15076192 -0.03602664 -0.11831015  0.349219067  0.05584245<br />Z  -1.4125863  0.03343204  1.7252433  1.14667200  0.72181439 -0.13599257  0.29550948  0.118988806  0.29309998<br />          PC10<br />A  -1.23773329<br />B  -0.01363216<br />D   0.03916544<br />G  -0.09389767<br />Ha -0.02458035<br />L  -0.11880316<br />Q   0.12662896<br />R  -0.79474759<br />S   0.26756947<br />Z  -0.15280722</pre>
 <pre class="R_code">&gt; row.names(eberg_sm@class.c) </pre>
-<pre class="R_env">[1] &quot;A&quot;  &quot;B&quot;  &quot;D&quot;  &quot;G&quot;  &quot;Hw&quot; &quot;L&quot;  &quot;N&quot;  &quot;Q&quot;  &quot;R&quot;  &quot;S&quot;  &quot;Z&quot;</pre>
+<pre class="R_env">[1] &quot;A&quot;  &quot;B&quot;  &quot;D&quot;  &quot;G&quot;  &quot;Ha&quot; &quot;L&quot;  &quot;Q&quot;  &quot;R&quot;  &quot;S&quot;  &quot;Z&quot;
+</pre>
 <table width="500" border="0" cellspacing="2" cellpadding="4">
   <caption class="caption" align="bottom">
     Fig: Predicted soil types for the Eberg&ouml;tzen case study.
-  See <a href="spfkm.html">spfkm</a> for more details. This can be also considered a downscaling or disaggregation method. 
+  See <a href="spmultinom.html">spmultinom</a><a href="spfkm.html"></a> for more details. This can be also considered a downscaling or disaggregation method.
   </caption>
   <tr>
     <th scope="col"><img src="Fig_eberg_Soiltypes_spfkm.png" alt="Fig_eberg_Soiltypes_spfkm.png" width="500" /></th>
   </tr>
 </table>
-<p>Mapped soil class memberships can also be used to map soil properties. The regression model changes to e.g.:</p>
-<pre class="R_code">&gt; glm.formulaString2</pre>
-<pre class="R_env">SNDMHT_A ~ A + B + D + G + Hw + L + N + Q + R + S + Z - 1</pre>
+<p>Mapped soil class memberships can also be used to map soil properties, which is then equivalent to weighted averaging. We can derive the memberships using the fuzzy <em>k</em>-means to ensure that they sum up to 1:</p>
+<pre class="R_code">&gt; eberg_sm &lt;- spfkm(formulaString, eberg.xy, eberg_spc@predicted)
+</pre>
+<p>The regression model changes to e.g.:</p>
+<pre class="R_code">&gt; glm.formulaString2 = as.formula(paste(&quot;SNDMHT_A ~ &quot;, paste(names(eberg_sm@mu), collapse=&quot;+&quot;), &quot;-1&quot;))<br />&gt; glm.formulaString2</pre>
+<pre class="R_env">SNDMHT_A ~ A + B + D + G + Hw + K + L + Q + R + S + Z - 1</pre>
 <pre class="R_code">&gt; SNDMHT.m2 &lt;- fit.gstatModel(observations=eberg.xy, glm.formulaString2, covariates=eberg_sm@mu)
 &gt; summary(SNDMHT.m2@regModel)</pre>
 <pre class="R_env">Call:
-glm(formula = SNDMHT_A ~ A + B + D + Hw + L + N + Q + R + S + 
- Z - 1, family = family, data = x)</pre>
-<pre class="R_env">Deviance Residuals: 
-   Min       1Q   Median       3Q      Max 
-   -39.449   -9.981   -1.528    8.040   65.483 </pre>
-<pre class="R_env">Coefficients:
-   Estimate Std. Error t value Pr(&gt;|t|) 
-   A    17.194     10.972   1.567    0.117 
-   B    50.183      1.399  35.881  &lt; 2e-16 ***
-   D    12.473      2.660   4.689 3.22e-06 ***
-   Hw   16.842      2.871   5.866 6.47e-09 ***
-   L    25.997      1.244  20.898  &lt; 2e-16 ***
-   N    56.134      3.142  17.867  &lt; 2e-16 ***
-   Q    37.881      2.580  14.683  &lt; 2e-16 ***
-   R    12.037      8.429   1.428    0.154 
-   S    28.960      1.597  18.136  &lt; 2e-16 ***
-   Z    17.904      1.864   9.604  &lt; 2e-16 ***
-   ---
-   Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 </pre>
-<pre class="R_env">(Dispersion parameter for gaussian family taken to be 292.8399)</pre>
-<pre class="R_env"> Null deviance: 1191564  on 828  degrees of freedom
-   Residual deviance:  239543  on 818  degrees of freedom
-   (1 observation deleted due to missingness)
-   AIC: 7064.4</pre>
-<pre class="R_env">Number of Fisher Scoring iterations: 2</pre>
-<p>Note that intercept needs to be taken out, so that the best predictor of the sand content for some soil type is basically the mean value of the sand for that soil type (for example class B is expected to have an average sand content of about 50.1%). If you compare the model based on soil classes and model fitted in the previous section (<span class="R_code">SNDMHT.m</span>), you can see that fitting data using a 3D model results in a slightly better fit. Nevertheless, soil classes are in this case study significant estimators of sand content.</p>
+glm(formula = SNDMHT_A ~ B + D + G + Hw + K + L + Q + R + S + 
+    Z - 1, family = family, data = rmatrix)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-51.603   -8.522   -1.022    8.397   55.466  
+
+Coefficients:
+   Estimate Std. Error t value Pr(>|t|)    
+B    58.103      1.492  38.955  < 2e-16 ***
+D    21.022      1.961  10.717  < 2e-16 ***
+G    13.500      7.090   1.904  0.05742 .  
+Hw   15.879      5.225   3.039  0.00248 ** 
+K    20.159      3.965   5.084 5.06e-07 ***
+L    24.465      1.720  14.224  < 2e-16 ***
+Q    32.552      2.535  12.839  < 2e-16 ***
+R    17.559      5.991   2.931  0.00352 ** 
+S    32.760      1.628  20.124  < 2e-16 ***
+Z    17.072      1.988   8.589  < 2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+(Dispersion parameter for gaussian family taken to be 251.3532)
+
+    Null deviance: 839197  on 567  degrees of freedom
+Residual deviance: 140004  on 557  degrees of freedom
+  (1 observation deleted due to missingness)
+AIC: 4754.7
+
+Number of Fisher Scoring iterations: 2</pre>
+<p>Note that intercept needs to be taken out, so that the best predictor of the sand content for some soil type is basically the mean value of the sand for that soil type (for example class B is expected to have an average sand content of about 58%). If you compare the model based on soil classes and model fitted in the previous section (<span class="R_code">SNDMHT.m</span>), you can see that fitting data using a 3D model results in a slightly better fit. Nevertheless, soil classes are in this case study significant estimators of sand content.</p>
 <hr />
 <table width="100%" border="0" cellspacing="0" cellpadding="10">
   <tr>
