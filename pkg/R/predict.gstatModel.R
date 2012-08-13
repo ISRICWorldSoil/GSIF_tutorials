@@ -7,7 +7,7 @@
 
 ################## model fitting #########################
 ## Fit a GLM to spatial data:
-glm.sp <- function(formulaString, rmatrix, covariates, family=gaussian, stepwise=TRUE, rvgm=NULL, vgmFun="Exp", type, ...){
+glm.sp <- function(formulaString, rmatrix, predictionDomain, family=gaussian, stepwise=TRUE, rvgm=NULL, vgmFun="Exp", type, ...){
   
   require(gstat)
   require(splines)
@@ -43,12 +43,12 @@ glm.sp <- function(formulaString, rmatrix, covariates, family=gaussian, stepwise
   if(type == "geosamples"){
     coordinates(rmatrix) <- ~ longitude + latitude + altitude
     proj4string(rmatrix) = get("ref_CRS", envir = GSIF.opts)
-    suppressWarnings(rmatrix <- spTransform(rmatrix, covariates@proj4string))
+    suppressWarnings(rmatrix <- spTransform(rmatrix, predictionDomain@proj4string))
   } else {
     if(type == "SpatialPointsDataFrame"){
-      xyn = attr(covariates@coords, "dimnames")[[2]]
+      xyn = attr(predictionDomain@bbox, "dimnames")[[1]]
       coordinates(rmatrix) <- as.formula(paste("~", paste(xyn, collapse = "+"), sep=""))
-      proj4string(rmatrix) = covariates@proj4string
+      proj4string(rmatrix) = predictionDomain@proj4string
     }
   }
   
@@ -56,7 +56,7 @@ glm.sp <- function(formulaString, rmatrix, covariates, family=gaussian, stepwise
   if(is.null(rvgm)){
     if(type == "geosamples"){
       # estimate area extent:
-      Range = sqrt(areaSpatialGrid(covariates))/3
+      Range = sqrt(areaSpatialGrid(predictionDomain))/3
       # estimate initial range in the vertical direction:
       dr <- abs(diff(range(rmatrix@coords[,3], na.rm=TRUE)))/3
       a2 = 2*dr/Range
@@ -70,17 +70,16 @@ glm.sp <- function(formulaString, rmatrix, covariates, family=gaussian, stepwise
     } else {
     if(type == "SpatialPointsDataFrame"){
       # fit the variogram:
-      if(!is.na(proj4string(covariates))){
-      if(!is.projected(covariates)){
+      if(!is.na(proj4string(predictionDomain))){
+      if(!is.projected(predictionDomain)){
         require(fossil)  # Haversine Formula for Great Circle distance
-        p.1 <- matrix(c(covariates@bbox[1,1], covariates@bbox[1,2]), ncol=2, dimnames=list(1,c("lon","lat")))  
-        p.2 <- matrix(c(covariates@bbox[2,1], covariates@bbox[2,2]), ncol=2, dimnames=list(1,c("lon","lat")))  
+        p.1 <- matrix(c(predictionDomain@bbox[1,1], predictionDomain@bbox[1,2]), ncol=2, dimnames=list(1,c("lon","lat")))  
+        p.2 <- matrix(c(predictionDomain@bbox[2,1], predictionDomain@bbox[2,2]), ncol=2, dimnames=list(1,c("lon","lat")))  
         Range = fossil::deg.dist(lat1=p.1[,2], long1=p.1[,1], lat2=p.2[,2], long2=p.2[,1])/2
-      } else{
-        Range = sqrt(areaSpatialGrid(covariates))/2
-        }
-      } else{
-        Range = sqrt(areaSpatialGrid(covariates))/2
+      } else {
+        Range = sqrt(areaSpatialGrid(predictionDomain))/2      
+      }} else{
+        Range = sqrt(areaSpatialGrid(predictionDomain))/2
       }
         ivgm <- vgm(nugget=0, model=vgmFun, range=Range, psill=var(rmatrix$residual))
         try(rvgm <- gstat::fit.variogram(variogram(residual ~ 1, rmatrix), ivgm, ...))
@@ -115,13 +114,14 @@ setMethod("fit.gstatModel", signature(observations = "geosamples", formulaString
   ov$observedValue = as.numeric(ov$observedValue)
   
   # fit/filter the regression model:
-  m <- glm.sp(formulaString=formulaString, rmatrix=ov, covariates=covariates, family=family, stepwise=stepwise, rvgm=rvgm, vgmFun=vgmFun, type="geosamples", ...)
+  m <- glm.sp(formulaString=formulaString, rmatrix=ov, predictionDomain=covariates, family=family, stepwise=stepwise, rvgm=rvgm, vgmFun=vgmFun, type="geosamples", ...)
   
   # save the fitted model:
   rkm <- new("gstatModel", regModel = m[[1]], vgmModel = as.data.frame(m[[2]]), sp = m[[3]])
   return(rkm)  
 
 })
+
 
 ## Fit a RK model to a list of covariates / formulas:
 setMethod("fit.gstatModel", signature(observations = "geosamples", formulaString = "list", covariates = "list"), function(observations, formulaString, covariates, methodid, family = gaussian, stepwise = TRUE, vgmFun = "Exp", rvgm = NULL, ...){
@@ -171,7 +171,7 @@ setMethod("fit.gstatModel", signature(observations = "geosamples", formulaString
   }
   
   # fit/filter the regression model:
-  m <- glm.sp(formulaString=formulaString, rmatrix=ov, covariates=covariates[[1]], family=family, stepwise=stepwise, rvgm=rvgm, vgmFun=vgmFun, type="geosamples", ...)
+  m <- glm.sp(formulaString=formulaString, rmatrix=ov, predictionDomain=covariates[covs], family=family, stepwise=stepwise, rvgm=rvgm, vgmFun=vgmFun, type="geosamples", ...)
   
   # save the fitted model:
   rkm <- new("gstatModel", regModel = m[[1]], vgmModel = as.data.frame(m[[2]]), sp = m[[3]])
@@ -205,12 +205,78 @@ setMethod("fit.gstatModel", signature(observations = "SpatialPointsDataFrame", f
   }
   
   # fit/filter the regression model:
-  m <- glm.sp(formulaString=formulaString, rmatrix=ov, covariates=covariates, family=family, stepwise=stepwise, rvgm=rvgm, vgmFun=vgmFun, type="SpatialPointsDataFrame", ...)  
+  m <- glm.sp(formulaString=formulaString, rmatrix=ov, predictionDomain=covariates[seln], family=family, stepwise=stepwise, rvgm=rvgm, vgmFun=vgmFun, type="SpatialPointsDataFrame", ...)  
     
   # save the fitted model:
   rkm <- new("gstatModel", regModel = m[[1]], vgmModel = as.data.frame(m[[2]]), sp = m[[3]])
   return(rkm)
 })
+
+
+################## cross-validation #########################
+## cross-validate a "gstatModel" object:
+setMethod("validate", signature(obj = "gstatModel"), function(obj, nfold = 5, predictionDomain = NULL, save.gstatModels = FALSE){
+
+   require(dismo)
+   require(gstat)
+   require(plotKML)
+   if(nfold < 2){ stop("'nfold' argument > 2 expected") }
+
+   # get the formString:
+   formulaString <- obj@regModel$formula
+   mfamily <- obj@regModel$family
+   linkfun <- obj@regModel$family$linkfun
+   # get the regression matrix:
+   ov <- obj@regModel$data[-obj@regModel$na.action,]
+   if(nfold > nrow(ov)){ stop("'nfold' argument must not exceed total number of points") }
+   # get the covariates:
+   seln = all.vars(formulaString)[-1]
+   tv = all.vars(formulaString)[1]
+   # get the variogram:
+   vgmmodel = obj@vgmModel
+   class(vgmmodel) <- c("variogramModel", "data.frame")
+   # predictionDomain:
+   if(is.null(predictionDomain)){
+     obj2D = data.frame(obj@sp@coords[,1:2])
+     coordinates(obj2D) <- names(obj2D)
+     message("Estimating the predictionDomain...")
+     predictionDomain <- vect2rast(remove.duplicates(obj2D))
+     proj4string(predictionDomain) <- obj@sp@proj4string
+   }
+
+   # re-fit the data in loops:
+   m.l <- list(NULL)
+   cv.l <- list(NULL)
+   sel <- kfold(ov, k=nfold)
+   message(paste("Running ", nfold, "-fold cross validation...", sep=""))
+   for(j in 1:nfold){
+      rmatrix <- ov[!sel==j,]
+      nlocs <- ov[sel==j,]
+      nlocs <- SpatialPointsDataFrame(obj@sp[sel==j,], data=nlocs)
+      m <- glm.sp(formulaString=formulaString, rmatrix=rmatrix, predictionDomain=predictionDomain, family=mfamily, stepwise=TRUE, vgmFun=vgmmodel$model[2])
+      m.l[[j]] <- new("gstatModel", regModel = m[[1]], vgmModel = as.data.frame(m[[2]]), sp = m[[3]])
+      cv.l[[j]] <- predict.gstatModel(object=m.l[[j]], predictionLocations=nlocs, nfold=0, block=rep(0, ncol(obj@sp@coords)), mask.extra = FALSE)$predicted
+      cv.l[[j]]$observed <- linkfun(nlocs@data[,tv])
+      cv.l[[j]]$residual <- cv.l[[j]]$observed - cv.l[[j]]$var1.pred
+      cv.l[[j]]$zscore <- cv.l[[j]]$residual/sqrt(cv.l[[j]]$var1.var)
+      cv.l[[j]]$fold <- rep(j, length(cv.l[[j]]$residual))
+      # clean up:
+      cv.l[[j]]@data <- cv.l[[j]]@data[,c("var1.pred","var1.var","observed","residual","zscore","fold")]
+   }
+   
+   if(save.gstatModels==TRUE){ 
+    cv <- list(do.call(rbind, cv.l), m.l)
+    names(cv) <- c("validation", "gstatModels")
+   } else {
+    cv <- list(do.call(rbind, cv.l))
+    names(cv) <- "validation"
+   }
+    
+   return(cv)   
+
+})
+
+
 
 
 ################## prediction #########################
@@ -231,8 +297,11 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
   if(is.na(proj4string(object@sp))){
     stop("proj4string for the 'gstatModel' object required")
   }
+  
   # force SpatialPixels:
-  predictionLocations <- as(predictionLocations, "SpatialPixelsDataFrame")
+  if(!class(predictionLocations)=="SpatialPointsDataFrame"){
+    predictionLocations <- as(predictionLocations, "SpatialPixelsDataFrame")
+  }
 
   # predict regression model:
   rp <- stats::predict.glm(object@regModel, newdata=predictionLocations, type="link", se.fit = TRUE, na.action = na.pass)
@@ -379,12 +448,20 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
   # save the output file:
   require(plotKML)
   if(nsim == 0){
-    rkp <- new("SpatialPredictions", variable = variable, observed = observed, glm = sum.glm, vgmModel = object@vgmModel, predicted = rk, validation = cv)
+    if(class(predictionLocations)=="SpatialPointsDataFrame"){
+    rkp <- list(variable = variable, observed = observed, glm = sum.glm, vgmModel = object@vgmModel, predicted = rk, validation = cv)
+    } else {
+      rkp <- new("SpatialPredictions", variable = variable, observed = observed, glm = sum.glm, vgmModel = object@vgmModel, predicted = rk, validation = cv)
+    }
   } 
   else {
-    t1 <- Line(matrix(c(rk@bbox[1,1],rk@bbox[1,2],mean(rk@bbox[2,]),mean(rk@bbox[2,])), ncol=2))
-    transect <- SpatialLines(list(Lines(list(t1), ID="t")), observed@proj4string)
-    rkp <- new("RasterBrickSimulations", variable = variable, sampled = transect, realizations = brick(rk))
+    if(class(predictionLocations)=="SpatialPointsDataFrame"){
+    rkp <- list(variable = variable, observed = observed, glm = sum.glm, vgmModel = object@vgmModel, predicted = rk, validation = cv)
+    } else {
+      t1 <- Line(matrix(c(rk@bbox[1,1],rk@bbox[1,2],mean(rk@bbox[2,]),mean(rk@bbox[2,])), ncol=2))
+      transect <- SpatialLines(list(Lines(list(t1), ID="t")), observed@proj4string)
+      rkp <- new("RasterBrickSimulations", variable = variable, sampled = transect, realizations = brick(rk))
+    }
   }
    
   return(rkp)

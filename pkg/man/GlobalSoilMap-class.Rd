@@ -83,7 +83,7 @@ p = get("cellsize", envir = GSIF.opts)[1]
 s = get("stdepths", envir = GSIF.opts)
 sd.ll <- sapply(1:length(sd.l), FUN=function(x){make.3Dgrid(sd.l[[x]]@predicted[3:4], pixsize=p, stdepths=s[x])})
 # save to a "GlobalSoilMap" object:
-SNDMHT.gsm <- GlobalSoilMap(varname="SNDMHT", sd.ll, period=c("", ""))
+SNDMHT.gsm <- GlobalSoilMap(varname="SNDMHT", sd.ll, period=c("1999-02-01", "2001-07-01"))
 # visualize all maps in Google Earth:
 data(R_pal)
 z0 = mean(eberg_grid$DEMSRT6, na.rm=TRUE)

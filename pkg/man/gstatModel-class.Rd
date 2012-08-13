@@ -2,6 +2,8 @@
 \docType{class}
 \alias{gstatModel-class}
 \alias{predict,gstatModel-method}
+\alias{validate,gstatModel-method}
+\alias{validate}
 \alias{predict.gstatModel}
 \alias{predict,list-method}
 \alias{predict.gstatModelList}
@@ -17,7 +19,8 @@
 \section{Methods}{
   \describe{
 	\item{summary}{\code{signature(obj = "gstatModel")}: summarize object by showing the mapping accuracy (cross-validation) and the amount of variation explained by the model }
-	\item{predict}{\code{signature(obj = "gstatModel")}: makes predictions for a set of given predictionLocations (gridded maps) at block support corresponding to the \code{cellsize} slot in the object of class \code{"SpatialPixelsDataFrame"} }
+	\item{predict}{\code{signature(obj = "gstatModel")}: makes predictions for a set of given predictionLocations (gridded maps) at block support corresponding to the \code{cellsize} slot in the object of class \code{"SpatialPixelsDataFrame"}; to produce predictions at point support, submit the predictionLocations as \code{"SpatialPoiuntsDataFrame"} }
+	\item{validate}{\code{signature(obj = "gstatModel")}: runs \emph{n}-fold cross-validation of the existing gstatModel (it re-fits the model using existing formula string and then validates the predictions at validation locations, that were not used for model fitting)}
   }
 }
 \note{ \code{"SpatialPredictions"} saves results of predictions for a single target variable, which can be of type numeric or factor. Multiple variables can be combined into a list. When using \code{nsim} argument with the \code{predict} method, the output result will be of type:\cr
@@ -55,6 +58,8 @@ library(plotKML)
 plotKML(om.rk)
 # simulations (by default at block support):
 om.rksim <- predict(omm, predictionLocations = meuse.grid, nsim=2)
+# run a proper cross-validation:
+rk.cv <- validate(omm)
 }
 }
 \keyword{classes}

@@ -164,6 +164,10 @@ if (!isGeneric("spmultinom")){
   setGeneric("spmultinom", function(formulaString, observations, covariates, ...){standardGeneric("spmultinom")})
 }
 
+if (!isGeneric("validate")){
+  setGeneric("validate", function(obj, ...){standardGeneric("validate")})
+}
+
 if (!isGeneric("spfkm")){
   setGeneric("spfkm", function(formulaString, observations, covariates, ...){standardGeneric("spfkm")})
 }
@@ -200,7 +204,7 @@ GSIF.env <- function(
     NAflag = -99999,
     license_url = "http://creativecommons.org/licenses/by/3.0/",
     project_url = "http://gsif.r-forge.r-project.org/",
-    stdepths = c(-2.5, -7.5, -22.5, -45, -80, -150)/100,
+    stdepths = c(-2.5, -10, -22.5, -45, -80, -150)/100,
     stsize = c(5, 10, 15, 30, 40, 100)/100,
     cellsize = rev(c(6/120, 3/120, 1/120, 1/240, 1/600, 1/1200, 1/3600)),
     show.env = TRUE

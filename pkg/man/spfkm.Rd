@@ -22,7 +22,7 @@ spfkm(formulaString, observations, covariates, \dots)
 }
 \value{Returns an object of type \code{"SpatialMemberships"} with following slots: \code{predicted} (classes predicted either by the multinomial logistic regression or fuzzy \emph{k}-means), \code{model} (the multinomial logistic regression model; if available), \code{mu} (memberships derived using the fuzzy \emph{k}-means), \code{class.c} (submitted or derived class centres), \code{class.sd} (submitted or derived class deviations), \code{confusion} (confusion matrix).}
 \note{Although \code{nnet::multinom} is consider to be robust and suited for large data sets, function might not converge in some cases or result in artifacts. If this happens try setting up the class centres and variances manually.}
-\author{Tomislav Hengl}
+\author{Tomislav Hengl and Bas Kempen}
 \references{
 \itemize{
 \item Burrough, P. A., Gaans, P.F.M., and Van Hootsmans, R., (1997) \href{http://dx.doi.org/10.1016/S0016-7061(97)00018-9}{Continuous classification in soil survey: spatial correlation, confusion and boundaries}. Geoderma, 77(2-4), 115--135.

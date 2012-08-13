@@ -3,12 +3,12 @@
 \title{Fits a GLM to spatial data}
 \description{Fits a GLM and variogram for the residuals using the default settings used in the gstat and glm packages.}
 \usage{
-glm.sp(formulaString, rmatrix, covariates, family=gaussian, stepwise=TRUE, rvgm=NULL, vgmFun="Exp", type, \dots)
+glm.sp(formulaString, rmatrix, predictionDomain, family=gaussian, stepwise=TRUE, rvgm=NULL, vgmFun="Exp", type, \dots)
 }
 \arguments{
   \item{formulaString}{object of class \code{"formula"} --- regression model} 
   \item{rmatrix}{object of class \code{"data.frame"}; regression matrix produced as a result of spatial overlay}
-  \item{covariates}{object of class \code{"SpatialPixelsDataFrame"}; list of covariates}
+  \item{predictionDomain}{object of class \code{"SpatialPixelsDataFrame"}; spatial domain of interest}
   \item{family}{family to be passed to the \code{glm} (see examples below)}
   \item{stepwise}{specifies whether to run step-wise regression on top of GLM to get an optimal subset of predictors}
   \item{rvgm}{residual variogram (assumed to be unknown)}

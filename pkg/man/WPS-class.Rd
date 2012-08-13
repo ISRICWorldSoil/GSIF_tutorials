@@ -13,7 +13,7 @@
 \section{Slots}{
   \describe{
     \item{\code{server}:}{object of class \code{"list"}; contains the location of the CGI script that executes WPS (\code{"URI"}); service name (\code{"service.name"}), version (\code{"version"}), request type (\code{"request"}), identifier (\code{"identifier"})}
-    \item{\code{inRastername}:}{object of class \code{"character"}; name of the objects withing the server}
+    \item{\code{inRastername}:}{object of class \code{"character"}; name of the objects on the server}
   }
 }
 \section{Methods}{
@@ -25,7 +25,7 @@
   \item{subset}{\code{signature(x = "WPS")}: subsets a grid (from server) and loads it to R; use \code{bbox} argument to specify the bounding box}
   }
 }
-\note{More examples of overlay, subset and aggregation functions are available via \href{http://worldgrids.org/doku.php?id=wiki:functions.r}{WorldGrids.org}. WPS WorldGrids.org uses the \href{http://pywps.wald.intevation.org}{PyWPS} module on a Debian system with Webserver, GDAL, Python and Scipy. The standard format for the gridded data on the worldgrids.org repository is \code{"GeoTiff"}. Use of the \code{"bbox"} object to obtain grids that cover more than 30 percent of the global coverage is not recommended. Consider downloading the compressed images directly from \href{http://worldgrids.org}{WorldGrids.org} instead.}
+\note{More examples of overlay, subset and aggregation functions are available via \href{http://worldgrids.org/doku.php?id=wiki:functions.r}{WorldGrids.org}. WPS WorldGrids.org uses the \href{http://pywps.wald.intevation.org}{PyWPS} module on a Debian system with Webserver, GDAL, Python and Scipy. The standard format for the gridded data on the WorldGrids.org repository is \code{"GeoTiff"}. Use of the \code{"bbox"} object to obtain grids that cover more than 30 percent of the global coverage is not recommended. Consider instead downloading the compressed images directly from \href{http://worldgrids.org}{WorldGrids.org}.}
 \references{
 \itemize{
 \item PyWPS module (\url{http://pywps.wald.intevation.org})
@@ -39,14 +39,15 @@
 \dontrun{
 URI = "http://wps.worldgrids.org/pywps.cgi"
 server <- list(URI=URI, request="execute", version="version=1.0.0", service.name="service=wps", identifier="identifier=sampler_local1pt_nogml")
-biocl15.wps <- new("WPS", server=server, inRastername="biocl15") # RNMGSP1
-# show(RNMGSP1.wps)
+biocl15.wps <- new("WPS", server=server, inRastername="biocl15")
+# show(biocl15.wps)
 prl <- getProcess(biocl15.wps)
 prl[7]
 describe(biocl15.wps, identifier="overlay")
 p1 <- data.frame(lon=10, lat=10)
 coordinates(p1) <- ~lon+lat
 proj4string(p1) <- CRS("+proj=longlat +datum=WGS84")
+p1
 overlay(biocl15.wps, p1)
 # fetch grids and load the to R:
 biocl15 <- subset(biocl15.wps, bbox=matrix(c(-20,30,40,60), nrow=2))

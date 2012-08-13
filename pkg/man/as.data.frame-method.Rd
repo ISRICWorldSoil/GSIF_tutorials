@@ -6,7 +6,7 @@
 \title{Converts an object of class \code{"SoilProfileCollection"} to a data frame}
 \description{Converts an object of class \code{"SoilProfileCollection"} to an object of class \code{"data.frame"} with both site and horizon data sorted in one row. Each original column name in the horizons table receives a sufix \code{*_A, B, \dots, Z} where alphabetic letters represent horizon sequence. }
 \usage{
-as.data.frame(x, row.names = NULL, optional = FALSE, \dots)
+\S4method{as.data.frame}{SoilProfileCollection}(x, row.names = NULL, optional = FALSE, \dots)
 }
 \arguments{
   \item{x}{object of class \code{"SoilProfileCollection"}}
@@ -26,7 +26,9 @@ top = c(0, 18, 36, 65, 87, 127)
 bottom = c(18, 36, 65, 87, 127, 181)
 ORCDRC = c(18.4, 4.4, 3.6, 3.6, 3.2, 1.2)
 # prepare a SoilProfileCollection:
-prof1 <- join(data.frame(id, top, bottom, ORCDRC), data.frame(id, lon, lat, FAO1988), type='inner')
+prof1 <- join(data.frame(id, top, bottom, ORCDRC), 
+    data.frame(id, lon, lat, FAO1988), 
+    type='inner')
 depths(prof1) <- id ~ top + bottom
 site(prof1) <- ~ lon + lat + FAO1988 
 coordinates(prof1) <- ~ lon + lat

@@ -130,7 +130,7 @@ makeGstatCmd <- function(formString, vgmModel, outfile, easfile, nsim = 0, nmin 
   }
      
   close(out)
-  message("You can now run the gstat command script using 'system' command")
+  message("You can now run the gstat command script using the 'system' command")
   
 }
 

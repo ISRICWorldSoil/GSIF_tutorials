@@ -16,6 +16,7 @@
 <h3>Usage</h3>
 
 <pre>
+## S4 method for signature 'SoilProfileCollection'
 as.data.frame(x, row.names = NULL, optional = FALSE, ...)
 </pre>
 
@@ -73,7 +74,9 @@ top = c(0, 18, 36, 65, 87, 127)
 bottom = c(18, 36, 65, 87, 127, 181)
 ORCDRC = c(18.4, 4.4, 3.6, 3.6, 3.2, 1.2)
 # prepare a SoilProfileCollection:
-prof1 &lt;- join(data.frame(id, top, bottom, ORCDRC), data.frame(id, lon, lat, FAO1988), type='inner')
+prof1 &lt;- join(data.frame(id, top, bottom, ORCDRC), 
+    data.frame(id, lon, lat, FAO1988), 
+    type='inner')
 depths(prof1) &lt;- id ~ top + bottom
 site(prof1) &lt;- ~ lon + lat + FAO1988 
 coordinates(prof1) &lt;- ~ lon + lat

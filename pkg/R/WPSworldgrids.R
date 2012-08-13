@@ -88,8 +88,9 @@ setMethod("subset", signature(x = "WPS"), function(x, bbox, import = TRUE){
 
   if(import == TRUE){
    out <- readGDAL(out)
-   if(grep(pattern="examine data for flipping", names(warnings()))>0){  out <- flipVertical(out) }
+   if(length(grep(pattern="examine data for flipping", names(warnings())))>0){  out <- flipVertical(out) }
    names(out) <- x@inRastername
+   proj4string(out) <- get("ref_CRS", envir = GSIF.opts)
    return(out)
   }
   else {

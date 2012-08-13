@@ -53,7 +53,7 @@ setMethod("MaxEnt", signature(occurrences = "ppp", covariates = "SpatialPixelsDa
 
 
 ## TH: manually copied from the dismo package:
-predict.MaxEnt <- function(object, x, ext=NULL, args="", filename='', ...) {
+.predict.MaxEnt <- function(object, x, ext=NULL, args="", filename='', ...) {
 
 		require(rJava)
 		require(raster)
@@ -256,7 +256,7 @@ predict.MaxEnt <- function(object, x, ext=NULL, args="", filename='', ...) {
 		out
 }
 
-setMethod('predict', signature(object='MaxEnt'), predict.MaxEnt)
+setMethod('predict', signature(object='MaxEnt'), .predict.MaxEnt)
 
 
 .rJava <- function() {

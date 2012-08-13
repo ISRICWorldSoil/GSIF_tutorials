@@ -62,7 +62,7 @@ echo $contents; } ?>
   </tr>
 </table>
 <p class="style1">Contact: <a href="http://www.wewur.wur.nl/popups/vcard.aspx?id=HENGL001" target="_blank">Tomislav Hengl</a></p>
-
+<p class="style1">Contributions by: Bas Kempen, Dylan Beaudette, Gerard B.M. Heuvelink, Reuter I. Hannes, Brendan Malone, Pierre Roudier ... </p>
 <p> The <strong>project summary page</strong> you can find <a href="http://<?php echo $domain; ?>/projects/<?php echo $group_name; ?>/"><strong>here</strong></a>. See the complete list of <strong><a href="00Index.html">functions</a></strong> available in this package. GSIF provides access to several case studies. A tutorial to analyze soil property and soil class data with the Ebergotzen data is available <strong><a href="tutorial_eberg.php">here</a></strong>. </p>
 
 <p><strong>Installation:</strong></p>
@@ -70,7 +70,7 @@ echo $contents; } ?>
 <p class="R_code">&gt; install.packages(c(&quot;RCurl&quot;, &quot;XML&quot;, &quot;rgdal&quot;, &quot;raster&quot;, &quot;sp&quot;, &quot;aqp&quot;,  &quot;mda&quot;, &quot;gstat&quot;, &quot;plotKML&quot;, &quot;dismo&quot;))<br />
 &gt; install.packages(&quot;GSIF&quot;, repos=c(&quot;http://R-Forge.R-project.org&quot;)) </p>
 <p>Alternatively, you can install the most recent snapshot of the package directly from the source by using e.g.:</p>
-<pre class="R_code">&gt; install.packages(c(&quot;RCurl&quot;, &quot;XML&quot;, &quot;rgdal&quot;, &quot;raster&quot;, &quot;sp&quot;, &quot;aqp&quot;,  &quot;mda&quot;, &quot;gstat&quot;, &quot;plotKML&quot;))
+<pre class="R_code">&gt; install.packages(c(&quot;RCurl&quot;, &quot;XML&quot;, &quot;rgdal&quot;, &quot;raster&quot;, &quot;sp&quot;, &quot;aqp&quot;,  &quot;mda&quot;, &quot;gstat&quot;, &quot;plotKML&quot;, &quot;dismo&quot;))
 &gt; download.file(&quot;http://gsif.r-forge.r-project.org/GSIF_0.2-2.tar.gz&quot;, &quot;GSIF_0.2-2.tar.gz&quot;)
 &gt; system(&quot;R CMD INSTALL GSIF_0.2-2.tar.gz&quot;) </pre>
 <p>GSIF package extensively uses a number of external software, hence it is highly recommended that, prior to starting GSIF, you first download and install:</p>

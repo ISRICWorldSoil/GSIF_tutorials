@@ -19,7 +19,7 @@ setMethod("gdalwarp", signature(obj = "SpatialPixelsDataFrame"), function(obj, p
   }
   
   if(!nchar(gdalwarp)==0){
-    message(paste('Resampling', length(names(obj)), 'layers to \"', stringr::str_trim(substr(proj4s, 1, 20)), '\" with grid cell size:', pixsize, '...'))
+    message(paste('Resampling', length(names(obj)), 'layers to \"', stringr::str_trim(substr(proj4s, 1, 20)), ' ... ', '\" with grid cell size:', pixsize, '...'))
     
     pb <- txtProgressBar(min=0, max=ncol(obj), style=3)
     for(i in 1:ncol(obj)){

@@ -35,7 +35,9 @@
 <dl>
 <dt>summary</dt><dd><p><code>signature(obj = "gstatModel")</code>: summarize object by showing the mapping accuracy (cross-validation) and the amount of variation explained by the model </p>
 </dd>
-<dt>predict</dt><dd><p><code>signature(obj = "gstatModel")</code>: makes predictions for a set of given predictionLocations (gridded maps) at block support corresponding to the <code>cellsize</code> slot in the object of class <code>"SpatialPixelsDataFrame"</code> </p>
+<dt>predict</dt><dd><p><code>signature(obj = "gstatModel")</code>: makes predictions for a set of given predictionLocations (gridded maps) at block support corresponding to the <code>cellsize</code> slot in the object of class <code>"SpatialPixelsDataFrame"</code>; to produce predictions at point support, submit the predictionLocations as <code>"SpatialPoiuntsDataFrame"</code> </p>
+</dd>
+<dt>validate</dt><dd><p><code>signature(obj = "gstatModel")</code>: runs <EM>n</EM>-fold cross-validation of the existing gstatModel (it re-fits the model using existing formula string and then validates the predictions at validation locations, that were not used for model fitting)</p>
 </dd>
 </dl>
 
@@ -90,6 +92,8 @@ library(plotKML)
 plotKML(om.rk)
 # simulations (by default at block support):
 om.rksim &lt;- predict(omm, predictionLocations = meuse.grid, nsim=2)
+# run a proper cross-validation:
+rk.cv &lt;- validate(omm)
 
 ## End(Not run)
 </pre>

@@ -2,7 +2,6 @@
 \docType{methods}
 \alias{MaxEnt}
 \alias{MaxEnt,ppp,SpatialPixelsDataFrame-method}
-\alias{predict.MaxEnt}
 \alias{predict,MaxEnt-method}
 \title{Prediction and cross-validation using the Maximum Entropy}
 \description{Runs \href{http://www.cs.princeton.edu/~schapire/maxent/}{MaxEnt} algorithm on a set of observations (\code{"ppp"} class from the \href{http://www.spatstat.org}{spatstat} package) and environmental covariates (of \code{"SpatialPixelsDataFrame"} class) and returns predicted probability of occurrence and cross-validation of models with presence/absence data.}

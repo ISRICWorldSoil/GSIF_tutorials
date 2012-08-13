@@ -106,16 +106,14 @@ setMethod("as.geosamples", signature(obj = "SoilProfileCollection"),
 
 
 ## subsetting geosamples:
-subset.geosamples <- function(x, method){
+setMethod("subset", signature(x = "geosamples"), function(x, method){
   ret <- x@data[x@data$methodid==method,]
   if(nrow(ret)==0){ warning("Empty object. Methodid possibly not available") }
   attr(ret$methodid, "description") <- x@methods[x@methods$methodid==method,"description"]
   attr(ret$methodid, "units") <- x@methods[x@methods$methodid==method,"units"]
   attr(ret$methodid, "detectionLimit") <- x@methods[x@methods$methodid==method,"detectionLimit"]
   return(ret)  
-}
-
-setMethod("subset", signature(x = "geosamples"), subset.geosamples)
+})
 
 
 ## summary values:

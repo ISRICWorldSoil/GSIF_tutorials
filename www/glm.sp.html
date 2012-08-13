@@ -16,7 +16,7 @@
 <h3>Usage</h3>
 
 <pre>
-glm.sp(formulaString, rmatrix, covariates, family=gaussian, stepwise=TRUE, rvgm=NULL, vgmFun="Exp", type, ...)
+glm.sp(formulaString, rmatrix, predictionDomain, family=gaussian, stepwise=TRUE, rvgm=NULL, vgmFun="Exp", type, ...)
 </pre>
 
 
@@ -32,9 +32,9 @@ glm.sp(formulaString, rmatrix, covariates, family=gaussian, stepwise=TRUE, rvgm=
 <td>
 <p>object of class <code>"data.frame"</code>; regression matrix produced as a result of spatial overlay</p>
 </td></tr>
-<tr valign="top"><td><code>covariates</code></td>
+<tr valign="top"><td><code>predictionDomain</code></td>
 <td>
-<p>object of class <code>"SpatialPixelsDataFrame"</code>; list of covariates</p>
+<p>object of class <code>"SpatialPixelsDataFrame"</code>; spatial domain of interest</p>
 </td></tr>
 <tr valign="top"><td><code>family</code></td>
 <td>

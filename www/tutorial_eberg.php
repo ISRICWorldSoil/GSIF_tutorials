@@ -71,10 +71,10 @@ echo $contents; } ?>
 <hr />
 <p class="style1">Prepared by: <a href="http://www.wewur.wur.nl/popups/vcard.aspx?id=HENGL001" target="_blank">Tomislav Hengl</a>, <a href="http://www.wewur.wur.nl/popups/vcard.aspx?id=HEUVE015" target="_blank">Gerard B.M. Heuvelink,</a> <a href="http://www.wewur.wur.nl/popups/vcard.aspx?id=KEMPE001" target="_blank">Bas Kempen</a> <br />
   Last update:
-  <!-- #BeginDate format:Am1 -->August 9, 2012<!-- #EndDate -->
+  <!-- #BeginDate format:Am1 -->August 11, 2012<!-- #EndDate -->
 </p>
 <p>The purpose of this tutorial is to demonstrate major processing steps used within the GSIF framework for generating soil property and soil class maps from point data, and with the help of multi-scale covariates. The GSIF (R package) <strong>project summary page</strong> you can find <a href="http://<?php echo $domain; ?>/projects/<?php echo $group_name; ?>/"><strong>here</strong></a>. To learn more about the <strong>Global Soil Information Facilities</strong> (GSIF), visit the <a href="http://www.isric.org/projects/global-soil-information-facilities-gsif" target="_blank">main project page</a>. See also the complete list of <strong><a href="00Index.html">functions</a></strong> available via the GSIF package.</p>
-<p>Download the tutorial as <a href="tutorial_eberg.R">R script</a>. </p>
+<p>Download the tutorial as <a href="tutorial_eberg.R">R script</a>.</p>
 <p><em><a name="top" id="top"></a>Table of content: </em></p>
 <ul>
   <li><a href="#data_import">Loading the data and data screening</a>
@@ -89,6 +89,7 @@ echo $contents; } ?>
       <li><a href="#preparing_point_data">Preparing the point data for geostatistical analysis</a></li>
       <li><a href="#generating_SPCs">Generating soil predictive components</a></li>
       <li><a href="#predicting_soil_properties">Predicting soil properties</a></li>
+      <li><a href="#visualizing_uncertainty">Visualizing the uncertainty of predictions</a> </li>
       <li><a href="#predicting_soil_classes">Predicting soil classes</a></li>
     </ul>
   </li>
@@ -110,7 +111,7 @@ echo $contents; } ?>
     <th scope="col"><div align="right"><a href="#top">^to top</a> </div></th>
   </tr>
 </table>
-<p>For demonstration purposes we use the <a href="http://plotkml.r-forge.r-project.org/eberg.html">Eberg&ouml;tzen</a> case study, which   has been used by the SAGA GIS development team (<a href="http://saga-gis.org/en/about/references.html" target="_blank">Böhner et al., 2006</a>; <a href="http://dx.doi.org/10.1016/j.jag.2012.02.005" target="_blank">Hengl et al., 2012</a>). To start the exercise, first install and load all required packages (see also: <a href="http://gsif.r-forge.r-project.org">GSIF installation instructions</a>):</p>
+<p>For demonstration purposes we use the <a href="http://plotkml.r-forge.r-project.org/eberg.html">Eberg&ouml;tzen</a> case study, which   has been used by the SAGA GIS development team (<a href="http://saga-gis.org/en/about/references.html" target="_blank">Böhner et al., 2006</a>; <a href="http://dx.doi.org/10.1016/j.jag.2012.02.005" target="_blank">Hengl et al., 2012</a>). To start the exercise, first install and load all required packages (see also: <a href="http://gsif.r-forge.r-project.org">GSIF installation instructions</a>). Note that GSIF is dependent on the <a href="http://plotkml.r-forge.r-project.org/tutorial.php">plotKML package</a>, which you should always first install from R-forge as these are both experimental packages:</p>
 <pre class="R_code">&gt; sessionInfo()</pre>
 <pre class="R_env">R version 2.14.1 (2011-12-22)<br />Platform: x86_64-pc-mingw32/x64 (64-bit)</pre>
 <pre class="R_code">&gt; library(plotKML)
@@ -184,7 +185,7 @@ lo     1   8   lo   G[lo](r) lower pointwise envelope of G(r) from simulations</
 <table width="350" border="0" cellspacing="2" cellpadding="4">
   <caption class="caption" align="bottom">
     Fig: The results of the Complete Spatial Randomness test (spatstat package) for the Eberg&ouml;tzen case study.
-  In this case the observed G-curve does not fit into the 95% range for the CSR, for this study area. 
+  In this case the observed G-curve does not fit into the 95% range for the CSR estimated for this study area.
   </caption>
   <tr>
     <th scope="col"><img src="Fig_eberg_CRS_test.png" alt="Fig_eberg_CRS_test.png" width="350" /></th>
@@ -377,7 +378,7 @@ anis2<br />1 1.00000<br />2 0.00015</pre>
 <pre class="R_code">&gt; p = get(&quot;cellsize&quot;, envir = GSIF.opts)[2]
 &gt; s = get(&quot;stdepths&quot;, envir = GSIF.opts)
 &gt; s</pre>
-<pre class="R_env">[1] -0.025 -0.075 -0.225 -0.450 -0.800 -1.500</pre>
+<pre class="R_env">[1] -0.025 -0.100 -0.225 -0.450 -0.800 -1.500</pre>
 <pre class="R_code">&gt; sd.ll &lt;- sapply(1:length(sd.l), FUN=function(x){make.3Dgrid(sd.l[[x]]@predicted[3:4], pixelsize=p, stdepths=s[x])})</pre>
 <pre class="R_env">Resampling 2 layers to +proj=longlat +datum=WGS84 with grid cell size of 0.000833333333333333 ...</pre>
 <p>The object <span class="R_code">sd.ll</span> can now be saved as a <a href="GlobalSoilMap-class.html">GlobalSoilMap-class</a> object:</p>
@@ -398,34 +399,102 @@ anis2<br />1 1.00000<br />2 0.00015</pre>
 <pre class="R_code">&gt;  z0 = mean(eberg_grid$DEMSRT6, na.rm=TRUE)
 &gt; for(j in 1:length(sd.ll)){
 + kml(slot(SNDMHT.gsm, paste(&quot;sd&quot;, j, sep=&quot;&quot;)), folder.name = paste(&quot;eberg_sd&quot;, j, sep=&quot;&quot;), 
-+    file = paste(&quot;SNDMHT_sd&quot;, j, &quot;.kml&quot;, sep=&quot;&quot;), colour = observedValue, zlim=c(10,85), 
++    file.name = paste(&quot;SNDMHT_sd&quot;, j, &quot;.kml&quot;, sep=&quot;&quot;), colour = observedValue, zlim=c(10,85), 
 +    raster_name = paste(&quot;SNDMHT_sd&quot;, j, &quot;.png&quot;, sep=&quot;&quot;), altitude = z0+5000+(s[j]*2500))
 + }</pre>
 <pre class="R_env">KML file header opened for parsing...
 Parsing to KML...
 Closing  SNDMHT_sd1.kml
 KML file header opened for parsing...
-Parsing to KML...
-Closing  SNDMHT_sd2.kml
-KML file header opened for parsing...
-Parsing to KML...
-Closing  SNDMHT_sd3.kml
-KML file header opened for parsing...
-Parsing to KML...
-Closing  SNDMHT_sd4.kml
-KML file header opened for parsing...
-Parsing to KML...
-Closing  SNDMHT_sd5.kml
-KML file header opened for parsing...
+...
 Parsing to KML...
 Closing  SNDMHT_sd6.kml</pre>
 <table width="500" border="0" cellspacing="2" cellpadding="4">
   <caption class="caption" align="bottom">
     Fig: Predicted sand content using 3D GLM-kriging as visualized in Google Earth (<a href="eberg_SNDMHT_6depths.zip">zip</a>). 
-  When visualizing this data, make sure that the relief exaggeration in Google Earth has been set at 1. 
+  When visualizing this data, make sure that the relief exaggeration in Google Earth has been set at 1.
   </caption>
   <tr>
     <th scope="col"><a href="eberg_SNDMHT_6depths.zip"><img src="Fig_GSIF_predicted_layers.jpg" alt="Fig_GSIF_predicted_layers.jpg" width="500" border="0" /></a></th>
+  </tr>
+</table>
+<h3><a name="visualizing_uncertainty" id="visualizing_uncertainty"></a>Visualizing the uncertainty of predictions</h3>
+<p>According to the <a href="http://GlobalSoilMap.net/specifications">GlobalSoilMap.net specifications</a>, a requirement to submit the predicted soil property maps is to estimate the 95% upper and lower confidence intervals and attach them to the predictions (thus, two extra maps). By using the above describe methodology (i.e. the <a href="gstatModel-class.html">gstatModel</a> class objects), one can derive confidence intervals for any arbitraty point in the 3D continuum. Here is an example of the calculus for some arbitrary 3D point:</p>
+<pre class="R_code">&gt; loc &lt;- eberg_spc@predicted[1200:1201,]
+&gt; new3D.loc &lt;- sp3D(loc)
+&gt; str(new3D.loc[[1]])</pre>
+<pre class="R_env">Formal class 'SpatialPixelsDataFrame' [package &quot;sp&quot;] with 7 slots
+   ..@ data       :'data.frame': 2 obs. of  11 variables:
+   .. ..$ PC1 : num [1:2] 3.09 -2.42
+   .. ..$ PC2 : num [1:2] 1.601 0.823
+   .. ..$ PC3 : num [1:2] -0.576 -1.176
+   .. ..$ PC4 : num [1:2] -0.09268 -0.00844
+   .. ..$ PC5 : num [1:2] 1.0204 0.0536
+   .. ..$ PC6 : num [1:2] -0.23 -0.189
+   .. ..$ PC7 : num [1:2] -0.312 0.0839
+   .. ..$ PC8 : num [1:2] 0.221 -0.15
+   .. ..$ PC9 : num [1:2] -0.218 -0.222
+   .. ..$ PC10: num [1:2] -0.1249 0.0608
+   .. ..$ PC11: num [1:2] -4.66e-15 7.88e-15
+   ..@ coords.nrs : num(0) 
+   ..@ grid       :Formal class 'GridTopology' [package &quot;sp&quot;] with 3 slots
+   .. .. ..@ cellcentre.offset: Named num [1:3] 3.57e+06 5.72e+06 -2.50e-02
+   .. .. .. ..- attr(*, &quot;names&quot;)= chr [1:3] &quot;longitude&quot; &quot;latitude&quot; &quot;altitude&quot;
+   .. .. ..@ cellsize         : Named num [1:3] 9900 100 0.05
+   .. .. .. ..- attr(*, &quot;names&quot;)= chr [1:3] &quot;longitude&quot; &quot;latitude&quot; &quot;altitude&quot;
+   .. .. ..@ cells.dim        : Named int [1:3] 2 2 1
+   .. .. .. ..- attr(*, &quot;names&quot;)= chr [1:3] &quot;longitude&quot; &quot;latitude&quot; &quot;altitude&quot;
+   ..@ grid.index : int [1:2] 2 3
+   ..@ coords     : num [1:2, 1:3] 3.58e+06 3.57e+06 5.72e+06 5.72e+06 -2.50e-02 ...
+   .. ..- attr(*, &quot;dimnames&quot;)=List of 2
+   .. .. ..$ : NULL
+   .. .. ..$ : chr [1:3] &quot;longitude&quot; &quot;latitude&quot; &quot;altitude&quot;
+   ..@ bbox       : num [1:3, 1:2] 3565100 5716700 -4950 3584900 5716900 ...
+   .. ..- attr(*, &quot;dimnames&quot;)=List of 2
+   .. .. ..$ : chr [1:3] &quot;longitude&quot; &quot;latitude&quot; &quot;altitude&quot;
+   .. .. ..$ : chr [1:2] &quot;min&quot; &quot;max&quot;
+   ..@ proj4string:Formal class 'CRS' [package &quot;sp&quot;] with 1 slots
+   .. .. ..@ projargs: chr &quot; +init=epsg:31467 +proj=tmerc +lat_0=0 +lon_0=9 +k=1 +x_0=3500000 +y_0=0 +ellps=bessel +datum=potsdam +units=m +no_defs +towgs8&quot;| __truncated__</pre>
+<pre class="R_code">&gt; sd.loc &lt;- predict(SNDMHT.m, predictionLocations=new3D.loc[[1]], nfold=0)</pre>
+<pre class="R_env">Generating predictions using the trend model (KED method)...
+[using universal kriging]</pre>
+<pre class="R_env">100% done</pre>
+<pre class="R_code">&gt; int95 &lt;- sd.loc@predicted$var1.pred[1] + c(-1.96, 1.96)*sqrt(sd.loc@predicted$var1.var[1])
+&gt; exp(int95)/(1+exp(int95))*100</pre>
+<pre class="R_env">[1] 10.97703 30.69503</pre>
+<pre class="R_code">&gt; new3D.loc[[1]]@coords[1,]</pre>
+<pre class="R_env">longitude    latitude    altitude 
+3579950.000 5716850.000      -0.025</pre>
+<p>This means that the 95% confidence interval of predictions for this 3D location is 11-31% of sand. Because the <a href="gstatModel-class.html">gstatModel</a> is basically a global 3D model for this soil property, we can estimate uncertainty at any new 3D location, the only requirement is that values of covariates at this location are known, and that the location is submitted as SpatialPixelsDataFrame object. </p>
+<p>To visualize uncertainty, you can consider using geostatistical simulations:</p>
+<pre class="R_code">&gt; SNDMHT.xy &lt;- spTransform(SNDMHT.geo, CRS(&quot;+init=epsg:31467&quot;))<br />&gt; sel.stripe &lt;- eberg_spc@predicted@coords[,2] &gt; min(SNDMHT.xy@coords[,2])  # 2400 locations<br />&gt; loc &lt;- eberg_spc@predicted[sel.stripe,]<br />&gt; new3D.loc &lt;- sp3D(loc)<br />&gt; sd.loc &lt;- predict(SNDMHT.m, predictionLocations=new3D.loc[[1]], nsim=20, block=c(0,0,0))</pre>
+<pre class="R_env">Generating 20 conditional simulations using the trend model (KED method)...
+drawing 20 GLS realisations of beta...
+[using conditional Gaussian simulation]</pre>
+<pre class="R_env">  100% done</pre>
+<pre class="R_code">&gt; sd.loc@realizations &lt;- calc(sd.loc@realizations, fun=function(x){exp(x)/(1+exp(x))*100})</pre>
+<p>This function will create an object of class &quot;<a href="http://plotkml.r-forge.r-project.org/RasterBrickSimulations-class.html">RasterBrickSimulations</a>&quot;, then can then be visualized by using the <a href="http://plotkml.r-forge.r-project.org/tutorial.php">plotKML</a> package:</p>
+<pre class="R_code">&gt; str(sd.loc, max.level=2)</pre>
+<pre class="R_env">Formal class 'RasterBrickSimulations' [package &quot;plotKML&quot;] with 3 slots
+..@ variable    : chr &quot;observedValue&quot;
+..@ sampled     :Formal class 'SpatialLines' [package &quot;sp&quot;] with 3 slots
+..@ realizations:Formal class 'RasterBrick' [package &quot;raster&quot;] with 16 slots</pre>
+<pre class="R_code">&gt; plotKML(sd.loc, file=&quot;SNDMHT_sims.kml&quot;, zlim=c(10,85))</pre>
+<pre class="R_env">KML file header opened for parsing...
+Reprojecting to +proj=longlat +datum=WGS84 ...
+... 
+Parsing to KML...
+Reprojecting to +proj=longlat +datum=WGS84 ...
+Parsing to KML...
+Closing  SNDMHT_sims.kml
+Compressing to KMZ...</pre>
+<p>The resulting simulations are shown in figure below. Note that the geostatistical simulations at block support can be very time consuming, so that running this code for millions of locations is probably not a good idea. One of the purposes of the GSIF package for R is to allow for faster methods to run geostatistical simulations (further development will likely go via Python).</p>
+<table width="500" border="0" cellspacing="2" cellpadding="4">
+  <caption class="caption" align="bottom">
+    Fig: 10 simulations of sand content and a cross-section showing the changes in values in vertical direction.
+  </caption>
+  <tr>
+    <th scope="col"><a href="eberg_SNDMHT_6depths.zip"><img src="Fig_eberg_sims_cross_section.png" alt="Fig_eberg_sims_cross_section.png" width="500" border="0" /></a></th>
   </tr>
 </table>
 <h3><a name="predicting_soil_classes" id="predicting_soil_classes"></a>Predicting soil classes</h3>
@@ -488,7 +557,7 @@ Residual deviance: 140004  on 557  degrees of freedom
 AIC: 4754.7
 
 Number of Fisher Scoring iterations: 2</pre>
-<p>Note that intercept needs to be taken out, so that the best predictor of the sand content for some soil type is basically the mean value of the sand for that soil type (for example class B is expected to have an average sand content of about 58%). If you compare the model based on soil classes and model fitted in the previous section (<span class="R_code">SNDMHT.m</span>), you can see that fitting data using a 3D model results in a slightly better fit. Nevertheless, soil classes are in this case study significant estimators of sand content.</p>
+<p>Note that intercept needs to be taken out, so that the best predictor of the sand content for some soil type is basically the mean value of the sand for that soil type (for example class &quot;B&quot; is expected to have an average sand content of about 58%). If you compare the model based on soil classes and model fitted in the previous section (<span class="R_code">SNDMHT.m</span>), you can see that fitting data using a 3D model results in a slightly better fit. Nevertheless, soil classes are in this case study significant estimators of sand content.</p>
 <hr />
 <table width="100%" border="0" cellspacing="0" cellpadding="10">
   <tr>
@@ -577,7 +646,7 @@ observedValue ~ PC1 + PC2 + PC3 + ns(altitude, df = 4)
 [using universal kriging]</pre>
 <pre class="R_env">Running 2-fold cross validation...
 |==============================================================================================| 100%</pre>
-<p>In the third step, we can sum up the predictions using weighted averaging. <a href="merge.html">merge</a> function will by default use results of cross-validation to scale the prediction variances, which are then used as weigths:</p>
+<p>In the third step, we can sum up the predictions using weighted averaging. <a href="merge.html">Merge</a> function will by default use results of cross-validation to scale the prediction variances, which are then used as weigths:</p>
 <pre class="R_code">&gt; sd.mlc &lt;- merge(sd.ml[[1]], sd.ml[[2]], silent=FALSE)</pre>
 <pre class="R_env">Resampling 2 layers to &quot; +init=epsg:31467 +p &quot; with grid cell size: 25 ...
 |==============================================================================================| 100%
@@ -587,14 +656,14 @@ observedValue_1 observedValue_2
 <p>In this case the predictions using the 100 m resolution data will receive a slightly higher weights. </p>
 <table width="500" border="0" cellspacing="2" cellpadding="4">
   <caption class="caption" align="bottom">
-    Fig: Predictions using multi-source data (produced using the function merge).
+    Fig: Predictions using multi-source data (produced using the function <a href="merge.html">merge</a>).
 Values from 4% to 96% sand (blue to red). 
   </caption>
   <tr>
     <th scope="col"><img src="Fig_eberg_merge_25_100_m.png" alt="Fig_eberg_merge_25_100_m.png" width="450" /></th>
   </tr>
 </table>
-<p>The results presented in figure above confirm that this method is equally valid and leads to almost identical predictions as when all covariates are used together (compare with the previous section). The final map again reflects mainly the patterns of the coarser predictors as these are more dominant. Assuming that the two predictions use completely independent covariates, the output should indeed be very similar to using a method that combines the two models. In fact, also in the case of regression-kriging, predictions using covariates are summed up to predictions using kriging (of residuals). In practice, the covariates might be correlated, and the models could overlap, so that the output of <a href="merge.html">merge</a> function might be biased. In fact, merging multi-source data is highly sensitive to type of models used to generate predictions and associated assumptions (for a discussion see e.g. <a href="http://web.gps.caltech.edu/~drf/misc/airs/maup_summary.pdf">Gotway and Young, 2002</a>; <a href="http://dx.doi.org/10.1198/106186007X179257" target="_blank">Gotway and Young, 2007</a>). Nevertheless, this approach is attractive for global soil mapping applications where predictions can be produced for areas of various extent, or using completely independent methods that can not be combined mathematically. For example, by following this approach, one could build models and produce predictions of soil properties for the whole world but at coarse resolution of e.g. 1 km, then use these predictions to fill-in the gaps for a regional model at resolution of 250 m or 100 m. It is important, however, to be aware that the covariates,  even if they are at different scales, are cross-correlated and hence this approach might lead to biased predictions (over or under estimation). </p>
+<p>The results presented in figure above confirm that this method is equally valid and leads to almost identical predictions as when all covariates are used together (compare with the previous section). The final map again reflects mainly the patterns of the coarser predictors as these are more dominant. Assuming that the two predictions use completely independent covariates, the output should indeed be very similar to using a method that combines the two models. In fact, also in the case of regression-kriging, predictions using covariates are summed up to predictions using kriging (of residuals). In practice, the covariates might be correlated, and the models could overlap, so that the output of the <a href="merge.html">merge</a> function might be biased. In fact, merging multi-source data is highly sensitive to type of models used to generate predictions and associated assumptions (for a discussion see e.g. <a href="http://web.gps.caltech.edu/~drf/misc/airs/maup_summary.pdf">Gotway and Young, 2002</a>; <a href="http://dx.doi.org/10.1198/106186007X179257" target="_blank">Gotway and Young, 2007</a>). Nevertheless, this approach is attractive for global soil mapping applications where predictions can be produced for areas of various extent, or using completely independent methods that can not be combined mathematically. For example, by following this approach, one could build models and produce predictions of soil properties for the whole world but at coarse resolution of e.g. 1 km, then use these predictions to fill-in the gaps for a regional model at resolution of 250 m or 100 m. It is important, however, to be aware that the covariates,  even if they are at different scales, are cross-correlated and hence this approach might lead to biased predictions (over or under estimation). </p>
 <p>Finally, the propagated prediction uncertainty for merged predictions is more difficult to estimate as one can not simply take the mean of the prediction (kriging) variances. Instead, geostatistical simulations can be used to produce multiple realizations (see figure above). The propagated prediction error can then be derived by aggregating multiple realizations per pixel (see e.g. <a href="http://cran.r-project.org/web/packages/raster/" target="_blank">raster</a> package).</p>
 <table width="100%" border="0" cellspacing="0" cellpadding="10">
   <tr>

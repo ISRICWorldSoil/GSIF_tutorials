@@ -20,7 +20,7 @@
 <dl>
 <dt><code>server</code>:</dt><dd><p>object of class <code>"list"</code>; contains the location of the CGI script that executes WPS (<code>"URI"</code>); service name (<code>"service.name"</code>), version (<code>"version"</code>), request type (<code>"request"</code>), identifier (<code>"identifier"</code>)</p>
 </dd>
-<dt><code>inRastername</code>:</dt><dd><p>object of class <code>"character"</code>; name of the objects withing the server</p>
+<dt><code>inRastername</code>:</dt><dd><p>object of class <code>"character"</code>; name of the objects on the server</p>
 </dd>
 </dl>
 
@@ -47,7 +47,7 @@
 
 <h3>Note</h3>
 
-<p>More examples of overlay, subset and aggregation functions are available via <a href="http://worldgrids.org/doku.php?id=wiki:functions.r">WorldGrids.org</a>. WPS WorldGrids.org uses the <a href="http://pywps.wald.intevation.org">PyWPS</a> module on a Debian system with Webserver, GDAL, Python and Scipy. The standard format for the gridded data on the worldgrids.org repository is <code>"GeoTiff"</code>. Use of the <code>"bbox"</code> object to obtain grids that cover more than 30 percent of the global coverage is not recommended. Consider downloading the compressed images directly from <a href="http://worldgrids.org">WorldGrids.org</a> instead.</p>
+<p>More examples of overlay, subset and aggregation functions are available via <a href="http://worldgrids.org/doku.php?id=wiki:functions.r">WorldGrids.org</a>. WPS WorldGrids.org uses the <a href="http://pywps.wald.intevation.org">PyWPS</a> module on a Debian system with Webserver, GDAL, Python and Scipy. The standard format for the gridded data on the WorldGrids.org repository is <code>"GeoTiff"</code>. Use of the <code>"bbox"</code> object to obtain grids that cover more than 30 percent of the global coverage is not recommended. Consider instead downloading the compressed images directly from <a href="http://worldgrids.org">WorldGrids.org</a>.</p>
 
 
 <h3>Author(s)</h3>
@@ -81,14 +81,15 @@
 ## Not run: 
 URI = "http://wps.worldgrids.org/pywps.cgi"
 server &lt;- list(URI=URI, request="execute", version="version=1.0.0", service.name="service=wps", identifier="identifier=sampler_local1pt_nogml")
-biocl15.wps &lt;- new("WPS", server=server, inRastername="biocl15") # RNMGSP1
-# show(RNMGSP1.wps)
+biocl15.wps &lt;- new("WPS", server=server, inRastername="biocl15")
+# show(biocl15.wps)
 prl &lt;- getProcess(biocl15.wps)
 prl[7]
 describe(biocl15.wps, identifier="overlay")
 p1 &lt;- data.frame(lon=10, lat=10)
 coordinates(p1) &lt;- ~lon+lat
 proj4string(p1) &lt;- CRS("+proj=longlat +datum=WGS84")
+p1
 overlay(biocl15.wps, p1)
 # fetch grids and load the to R:
 biocl15 &lt;- subset(biocl15.wps, bbox=matrix(c(-20,30,40,60), nrow=2))
