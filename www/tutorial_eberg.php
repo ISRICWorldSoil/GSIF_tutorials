@@ -523,6 +523,14 @@ Compressing to KMZ...</pre>
 </pre>
 <pre class="R_env">Trying to estimate the class centres using the 'multinom' method...
 Fitting a multinomial logistic regression model...<br />...</pre>
+<table width="500" border="0" cellspacing="2" cellpadding="4">
+  <caption class="caption" align="bottom">
+    Fig: Predicted soil memberships using the <a href="spfkm.html">spfkm</a> method.
+  </caption>
+  <tr>
+    <th scope="col"><img src="Fig_eberg_spatialmemberships.png" alt="Fig_eberg_spatialmemberships.png" width="550" /></th>
+  </tr>
+</table>
 <p>The regression model changes to e.g.:</p>
 <pre class="R_code">&gt; glm.formulaString2 = as.formula(paste(&quot;SNDMHT_A ~ &quot;, paste(names(eberg_sm@mu), collapse=&quot;+&quot;), &quot;-1&quot;))<br />&gt; glm.formulaString2</pre>
 <pre class="R_env">SNDMHT_A ~ A + B + D + G + Hw + K + L + Q + R + S + Z - 1</pre>
