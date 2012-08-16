@@ -180,10 +180,6 @@ if (!isGeneric("write.data")){
   setGeneric("write.data", function(obj, ...){standardGeneric("write.data")})
 }
 
-if (!isGeneric("as.data.frame")){
-  setGeneric("as.data.frame", function(x, row.names = NULL, optional = FALSE, ...){standardGeneric("as.data.frame")})
-}
-
 if (!isGeneric("gdalwarp")){
   setGeneric("gdalwarp", function(obj, ...){standardGeneric("gdalwarp")})
 }

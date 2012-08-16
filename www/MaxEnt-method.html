@@ -16,7 +16,10 @@
 <h3>Usage</h3>
 
 <pre>
-MaxEnt(occurrences, covariates, ...)
+## S4 method for signature 'ppp,SpatialPixelsDataFrame'
+MaxEnt(occurrences, covariates,
+          nfold = 5, Npoints = 1000, sciname = as.character(NA), 
+          period = c(Sys.Date()-1, Sys.Date()), ...)
 </pre>
 
 
@@ -32,31 +35,27 @@ MaxEnt(occurrences, covariates, ...)
 <td>
 <p>object of type <code>"SpatialPixelsData"</code>; list of covariate layers</p>
 </td></tr>
+<tr valign="top"><td><code>nfold</code></td>
+<td>
+<p>object of type <code>"integer"</code>; number of folds used for cross-validation (see <code>dismo::randomPoints</code>)</p>
+</td></tr>
+<tr valign="top"><td><code>Npoints</code></td>
+<td>
+<p>object of type <code>"integer"</code>; number of points used for cross-validation (see <code>dismo::randomPoints</code>)</p>
+</td></tr>
+<tr valign="top"><td><code>sciname</code></td>
+<td>
+<p>object of type <code>"character"</code>; usually species latin name (it can also be a surveyor's team name or a sampling design)</p>
+</td></tr>
+<tr valign="top"><td><code>period</code></td>
+<td>
+<p>object of type <code>"Date"</code>; sampling period</p>
+</td></tr>
 <tr valign="top"><td><code>...</code></td>
 <td>
-<p>optional arguments</p>
+<p>for more additional arguments see <code>dismo::predict</code></p>
 </td></tr>
 </table>
-
-
-<h3>Details</h3>
-
-<p>Optional arguments include:
-</p>
-
-<dl>
-<dt>nfold</dt><dd><p>object of type <code>"integer"</code>; number of folds used for cross-validation (see <code>dismo::randomPoints</code>)</p>
-</dd>
-<dt>Npoints</dt><dd><p>object of type <code>"integer"</code>; number of points used for cross-validation (see <code>dismo::randomPoints</code>)</p>
-</dd>
-<dt>sciname</dt><dd><p>object of type <code>"character"</code>; usually species latin name (it can also be a surveyor's team name or a sampling design)</p>
-</dd>
-<dt>period</dt><dd><p>object of type <code>"Date"</code>; sampling period</p>
-</dd>
-<dt>...</dt><dd><p>for more additional arguments see <code>dismo::predict</code></p>
-</dd>
-</dl>
-
 
 
 <h3>Value</h3>

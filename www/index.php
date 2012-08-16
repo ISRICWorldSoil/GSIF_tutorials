@@ -67,10 +67,10 @@ echo $contents; } ?>
 
 <p><strong>Installation:</strong></p>
 <p>To install this package from R-forge use (works only on<strong> &gt;= R 2.14!</strong>):</p>
-<p class="R_code">&gt; install.packages(c(&quot;RCurl&quot;, &quot;XML&quot;, &quot;rgdal&quot;, &quot;raster&quot;, &quot;sp&quot;, &quot;aqp&quot;,  &quot;mda&quot;, &quot;gstat&quot;, &quot;plotKML&quot;, &quot;dismo&quot;))<br />
-&gt; install.packages(&quot;GSIF&quot;, repos=c(&quot;http://R-Forge.R-project.org&quot;)) </p>
+<p class="R_code">&gt; install.packages(c(&quot;RCurl&quot;, &quot;XML&quot;, &quot;rgdal&quot;, &quot;raster&quot;, &quot;sp&quot;, &quot;aqp&quot;,  &quot;mda&quot;, &quot;gstat&quot;, &quot;plotKML&quot;, &quot;dismo&quot;, &quot;rJava&quot;))<br />
+&gt; install.packages(&quot;GSIF&quot;, repos=c(&quot;http://R-Forge.R-project.org&quot;))</p>
 <p>Alternatively, you can install the most recent snapshot of the package directly from the source by using e.g.:</p>
-<pre class="R_code">&gt; install.packages(c(&quot;RCurl&quot;, &quot;XML&quot;, &quot;rgdal&quot;, &quot;raster&quot;, &quot;sp&quot;, &quot;aqp&quot;,  &quot;mda&quot;, &quot;gstat&quot;, &quot;plotKML&quot;, &quot;dismo&quot;))
+<pre class="R_code">&gt; install.packages(c(&quot;RCurl&quot;, &quot;XML&quot;, &quot;rgdal&quot;, &quot;raster&quot;, &quot;sp&quot;, &quot;aqp&quot;, &quot;mda&quot;, &quot;gstat&quot;, &quot;plotKML&quot;, &quot;dismo&quot;, &quot;rJava&quot;))
 &gt; download.file(&quot;http://gsif.r-forge.r-project.org/GSIF_0.2-2.tar.gz&quot;, &quot;GSIF_0.2-2.tar.gz&quot;)
 &gt; system(&quot;R CMD INSTALL GSIF_0.2-2.tar.gz&quot;) </pre>
 <p>GSIF package extensively uses a number of external software, hence it is highly recommended that, prior to starting GSIF, you first download and install:</p>

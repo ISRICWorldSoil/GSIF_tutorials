@@ -7,7 +7,8 @@
 \description{Merges objects of class \code{"SpatialPredictions"} or \code{"RasterBrickSimulations"} and produces average predictions where the two objects overlap spatially. If the predictions are available at different resolutions, then it downscales all other grids to the smallest grid cell size using bicubic splines (for predictions) i.e. nearest neighbor algorithm (for simulations). Weigths can be passed via the \code{RMSE.l} argument, otherwise they will be estimated from \code{validation} slot (in the case of the \code{"SpatialPredictions"} class objects).
 }
 \usage{
-\S4method{merge}{SpatialPredictions,SpatialPredictions}(x, y, ..., RMSE.l = NULL, silent = TRUE)
+\S4method{merge}{SpatialPredictions,SpatialPredictions}(x, y, \dots, 
+          RMSE.l = NULL, silent = TRUE)
 }
 \arguments{
   \item{x}{object of class \code{"SpatialPredictions"} or \code{"RasterBrickSimulations"}}

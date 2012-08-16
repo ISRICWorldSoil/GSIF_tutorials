@@ -12,7 +12,7 @@ setMethod('mpspline', signature(obj = "SoilProfileCollection"),
   depthcols = obj@depthcols
   idcol = obj@idcol
   # convert to a data frame:
-  objd <- as.data.frame(x=obj)
+  objd <- .as.data.frame.SoilProfileCollection(x=obj)
   # organize the data:
   ndata <- nrow(objd)
   # Matrix in which the averaged values of the spline are fitted. The depths are specified in the (d) object:

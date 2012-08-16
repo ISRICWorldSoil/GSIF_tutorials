@@ -13,13 +13,13 @@
   \describe{
     \item{\code{regModel}:}{object of class \code{"glm"}; output of fitting a generalized linear model (GLM)}
     \item{\code{vgmModel}:}{object of class \code{"data.frame"}; the fitted gstat variogram model parameters containing variogram model, nugget, sill, range and the five anisotropy parameters}
-    \item{\code{sp}:}{object of class \code{"SpatialPointsDataFrame"}; observation locations}
+    \item{\code{sp}:}{object of class \code{"SpatialPoints"}; observation locations}
   }
 }
 \section{Methods}{
   \describe{
 	\item{summary}{\code{signature(obj = "gstatModel")}: summarize object by showing the mapping accuracy (cross-validation) and the amount of variation explained by the model }
-	\item{predict}{\code{signature(obj = "gstatModel")}: makes predictions for a set of given predictionLocations (gridded maps) at block support corresponding to the \code{cellsize} slot in the object of class \code{"SpatialPixelsDataFrame"}; to produce predictions at point support, submit the predictionLocations as \code{"SpatialPoiuntsDataFrame"} }
+	\item{predict}{\code{signature(obj = "gstatModel")}: makes predictions for a set of given predictionLocations (gridded maps) at block support corresponding to the \code{cellsize} slot in the object of class \code{"SpatialPixelsDataFrame"}; to produce predictions at point support, submit the \code{predictionLocations} as \code{"SpatialPointsDataFrame"} }
 	\item{validate}{\code{signature(obj = "gstatModel")}: runs \emph{n}-fold cross-validation of the existing gstatModel (it re-fits the model using existing formula string and then validates the predictions at validation locations, that were not used for model fitting)}
   }
 }

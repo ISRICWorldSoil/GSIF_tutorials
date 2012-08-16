@@ -5,22 +5,18 @@
 \title{Fits a mass preserving spline}
 \description{Fits a mass preserving spline to a soil profile data. Target variable needs to be a numeric vector measured at least 3 horizons. It is assumed that soil variables collected per horizon refer to block support i.e. they represent composite values for the whole horizon.}
 \usage{
-mpspline(obj, ...)
+\S4method{mpspline}{SoilProfileCollection}(obj, var.name, 
+      mxd = 200, lam = 0.1, d = t(c(0,5,15,30,60,100,200)), 
+      vlow = 0, vhigh = 1000)
 }
 \arguments{
   \item{obj}{object of class \code{"SoilProfileCollection"}} 
-  \item{\dots}{optional arguments}
-}
-\details{
-Optional arguments include:
-\describe{
   \item{var.name}{character; target variable name (must be a numeric variable)}
   \item{mxd}{numeric; maximum depth to which spline should be fitted}        
   \item{lam}{numeric; lambda the smoothing parameter}
   \item{d}{numeric; standard depths}
-  \item{vlow}{numeric; smallest value of the target variable (smaller values will be replaced)} 
+  \item{vlow}{numeric; smallest value of the target variable (smaller values will be replaced)}
   \item{vhigh}{numeric; highest value of the target variable (larger values will be replaced)}
-}
 }
 \value{Returns a list with four elements:
   \describe{

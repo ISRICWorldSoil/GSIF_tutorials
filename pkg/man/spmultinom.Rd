@@ -5,19 +5,16 @@
 \title{Multinomial logistic regression on spatial objects}
 \description{Runs the multinomial logistic regression via \code{nnet::multinom} to produce spatial predictions of the target factor-type variable. It requires point locations of observed classes and a list of covariate layers provided as \code{"SpatialPixelsDataFrame-class"} object. The resulting predicted classes are then used to estimate class centres and variances per class.}
 \usage{
-spmultinom(formulaString, observations, covariates, \dots)
+\S4method{spmultinom}{formula,SpatialPointsDataFrame,SpatialPixelsDataFrame}(formulaString,
+     observations, covariates, class.stats = TRUE, predict.probs = TRUE, \dots)
 }
 \arguments{
   \item{formulaString}{formula string}
   \item{observations}{object of type \code{"SpatialPointsData"}; occurrences of factors}
   \item{covariates}{object of type \code{"SpatialPixelsData"}; list of covariate layers}
-  \item{\dots}{optional arguments}
-}
-\details{Optional arguments include:
-\describe{
   \item{class.stats}{logical; species wether to estimate class centres}
   \item{predict.probs}{logical; species wether to predict probabilities per class}
-}
+  \item{\dots}{optional arguments}
 }
 \value{Returns an object of type \code{"SpatialMemberships"} with following slots: \code{predicted} (classes predicted by the multinomial logistic regression, \code{model} (the multinomial logistic regression model), \code{mu} (probabilities derived using the mutinom model), \code{class.c} (derived class centres), \code{class.sd} (derived class deviations), \code{confusion} (confusion matrix).}
 \author{Bas Kempen and Tomislav Hengl}

@@ -9,15 +9,30 @@
 \alias{fit.gstatModel,geosamples,list,list-method}
 \title{Methods to fit a regression-kriging model}
 \description{Tries to automatically fit a 2D or 3D regression-kriging model for a given set of points (object of type \code{"SpatialPointsDataFrame"} or \code{"geosamples"}) and covariates (object of type \code{"SpatialPixelsDataFrame"}). It first fits a Generalized Linear Model (GLM) following the \code{formulaString}, then fits variogram for residuals usign the \code{fit.variogram} method from the \href{http://www.gstat.org}{gstat} package. Creates an output object of class \code{\link{gstatModel-class}}.}
-\usage{ fit.gstatModel(observations, formulaString, covariates, \dots )
+\usage{ 
+\S4method{fit.gstatModel}{SpatialPointsDataFrame,formula,SpatialPixelsDataFrame}(observations,
+     formulaString, covariates, family = gaussian, stepwise = TRUE, 
+     vgmFun = "Exp", rvgm = NULL, \dots)
+\S4method{fit.gstatModel}{geosamples,formula,SpatialPixelsDataFrame}(observations,
+     formulaString, covariates, methodid, family = gaussian, stepwise = TRUE, 
+     vgmFun = "Exp", rvgm = NULL, \dots)
+\S4method{fit.gstatModel}{geosamples,formula,list}(observations, formulaString, covariates,
+     methodid, family = gaussian, stepwise = TRUE, vgmFun = "Exp", rvgm = NULL, \dots)
+\S4method{fit.gstatModel}{geosamples,list,list}(observations, formulaString, covariates,
+     methodid, family = gaussian, stepwise = TRUE, vgmFun = "Exp", rvgm = NULL, \dots)
 }
 \arguments{
   \item{observations}{object of type \code{"SpatialPointsDataFrame"} or \code{"geosamples-class"}}
-  \item{formulaString}{object of type \code{"formula"} or a character}
-  \item{covariates}{object of type \code{"SpatialPixelsDataFrame"}, or list of grids at various resolutions}
-  \item{\dots}{other optional arguments that can be passed to \code{glm} and/or \code{fit.variogram}}
+  \item{formulaString}{object of type \code{"formula"} or a list of formulas}
+  \item{covariates}{object of type \code{"SpatialPixelsDataFrame"}, or list of grids}
+  \item{methodid}{character; method name in the case of using the \code{"geosamples-class"}}
+  \item{family}{character string defyning the GLM family (for more info see \code{stats::glm})}
+  \item{stepwise}{specifies whether to run step-wise regression on top of GLM to get an optimal subset of predictors}
+  \item{vgmFun}{variogram function (\code{"Exp"} by default)}
+  \item{rvgm}{residual variogram model can be passed from gstat, in which case \code{fit.gstatModel} will not try to fit the variogram}
+  \item{\dots}{other optional arguments that can be passed to \code{glm} and/or \code{fit.variogram}}  
 }
-\details{Optional arguments are \code{rvgm} --- residual variogram model can be passed from gstat, in which case \code{fit.gstatModel} will not try to fit the variogram; \code{vgmFun} --- variogram function (\code{"Exp"} by default); \code{family} --- character string defyning the GLM family (for more info see \code{stats::glm}); \code{stepwise} --- specifies whether to run step-wise regression on top of GLM to get an optimal subset of predictors. The method by default assumes that the target variable follows a normal distribution \code{family = gaussian}. Other possible families are:
+\details{The method by default assumes that the target variable follows a normal distribution \code{family = gaussian}. Other possible families are:
 \describe{
  \item{normal distribution}{\code{family = gaussian} (default setting)}
  \item{log-normal distribution}{\code{family = gaussian(log)}}

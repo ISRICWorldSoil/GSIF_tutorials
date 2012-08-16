@@ -139,7 +139,7 @@ setMethod("fit.gstatModel", signature(observations = "geosamples", formulaString
 
 
 ## Fit a RK model and return an object of class "gstatModel" for a list of multiscale grids:
-setMethod("fit.gstatModel", signature(observations = "geosamples", formulaString = "formula", covariates = "list"), function(observations, formulaString, covariates, methodid, family = gaussian, stepwise = TRUE, vgmFun = "Exp", rvgm = NULL, spc = TRUE, ...){
+setMethod("fit.gstatModel", signature(observations = "geosamples", formulaString = "formula", covariates = "list"), function(observations, formulaString, covariates, methodid, family = gaussian, stepwise = TRUE, vgmFun = "Exp", rvgm = NULL, ...){
 
   if(!any(sapply(covariates, class)=="SpatialPixelsDataFrame")){
     stop("List of covariates of class 'SpatialPixelsDataFrame' expected")

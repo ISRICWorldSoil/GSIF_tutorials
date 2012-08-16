@@ -28,7 +28,7 @@ makeGstatCmd(formString, vgmModel, outfile, easfile,
   \item{Xcols}{integer; column numbers for the list of covariates}
 }
 \details{To run the script under Windows OS you need to obtain the pre-compiled \code{gstat.exe} program from the www.gstat.org website, and put it in some directory e.g. \code{c:/gstat/}. Then add the program to your path (see environmental variable under Windows > Control panel > System > Advanced > Environmental variables), or copy the exe program directly to some windows system directory.}
-\note{The advantage of using \code{gstat.exe} is that it loads large grids much faster to memory than if you use gstat in R, hence it is potentially more suited for computing with large grids. The draw back is that you can only pass simple linear regression models to gstat.exe. The stand-alone gstat is not maintained by the author of gstat any more.}
+\note{The advantage of using \code{gstat.exe} is that it loads large grids much faster to memory than if you use gstat in R, hence it is potentially more suited for computing with large grids. The draw back is that you can only pass simple linear regression models to \code{gstat.exe}. The stand-alone gstat is not maintained by the author of gstat any more.}
 \author{ Tomislav Hengl }
 \references{
 \itemize{
@@ -51,14 +51,18 @@ omm <- fit.gstatModel(observations = meuse, formulaString = om~dist,
 str(omm@vgmModel)
 # write the regression matrix to GeoEAS:
 meuse$log_om <- log1p(meuse$om)
-write.data(obj=meuse, covariates=meuse.grid["dist"], outfile="meuse.eas", methodid="log_om")
+write.data(obj=meuse, covariates=meuse.grid["dist"], 
+    outfile="meuse.eas", methodid="log_om")
 writeGDAL(meuse.grid["dist"], "dist.rst", drivername="RST", mvFlag="-99999")
-makeGstatCmd(log_om~dist, vgmModel=omm@vgmModel, outfile="meuse_om_sims.cmd", easfile="meuse.eas", nsim=50, nmin=20, nmax=40, radius=1500)
+makeGstatCmd(log_om~dist, vgmModel=omm@vgmModel, 
+    outfile="meuse_om_sims.cmd", easfile="meuse.eas", 
+    nsim=50, nmin=20, nmax=40, radius=1500)
 # compare the processing times:
 system.time(system("gstat meuse_om_sims.cmd"))
 vgmModel = omm@vgmModel
 class(vgmModel) <- c("variogramModel", "data.frame")
-system.time(om.rk <- krige(log_om~dist, meuse[!is.na(meuse$log_om),], meuse.grid, nmin=20, nmax=40, model=vgmModel, nsim=50))
+system.time(om.rk <- krige(log_om~dist, meuse[!is.na(meuse$log_om),], 
+    meuse.grid, nmin=20, nmax=40, model=vgmModel, nsim=50))
 }
 }
 \keyword{methods}

@@ -6,7 +6,7 @@
 
 
 # Converts a SoilProfileCollection to a data frame:
-setMethod('as.data.frame', signature(x = "SoilProfileCollection"), function(x, row.names = NULL, optional = FALSE, ...){
+.as.data.frame.SoilProfileCollection <- function(x, row.names = NULL, optional = FALSE, ...){
  
   # derive layer sequence:
   s1 <- unlist(by(x@horizons[,x@depthcols[1]], x@horizons[,paste(x@idcol)], order))
@@ -43,7 +43,9 @@ setMethod('as.data.frame', signature(x = "SoilProfileCollection"), function(x, r
    
   return(fdb)
 
-})
+}
+
+setMethod('as.data.frame', signature(x = "SoilProfileCollection"), .as.data.frame.SoilProfileCollection)
 
 
 # Reverse function -- extract horizons from a data.frame:

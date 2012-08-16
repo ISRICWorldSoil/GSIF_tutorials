@@ -16,7 +16,22 @@
 <h3>Usage</h3>
 
 <pre>
-make.3Dgrid(obj, ...)
+## S4 method for signature 'SpatialPixelsDataFrame'
+make.3Dgrid(obj, 
+      proj4s = get("ref_CRS", envir = GSIF.opts), 
+      pixsize = get("cellsize", envir = GSIF.opts)[2], 
+      resampling_method = "bilinear", 
+      NAflag = get("NAflag", envir = GSIF.opts), 
+      stdepths = get("stdepths", envir = GSIF.opts), 
+      tmp.file = TRUE, show.output.on.console = FALSE, ...)
+## S4 method for signature 'RasterBrick'
+make.3Dgrid(obj, 
+      proj4s = get("ref_CRS", envir = GSIF.opts), 
+      pixsize = get("cellsize", envir = GSIF.opts)[2], 
+      resampling_method = "bilinear", 
+      NAflag = get("NAflag", envir = GSIF.opts), 
+      stdepths = get("stdepths", envir = GSIF.opts), 
+      tmp.file = TRUE, show.output.on.console = FALSE, ...)
 </pre>
 
 
@@ -28,6 +43,34 @@ make.3Dgrid(obj, ...)
 <td>
 <p>object of class <code>"SpatialPixelsDataFrame"</code> or <code>"RasterBrick"</code></p>
 </td></tr> 
+<tr valign="top"><td><code>proj4s</code></td>
+<td>
+<p>character; proj4string describing the target coordinate system</p>
+</td></tr>
+<tr valign="top"><td><code>pixsize</code></td>
+<td>
+<p>grid cell size in decimal degrees (set by default at 1/1200 (0.0008333333 or 100 m around equator)</p>
+</td></tr> 
+<tr valign="top"><td><code>resampling_method</code></td>
+<td>
+<p>character; resampling method to be passed the reprojection algorithm</p>
+</td></tr>
+<tr valign="top"><td><code>NAflag</code></td>
+<td>
+<p>character; missing value flag</p>
+</td></tr>
+<tr valign="top"><td><code>stdepths</code></td>
+<td>
+<p>numeric; list of standard depths</p>
+</td></tr>
+<tr valign="top"><td><code>tmp.file</code></td>
+<td>
+<p>logical; specifies whether a temporary file name should be generated</p>
+</td></tr>
+<tr valign="top"><td><code>show.output.on.console</code></td>
+<td>
+<p>logical; specifies whether to print out the progress</p>
+</td></tr>
 <tr valign="top"><td><code>...</code></td>
 <td>
 <p>optional arguments that can be passed to the reprojetion algorithm</p>
@@ -35,35 +78,16 @@ make.3Dgrid(obj, ...)
 </table>
 
 
-<h3>Details</h3>
+<h3>Value</h3>
 
-<p>Optional arguments include:
+<p>The output is list of objects of class <code>"SpatialPixelsDataFrame"</code> where the number of elements in the list corresponds to the number of standard depths.
 </p>
-
-<dl>
-<dt>proj4s</dt><dd><p>character; proj4string describing the target coordinate system</p>
-</dd>
-<dt>pixsize</dt><dd><p>grid cell size in decimal degrees (set by default at 1/1200 (0.0008333333 or 100 m around equator)</p>
-</dd> 
-<dt>resample</dt><dd><p>character; resampling method to be passed the reprojection algorithm</p>
-</dd>
-<dt>NAflag</dt><dd><p>character; missing value flag</p>
-</dd>
-<dt>stdepths</dt><dd><p>numeric; list of standard depths</p>
-</dd>                                             
-<dt>tmp.file</dt><dd><p>logical; specifies whether a temporary file name should be generated</p>
-</dd>
-<dt>show.output.on.console</dt><dd><p>logical; specifies whether to print out the progress</p>
-</dd>
-</dl>
-
-<p>The output is list of objects of class <code>"SpatialPixelsDataFrame"</code> where the number of elements in the list corresponds to the number of standard depths.</p>
 
 
 <h3>Note</h3>
 
 <p>If the input object is of class <code>"SpatialPixelsDataFrame"</code>, the method by default uses <code>FWTools</code> (<code>gdalwarp</code> command) to resample grids, otherwise the <code>raster::projectRaster</code> command is passed. <a href="http://fwtools.maptools.org/">FWTools</a> must be installed separately. <br> 
-This operation can be time consuming for large areas (e.g. continents).</p>
+Note: this operation can be time consuming for large areas (e.g. &gt;&gt; 1e6 pixels).</p>
 
 
 <h3>Author(s)</h3>
@@ -96,24 +120,26 @@ This operation can be time consuming for large areas (e.g. continents).</p>
 <h3>Examples</h3>
 
 <pre>
-## Not run: # grids Ebergotzen:
+## grids Ebergotzen:
 library(plotKML)
 data(eberg_grid)
 gridded(eberg_grid) &lt;- ~x+y
 proj4string(eberg_grid) &lt;- CRS("+init=epsg:31467")
-# convert to spatial components:
+## Not run: ##  convert to spatial components:
 formulaString &lt;- ~ PRMGEO6+DEMSRT6+TWISRT6+TIRAST6
 eberg_spc &lt;- spc(eberg_grid, formulaString)
 # create 3D locations in the original coordinate system:
 eberg_3Dxy &lt;- sp3D(eberg_spc@predicted)
-# wrapper function to create 3D locations in the default system:
+# wrapper function to create 3D locations in the default WGS84 system:
 eberg_3D &lt;- make.3Dgrid(eberg_spc@predicted)
 image(eberg_3D[[1]]["PC1"])
 # downscale 100 m resolution imagery to 25 m:
 data(eberg_grid25)
 gridded(eberg_grid25) &lt;- ~x+y
 proj4string(eberg_grid25) &lt;- CRS("+init=epsg:31467")
-eberg_grid25@data &lt;- cbind(eberg_grid25@data, gdalwarp(eberg_grid, pixsize=eberg_grid25@grid@cellsize[1], GridTopology=eberg_grid25@grid, resampling_method="cubicspline")@data)
+eberg_grid25@data &lt;- cbind(eberg_grid25@data, 
+    gdalwarp(eberg_grid, pixsize=eberg_grid25@grid@cellsize[1], 
+    GridTopology=eberg_grid25@grid, resampling_method="cubicspline")@data)
 # this function requires FWTools!
 
 ## End(Not run)

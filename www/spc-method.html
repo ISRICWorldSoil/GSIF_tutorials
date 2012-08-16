@@ -16,7 +16,12 @@
 <h3>Usage</h3>
 
 <pre>
-spc(obj, formulaString, ...)
+## S4 method for signature 'SpatialPixelsDataFrame,formula'
+spc(obj, formulaString, scale. = TRUE, 
+      silent = FALSE, ...)
+## S4 method for signature 'list,list'
+spc(obj, formulaString, scale. = TRUE, 
+      silent = FALSE, ...)
 </pre>
 
 
@@ -26,31 +31,25 @@ spc(obj, formulaString, ...)
 <table summary="R argblock">
 <tr valign="top"><td><code>obj</code></td>
 <td>
-<p>object of class <code>"SpatialPixelsDataFrame"</code>; must contain at least two grids</p>
+<p>object of class <code>"SpatialPixelsDataFrame"</code> (must contain at least two grids) or a list of objects of type <code>"SpatialPixelsDataFrame"</code></p>
 </td></tr>
 <tr valign="top"><td><code>formulaString</code></td>
 <td>
-<p>object of class <code>"formula"</code></p>
+<p>object of class <code>"formula"</code> or a list of formulas</p>
+</td></tr>
+<tr valign="top"><td><code>scale.</code></td>
+<td>
+<p>object of class <code>"logical"</code>; specifies whether covariates need to be scaled</p>
+</td></tr>
+<tr valign="top"><td><code>silent</code></td>
+<td>
+<p>object of class <code>"logical"</code>; specifies whether to print the progress</p>
 </td></tr>
 <tr valign="top"><td><code>...</code></td>
 <td>
 <p>additional arguments that can be passed to <code>stats::prcomp</code></p>
 </td></tr> 
 </table>
-
-
-<h3>Details</h3>
-
-<p>Optional arguments include:
-</p>
-
-<dl>
-<dt>scale.</dt><dd><p>object of class <code>"logical"</code>; specifies whether covariates need to be scaled</p>
-</dd>
-<dt>silent</dt><dd><p>object of class <code>"logical"</code>; specifies whether to print the progress</p>
-</dd>
-</dl>
-
 
 
 <h3>Value</h3>
@@ -78,7 +77,7 @@ spc(obj, formulaString, ...)
 <h3>Examples</h3>
 
 <pre>
-## Not run: # load data:
+# load data:
 library(plotKML)
 pal = rev(rainbow(65)[1:48])
 data(eberg_grid)
@@ -87,8 +86,10 @@ proj4string(eberg_grid) &lt;- CRS("+init=epsg:31467")
 formulaString &lt;- ~ PRMGEO6+DEMSRT6+TWISRT6+TIRAST6
 eberg_spc &lt;- spc(eberg_grid, formulaString)
 names(eberg_spc@predicted) # 11 components on the end;
+## Not run: # plot maps:
 rd = range(eberg_spc@predicted@data[,1], na.rm=TRUE)
-spplot(eberg_spc@predicted[1:4], at=seq(rd[1], rd[2], length.out=48), col.regions=pal)
+sq = seq(rd[1], rd[2], length.out=48)
+spplot(eberg_spc@predicted[1:4], at=sq, col.regions=pal)
 
 ## End(Not run)
 </pre>

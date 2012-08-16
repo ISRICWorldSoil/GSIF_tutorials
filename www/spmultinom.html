@@ -16,7 +16,9 @@
 <h3>Usage</h3>
 
 <pre>
-spmultinom(formulaString, observations, covariates, ...)
+## S4 method for signature 'formula,SpatialPointsDataFrame,SpatialPixelsDataFrame'
+spmultinom(formulaString,
+     observations, covariates, class.stats = TRUE, predict.probs = TRUE, ...)
 </pre>
 
 
@@ -36,25 +38,19 @@ spmultinom(formulaString, observations, covariates, ...)
 <td>
 <p>object of type <code>"SpatialPixelsData"</code>; list of covariate layers</p>
 </td></tr>
+<tr valign="top"><td><code>class.stats</code></td>
+<td>
+<p>logical; species wether to estimate class centres</p>
+</td></tr>
+<tr valign="top"><td><code>predict.probs</code></td>
+<td>
+<p>logical; species wether to predict probabilities per class</p>
+</td></tr>
 <tr valign="top"><td><code>...</code></td>
 <td>
 <p>optional arguments</p>
 </td></tr>
 </table>
-
-
-<h3>Details</h3>
-
-<p>Optional arguments include:
-</p>
-
-<dl>
-<dt>class.stats</dt><dd><p>logical; species wether to estimate class centres</p>
-</dd>
-<dt>predict.probs</dt><dd><p>logical; species wether to predict probabilities per class</p>
-</dd>
-</dl>
-
 
 
 <h3>Value</h3>

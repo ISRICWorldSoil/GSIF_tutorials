@@ -15,7 +15,21 @@
 
 <h3>Usage</h3>
 
-<pre> fit.gstatModel(observations, formulaString, covariates, ... )
+<pre> 
+## S4 method for signature 'SpatialPointsDataFrame,formula,SpatialPixelsDataFrame'
+fit.gstatModel(observations,
+     formulaString, covariates, family = gaussian, stepwise = TRUE, 
+     vgmFun = "Exp", rvgm = NULL, ...)
+## S4 method for signature 'geosamples,formula,SpatialPixelsDataFrame'
+fit.gstatModel(observations,
+     formulaString, covariates, methodid, family = gaussian, stepwise = TRUE, 
+     vgmFun = "Exp", rvgm = NULL, ...)
+## S4 method for signature 'geosamples,formula,list'
+fit.gstatModel(observations, formulaString, covariates,
+     methodid, family = gaussian, stepwise = TRUE, vgmFun = "Exp", rvgm = NULL, ...)
+## S4 method for signature 'geosamples,list,list'
+fit.gstatModel(observations, formulaString, covariates,
+     methodid, family = gaussian, stepwise = TRUE, vgmFun = "Exp", rvgm = NULL, ...)
 </pre>
 
 
@@ -29,22 +43,42 @@
 </td></tr>
 <tr valign="top"><td><code>formulaString</code></td>
 <td>
-<p>object of type <code>"formula"</code> or a character</p>
+<p>object of type <code>"formula"</code> or a list of formulas</p>
 </td></tr>
 <tr valign="top"><td><code>covariates</code></td>
 <td>
-<p>object of type <code>"SpatialPixelsDataFrame"</code>, or list of grids at various resolutions</p>
+<p>object of type <code>"SpatialPixelsDataFrame"</code>, or list of grids</p>
+</td></tr>
+<tr valign="top"><td><code>methodid</code></td>
+<td>
+<p>character; method name in the case of using the <code>"geosamples-class"</code></p>
+</td></tr>
+<tr valign="top"><td><code>family</code></td>
+<td>
+<p>character string defyning the GLM family (for more info see <code>stats::glm</code>)</p>
+</td></tr>
+<tr valign="top"><td><code>stepwise</code></td>
+<td>
+<p>specifies whether to run step-wise regression on top of GLM to get an optimal subset of predictors</p>
+</td></tr>
+<tr valign="top"><td><code>vgmFun</code></td>
+<td>
+<p>variogram function (<code>"Exp"</code> by default)</p>
+</td></tr>
+<tr valign="top"><td><code>rvgm</code></td>
+<td>
+<p>residual variogram model can be passed from gstat, in which case <code>fit.gstatModel</code> will not try to fit the variogram</p>
 </td></tr>
 <tr valign="top"><td><code>...</code></td>
 <td>
 <p>other optional arguments that can be passed to <code>glm</code> and/or <code>fit.variogram</code></p>
-</td></tr>
+</td></tr>  
 </table>
 
 
 <h3>Details</h3>
 
-<p>Optional arguments are <code>rvgm</code> &mdash; residual variogram model can be passed from gstat, in which case <code>fit.gstatModel</code> will not try to fit the variogram; <code>vgmFun</code> &mdash; variogram function (<code>"Exp"</code> by default); <code>family</code> &mdash; character string defyning the GLM family (for more info see <code>stats::glm</code>); <code>stepwise</code> &mdash; specifies whether to run step-wise regression on top of GLM to get an optimal subset of predictors. The method by default assumes that the target variable follows a normal distribution <code>family = gaussian</code>. Other possible families are:
+<p>The method by default assumes that the target variable follows a normal distribution <code>family = gaussian</code>. Other possible families are:
 </p>
 
 <dl>

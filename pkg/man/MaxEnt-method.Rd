@@ -6,21 +6,18 @@
 \title{Prediction and cross-validation using the Maximum Entropy}
 \description{Runs \href{http://www.cs.princeton.edu/~schapire/maxent/}{MaxEnt} algorithm on a set of observations (\code{"ppp"} class from the \href{http://www.spatstat.org}{spatstat} package) and environmental covariates (of \code{"SpatialPixelsDataFrame"} class) and returns predicted probability of occurrence and cross-validation of models with presence/absence data.}
 \usage{
-MaxEnt(occurrences, covariates, \dots)
+\S4method{MaxEnt}{ppp,SpatialPixelsDataFrame}(occurrences, covariates,
+          nfold = 5, Npoints = 1000, sciname = as.character(NA), 
+          period = c(Sys.Date()-1, Sys.Date()), \dots)
 }
 \arguments{
   \item{occurrences}{object of type \code{"ppp"}; occurrences}
   \item{covariates}{object of type \code{"SpatialPixelsData"}; list of covariate layers}
-  \item{\dots}{optional arguments}
-}
-\details{Optional arguments include:
-\describe{
   \item{nfold}{object of type \code{"integer"}; number of folds used for cross-validation (see \code{dismo::randomPoints})}
   \item{Npoints}{object of type \code{"integer"}; number of points used for cross-validation (see \code{dismo::randomPoints})}
   \item{sciname}{object of type \code{"character"}; usually species latin name (it can also be a surveyor's team name or a sampling design)}
   \item{period}{object of type \code{"Date"}; sampling period}
   \item{\dots}{for more additional arguments see \code{dismo::predict}}
-}
 }
 \value{Returns an object of type \code{"SpatialMaxEntOutput"} with the following slots: \code{sciname} (usually latin "genus" and "species" name), \code{occurrences} (occurrence-only records), \code{TimeSpan.begin} (begin of sampling), \code{TimeSpan.end} (end of sampling), \code{maxent} (object of class \code{"MaxEnt"} produced as an output of the \code{dismo::maxent} function), \code{sp.domain} (assumed spatial domain), and \code{predicted} (results of prediction produced using the MaxEnt software).}
 \note{MaxEnt is one of the standard tools used in ecology for Niche analysis and species distribution modelling. What makes it especially robust is the fact that it can take both continuous and factor data as inputs, and has no requirements considering the distribution of covariates (\href{http://dx.doi.org/10.1016/j.ecolmodel.2005.03.026}{Phillips et al., 2006}). In the example below, I use MaxEnt to analyze representation of feature space by a given soil sampling pattern (i.e. mis-representation or the sampling preference by the surveyors). For more information on how to install MaxEnt and use it in R, see \href{http://CRAN.R-project.org/package=dismo}{dismo} package documentation.}

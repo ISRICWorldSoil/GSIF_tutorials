@@ -37,11 +37,11 @@ setMethod("spfkm", signature(formulaString = "formula", observations = "SpatialP
   }
   # otherwise, estimate class centres using the multinomial logistic regression:
   else {
+    message("Trying to estimate the class centres using the 'multinom' method...")
     # multinomial logistic regression:
     rout <- spmultinom(formulaString=formulaString, observations, covariates, class.stats=TRUE, predict.probs=FALSE)
     mout = rout$model
-    if(length(unique(rout$fit))<2){ stop("Predictions result in <2 classes. See ?multinom for more info") }
-    cout = rout$fit
+    if(length(unique(rout$fit))<2){ stop("Predictions resulted in <2 classes. See ?multinom for more info") }
     class.c = rout$class.c
     class.sd = rout$class.sd
   }
@@ -50,7 +50,7 @@ setMethod("spfkm", signature(formulaString = "formula", observations = "SpatialP
   dsf <- NULL
   # derive distances in feature space:
   for(c in unlist(cl)){
-      dsf[[c]] <- data.frame(lapply(names(covariates)[sel], FUN=function(x){rep(NA, length(cout))}))
+      dsf[[c]] <- data.frame(lapply(names(covariates)[sel], FUN=function(x){rep(NA, length(covariates@data[,1]))}))
       names(dsf[[c]]) <- names(covariates)[sel]
       for(j in names(covariates)[sel]){
          dsf[[c]][,j] <- ((covariates@data[,j]-class.c[c,j])/class.sd[c,j])^2
@@ -70,16 +70,14 @@ setMethod("spfkm", signature(formulaString = "formula", observations = "SpatialP
   }
   mm@data[,names(covariates)[1]] <- NULL
   
-  # if required, derive the dominant class:
-  if(check_tc){
-    # highest membership:
-    maxm <- sapply(data.frame(t(as.matrix(mm@data))), FUN=function(x){max(x, na.rm=TRUE)})
-    # class having the highest membership
-    cout <- NULL
-    for(c in unlist(cl)){
+  # Derive the dominant class:
+  maxm <- sapply(data.frame(t(as.matrix(mm@data))), FUN=function(x){max(x, na.rm=TRUE)})
+  # class having the highest membership
+  cout <- NULL
+  for(c in unlist(cl)){
        cout[which(mm@data[,c] == maxm)] <- c
-    }
   }
+  cout <- as.factor(cout)
   
   # kappa statistics:
   require(mda)

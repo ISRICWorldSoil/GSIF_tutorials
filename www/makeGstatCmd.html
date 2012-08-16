@@ -101,7 +101,7 @@ makeGstatCmd(formString, vgmModel, outfile, easfile,
 
 <h3>Note</h3>
 
-<p>The advantage of using <code>gstat.exe</code> is that it loads large grids much faster to memory than if you use gstat in R, hence it is potentially more suited for computing with large grids. The draw back is that you can only pass simple linear regression models to gstat.exe. The stand-alone gstat is not maintained by the author of gstat any more.</p>
+<p>The advantage of using <code>gstat.exe</code> is that it loads large grids much faster to memory than if you use gstat in R, hence it is potentially more suited for computing with large grids. The draw back is that you can only pass simple linear regression models to <code>gstat.exe</code>. The stand-alone gstat is not maintained by the author of gstat any more.</p>
 
 
 <h3>Author(s)</h3>
@@ -144,14 +144,18 @@ omm &lt;- fit.gstatModel(observations = meuse, formulaString = om~dist,
 str(omm@vgmModel)
 # write the regression matrix to GeoEAS:
 meuse$log_om &lt;- log1p(meuse$om)
-write.data(obj=meuse, covariates=meuse.grid["dist"], outfile="meuse.eas", methodid="log_om")
+write.data(obj=meuse, covariates=meuse.grid["dist"], 
+    outfile="meuse.eas", methodid="log_om")
 writeGDAL(meuse.grid["dist"], "dist.rst", drivername="RST", mvFlag="-99999")
-makeGstatCmd(log_om~dist, vgmModel=omm@vgmModel, outfile="meuse_om_sims.cmd", easfile="meuse.eas", nsim=50, nmin=20, nmax=40, radius=1500)
+makeGstatCmd(log_om~dist, vgmModel=omm@vgmModel, 
+    outfile="meuse_om_sims.cmd", easfile="meuse.eas", 
+    nsim=50, nmin=20, nmax=40, radius=1500)
 # compare the processing times:
 system.time(system("gstat meuse_om_sims.cmd"))
 vgmModel = omm@vgmModel
 class(vgmModel) &lt;- c("variogramModel", "data.frame")
-system.time(om.rk &lt;- krige(log_om~dist, meuse[!is.na(meuse$log_om),], meuse.grid, nmin=20, nmax=40, model=vgmModel, nsim=50))
+system.time(om.rk &lt;- krige(log_om~dist, meuse[!is.na(meuse$log_om),], 
+    meuse.grid, nmin=20, nmax=40, model=vgmModel, nsim=50))
 
 ## End(Not run)
 </pre>

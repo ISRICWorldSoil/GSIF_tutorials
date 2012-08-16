@@ -71,7 +71,7 @@ echo $contents; } ?>
 <hr />
 <p class="style1">Prepared by: <a href="http://www.wewur.wur.nl/popups/vcard.aspx?id=HENGL001" target="_blank">Tomislav Hengl</a>, <a href="http://www.wewur.wur.nl/popups/vcard.aspx?id=HEUVE015" target="_blank">Gerard B.M. Heuvelink,</a> <a href="http://www.wewur.wur.nl/popups/vcard.aspx?id=KEMPE001" target="_blank">Bas Kempen</a> <br />
   Last update:
-  <!-- #BeginDate format:Am1 -->August 11, 2012<!-- #EndDate -->
+  <!-- #BeginDate format:Am1 -->August 16, 2012<!-- #EndDate -->
 </p>
 <p>The purpose of this tutorial is to demonstrate major processing steps used within the GSIF framework for generating soil property and soil class maps from point data, and with the help of multi-scale covariates. The GSIF (R package) <strong>project summary page</strong> you can find <a href="http://<?php echo $domain; ?>/projects/<?php echo $group_name; ?>/"><strong>here</strong></a>. To learn more about the <strong>Global Soil Information Facilities</strong> (GSIF), visit the <a href="http://www.isric.org/projects/global-soil-information-facilities-gsif" target="_blank">main project page</a>. See also the complete list of <strong><a href="00Index.html">functions</a></strong> available via the GSIF package.</p>
 <p>Download the tutorial as <a href="tutorial_eberg.R">R script</a>.</p>
@@ -521,6 +521,8 @@ Compressing to KMZ...</pre>
 <p>Mapped soil class memberships can also be used to map soil properties, which is then equivalent to weighted averaging. We can derive the memberships using the fuzzy <em>k</em>-means to ensure that they sum up to 1:</p>
 <pre class="R_code">&gt; eberg_sm &lt;- spfkm(formulaString, eberg.xy, eberg_spc@predicted)
 </pre>
+<pre class="R_env">Trying to estimate the class centres using the 'multinom' method...
+Fitting a multinomial logistic regression model...<br />...</pre>
 <p>The regression model changes to e.g.:</p>
 <pre class="R_code">&gt; glm.formulaString2 = as.formula(paste(&quot;SNDMHT_A ~ &quot;, paste(names(eberg_sm@mu), collapse=&quot;+&quot;), &quot;-1&quot;))<br />&gt; glm.formulaString2</pre>
 <pre class="R_env">SNDMHT_A ~ A + B + D + G + Hw + K + L + Q + R + S + Z - 1</pre>
