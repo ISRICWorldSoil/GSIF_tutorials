@@ -2,7 +2,6 @@
 \docType{class}
 \alias{geosamples-class}
 \alias{subset,geosamples-method}
-\alias{subset.geosamples}
 \alias{show,geosamples-method}
 \alias{overlay,geosamples-method}
 \alias{write.data}

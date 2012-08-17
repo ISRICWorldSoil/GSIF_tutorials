@@ -106,15 +106,16 @@ setMethod("as.geosamples", signature(obj = "SoilProfileCollection"),
 
 
 ## subsetting geosamples:
-setMethod("subset", signature(x = "geosamples"), function(x, method){
+.subset.geosamples <- function(x, method){
   ret <- x@data[x@data$methodid==method,]
   if(nrow(ret)==0){ warning("Empty object. Methodid possibly not available") }
   attr(ret$methodid, "description") <- x@methods[x@methods$methodid==method,"description"]
   attr(ret$methodid, "units") <- x@methods[x@methods$methodid==method,"units"]
   attr(ret$methodid, "detectionLimit") <- x@methods[x@methods$methodid==method,"detectionLimit"]
   return(ret)  
-})
+}
 
+setMethod("subset", signature(x = "geosamples"), .subset.geosamples)
 
 ## summary values:
 setMethod("show", signature(object = "geosamples"), 
@@ -149,7 +150,7 @@ setMethod("overlay", signature(x = "SpatialPixelsDataFrame", y = "geosamples"), 
     warning("AltitudeMode accepts only 'relativeToGround' values")
   }
   
-  pnts = subset.geosamples(y, method=methodid)
+  pnts = .subset.geosamples(y, method=methodid)
   # reformat observed values:
   if(var.type=="numeric"){
     pnts$observedValue = as.numeric(pnts$observedValue)
