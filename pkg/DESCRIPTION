@@ -9,5 +9,5 @@ Description: Global Soil Information Facilities - tools (standards and functions
 License: GPL
 URL: http://gsif.r-forge.r-project.org/
 LazyLoad: yes
-Depends: R (>= 2.12.0), methods, stringr, XML, RCurl, sp, maptools, rgdal, raster, plotKML, aqp, rJava (>= 0.5-0)
-Suggests: soiltexture, RSAGA, splines, gstat, boot, mda, psych, fossil, nnet, dismo, SDMTools
+Depends: R (>= 2.12.0), methods, stringr, XML, RCurl, sp, maptools, rgdal, raster, plotKML, aqp, dismo
+Suggests: soiltexture, RSAGA, splines, gstat, boot, mda, psych, fossil, nnet, SDMTools, rJava (>= 0.5-0)

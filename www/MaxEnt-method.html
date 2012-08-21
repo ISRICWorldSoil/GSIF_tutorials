@@ -37,11 +37,11 @@ MaxEnt(occurrences, covariates,
 </td></tr>
 <tr valign="top"><td><code>nfold</code></td>
 <td>
-<p>object of type <code>"integer"</code>; number of folds used for cross-validation (see <code>dismo::randomPoints</code>)</p>
+<p>object of type <code>"integer"</code>; number of folds used for cross-validation</p>
 </td></tr>
 <tr valign="top"><td><code>Npoints</code></td>
 <td>
-<p>object of type <code>"integer"</code>; number of points used for cross-validation (see <code>dismo::randomPoints</code>)</p>
+<p>object of type <code>"integer"</code>; number of points used for cross-validation</p>
 </td></tr>
 <tr valign="top"><td><code>sciname</code></td>
 <td>
@@ -112,6 +112,7 @@ proj4string(eberg_grid) &lt;- CRS("+init=epsg:31467")
 # convert to a "ppp" object:
 library(spatstat)
 eberg.ppp &lt;- as.ppp(eberg.xy)
+library(dismo)
 # run MaxEnt analysis (evaluates sampling bias or mis-representation):
 jar &lt;- paste(system.file(package="dismo"), "/java/maxent.jar", sep='')
 if(file.exists(jar)){

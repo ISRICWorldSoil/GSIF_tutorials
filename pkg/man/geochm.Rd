@@ -56,7 +56,8 @@ data(SAGA_pal)
 # replace the missing values with half the detection limit:
 geochm$PB_ICP40 <- ifelse(geochm$PB_ICP40 < 0, 2, geochm$PB_ICP40) 
 shape = "http://maps.google.com/mapfiles/kml/pal2/icon18.png"
-kml(geochm, shape = shape, colour = log1p(PB_ICP40), labels = "", colour_scale = SAGA_pal[[1]], kmz = TRUE)
+kml(geochm, shape = shape, colour = log1p(PB_ICP40), labels = "", 
+    colour_scale = SAGA_pal[[1]], kmz = TRUE)
 }
 }
 \keyword{datasets}

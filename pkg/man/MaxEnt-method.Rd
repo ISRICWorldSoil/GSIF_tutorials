@@ -13,8 +13,8 @@
 \arguments{
   \item{occurrences}{object of type \code{"ppp"}; occurrences}
   \item{covariates}{object of type \code{"SpatialPixelsData"}; list of covariate layers}
-  \item{nfold}{object of type \code{"integer"}; number of folds used for cross-validation (see \code{dismo::randomPoints})}
-  \item{Npoints}{object of type \code{"integer"}; number of points used for cross-validation (see \code{dismo::randomPoints})}
+  \item{nfold}{object of type \code{"integer"}; number of folds used for cross-validation}
+  \item{Npoints}{object of type \code{"integer"}; number of points used for cross-validation}
   \item{sciname}{object of type \code{"character"}; usually species latin name (it can also be a surveyor's team name or a sampling design)}
   \item{period}{object of type \code{"Date"}; sampling period}
   \item{\dots}{for more additional arguments see \code{dismo::predict}}
@@ -45,6 +45,7 @@ proj4string(eberg_grid) <- CRS("+init=epsg:31467")
 # convert to a "ppp" object:
 library(spatstat)
 eberg.ppp <- as.ppp(eberg.xy)
+library(dismo)
 # run MaxEnt analysis (evaluates sampling bias or mis-representation):
 jar <- paste(system.file(package="dismo"), "/java/maxent.jar", sep='')
 if(file.exists(jar)){

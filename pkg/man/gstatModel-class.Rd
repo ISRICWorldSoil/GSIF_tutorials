@@ -47,7 +47,7 @@ coordinates(meuse.grid) <- ~x+y
 gridded(meuse.grid) <- TRUE
 proj4string(meuse.grid) <- CRS("+init=epsg:28992")
 \dontrun{# fit a model:
-omm <- fit.gstatModel(meuse, formulaString = om~dist, family=gaussian(link="log"), covariates = meuse.grid)
+omm <- fit.gstatModel(meuse, om~dist, family=gaussian(link="log"), meuse.grid)
 show(omm@regModel)
 # produce SpatialPredictions:
 om.rk <- predict(omm, predictionLocations = meuse.grid)

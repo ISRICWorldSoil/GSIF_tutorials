@@ -66,7 +66,8 @@ eberg_spc &lt;- spc(eberg_grid, as.formula("~ PRMGEO6+DEMSRT6+TWISRT6+TIRAST6"))
 # overlay with SPCs (create the regression matrix):
 SNDMHT.eberg &lt;- overlay(eberg_spc@predicted, eberg.geo, methodid="SNDMHT")
 # fit a glm:
-SNDMHT.glm &lt;- glm(observedValue~PC1+PC2+PC3+PC4+PC5+PC6+PC7+PC8+PC9+PC10+PC11+ns(altitude, df=4), SNDMHT.eberg, family=gaussian())
+formulaString = observedValue~PC1+PC2+PC3+PC4+PC5+PC6+PC7+PC8+PC9+PC10+PC11+ns(altitude, df=4)
+SNDMHT.glm &lt;- glm(formulaString, SNDMHT.eberg, family=gaussian())
 summary(SNDMHT.glm)
 
 ## End(Not run)

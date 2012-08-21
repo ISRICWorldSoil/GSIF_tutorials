@@ -25,14 +25,15 @@
   \item{show.env}{logical; specify whether to print all environmental parameters}
 }
 \author{Tomislav Hengl}
-\note{To further customize the GSIF options, consider putting:\cr 
-\code{library(GSIF); GSIF.env(..., show.env = FALSE)}\cr 
+\note{To further customize the GSIF options, consider putting:\cr
+ 
+\code{library(GSIF); GSIF.env(\dots, show.env = FALSE)}\cr 
+
 in your \code{"/etc/Rprofile.site"}.
 }
 \examples{
-\dontrun{# environmental variables:
+# environmental variables:
 GSIF.env()
 get("cellsize", envir = GSIF.opts)
 }
-}
-\keyword{datasets}
+\keyword{options}

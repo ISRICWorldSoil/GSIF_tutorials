@@ -29,16 +29,19 @@
 \examples{
 require(aqp)
 # sample profile from Nigeria:
-lon = 3.90; lat = 7.50; time = as.POSIXct("1978", format="\%Y"); id = "ISRIC:NG0017"; TAXNFAO8 = "LXp" 
+lon = 3.90; lat = 7.50; time = as.POSIXct("1978", format="\%Y") 
+id = "ISRIC:NG0017"; TAXNFAO8 = "LXp" 
 top = c(0, 18, 36, 65, 87, 127) 
 bottom = c(18, 36, 65, 87, 127, 181)
 ORCDRC = c(18.4, 4.4, 3.6, 3.6, 3.2, 1.2)
 methodid = c("TAXNFAO8", "ORCDRC")
-description = c("FAO 1988 classification system group", "Method of Walkley-Black (Org. matter = Org. C x 1.72)")
+description = c("FAO 1988 classification system group", 
+    "Method of Walkley-Black (Org. matter = Org. C x 1.72)")
 units = c("FAO 1988 classes", "permille")
 detectionLimit = c(as.character(NA), "0.1")
 # prepare a SoilProfileCollection:
-prof1 <- join(data.frame(id, top, bottom, ORCDRC), data.frame(id, lon, lat, time, TAXNFAO8), type='inner')
+prof1 <- join(data.frame(id, top, bottom, ORCDRC), 
+    data.frame(id, lon, lat, time, TAXNFAO8), type='inner')
 depths(prof1) <- id ~ top + bottom
 site(prof1) <- ~ lon + lat + time + TAXNFAO8 
 coordinates(prof1) <- ~ lon + lat + time

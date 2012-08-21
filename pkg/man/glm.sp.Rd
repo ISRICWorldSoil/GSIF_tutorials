@@ -3,7 +3,8 @@
 \title{Fits a GLM to spatial data}
 \description{Fits a GLM and variogram for the residuals using the default settings used in the gstat and glm packages.}
 \usage{
-glm.sp(formulaString, rmatrix, predictionDomain, family=gaussian, stepwise=TRUE, rvgm=NULL, vgmFun="Exp", type, \dots)
+glm.sp(formulaString, rmatrix, predictionDomain, family=gaussian, stepwise=TRUE, 
+          rvgm=NULL, vgmFun="Exp", type, \dots)
 }
 \arguments{
   \item{formulaString}{object of class \code{"formula"} --- regression model} 

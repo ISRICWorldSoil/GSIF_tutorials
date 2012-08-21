@@ -38,7 +38,9 @@
 \examples{
 \dontrun{
 URI = "http://wps.worldgrids.org/pywps.cgi"
-server <- list(URI=URI, request="execute", version="version=1.0.0", service.name="service=wps", identifier="identifier=sampler_local1pt_nogml")
+server <- list(URI=URI, request="execute", 
+    version="version=1.0.0", service.name="service=wps", 
+    identifier="identifier=sampler_local1pt_nogml")
 biocl15.wps <- new("WPS", server=server, inRastername="biocl15")
 # show(biocl15.wps)
 prl <- getProcess(biocl15.wps)

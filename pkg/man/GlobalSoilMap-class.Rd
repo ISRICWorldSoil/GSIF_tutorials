@@ -57,7 +57,8 @@ site(eberg.spc) <- as.formula(paste("~", paste(s.lst[-1], collapse="+"), sep="")
 coordinates(eberg.spc) <- ~X+Y
 proj4string(eberg.spc) <- CRS("+init=epsg:31467")
 # convert to logits:
-eberg.spc@horizons$SNDMHT.t <- log((eberg.spc@horizons$SNDMHT/100)/(1-eberg.spc@horizons$SNDMHT/100))
+eberg.spc@horizons$SNDMHT.t <- log((eberg.spc@horizons$SNDMHT/100)/
+    (1-eberg.spc@horizons$SNDMHT/100))
 # convert to geosamples:
 eberg.geo <- as.geosamples(eberg.spc)
 # load gridded data:
@@ -68,8 +69,10 @@ proj4string(eberg_grid) <- CRS("+init=epsg:31467")
 formulaString <- ~ PRMGEO6+DEMSRT6+TWISRT6+TIRAST6
 eberg_spc <- spc(eberg_grid, formulaString)
 # build a 3D "gstatModel": 
-glm.formulaString = as.formula(paste("observedValue ~ ", paste(names(eberg_spc@predicted), collapse="+"), "+ ns(altitude, df=4)"))
-SNDMHT.m <- fit.gstatModel(observations=eberg.geo, glm.formulaString, covariates=eberg_spc@predicted, methodid="SNDMHT.t")
+glm.formulaString = as.formula(paste("observedValue ~ ", 
+     paste(names(eberg_spc@predicted), collapse="+"), "+ ns(altitude, df=4)"))
+SNDMHT.m <- fit.gstatModel(observations=eberg.geo, glm.formulaString, 
+     covariates=eberg_spc@predicted, methodid="SNDMHT.t")
 summary(SNDMHT.m@regModel)
 SNDMHT.m@vgmModel
 # prepare new locations (6 standard depths): 
@@ -77,11 +80,15 @@ new3D <- sp3D(eberg_spc@predicted)
 # Make predictions at six depths:
 sd.l <- lapply(new3D, FUN=function(x){predict(SNDMHT.m, predictionLocations=x, nfold=0)})
 # back-transform values from logits:
-for(j in 1:length(sd.l)){ sd.l[[j]]@predicted$observedValue <- exp(sd.l[[j]]@predicted$observedValue)/(1+exp(sd.l[[j]]@predicted$observedValue))*100 }
+for(j in 1:length(sd.l)){ 
+    sd.l[[j]]@predicted$observedValue <- exp(sd.l[[j]]@predicted$observedValue)/
+      (1+exp(sd.l[[j]]@predicted$observedValue))*100 
+}
 # reproject to WGS84 system (100 m resolution):
 p = get("cellsize", envir = GSIF.opts)[1]
 s = get("stdepths", envir = GSIF.opts)
-sd.ll <- sapply(1:length(sd.l), FUN=function(x){make.3Dgrid(sd.l[[x]]@predicted[3:4], pixsize=p, stdepths=s[x])})
+sd.ll <- sapply(1:length(sd.l), FUN=function(x){make.3Dgrid(sd.l[[x]]@predicted[3:4],
+     pixsize=p, stdepths=s[x])})
 # save to a "GlobalSoilMap" object:
 SNDMHT.gsm <- GlobalSoilMap(varname="SNDMHT", sd.ll, period=c("1999-02-01", "2001-07-01"))
 # visualize all maps in Google Earth:
@@ -89,7 +96,9 @@ data(R_pal)
 z0 = mean(eberg_grid$DEMSRT6, na.rm=TRUE)
 # export grids:
 for(j in 1:length(sd.ll)){
-  kml(slot(SNDMHT.gsm, paste("sd", j, sep="")), folder.name = paste("eberg_sd", j, sep=""), file = paste("SNDMHT_sd", j, ".kml", sep=""), colour = observedValue, zlim=c(10,85), raster_name = paste("SNDMHT_sd", j, ".png", sep=""), altitude = z0+5000+(s[j]*2500))
+  kml(slot(SNDMHT.gsm, paste("sd", j, sep="")), folder.name = paste("eberg_sd", j, sep=""),
+     file = paste("SNDMHT_sd", j, ".kml", sep=""), colour = observedValue, zlim=c(10,85),
+     raster_name = paste("SNDMHT_sd", j, ".png", sep=""), altitude = z0+5000+(s[j]*2500))
 }
 }
 }

@@ -124,7 +124,7 @@ Listed gridded layers follow a standard naming convention used by WorlGrids.org 
 
 <h3>Author(s)</h3>
 
-<p>The original detailed profile description and laboratory analysis was funded by a Cotton Research and Development Corporation project in the mid-late 1980's by the CSIRO Division of Soils and available via the <a href="http://www.asris.csiro.au/mapping/hyperdocs/NatSoil/">NatSoil</a> DB. The gamma radiometrics images are property of the NSW Department of Primary Industries &mdash; Mineral Resources.</p>
+<p>The <a href="http://www.asris.csiro.au/mapping/hyperdocs/NatSoil/">original detailed profile description and laboratory analysis</a> was funded by a Cotton Research and Development Corporation project in the mid-late 1980's by the CSIRO Division of Soils and available via the <a href="http://www.asris.csiro.au/mapping/hyperdocs/NatSoil/">NatSoil</a> DB. The gamma radiometrics images are property of the NSW Department of Primary Industries &mdash; Mineral Resources.</p>
 
 
 <h3>References</h3>
@@ -148,8 +148,6 @@ Listed gridded layers follow a standard naming convention used by WorlGrids.org 
 
 <pre>
 data(edgeroi)
-# download.file("http://www.asris.csiro.au/mapping/hyperdocs/NatSoil/399%5EEDGEROI%5Eed095.pdf", "399%5EEDGEROI%5Eed095.pdf")
-# system("open 399%5EEDGEROI%5Eed095.pdf")
 edgeroi$sites[edgeroi$sites$SOURCEID=="399_EDGEROI_ed095_1",]
 edgeroi$horizons[edgeroi$horizons$SOURCEID=="399_EDGEROI_ed095_1",]
 # spPoints:
