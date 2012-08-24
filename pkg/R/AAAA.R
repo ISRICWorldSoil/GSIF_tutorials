@@ -124,6 +124,14 @@ if(!isGeneric("getID")){
   setGeneric("getID", function(obj, ...){standardGeneric("getID")})
 }
 
+if(!isGeneric("as.data.frame")){
+  setGeneric("as.data.frame", function(x, row.names = NULL, optional = FALSE, ...){standardGeneric("as.data.frame")})
+}
+
+if(!isGeneric("predict")){
+  setGeneric("predict", function(object, ...){standardGeneric("predict")})
+}
+
 if(!isGeneric("mpspline")){
   setGeneric("mpspline", function(obj, ...){standardGeneric("mpspline")})
 }

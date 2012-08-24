@@ -4,7 +4,7 @@
 \alias{riodoce}
 \alias{riodoce.grids}
 \title{Soil samples for the Rio Doce basin}
-\description{Soil samples (413 profiles) collected for the Rio Doce basin in Brazil.}
+\description{Soil samples (414 profiles) collected for the Rio Doce basin in Brazil.}
 \usage{data(riodoce)}
 \format{
 The \code{riodoce} data set contains two data frames --- sites and horizons. Sites table contains the following columns:
@@ -30,7 +30,6 @@ Horizons table contains the following columns:
   \item{\code{BSABCL}}{numeric; base saturation in percent}
   \item{\code{CEXBCL}}{numeric; Cation Exchange Capacity in cmol(+)/kg (summary)}
   \item{\code{BLDVOL}}{bulk density oven dry (105 C) in g per cubic centimeter}
-  \item{\code{AWAIMM}}{total available water capacity in mm}
   \item{\code{HORUID}}{factor; unique name that identifies a particular horizon}
 }
 The \code{riodoce.grids} data frame contains a list of soil covariates prepared for the Rio Doce catchment in Brazil (122,855 grid nodes):
