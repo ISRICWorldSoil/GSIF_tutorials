@@ -13,6 +13,7 @@ library(plotKML)
 library(raster)
 library(aqp)
 utm.csy <- "+proj=utm +zone=23 +south +ellps=GRS67 +units=m +no_defs"
+packageDescription("GSIF")
 
 ## Load data
 data(riodoce)
@@ -62,7 +63,7 @@ rsaga.geoprocessor(lib="shapes_grid", module=6, param=list(GRID="riodoce_mask.sg
 riodoce.pol <- as(readShapePoly("riodoce_mask.shp"), "SpatialLines")
 
 #########################################
-# Modeling soil types (memberships)
+# Modeling soil types (probabilities)
 #########################################
 
 TAXBRC.xy <- riodoce$sites
@@ -93,7 +94,7 @@ riodoce_sm@predicted$legend <- as.factor(riodoce_sm@predicted$legend)
 Ls = length(levels(riodoce_sm@predicted$legend))
 cols = rainbow(Ls)[rank(runif(Ls))]
 ## plot memberships:
-spplot(riodoce_sm@mu, at=pal, col.regions=rev(grey(pal)))
+spplot(riodoce_sm@mu, at=pal, col.regions=rev(grey(pal)), sp.layout=list("sp.lines", riodoce.pol))
 ## Fig_RioDoce_memberships.png
 names(riodoce_sm@mu)
 ## plot the final classification result (Area class map):
@@ -129,7 +130,7 @@ summary(ORCDRC.WA@regModel)
 ## force a zero-nugget variogram:
 ORCDRC.WA@vgmModel$psill[2] = 0
 ## prepare new locations and make predictions: 
-new3D.WA <- sp3D(riodoce.grids[riodoce.grids$mask==1,"TAXBRC3"], stdepths=c(-.05, -.20))
+new3D.WA <- sp3D(riodoce.grids[riodoce.grids$mask==1,"TAXBRC3"])
 ORCDRC.WA.sd1 <- predict(ORCDRC.WA, predictionLocations = new3D.WA[[1]], method="RK", nfold=0)
 writeGDAL(ORCDRC.WA.sd1@predicted["observedValue"], "ORCDRC_sd1_WA.sdat", "SAGA", mvFlag=-99999)
 # ORCDRC.WA.sd1sim <- predict(ORCDRC.WA, predictionLocations = new3D.WA[[1]], method="RK", nsim=5)
@@ -140,12 +141,12 @@ ORCDRC.WA.cv <- validate(ORCDRC.WA)
 # (SMT) using soil class memberships
 #########################################
 
-glm.formulaString.SMT = as.formula(paste("observedValue ~ ", paste(names(riodoce_sm@mu), collapse="+"), "+ ns(altitude, df=4)"))
+glm.formulaString.SMT = as.formula(paste("observedValue ~ ", paste(names(riodoce_sm@mu), collapse="+"), "+ log(altitude+100)")) # + ns(altitude, df=4)
 glm.formulaString.SMT
 ORCDRC.SMT <- fit.gstatModel(observations=riodoce.geo, glm.formulaString.SMT, covariates=riodoce_sm@mu, methodid="ORCDRC", family=gaussian(log))
 summary(ORCDRC.SMT@regModel)
 ## prepare new locations and make predictions: 
-new3D.SMT <- sp3D(riodoce_sm@mu[riodoce.grids$mask==1,], stdepths=c(-.05, -.20))
+new3D.SMT <- sp3D(riodoce_sm@mu[riodoce.grids$mask==1,])
 ORCDRC.SMT.sd1 <- predict(ORCDRC.SMT, predictionLocations = new3D.SMT[[1]])
 writeGDAL(ORCDRC.SMT.sd1@predicted["observedValue"], "ORCDRC_sd1_SMT.sdat", "SAGA", mvFlag=-99999)
 ORCDRC.SMT.cv <- validate(ORCDRC.SMT)
@@ -164,13 +165,13 @@ points(y=(riodoce.spc@horizons[riodoce.spc@horizons$SOURCEID=="UFV277",]$LHDICM+
 # (DMS1) Using soil mapping units
 #########################################
 
-glm.formulaString.DMS1 = as.formula(paste("observedValue ~ ", paste(names(riodoce_spc@predicted), collapse="+"), "+ ns(altitude, df=4)"))
+glm.formulaString.DMS1 = as.formula(paste("observedValue ~ ", paste(names(riodoce_spc@predicted), collapse="+"), "+ log(altitude+100)"))
 glm.formulaString.DMS1
 ORCDRC.DMS1 <- fit.gstatModel(observations=riodoce.geo, glm.formulaString.DMS1, covariates=riodoce_spc@predicted, methodid="ORCDRC", family=gaussian(log))
 summary(ORCDRC.DMS1@regModel)  # 39%?
 # ORCDRC.m@vgmModel
 # prepare new locations and make predictions: 
-new3D.DMS1 <- sp3D(riodoce_spc@predicted[riodoce.grids$mask==1,], stdepths=c(-.05, -.20))
+new3D.DMS1 <- sp3D(riodoce_spc@predicted[riodoce.grids$mask==1,])
 ORCDRC.DMS1.sd1 <- predict(ORCDRC.DMS1, predictionLocations = new3D.DMS1[[1]])
 writeGDAL(ORCDRC.DMS1.sd1@predicted["observedValue"], "ORCDRC_sd1_DMS1.sdat", "SAGA", mvFlag=-99999)
 ORCDRC.DMS1.cv <- validate(ORCDRC.DMS1)
@@ -180,12 +181,12 @@ ORCDRC.DMS1.cv <- validate(ORCDRC.DMS1)
 # (DMS2) ignoring the soil mapping units
 #########################################
 
-glm.formulaString.DMS2 = as.formula(paste("observedValue ~ ", paste(names(riodoce_spc2@predicted), collapse="+"), "+ ns(altitude, df=4)"))
+glm.formulaString.DMS2 = as.formula(paste("observedValue ~ ", paste(names(riodoce_spc2@predicted), collapse="+"), "+ log(altitude+100)"))
 glm.formulaString.DMS2
 ORCDRC.DMS2 <- fit.gstatModel(observations=riodoce.geo, glm.formulaString.DMS2, covariates=riodoce_spc2@predicted, methodid="ORCDRC", family=gaussian(log))
 summary(ORCDRC.DMS2@regModel)  # %?
 # prepare new locations and make predictions: 
-new3D.DMS2 <- sp3D(riodoce_spc2@predicted[riodoce.grids$mask==1,], stdepths=c(-.05, -.20))
+new3D.DMS2 <- sp3D(riodoce_spc2@predicted[riodoce.grids$mask==1,])
 ORCDRC.DMS2.sd1 <- predict(ORCDRC.DMS2, predictionLocations = new3D.DMS2[[1]])
 writeGDAL(ORCDRC.DMS2.sd1@predicted["observedValue"], "ORCDRC_sd1_DMS2.sdat", "SAGA", mvFlag=-99999)
 ORCDRC.DMS2.cv <- validate(ORCDRC.DMS2)
