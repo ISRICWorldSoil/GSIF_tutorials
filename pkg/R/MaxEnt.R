@@ -8,8 +8,8 @@
 ## Wrapper function for MaxEnt:
 setMethod("MaxEnt", signature(occurrences = "ppp", covariates = "SpatialPixelsDataFrame"), function(occurrences, covariates, nfold = 5, Npoints = 1000, sciname = as.character(NA), period = c(Sys.Date()-1, Sys.Date()),  ...){
   
-  # require(dismo)
-  # require(raster)
+  require(dismo)
+  require(raster)
   # require(plotKML)
   # require(maptools)
   

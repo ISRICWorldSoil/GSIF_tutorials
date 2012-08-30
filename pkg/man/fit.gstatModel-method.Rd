@@ -10,16 +10,14 @@
 \title{Methods to fit a regression-kriging model}
 \description{Tries to automatically fit a 2D or 3D regression-kriging model for a given set of points (object of type \code{"SpatialPointsDataFrame"} or \code{"geosamples"}) and covariates (object of type \code{"SpatialPixelsDataFrame"}). It first fits a Generalized Linear Model (GLM) following the \code{formulaString}, then fits variogram for residuals usign the \code{fit.variogram} method from the \href{http://www.gstat.org}{gstat} package. Creates an output object of class \code{\link{gstatModel-class}}.}
 \usage{ 
-\S4method{fit.gstatModel}{SpatialPointsDataFrame,formula,SpatialPixelsDataFrame}(observations,
-     formulaString, covariates, family = gaussian, stepwise = TRUE, 
-     vgmFun = "Exp", rvgm = NULL, \dots)
-\S4method{fit.gstatModel}{geosamples,formula,SpatialPixelsDataFrame}(observations,
-     formulaString, covariates, methodid, family = gaussian, stepwise = TRUE, 
-     vgmFun = "Exp", rvgm = NULL, \dots)
-\S4method{fit.gstatModel}{geosamples,formula,list}(observations, formulaString, covariates,
-     methodid, family = gaussian, stepwise = TRUE, vgmFun = "Exp", rvgm = NULL, \dots)
-\S4method{fit.gstatModel}{geosamples,list,list}(observations, formulaString, covariates,
-     methodid, family = gaussian, stepwise = TRUE, vgmFun = "Exp", rvgm = NULL, \dots)
+\S4method{fit.gstatModel}{SpatialPointsDataFrame,formula,SpatialPixelsDataFrame}(observations, formulaString, covariates, family = gaussian, 
+     stepwise = TRUE, vgmFun = "Exp", rvgm = NULL, \dots)
+\S4method{fit.gstatModel}{geosamples,formula,SpatialPixelsDataFrame}(observations, formulaString, covariates, methodid, family = gaussian, 
+     stepwise = TRUE, vgmFun = "Exp", rvgm = NULL, \dots)
+\S4method{fit.gstatModel}{geosamples,formula,list}(observations, formulaString, covariates, methodid, family = gaussian, 
+     stepwise = TRUE, vgmFun = "Exp", rvgm = NULL, \dots)
+\S4method{fit.gstatModel}{geosamples,list,list}(observations, formulaString, covariates, methodid, family = gaussian, 
+     stepwise = TRUE, vgmFun = "Exp", rvgm = NULL, \dots)
 }
 \arguments{
   \item{observations}{object of type \code{"SpatialPointsDataFrame"} or \code{"geosamples-class"}}
@@ -42,7 +40,7 @@
 }
 \references{
 \itemize{
-\item Minasny, B., McBratney, A.B. (2007) \href{http://dx.doi.org/10.1016/j.geoderma.2007.04.028}{Spatial prediction of soil properties using EBLUP with the \enc{Matérn}{Matern} covariance function}. Geoderma, 140(4): 324-336.
+\item chapter 8 ``Interpolation and Geostatistics'' in Bivand, R., Pebesma, E., Rubio, V., (2008) \href{http://asdar-book.org/}{Applied Spatial Data Analysis with R}. Use R Series, Springer, Heidelberg, pp. 378.
 \item Hengl, T. (2009) \href{http://spatial-analyst.net/book/}{A Practical Guide to Geostatistical Mapping}, 2nd Edt. University of Amsterdam, www.lulu.com, 291 p.
 }
 }

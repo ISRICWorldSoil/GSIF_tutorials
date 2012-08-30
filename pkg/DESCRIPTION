@@ -1,13 +1,13 @@
 Package: GSIF
 Type: Package
 Title: Global Soil Information Facilities
-Version: 0.2-2
-Date: 2012-08-24
+Version: 0.2-3
+Date: 2012-08-28
 Author: Tomislav Hengl <tom.hengl@wur.nl>, Contributions by: Bas Kempen <bas.kempen@wur.nl>, Dylan Beaudette <debeaudette@ucdavis.edu>, Gerard B.M. Heuvelink <gerard.heuvelink@wur.nl>, Reuter I. Hannes <hannes.reuter@wur.nl>, Brendan Malone <brendan.malone@sydney.edu.au>, Pierre Roudier <roudierp@landcareresearch.co.nz>
 Maintainer: Tomislav Hengl <tom.hengl@wur.nl>
 Description: Global Soil Information Facilities - tools (standards and functions) and sample datasets for global soil mapping.
 License: GPL
 URL: http://gsif.r-forge.r-project.org/
 LazyLoad: yes
-Depends: R (>= 2.12.0), methods, stringr, XML, RCurl, sp, maptools, rgdal, raster, plotKML, aqp, dismo
-Suggests: soiltexture, RSAGA, splines, gstat, boot, mda, psych, fossil, nnet, SDMTools, rJava (>= 0.5-0)
+Depends: R (>= 2.12.0), methods, stringr, XML, RCurl, sp, maptools, rgdal, raster, plotKML, aqp
+Suggests: soiltexture, RSAGA, splines, gstat, boot, mda, psych, fossil, nnet, SDMTools, rJava (>= 0.5-0), dismo

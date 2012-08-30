@@ -67,6 +67,7 @@ glm.sp <- function(formulaString, rmatrix, predictionDomain, family=gaussian, st
       # fit the 3D variogram:
       try(rvgm <- gstat::fit.variogram(variogram(residual ~ 1, rmatrix), ivgm, ...))    
     ## TH: This is the most simple implementation - fitting of 3D variograms needs to be improved!
+      if(class(.Last.value)=="try-error"){ stop("Variogram could not be fitted. Try fitting the model manually.")}
     } else {
     if(type == "SpatialPointsDataFrame"){
       # fit the variogram:
@@ -83,6 +84,7 @@ glm.sp <- function(formulaString, rmatrix, predictionDomain, family=gaussian, st
       }
         ivgm <- vgm(nugget=0, model=vgmFun, range=Range, psill=var(rmatrix$residual))
         try(rvgm <- gstat::fit.variogram(variogram(residual ~ 1, rmatrix), ivgm, ...))
+        if(class(.Last.value)=="try-error"){ stop("Variogram could not be fitted. Try fitting the model manually.")}
         if(diff(rvgm$range)==0|diff(rvgm$psill)==0){
           warning("Variogram shows no spatial dependence")    
       }
@@ -261,7 +263,7 @@ setMethod("validate", signature(obj = "gstatModel"), function(obj, nfold = 5, pr
       cv.l[[j]]$zscore <- cv.l[[j]]$residual/sqrt(cv.l[[j]]$var1.var)
       cv.l[[j]]$fold <- rep(j, length(cv.l[[j]]$residual))
       # clean up:
-      cv.l[[j]]@data <- cv.l[[j]]@data[,c("var1.pred","var1.var","observed","residual","zscore","fold")]
+      cv.l[[j]]@data <- cv.l[[j]]@data[,c("var1.pred", "var1.var", "observed", "residual", "zscore", "fold")]
    }
    
    if(save.gstatModels==TRUE){ 

@@ -17,19 +17,17 @@
 
 <pre> 
 ## S4 method for signature 'SpatialPointsDataFrame,formula,SpatialPixelsDataFrame'
-fit.gstatModel(observations,
-     formulaString, covariates, family = gaussian, stepwise = TRUE, 
-     vgmFun = "Exp", rvgm = NULL, ...)
+fit.gstatModel(observations, formulaString, covariates, family = gaussian, 
+     stepwise = TRUE, vgmFun = "Exp", rvgm = NULL, ...)
 ## S4 method for signature 'geosamples,formula,SpatialPixelsDataFrame'
-fit.gstatModel(observations,
-     formulaString, covariates, methodid, family = gaussian, stepwise = TRUE, 
-     vgmFun = "Exp", rvgm = NULL, ...)
+fit.gstatModel(observations, formulaString, covariates, methodid, family = gaussian, 
+     stepwise = TRUE, vgmFun = "Exp", rvgm = NULL, ...)
 ## S4 method for signature 'geosamples,formula,list'
-fit.gstatModel(observations, formulaString, covariates,
-     methodid, family = gaussian, stepwise = TRUE, vgmFun = "Exp", rvgm = NULL, ...)
+fit.gstatModel(observations, formulaString, covariates, methodid, family = gaussian, 
+     stepwise = TRUE, vgmFun = "Exp", rvgm = NULL, ...)
 ## S4 method for signature 'geosamples,list,list'
-fit.gstatModel(observations, formulaString, covariates,
-     methodid, family = gaussian, stepwise = TRUE, vgmFun = "Exp", rvgm = NULL, ...)
+fit.gstatModel(observations, formulaString, covariates, methodid, family = gaussian, 
+     stepwise = TRUE, vgmFun = "Exp", rvgm = NULL, ...)
 </pre>
 
 
@@ -104,12 +102,12 @@ fit.gstatModel(observations, formulaString, covariates,
 
 
 <ul>
-<li><p> Minasny, B., McBratney, A.B. (2007) <a href="http://dx.doi.org/10.1016/j.geoderma.2007.04.028">Spatial prediction of soil properties using EBLUP with the Matérn covariance function</a>. Geoderma, 140(4): 324-336.
+<li><p> chapter 8 &ldquo;Interpolation and Geostatistics&rdquo; in Bivand, R., Pebesma, E., Rubio, V., (2008) <a href="http://asdar-book.org/">Applied Spatial Data Analysis with R</a>. Use R Series, Springer, Heidelberg, pp. 378.
 </p>
 </li>
 <li><p> Hengl, T. (2009) <a href="http://spatial-analyst.net/book/">A Practical Guide to Geostatistical Mapping</a>, 2nd Edt. University of Amsterdam, www.lulu.com, 291 p.
 </p>
-</ul>
+</li></ul>
 
 
 
@@ -138,5 +136,5 @@ plot(variogram(om~1, om.sp))
 ## End(Not run)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.2-2 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.2-3 <a href="00Index.html">Index</a>]</div>
 </body></html>

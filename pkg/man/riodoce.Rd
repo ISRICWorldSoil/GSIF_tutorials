@@ -32,7 +32,7 @@ Horizons table contains the following columns:
   \item{\code{BLDVOL}}{bulk density oven dry (105 C) in g per cubic centimeter}
   \item{\code{HORUID}}{factor; unique name that identifies a particular horizon}
 }
-The \code{riodoce.grids} data frame contains a list of soil covariates prepared for the Rio Doce catchment in Brazil (122,855 grid nodes):
+The \code{riodoce.grids} data frame contains a list of soil covariates prepared for the Rio Doce catchment in Brazil (122,857 grid nodes):
   \describe{
   \item{\code{TAXBRC3}}{factor; dominant soil class from a 1:600,000 scale polgyon map, and based on the \href{http://www.cnps.embrapa.br/sibcs/}{Brazilian Soil Classification System}}
   \item{\code{DEMSRT3}}{numeric; SRTM DEM}  

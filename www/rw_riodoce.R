@@ -25,11 +25,14 @@ utm.csy <- "+proj=utm +zone=23 +south +ellps=GRS67 +units=m +no_defs"
 # Soil profile data
 # -------------------------------------
 
+## Dowload the excel file from:
+download.file("http://gsif.r-forge.r-project.org/soil_profile_sad69_20_maio.xls", "soil_profile_sad69_20_maio.xls")
+
 library(gdata)
 # perl <- gdata:::findPerl("perl")
 perl = "C:/Perl64/bin/perl.exe"
 perfis <- read.xls("soil_profile_sad69_20_maio.xls", perl=perl)
-plyr:::nunique(perfis$identif)  ## 413 profiles
+plyr:::nunique(perfis$identif)  ## 414 profiles
 perfis$SOURCEID <- as.factor(paste("UFV", perfis$identif, sep=""))
 # rename columns:
 names(perfis)[which(names(perfis)=="Horiz")] <- "HRDLOC" # horizon designation
@@ -45,18 +48,18 @@ perfis$PHIHO5 <- ifelse(perfis$PHIHO5 < 2, NA, perfis$PHIHO5)
 names(perfis)[which(names(perfis)=="PH_KCL")] <- "PHIKCL"
 perfis$PHIKCL <- ifelse(perfis$PHIKCL < 2, NA, perfis$PHIKCL)
 names(perfis)[which(names(perfis)=="SB")] <- "BSABCL" # Base saturation
-perfis$BSABCL <- ifelse(perfis$BSABCL == 0, NA, perfis$BSABCL)
+# perfis$BSABCL <- ifelse(perfis$BSABCL < 0, NA, perfis$BSABCL)
 names(perfis)[which(names(perfis)=="CTC_T1")] <- "CEXBCL" # effective Cations Exchange capacity;
-perfis$CEXBCL <- ifelse(perfis$CEXBCL == 0, NA, perfis$CEXBCL)
+# perfis$CEXBCL <- ifelse(perfis$CEXBCL == 0, NA, perfis$CEXBCL)
 names(perfis)[which(names(perfis)=="MO")] <- "ORCDRC" # Organic carbon in permilles;
 perfis$ORCDRC <- ifelse(perfis$ORCDRC == 0, NA, perfis$ORCDRC*10/1.724)
 names(perfis)[which(names(perfis)=="Total_sand")] <- "SNDPPT" # total sand;
 names(perfis)[which(names(perfis)=="Silt")] <- "SLTPPT" # total silt;
 names(perfis)[which(names(perfis)=="clay")] <- "CLYPPT" # total clay;
-names(perfis)[which(names(perfis)=="bulk_densi")] <- "BLDVOL" # bulk density;
-perfis$BLDVOL <- ifelse(perfis$BLDVOL==0, NA, perfis$BLDVOL)
-names(perfis)[which(names(perfis)=="water_capa")] <- "AWAIMM" # water capacity;
-perfis$AWAIMM <- ifelse(perfis$AWAIMM==0, NA, perfis$AWAIMM)
+names(perfis)[which(names(perfis)=="Dens_solo")] <- "BLDVOL" # bulk density;
+# perfis$Dens_solo <- ifelse(perfis$Dens_solo==0, NA, perfis$Dens_solo)
+# names(perfis)[which(names(perfis)=="water_capa")] <- "AWAIMM" # water capacity;
+# perfis$AWAIMM <- ifelse(perfis$AWAIMM==0, NA, perfis$AWAIMM)
 
 depths(perfis) <- SOURCEID ~ UHDICM + LHDICM
 # extract site data
@@ -70,15 +73,20 @@ site(perfis) <- ~ LONWGS84 + LATWGS84 + TAXBRC + legend
 
 ## some can be duplicated:
 perfis@site$SOURCEID[duplicated(perfis@site$SOURCEID)]
+## spatial duplicates:
+sp::zerodist(perfis@sp)
 
 # prepare the dataset:
-riodoce <- list(sites=perfis@site, horizons=perfis@horizons[,c("SOURCEID","HRDLOC","UHDICM","LHDICM","PHIHO5","PHIKCL","ORCDRC","SNDPPT","SLTPPT","CLYPPT","BSABCL","CEXBCL","BLDVOL","AWAIMM")])
+riodoce <- list(sites=perfis@site, horizons=perfis@horizons[,c("SOURCEID","HRDLOC","UHDICM","LHDICM","PHIHO5","PHIKCL","ORCDRC","SNDPPT","SLTPPT","CLYPPT","BSABCL","CEXBCL","BLDVOL")])
 str(riodoce)
 riodoce$horizons$HRDLOC <- as.factor(iconv(riodoce$horizons$HRDLOC, to="ASCII", sub="byte"))
 riodoce$sites$TAXBRC <- as.factor(iconv(riodoce$sites$TAXBRC, to="ASCII", sub="byte"))
 levels(riodoce$sites$TAXBRC)
-x = strsplit(paste(riodoce$sites$TAXBRC), " ")
 summary(riodoce$sites$legend)
+# x = strsplit(paste(riodoce$sites$TAXBRC), " ")
+# TAXBRC.2 <- sapply(x, FUN=function(x){paste(x[1:2], collapse=" ")})
+# summary(as.factor(TAXBRC.2))
+# TAXBRC.2 <- ifelse(TAXBRC.2 == "Gleissolo NA", "Gleissolo H<fa>mico", TAXBRC.2)
 save(riodoce, file="riodoce.rda", compress="xz")
 # summary(riodoce$horizons$ORCDRC)
 
@@ -96,9 +104,12 @@ bbox[,"max"] <- bbox[,"max"]+.2
 proj4string(mapas) <- "+proj=longlat +datum=WGS84"
 proj4string(mapas.L) <- "+proj=longlat +datum=WGS84"
 mapas.xy <- spTransform(mapas.L, CRS(utm.csy))
+mask.xy <- spTransform(mapas, CRS(utm.csy))
 # revised soil map:
 mapas.xy$legendm <- as.integer(mapas.L$soil_class)
+mask.xy$legendm <- as.integer(mask.xy$Legend_RD)
 writePolyShape(mapas.xy["legendm"], "mapa_solos_xy.shp")
+writePolyShape(mask.xy["legendm"], "mask_xy.shp")
 
 # read the geology shape:
 geol <- readShapePoly("geologia_sad69.shp")
@@ -118,6 +129,8 @@ grid.xy@bbox
 
 # convert soil polygon map to a raster:
 rsaga.geoprocessor(lib="grid_gridding", module=0, param=list(USER_GRID="TAXBRC3a_utm.sgrd", GRID_TYPE=0, INPUT="mapa_solos_xy.shp", FIELD=1, TARGET=0, LINE_TYPE=1, USER_SIZE=1000, USER_XMIN=grid.xy@bbox[1,1]+1000/2, USER_XMAX=grid.xy@bbox[1,2]-1000/2, USER_YMIN=grid.xy@bbox[2,1]+1000/2, USER_YMAX=grid.xy@bbox[2,2]-1000/2))
+# mask map:
+rsaga.geoprocessor(lib="grid_gridding", module=0, param=list(USER_GRID="mask_utm.sgrd", GRID_TYPE=0, INPUT="mask_xy.shp", FIELD=1, TARGET=0, LINE_TYPE=1, USER_SIZE=1000, USER_XMIN=grid.xy@bbox[1,1]+1000/2, USER_XMAX=grid.xy@bbox[1,2]-1000/2, USER_YMIN=grid.xy@bbox[2,1]+1000/2, USER_YMAX=grid.xy@bbox[2,2]-1000/2))
 # convert geological map to a raster:
 rsaga.geoprocessor(lib="grid_gridding", module=0, param=list(USER_GRID="GEOGLS3a_utm.sgrd", GRID_TYPE=0, INPUT="geologia_sad69_xy.shp", FIELD=1, TARGET=0, LINE_TYPE=1, USER_SIZE=1000, USER_XMIN=grid.xy@bbox[1,1]+1000/2, USER_XMAX=grid.xy@bbox[1,2]-1000/2, USER_YMIN=grid.xy@bbox[2,1]+1000/2, USER_YMAX=grid.xy@bbox[2,2]-1000/2))
 
@@ -212,9 +225,10 @@ writeRaster(lstngrid[["PC2"]], file="ST2MODN.tif", format="GTiff")
 
 riodoce.grid <- readGDAL("TAXBRC3a_utm.sdat")
 names(riodoce.grid) <- "TAXBRC3"
-# riodoce.grid$GEOGLS3 <- readGDAL("GEOGLS3a_utm.sdat")$band1
+# watershed mask:
+riodoce.grid$mask <- readGDAL("mask_utm.sdat")$band1
+riodoce.grid$mask <- ifelse(riodoce.grid$mask==129, 0, 1)
 riodoce.grid$TAXBRC3 <- ifelse(riodoce.grid$TAXBRC3==129, NA, riodoce.grid$TAXBRC3)
-# riodoce.grid$GEOGLS3 <- ifelse(riodoce.grid$GEOGLS3==129, NA, riodoce.grid$GEOGLS3)
 riodoce.grid$TAXBRC3 <- as.factor(riodoce.grid$TAXBRC3)
 # riodoce.grid$GEOGLS3 <- as.factor(riodoce.grid$GEOGLS3)
 # attach the original names:

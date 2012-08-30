@@ -35,7 +35,8 @@ setMethod("as.geosamples", signature(obj = "SoilProfileCollection"),
     XYT <- data.frame(obj@sp@coords)
   }
   names(XYT)[1:2] <- c("x", "y")
-  XYT$ID <- profile_id(obj)
+  XYT$ID <- obj@site[,obj@idcol]
+  ## TH: this assumes that the 'sp' slot and the 'site' slot have the same order;
   
   # convert site data to geosamples:
   x <- NULL
@@ -56,7 +57,7 @@ setMethod("as.geosamples", signature(obj = "SoilProfileCollection"),
     if(is.null(measurementError)) { measurementError = rep(as.character(NA), ll) }
     sampleArea = attr(site[,names(site)[j]], "sampleArea")
     if(is.null(sampleArea)) { sampleArea = rep(sample.area, ll) }    
-    x[[j]] <- data.frame(observationid = as.character(observationid), sampleid = profile_id(obj), longitude = XYT[,1], latitude = XYT[,2], locationError = as.numeric(locationError), TimeSpan.begin = as.POSIXct(XYT[,3]-dtime/2, origin="1970-01-01"), TimeSpan.end = as.POSIXct(XYT[,3]+dtime/2, origin="1970-01-01"), altitude = as.numeric(rep(0, ll)), altitudeMode = rep("relativeToGround", ll), sampleArea = sampleArea, sampleThickness = rep(mxd*sample.area, ll), observedValue = as.character(site[,names(site)[j]]), methodid = rep(names(site)[j], ll), measurementError = as.numeric(measurementError), stringsAsFactors = FALSE) 
+    x[[j]] <- data.frame(observationid = as.character(observationid), sampleid = obj@site[,obj@idcol], longitude = XYT[,1], latitude = XYT[,2], locationError = as.numeric(locationError), TimeSpan.begin = as.POSIXct(XYT[,3]-dtime/2, origin="1970-01-01"), TimeSpan.end = as.POSIXct(XYT[,3]+dtime/2, origin="1970-01-01"), altitude = as.numeric(rep(0, ll)), altitudeMode = rep("relativeToGround", ll), sampleArea = sampleArea, sampleThickness = rep(mxd*sample.area, ll), observedValue = as.character(site[,names(site)[j]]), methodid = rep(names(site)[j], ll), measurementError = as.numeric(measurementError), stringsAsFactors = FALSE) 
   }
   rx <- do.call(rbind, x)
     
