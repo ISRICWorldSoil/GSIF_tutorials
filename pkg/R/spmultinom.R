@@ -38,9 +38,9 @@ setMethod("spmultinom", signature(formulaString = "formula", observations = "Spa
      probs <- predict(mout, newdata=covariates, type="probs", na.action = na.pass)
      mm <- covariates[1]
      mm@data <- data.frame(probs)
-     mu <- covariates[1]
-     mu@data[,tv] <- cout
-     mu@data[,names(covariates)[1]] <- NULL    
+     pm <- covariates[1]
+     pm@data[,tv] <- cout
+     pm@data[,names(covariates)[1]] <- NULL    
      
      # kappa statistics:
      require(mda)
@@ -76,7 +76,7 @@ setMethod("spmultinom", signature(formulaString = "formula", observations = "Spa
     
   # create the output object:
   if(predict.probs == TRUE){
-    out <- new("SpatialMemberships", predicted = mu, model = mout, probabilities = mm, class.c = class.c, class.sd = class.sd, confusion = cf)
+    out <- new("SpatialMemberships", predicted = pm, model = mout, mu = mm, class.c = class.c, class.sd = class.sd, confusion = cf)
   } else {  
     out <- list(model=mout, fit=cout, class.c=class.c, class.sd=class.sd)
   }
