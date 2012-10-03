@@ -99,7 +99,7 @@ setClass("SpatialComponents", representation (predicted = "SpatialPixelsDataFram
 ## SpatialMemberships class
 setClass("SpatialMemberships", representation (predicted = "SpatialPixelsDataFrame", model = "list", mu = "SpatialPixelsDataFrame", class.c = "matrix", class.sd = "matrix", confusion = "matrix"), validity = function(object) {
    # check if column names match:
-   if(!all(names(object@mu) %in% levels(object@predicted@data[,1])))
+   if(!any(names(object@mu) %in% levels(object@predicted@data[,1])))
       return("Class names in the 'predicted' and 'mu' slots do not match")
    # check if the row names in the class.sd, class.c match:
    if(!all(row.names(object@class.c) %in% levels(object@predicted@data[,1])))

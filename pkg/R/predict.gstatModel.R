@@ -67,7 +67,7 @@ glm.sp <- function(formulaString, rmatrix, predictionDomain, family=gaussian, st
       # fit the 3D variogram:
       try(rvgm <- gstat::fit.variogram(variogram(residual ~ 1, rmatrix), ivgm, ...))    
     ## TH: This is the most simple implementation - fitting of 3D variograms needs to be improved!
-      if(class(.Last.value)=="try-error"){ stop("Variogram could not be fitted. Try fitting the model manually.")}
+      if(class(.Last.value)[1]=="try-error"){ stop("Variogram could not be fitted. Try fitting the model manually.")}
     } else {
     if(type == "SpatialPointsDataFrame"){
       # fit the variogram:
@@ -84,17 +84,14 @@ glm.sp <- function(formulaString, rmatrix, predictionDomain, family=gaussian, st
       }
         ivgm <- vgm(nugget=0, model=vgmFun, range=Range, psill=var(rmatrix$residual))
         try(rvgm <- gstat::fit.variogram(variogram(residual ~ 1, rmatrix), ivgm, ...))
-        if(class(.Last.value)=="try-error"){ stop("Variogram could not be fitted. Try fitting the model manually.")}
-        if(diff(rvgm$range)==0|diff(rvgm$psill)==0){
-          warning("Variogram shows no spatial dependence")    
-      }
+        if(class(.Last.value)[1]=="try-error"){ stop("Variogram could not be fitted. Try fitting the model manually.")}
     }
-  }}
-  
-  if(diff(rvgm$range)==0|diff(rvgm$psill)==0){
-    warning("Variogram shows no spatial dependence")
+  }
   }
   
+  if((names(rvgm) %in% c("range", "psill")) & diff(rvgm$range)==0|diff(rvgm$psill)==0){
+          warning("Variogram shows no spatial dependence")     }
+   
   out = list(rgm, rvgm, as(rmatrix, "SpatialPoints"))
   names(out) = c("regModel", "vgmModel", "sp")
   

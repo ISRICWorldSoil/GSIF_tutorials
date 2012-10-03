@@ -3,7 +3,7 @@
 \alias{as.geosamples}
 \alias{as.geosamples,SoilProfileCollection-method}
 \title{Converts an object of class \code{"SoilProfileCollection"} to a standardized data frame}
-\description{Converts an object of class \code{"SoilProfileCollection"} to an object of class \code{"geosamples"} with all measurements broken separately as individual records. Geosamples are standardized spatially and temporally referenced samples from the Earth's surface.}
+\description{Converts an object of class \code{"SoilProfileCollection"} to an object of class \code{"geosamples"} with all measurements broken into individual records. Geosamples are standardized spatially and temporally referenced samples from the Earth's surface.}
 \usage{
 \S4method{as.geosamples}{SoilProfileCollection}(obj, 
           registry = as.character(NA), sample.area = 1, mxd = 2, dtime = 3600)

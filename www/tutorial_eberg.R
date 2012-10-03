@@ -2,7 +2,7 @@
 # purpose       : Pedometric mapping using the Ebergotzen data set;
 # reference     : [http://gsif.r-forge.r-project.org/tutorial_eberg.php]
 # producer      : Prepared by T. Hengl and Bas Kempen
-# last update   : In Wageningen, NL, Aug 2012.
+# last update   : In Wageningen, NL, Oct 2012.
 # inputs        : Ebergotzen data set [http://plotkml.r-forge.r-project.org/eberg.html]; 3670 observations of soil classes and textures; 100 m and 25 resolution grids (covariates)
 # outputs       : 3D predictions of soil properties and classes;
 
@@ -39,10 +39,10 @@ proj4string(eberg_grid) <- CRS("+init=epsg:31467")
 gridded(eberg_grid25) <- ~x+y
 proj4string(eberg_grid25) <- CRS("+init=epsg:31467")
 
-# Point pattern statistics:
+## Point pattern statistics:
 library(spatstat)
 # mg_owin <- as.owin(eberg_grid[1])
-mg_owin <- as.owin(data.frame(x = as.data.frame(eberg_grid)[,"x"], y = as.data.frame(eberg_grid)[,"y"], window = TRUE))
+mg_owin <- as.owin(data.frame(x = data.frame(eberg_grid)[,"x"], y = data.frame(eberg_grid)[,"y"], window = TRUE))
 eberg.ppp <- ppp(x=coordinates(eberg.xy)[,1], y=coordinates(eberg.xy)[,2], window=mg_owin)
 summary(nndist(eberg.ppp))
 # Complete Spatial Randomness:
@@ -51,15 +51,15 @@ par(mar=c(4.5,4.5,0.5,0.5), oma=c(0,0,0,0))
 plot(env.eberg.xy, lwd=list(3,1,1,1), main="")
 ## http://gsif.r-forge.r-project.org/Fig_eberg_CRS_test.png
 
-# MaxEnt analysis:
-jar <- paste(system.file(package="dismo"), "/java/maxent.jar", sep='')
-if (file.exists(jar)) {
-me.eberg <- MaxEnt(occurrences=eberg.ppp, covariates=eberg_grid)
-par(mfrow=c(1,2), mar=c(0.5,0.5,0.5,0.5), oma=c(0,0,0,0))
-image(as(me.eberg@predicted, "SpatialPixelsDataFrame"), col=rev(heat.colors(25)), xlab="", ylab="")
-points(me.eberg@occurrences, pch="+", cex=.7)
-image(me.eberg@sp.domain, col="grey", xlab="", ylab="")
-}
+## MaxEnt analysis:
+#jar <- paste(system.file(package="dismo"), "/java/maxent.jar", sep='')
+#if (file.exists(jar)) {
+#me.eberg <- MaxEnt(occurrences=eberg.ppp, covariates=eberg_grid)
+#par(mfrow=c(1,2), mar=c(0.5,0.5,0.5,0.5), oma=c(0,0,0,0))
+#image(as(me.eberg@predicted, "SpatialPixelsDataFrame"), col=rev(heat.colors(25)), xlab="", ylab="")
+#points(me.eberg@occurrences, pch="+", cex=.7)
+#image(me.eberg@sp.domain, col="grey", xlab="", ylab="")
+#}
 ## http://gsif.r-forge.r-project.org/Fig_eberg_MaxEnt_test.png
 # plot(me.eberg@maxent)
 
@@ -133,7 +133,7 @@ SNDMHT.geo$observedValue <- as.numeric(SNDMHT.geo$observedValue)
 coordinates(SNDMHT.geo) <- ~ longitude + latitude + altitude
 proj4string(SNDMHT.geo) <- CRS("+proj=longlat +datum=WGS84")
 shape = "http://maps.google.com/mapfiles/kml/pal2/icon18.png"
-kml(SNDMHT.geo, shape=shape, colour=observedValue, zlim=c(10,85), file.name="SNDMHT_eberg.kml", altitude=z0+5000+(SNDMHT.geo@coords[,3]*2500), balloon=FALSE, labels="", extrude=FALSE, altitudeMode="absolute", size=.3)
+kml(SNDMHT.geo, shape=shape, colour=observedValue, zlim=c(10,85), file.name="SNDMHT_eberg.kml", altitude=z0+5000+(SNDMHT.geo@coords[,3]*2500), balloon=FALSE, labels="", extrude=FALSE, altitudeMode="relativeToGround", size=.3)
 
 ## Uncertainty at two arbitrary locations:
 loc <- eberg_spc@predicted[1200:1201,]
