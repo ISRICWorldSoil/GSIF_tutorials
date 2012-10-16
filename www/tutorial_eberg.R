@@ -1,7 +1,7 @@
 # title         : tutorial_eberg.R
 # purpose       : Pedometric mapping using the Ebergotzen data set;
 # reference     : [http://gsif.r-forge.r-project.org/tutorial_eberg.php]
-# producer      : Prepared by T. Hengl and Bas Kempen
+# producer      : Prepared by T. Hengl, Bas Kempen, Gerard Heuvelink
 # last update   : In Wageningen, NL, Oct 2012.
 # inputs        : Ebergotzen data set [http://plotkml.r-forge.r-project.org/eberg.html]; 3670 observations of soil classes and textures; 100 m and 25 resolution grids (covariates)
 # outputs       : 3D predictions of soil properties and classes;
