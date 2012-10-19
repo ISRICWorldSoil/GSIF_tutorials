@@ -10,6 +10,7 @@ setMethod("MaxEnt", signature(occurrences = "ppp", covariates = "SpatialPixelsDa
   
   require(dismo)
   require(raster)
+  require(spatstat)
   # require(plotKML)
   # require(maptools)
   
@@ -20,7 +21,7 @@ setMethod("MaxEnt", signature(occurrences = "ppp", covariates = "SpatialPixelsDa
     sel <- names(covariates)[sapply(covariates@data, is.factor)]
     covariates <- stack(covariates)
     # prepare the occurrence-only records:
-    xy <- data.frame(occurrences)[,1:2]
+    xy <- as.data.frame(occurrences)[,1:2]
     # fit a MaxEnt model (can take few minutes!):
     if(length(sel)==0){
       me <- maxent(covariates, xy, ...) 
@@ -39,7 +40,7 @@ setMethod("MaxEnt", signature(occurrences = "ppp", covariates = "SpatialPixelsDa
 	  }
 
     # predict distribution:
-    pr <- predict(object=me, x=covariates, ...)  # predict.MaxEnt
+    pr <- dismo::predict(object=me, x=covariates, ...)  # predict.MaxEnt
     # run cross-validation
     fold <- kfold(xy, k=nfold)
     # randomly take 20% of observations:

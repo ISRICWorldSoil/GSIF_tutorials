@@ -2,7 +2,7 @@
 # purpose       : Pedometric mapping using the Ebergotzen data set;
 # reference     : [http://gsif.r-forge.r-project.org/tutorial_eberg.php]
 # producer      : Prepared by T. Hengl, Bas Kempen, Gerard Heuvelink
-# last update   : In Wageningen, NL, Oct 2012.
+# last update   : In Wageningen, NL, Oct 19, 2012.
 # inputs        : Ebergotzen data set [http://plotkml.r-forge.r-project.org/eberg.html]; 3670 observations of soil classes and textures; 100 m and 25 resolution grids (covariates)
 # outputs       : 3D predictions of soil properties and classes;
 
@@ -52,16 +52,17 @@ plot(env.eberg.xy, lwd=list(3,1,1,1), main="")
 ## http://gsif.r-forge.r-project.org/Fig_eberg_CRS_test.png
 
 ## MaxEnt analysis:
-#jar <- paste(system.file(package="dismo"), "/java/maxent.jar", sep='')
-#if (file.exists(jar)) {
-#me.eberg <- MaxEnt(occurrences=eberg.ppp, covariates=eberg_grid)
-#par(mfrow=c(1,2), mar=c(0.5,0.5,0.5,0.5), oma=c(0,0,0,0))
-#image(as(me.eberg@predicted, "SpatialPixelsDataFrame"), col=rev(heat.colors(25)), xlab="", ylab="")
-#points(me.eberg@occurrences, pch="+", cex=.7)
-#image(me.eberg@sp.domain, col="grey", xlab="", ylab="")
-#}
+jar <- paste(system.file(package="dismo"), "/java/maxent.jar", sep='')
+## download.file("http://www.cs.princeton.edu/~schapire/maxent/maxent.jar", jar)
+if(file.exists(jar)) {
+me.eberg <- MaxEnt(occurrences=eberg.ppp, covariates=eberg_grid)
+par(mfrow=c(1,2), mar=c(0.5,0.5,0.5,0.5), oma=c(0,0,0,0))
+image(as(me.eberg@predicted, "SpatialPixelsDataFrame"), col=rev(heat.colors(25)), xlab="", ylab="")
+points(me.eberg@occurrences, pch="+", cex=.7)
+image(me.eberg@sp.domain, col="grey", xlab="", ylab="")
+plot(me.eberg@maxent)
+}
 ## http://gsif.r-forge.r-project.org/Fig_eberg_MaxEnt_test.png
-# plot(me.eberg@maxent)
 
 ## Convert to SoilProfileCollection:
 # list columns of interest:
@@ -77,8 +78,6 @@ depths(eberg.spc) <- ID ~ UHDICM + LHDICM
 site(eberg.spc) <- as.formula(paste("~", paste(s.lst[-1], collapse="+"), sep=""))
 coordinates(eberg.spc) <- ~X+Y
 proj4string(eberg.spc) <- CRS("+init=epsg:31467")
-# convert to logits:
-eberg.spc@horizons$SNDMHT.t <- log((eberg.spc@horizons$SNDMHT/100)/(1-eberg.spc@horizons$SNDMHT/100))
 # convert to geosamples:
 eberg.geo <- as.geosamples(eberg.spc)
 # str(eberg.geo)
@@ -96,37 +95,47 @@ spplot(eberg_spc@predicted[1:4], at=seq(rd[1], rd[2], length.out=48), col.region
 ## http://gsif.r-forge.r-project.org/Fig_eberg_SPCs1_4.png
 
 ## Build a 3D "gstatModel" 
-glm.formulaString = as.formula(paste("observedValue ~ ", paste(names(eberg_spc@predicted), collapse="+"), "+ ns(altitude, df=4)"))
+glm.formulaString = as.formula(paste("log((observedValue/100)/(1-observedValue/100)) ~ ", paste(names(eberg_spc@predicted), collapse="+"), "+ ns(altitude, df=4)"))
+## Note: we have to use logits to prevent the output predictions to be outside the range [0-1];
 glm.formulaString
-SNDMHT.m <- fit.gstatModel(observations=eberg.geo, glm.formulaString, covariates=eberg_spc@predicted, methodid="SNDMHT.t")
+SNDMHT.m <- fit.gstatModel(observations=eberg.geo, glm.formulaString, covariates=eberg_spc@predicted, methodid="SNDMHT")
 summary(SNDMHT.m@regModel)
 SNDMHT.m@vgmModel
 # run a proper cross-validation:
 rk.cv <- validate(SNDMHT.m)
+tvar <- 1-var(rk.cv[[1]]$residual, na.rm=T)/var(rk.cv[[1]]$observed, na.rm=T)
+signif(tvar*100, 3)
 
 ## Prepare prediction locations:
 new3D <- sp3D(eberg_spc@predicted)
 str(new3D[[1]]@grid)
-# Make predictions at six depths:
+## test making predictions:
+#x <- predict(SNDMHT.m, predictionLocations=new3D[[1]], nfold=5)
+#show(x)
+
+## Make predictions at six depths:
 sd.l <- lapply(new3D, FUN=function(x){predict(SNDMHT.m, predictionLocations=x, nfold=0)})
-# back-transform values from logits:
-for(j in 1:length(sd.l)){ sd.l[[j]]@predicted$observedValue <- exp(sd.l[[j]]@predicted$observedValue)/(1+exp(sd.l[[j]]@predicted$observedValue))*100 }
-# reproject to WGS84 system (100 m resolution):
+## back-transform:
+invlogit = function(x){exp(x)/(1+exp(x))*100}
+for(j in 1:length(sd.l)){ sd.l[[j]]@predicted$observedValue <- invlogit(sd.l[[j]]@predicted$observedValue) }
+summary(sd.l[[1]]@predicted$observedValue)
+
+## reproject to WGS84 system (100 m resolution):
 p = get("cellsize", envir = GSIF.opts)[2]
 s = get("stdepths", envir = GSIF.opts)
 s
 sd.ll <- sapply(1:length(sd.l), FUN=function(x){make.3Dgrid(sd.l[[x]]@predicted[3:4], pixelsize=p, stdepths=s[x])})
-# save to a "GlobalSoilMap" object:
+## save to a "GlobalSoilMap" object:
 SNDMHT.gsm <- GlobalSoilMap(sd.ll, varname="SNDMHT", period=c("1999-02-01", "2001-07-01"))
 save(SNDMHT.gsm, file="SNDMHT.rda", compress="xz") 
 
-# visualize all maps in Google Earth:
+## visualize all maps in Google Earth:
 z0 = mean(eberg_grid$DEMSRT6, na.rm=TRUE)
-# export grids:
+## export grids:
 for(j in 1:length(sd.ll)){
   kml(slot(SNDMHT.gsm, paste("sd", j, sep="")), folder.name=paste("eberg_sd", j, sep=""), file=paste("SNDMHT_sd", j, ".kml", sep=""), colour=observedValue, zlim=c(10,85), raster_name=paste("SNDMHT_sd", j, ".png", sep=""), altitude=z0+5000+(s[j]*2500))
 }
-# export points:
+## export points:
 SNDMHT.geo <- subset(eberg.geo, method="SNDMHT")
 SNDMHT.geo <- SNDMHT.geo[SNDMHT.geo$latitude>51.57&SNDMHT.geo$latitude<51.59,]
 SNDMHT.geo$observedValue <- as.numeric(SNDMHT.geo$observedValue)
@@ -142,7 +151,7 @@ str(new3D.loc[[1]])
 sd.loc <- predict(SNDMHT.m, predictionLocations=new3D.loc[[1]], nfold=0)
 ## 95% interval:
 int95 <- sd.loc@predicted$var1.pred[1] + c(-1.96, 1.96)*sqrt(sd.loc@predicted$var1.var[1])
-exp(int95)/(1+exp(int95))*100
+invlogit(int95)
 new3D.loc[[1]]@coords[1,]
 ## Subset / stripe:
 SNDMHT.xy <- spTransform(SNDMHT.geo, CRS("+init=epsg:31467"))
@@ -152,7 +161,7 @@ new3D.loc <- sp3D(loc)
 sd.loc <- predict(SNDMHT.m, predictionLocations=new3D.loc[[1]], nsim=10, block=c(0,0,0))
 ## TH: geostat simulations on a block support in gstat is very time-consuming;  -> not a good idea!
 ## back-transform the values:
-sd.loc@realizations <- calc(sd.loc@realizations, fun=function(x){exp(x)/(1+exp(x))*100})
+sd.loc@realizations <- calc(sd.loc@realizations, fun=invlogit)
 str(sd.loc, max.level=2)
 plotKML(sd.loc, file.name="SNDMHT_sims.kml", zlim=c(10,85))
 ## http://gsif.r-forge.r-project.org/Fig_eberg_sims_cross_section.png

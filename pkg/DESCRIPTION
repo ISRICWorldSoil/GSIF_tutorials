@@ -2,8 +2,8 @@ Package: GSIF
 Type: Package
 Title: Global Soil Information Facilities
 Version: 0.2-3
-Date: 2012-08-28
-Author: Tomislav Hengl <tom.hengl@wur.nl>, Contributions by: Bas Kempen <bas.kempen@wur.nl>, Dylan Beaudette <debeaudette@ucdavis.edu>, Gerard B.M. Heuvelink <gerard.heuvelink@wur.nl>, Reuter I. Hannes <hannes.reuter@wur.nl>, Brendan Malone <brendan.malone@sydney.edu.au>, Pierre Roudier <roudierp@landcareresearch.co.nz>
+Date: 2012-10-18
+Author: Tomislav Hengl <tom.hengl@wur.nl>, Contributions by: Bas Kempen <bas.kempen@wur.nl>, Dylan Beaudette <debeaudette@ucdavis.edu>, Gerard B.M. Heuvelink <gerard.heuvelink@wur.nl>, Reuter I. Hannes <hannes.reuter@wur.nl>, Brendan Malone <brendan.malone@sydney.edu.au>
 Maintainer: Tomislav Hengl <tom.hengl@wur.nl>
 Description: Global Soil Information Facilities - tools (standards and functions) and sample datasets for global soil mapping.
 License: GPL

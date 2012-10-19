@@ -83,3 +83,5 @@ setMethod("spmultinom", signature(formulaString = "formula", observations = "Spa
     
   return(out)
 })
+
+# end of script;

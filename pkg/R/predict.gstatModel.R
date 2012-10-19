@@ -22,13 +22,15 @@ glm.sp <- function(formulaString, rmatrix, predictionDomain, family=gaussian, st
   tv = all.vars(formulaString)[1]  
   if(!any(names(rmatrix) %in% tv)){
     stop("Target variable not found in the 'rmatrix' object.")
-  } 
+  }
+  ## TH: target variable term (is it always second position?):
+  tm = rgm$terms[[2]]
   
   # mask out the missing values:
   if(any(names(rgm) == "na.action")){  rmatrix <- rmatrix[-rgm$na.action,] }
   # extract the residuals in the transformed space:
   linkfun <- rgm$family$linkfun
-  rmatrix$residual <- linkfun(rmatrix[,tv]) - rgm$linear.predictors
+  rmatrix$residual <- linkfun(eval(tm, rmatrix)) - rgm$linear.predictors
   
   # try to guess the type of rmatrix
   if(missing(type)){
@@ -39,6 +41,7 @@ glm.sp <- function(formulaString, rmatrix, predictionDomain, family=gaussian, st
   }
   }
   
+  ## ~~ TH: This part split to a new function "fit.variogram3D"
   # create a 2D / 3D object:
   if(type == "geosamples"){
     coordinates(rmatrix) <- ~ longitude + latitude + altitude
@@ -88,8 +91,9 @@ glm.sp <- function(formulaString, rmatrix, predictionDomain, family=gaussian, st
     }
   }
   }
+  ## ~~
   
-  if((names(rvgm) %in% c("range", "psill")) & diff(rvgm$range)==0|diff(rvgm$psill)==0){
+  if(any(!(names(rvgm) %in% c("range", "psill"))) & diff(rvgm$range)==0|diff(rvgm$psill)==0){
           warning("Variogram shows no spatial dependence")     }
    
   out = list(rgm, rvgm, as(rmatrix, "SpatialPoints"))
@@ -231,6 +235,8 @@ setMethod("validate", signature(obj = "gstatModel"), function(obj, nfold = 5, pr
    # get the covariates:
    seln = all.vars(formulaString)[-1]
    tv = all.vars(formulaString)[1]
+   tm = obj@regModel$terms[[2]]
+   
    # get the variogram:
    vgmmodel = obj@vgmModel
    class(vgmmodel) <- c("variogramModel", "data.frame")
@@ -255,7 +261,7 @@ setMethod("validate", signature(obj = "gstatModel"), function(obj, nfold = 5, pr
       m <- glm.sp(formulaString=formulaString, rmatrix=rmatrix, predictionDomain=predictionDomain, family=mfamily, stepwise=TRUE, vgmFun=vgmmodel$model[2])
       m.l[[j]] <- new("gstatModel", regModel = m[[1]], vgmModel = as.data.frame(m[[2]]), sp = m[[3]])
       cv.l[[j]] <- predict.gstatModel(object=m.l[[j]], predictionLocations=nlocs, nfold=0, block=rep(0, ncol(obj@sp@coords)), mask.extra = FALSE)$predicted
-      cv.l[[j]]$observed <- linkfun(nlocs@data[,tv])
+      cv.l[[j]]$observed <- linkfun(eval(tm, nlocs@data))
       cv.l[[j]]$residual <- cv.l[[j]]$observed - cv.l[[j]]$var1.pred
       cv.l[[j]]$zscore <- cv.l[[j]]$residual/sqrt(cv.l[[j]]$var1.var)
       cv.l[[j]]$fold <- rep(j, length(cv.l[[j]]$residual))
@@ -304,14 +310,21 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
 
   # predict regression model:
   rp <- stats::predict.glm(object@regModel, newdata=predictionLocations, type="link", se.fit = TRUE, na.action = na.pass)
-  variable = all.vars(object@regModel$formula)[1] # target variable
-  # the vgm for residuals:
+  # target variable name:  
+  variable = all.vars(object@regModel$formula)[1]
+     
+  # vgm for residuals:
   vgmmodel = object@vgmModel
   class(vgmmodel) <- c("variogramModel", "data.frame")
   # if the variogram is not significant, then use a NULL model:
   if(attr(vgmmodel, "singular")==TRUE|diff(vgmmodel$range)==0|diff(vgmmodel$psill)==0){ vgmmodel = NULL }
+
   # observed values:
   observed <- SpatialPointsDataFrame(object@sp, data=object@regModel$model)
+  ## TH: this assumes that the first variable on the list is the target var:
+  names(observed@data)[1] = variable
+  
+  # check proj4 strings:
   if(!proj4string(observed)==proj4string(predictionLocations)){
     stop("proj4string at observed and predictionLocations don't match")
   }
@@ -323,7 +336,7 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
   # values after transformation:
   observed@data[,paste(variable, "glmfit", sep=".")] <- object@regModel$linear.predictors
   observed@data[,paste(variable, "link", sep=".")] <- linkfun(observed@data[,variable])
-  observed@data[,paste(variable, "residual", sep=".")] <- linkfun(observed@data[,variable]) - object@regModel$linear.predictors 
+  observed@data[,paste(variable, "residual", sep=".")] <- linkfun(observed@data[,variable]) - object@regModel$linear.predictors
   
   # remove duplicates as they can lead to singular matrix problems:
   if(length(zerodist(observed))>0){
@@ -332,7 +345,7 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
   
   # skip cross-validation in nfold = 0
   if(nfold==0){ 
-    cv <- observed[variable]
+    cv <- observed[1]
     names(cv) <- "observed"
     cv$var1.pred <- rep(NA, length(cv$observed))
     cv$var1.var <- rep(NA, length(cv$observed))

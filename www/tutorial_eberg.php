@@ -71,7 +71,7 @@ echo $contents; } ?>
 <hr />
 <p class="style1">Prepared by: <a href="http://www.wewur.wur.nl/popups/vcard.aspx?id=HENGL001" target="_blank">Tomislav Hengl</a>, <a href="http://www.wewur.wur.nl/popups/vcard.aspx?id=HEUVE015" target="_blank">Gerard B.M. Heuvelink,</a> <a href="http://www.wewur.wur.nl/popups/vcard.aspx?id=KEMPE001" target="_blank">Bas Kempen</a> <br />
   Last update:
-  <!-- #BeginDate format:Am1 -->August 16, 2012<!-- #EndDate -->
+  <!-- #BeginDate format:Am1 -->October 19, 2012<!-- #EndDate -->
 </p>
 <p>The purpose of this tutorial is to demonstrate major processing steps used within the GSIF framework for generating soil property and soil class maps from point data, and with the help of multi-scale covariates. The GSIF (R package) <strong>project summary page</strong> you can find <a href="http://<?php echo $domain; ?>/projects/<?php echo $group_name; ?>/"><strong>here</strong></a>. To learn more about the <strong>Global Soil Information Facilities</strong> (GSIF), visit the <a href="http://www.isric.org/projects/global-soil-information-facilities-gsif" target="_blank">main project page</a>. See also the complete list of <strong><a href="00Index.html">functions</a></strong> available via the GSIF package.</p>
 <p>Download the tutorial as <a href="tutorial_eberg.R">R script</a>.</p>
@@ -113,10 +113,10 @@ echo $contents; } ?>
 </table>
 <p>For demonstration purposes we use the <a href="http://plotkml.r-forge.r-project.org/eberg.html">Eberg&ouml;tzen</a> case study, which   has been used by the SAGA GIS development team (<a href="http://saga-gis.org/en/about/references.html" target="_blank">Böhner et al., 2006</a>; <a href="http://dx.doi.org/10.1016/j.jag.2012.02.005" target="_blank">Hengl et al., 2012</a>). To start the exercise, first install and load all required packages (see also: <a href="http://gsif.r-forge.r-project.org">GSIF installation instructions</a>). Note that GSIF is dependent on the <a href="http://plotkml.r-forge.r-project.org/tutorial.php">plotKML package</a>, which you should always first install from R-forge as these are both experimental packages:</p>
 <pre class="R_code">&gt; sessionInfo()</pre>
-<pre class="R_env">R version 2.14.1 (2011-12-22)<br />Platform: x86_64-pc-mingw32/x64 (64-bit)</pre>
+<pre class="R_env">R version 2.15.1 (2012-06-22)<br />Platform: x86_64-pc-mingw32/x64 (64-bit)</pre>
 <pre class="R_code">&gt; library(plotKML)
 &gt; library(GSIF)</pre>
-<pre class="R_env">Loading required package: RCurl<br />Loading required package: bitops<br />GSIF version 0.2-2 (2012-08-09)<br />URL: http://gsif.r-forge.r-project.org/</pre>
+<pre class="R_env">Loading required package: RCurl<br />Loading required package: bitops<br />GSIF version 0.2-3 (2012-10-18)<br />URL: http://gsif.r-forge.r-project.org/</pre>
 <p>load the input data:</p>
 <pre class="R_code">> data(eberg)
 > data(eberg_grid)
@@ -235,38 +235,14 @@ lo     1   8   lo   G[lo](r) lower pointwise envelope of G(r) from simulations</
 converting IDs from factor to character</pre>
 <pre class="R_code">&gt; coordinates(eberg.spc) &lt;- ~X+Y
 &gt; proj4string(eberg.spc) &lt;- CRS(&quot;+init=epsg:31467&quot;)
-&gt; # convert to logits: 
-&gt; eberg.spc@horizons$SNDMHT.t &lt;- log((eberg.spc@horizons$SNDMHT/100)/(1-eberg.spc@horizons$SNDMHT/100))</pre>
-<p>where <span class="R_code">SNDMHT.t</span> is the logit-transformed value of the target variable. Logit transformation is required to prevent from making predictions outside the 0-1 range. </p>
+</pre>
 <p>GSIF package by default works with <a href="geosamples-class.html">geosamples-class</a> as the main class for field observations (points). Conversion of the SPC class data to geosamples is straight forward:</p>
 <pre class="R_code">&gt; eberg.geo &lt;- as.geosamples(eberg.spc)</pre>
 <pre class="R_env">Reprojecting to +proj=longlat +datum=WGS84 ...</pre>
 <pre class="R_code">&gt; str(eberg.geo)</pre>
-<pre class="R_env">Formal class 'geosamples' [package &quot;GSIF&quot;] with 3 slots
- ..@ registry: chr NA
- ..@ methods :'data.frame':    6 obs. of  4 variables:
- .. ..$ methodid      : Factor w/ 6 levels &quot;CLYMHT&quot;,&quot;SLTMHT&quot;,..: 1 2 3 4 5 6
- .. ..$ description   : logi [1:6] NA NA NA NA NA NA
- .. ..$ units         : logi [1:6] NA NA NA NA NA NA
- .. ..$ detectionLimit: logi [1:6] NA NA NA NA NA NA
- ..@ data    :'data.frame':    25762 obs. of  14 variables:
- .. ..$ observationid   : chr [1:25762] NA NA NA NA ...
- .. ..$ sampleid        : chr [1:25762] &quot;id0003&quot; &quot;id0007&quot; &quot;id0014&quot; &quot;id0015&quot; ...
- .. ..$ longitude       : num [1:25762] 10.2 10.1 10.1 10.1 10.1 ...
- .. ..$ latitude        : num [1:25762] 51.6 51.5 51.5 51.6 51.6 ...
- .. ..$ locationError   : num [1:25762] NA NA NA NA NA NA NA NA NA NA ...
- .. ..$ TimeSpan.begin  : POSIXct[1:25762], format: NA NA NA ...
- .. ..$ TimeSpan.end    : POSIXct[1:25762], format: NA NA NA ...
- .. ..$ altitude        : num [1:25762] 0 0 0 0 0 0 0 0 0 0 ...
- .. ..$ altitudeMode    : chr [1:25762] &quot;relativeToGround&quot; &quot;relativeToGround&quot; &quot;relativeToGround&quot; &quot;relativeToGround&quot; ...
- .. ..$ sampleArea      : num [1:25762] 1 1 1 1 1 1 1 1 1 1 ...
- .. ..$ sampleThickness : num [1:25762] 2 2 2 2 2 2 2 2 2 2 ...
- .. ..$ observedValue   : chr [1:25762] &quot;L&quot; &quot;L&quot; &quot;B&quot; &quot;K&quot; ...
- .. ..$ methodid        : Factor w/ 6 levels &quot;CLYMHT&quot;,&quot;SLTMHT&quot;,..: 5 5 5 5 5 5 5 5 5 5 ...
- .. ..$ measurementError: num [1:25762] NA NA NA NA NA NA NA NA NA NA ...</pre>
+<pre class="R_env">Formal class 'geosamples' [package &quot;GSIF&quot;] with 3 slots<br />  ..@ registry: chr NA<br />  ..@ methods :'data.frame':    5 obs. of  4 variables:<br />  .. ..$ methodid      : Factor w/ 5 levels &quot;CLYMHT&quot;,&quot;SLTMHT&quot;,..: 1 2 3 4 5<br />  .. ..$ description   : logi [1:5] NA NA NA NA NA<br />  .. ..$ units         : logi [1:5] NA NA NA NA NA<br />  .. ..$ detectionLimit: logi [1:5] NA NA NA NA NA<br />  ..@ data    :'data.frame':    18496 obs. of  14 variables:<br />  .. ..$ observationid   : chr [1:18496] &quot;eberg1&quot; &quot;eberg2&quot; &quot;eberg3&quot; &quot;eberg4&quot; ...<br />  .. ..$ sampleid        : chr [1:18496] &quot;id0003&quot; &quot;id0004&quot; &quot;id0007&quot; &quot;id0014&quot; ...<br />  .. ..$ longitude       : num [1:18496] 10.2 10.2 10.1 10.1 10.1 ...<br />  .. ..$ latitude        : num [1:18496] 51.6 51.6 51.5 51.5 51.6 ...<br />  .. ..$ locationError   : num [1:18496] NA NA NA NA NA NA NA NA NA NA ...<br />  .. ..$ TimeSpan.begin  : POSIXct[1:18496], format:  ...<br />  .. ..$ TimeSpan.end    : POSIXct[1:18496], format:  ...<br />  .. ..$ altitude        : num [1:18496] 0 0 0 0 0 0 0 0 0 0 ...<br />  .. ..$ altitudeMode    : chr [1:18496] &quot;relativeToGround&quot; &quot;relativeToGround&quot; &quot;relativeToGround&quot; &quot;relativeToGround&quot; ...<br />  .. ..$ sampleArea      : num [1:18496] 1 1 1 1 1 1 1 1 1 1 ...<br />  .. ..$ sampleThickness : num [1:18496] 2 2 2 2 2 2 2 2 2 2 ...<br />  .. ..$ observedValue   : chr [1:18496] &quot;L&quot; &quot;G&quot; &quot;L&quot; &quot;B&quot; ...<br />  .. ..$ methodid        : Factor w/ 5 levels &quot;CLYMHT&quot;,&quot;SLTMHT&quot;,..: 4 4 4 4 4 4 4 4 4 4 ...<br />  .. ..$ measurementError: num [1:18496] NA NA NA NA NA NA NA NA NA NA ...</pre>
 <pre class="R_code">&gt; levels(eberg.geo@data$methodid)</pre>
-<pre class="R_env">[1] &quot;CLYMHT&quot;   &quot;SLTMHT&quot;   &quot;SNDMHT&quot;   &quot;SNDMHT.t&quot; &quot;soiltype&quot;
-[6] &quot;TAXGRSC&quot;</pre>
+<pre class="R_env">[1] &quot;CLYMHT&quot;   &quot;SLTMHT&quot;   &quot;SNDMHT&quot;   &quot;soiltype&quot;<br />[5] &quot;TAXGRSC&quot;</pre>
 <p><a href="geosamples-class.html">Geosamples-class</a> can be considered the most plain (standard) format for any space-time observations and, as such, highly suitable for storing free-form geosamples. Main advantage of using this class in R is that it can be easily manipulated and converted to spatial and aqp classes. Likewise, the column names in the <span class="R_code">@data</span> slot correspond to the tag names used in the KML schema, which makes it easier to export such data to some GIS or <a href="http://www.google.com/earth/" target="_blank">Google Earth</a>. Note also that the idea of using <a href="geosamples-class.html">geosamples</a> is to allow users to extend possibilities of geostatistical analysis with data parameters such as horizontal and vertical support (<span class="R_code">sampleArea</span> and <span class="R_code">sampleThikness</span>) and uncertainty measures (<span class="R_code">locationError</span> and <span class="R_code">measurementError</span>).</p>
 <h3><a name="generating_SPCs" id="generating_SPCs"></a>Generating soil predictive components</h3>
 <p>Prior to geostatistical modeling, it is also probably a good idea to convert all covariates to independent components. This way, it will be easier to subset to the optimal number of predictors during the regression analysis. PCA helps reducing the prediction bias, which might happen if the covariates are cross-correlated. A wrapper function <a href="spc-method.html">spc</a> will convert all factor variables to indicators and run PCA on a stack of grids: </p>
@@ -313,47 +289,48 @@ PRMGEO6_8  0.101594844 -0.02238362  3.118692e-01</pre>
 </table>
 <h3><a name="predicting_soil_properties" id="predicting_soil_properties"></a>Predicting soil properties</h3>
 <p>In the GSIF package, regression-kriging model can be fitted at once by using the <a href="fit.gstatModel-method.html">fit.gstatModel</a> function. First, we need to specify the model explaining the distribution of soil property as a function of soil covariates: </p>
-<pre class="R_code">&gt; glm.formulaString = as.formula(paste(&quot;observedValue ~ &quot;, paste(names(eberg_spc@predicted), collapse=&quot;+&quot;), &quot;+ ns(altitude, df=4)&quot;))
+<pre class="R_code">&gt; glm.formulaString = as.formula(paste(&quot;log((observedValue/100)/(1-observedValue/100)) ~ &quot;, paste(names(eberg_spc@predicted), collapse=&quot;+&quot;), &quot;+ ns(altitude, df=4)&quot;))
 &gt; glm.formulaString</pre>
-<pre class="R_env">observedValue ~ PC1 + PC2 + PC3 + PC4 + PC5 + PC6 + PC7 + PC8 + 
- PC9 + PC10 + PC11 + ns(altitude, df = 4)</pre>
-<p>In other words the observed values will be modeled as a function of PCs and altitude (natural splines via the <a href="http://stat.ethz.ch/R-manual/R-devel/library/splines/html/ns.html">ns</a> function). In the GSIF package, the 3D GLM-kriging model can be fitted at once by running: </p>
+<pre class="R_env">log((observedValue/100)/(1 - observedValue/100)) ~ PC1 + PC2 + <br />    PC3 + PC4 + PC5 + PC6 + PC7 + PC8 + PC9 + PC10 + PC11 + ns(altitude, <br />    df = 4)</pre>
+<p>In other words the observed values will be modeled as a function of PCs and altitude (natural splines via the <a href="http://stat.ethz.ch/R-manual/R-devel/library/splines/html/ns.html">ns</a> function). The ns function is only one of the possible functions in R to fit soil-depth relationships. Other possible model is, for example, the restricted cubic splines (rsc) function in the <a href="http://cran.r-project.org/web/packages/rms/" target="_blank">rms</a> package. Note that the logit-transformed value of the target variable is required to prevent from making predictions outside the 0-1 range.</p>
+<p>In the GSIF package, the 3D GLM-kriging model can be fitted at once by running: </p>
 <pre class="R_code">&gt; SNDMHT.m &lt;- fit.gstatModel(observations=eberg.geo, glm.formulaString, covariates=eberg_spc@predicted, methodid=&quot;SNDMHT.t&quot;)<br />&gt; summary(SNDMHT.m@regModel)</pre>
-<pre><span class="R_env">Call:
- glm(formula = observedValue ~ PC1 + PC2 + PC4 + PC5 + PC6 + PC7 + 
-   PC8 + PC9 + PC10 + PC11 + ns(altitude, df = 4), family = family, 
-   data = rmatrix)</span></pre>
-<pre class="R_env">Deviance Residuals: 
-   Min       1Q   Median       3Q      Max 
-   -3.0547  -0.4427  -0.0628   0.3672   4.2196 </pre>
-<pre class="R_env">Coefficients:
-   Estimate Std. Error t value Pr(&gt;|t|) 
-   (Intercept)           -1.261e+00  3.670e-02 -34.369  &lt; 2e-16 ***
-   PC1                   -4.409e-01  3.946e-02 -11.172  &lt; 2e-16 ***
-   PC2                   -1.935e-01  1.593e-02 -12.148  &lt; 2e-16 ***
-   PC4                    5.051e-01  1.079e-02  46.818  &lt; 2e-16 ***
-   PC5                    1.157e-01  1.078e-02  10.726  &lt; 2e-16 ***
-   PC6                    4.058e-02  1.876e-02   2.163  0.03061 * 
-   PC7                    5.156e-02  1.680e-02   3.069  0.00216 ** 
-   PC8                    5.309e-01  3.493e-02  15.201  &lt; 2e-16 ***
-   PC9                   -3.940e-01  3.890e-02 -10.129  &lt; 2e-16 ***
-   PC10                   4.717e-01  6.209e-02   7.597 3.80e-14 ***
-   PC11                  -2.027e+14  2.104e+13  -9.634  &lt; 2e-16 ***
-   ns(altitude, df = 4)1  6.027e-02  5.998e-02   1.005  0.31510 
-   ns(altitude, df = 4)2  1.270e-01  5.020e-02   2.530  0.01146 * 
-   ns(altitude, df = 4)3  2.449e-01  8.020e-02   3.054  0.00228 ** 
-   ns(altitude, df = 4)4  2.301e-01  4.053e-02   5.676 1.48e-08 ***
-   ---
-   Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 </pre>
-<pre class="R_env">(Dispersion parameter for gaussian family taken to be 0.611171)</pre>
-<pre class="R_env"> Null deviance: 4278.8  on 3790  degrees of freedom
-   Residual deviance: 2307.8  on 3776  degrees of freedom
-   (624 observations deleted due to missingness)
-   AIC: 8908.8</pre>
-<pre class="R_env">Number of Fisher Scoring iterations: 2</pre>
+<pre class="R_env"><span class="R_env">Call:
+glm(formula = log((observedValue/100)/(1 - observedValue/100)) ~ 
+    PC1 + PC2 + PC3 + PC4 + PC5 + PC10 + PC11 + ns(altitude, 
+        df = 4), family = family, data = rmatrix)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-3.1317  -0.4247  -0.0444   0.3828   3.6510  
+
+Coefficients:
+                        Estimate Std. Error t value Pr(>|t|)    
+(Intercept)           -1.235e+00  3.899e-02 -31.673  < 2e-16 ***
+PC1                    2.789e-01  2.751e-02  10.142  < 2e-16 ***
+PC2                   -2.965e-01  1.709e-02 -17.348  < 2e-16 ***
+PC3                    3.390e-01  2.004e-02  16.917  < 2e-16 ***
+PC4                   -5.619e-01  1.178e-02 -47.681  < 2e-16 ***
+PC5                   -1.333e-01  1.210e-02 -11.021  < 2e-16 ***
+PC10                   4.023e-01  6.093e-02   6.604 4.62e-11 ***
+PC11                   1.063e+14  1.188e+13   8.943  < 2e-16 ***
+ns(altitude, df = 4)1  1.606e-02  6.492e-02   0.247  0.80466    
+ns(altitude, df = 4)2  1.268e-01  5.427e-02   2.337  0.01951 *  
+ns(altitude, df = 4)3  2.465e-01  8.642e-02   2.852  0.00436 ** 
+ns(altitude, df = 4)4  2.148e-01  4.361e-02   4.925 8.85e-07 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+(Dispersion parameter for gaussian family taken to be 0.6551261)
+
+    Null deviance: 4317.2  on 3484  degrees of freedom
+Residual deviance: 2275.3  on 3473  degrees of freedom
+  (595 observations deleted due to missingness)
+AIC: 8430.1
+
+Number of Fisher Scoring iterations: 2</pre>
 <pre class="R_code">&gt; SNDMHT.m@vgmModel</pre>
-<pre class="R_env">model     psill    range kappa ang1 ang2 ang3 anis1<br />1   Nug 0.2771894   0.0000   0.0    0    0    0     1<br />2   Exp 0.4396340 145.4435   0.5    0    0    0     1<br />
-anis2<br />1 1.00000<br />2 0.00015</pre>
+<pre class="R_env">  model     psill    range kappa ang1 ang2 ang3 anis1   anis2<br />1   Nug 0.3081979   0.0000   0.0    0    0    0     1 1.00000<br />2   Exp 0.4165965 151.0638   0.5    0    0    0     1 0.00015</pre>
 <p>These result show that the model is significant, and this is valid for both GLM and the variogram. Note however that this is not completely a 3D regression-krging, as we do not actually have values of PCs at different depths (in fact, most of PCs relate only to the surface), so that many values of covariates are basically copied to all depths. This does not represent any problem for the GLM modeling, however, you should be aware that, because values of covariates are fixed with the different depths, the resulting 3D patterns in the target variable will be mainly controlled by the surface patterns.</p>
 <p>Once we have fitted a <a href="gstatModel-class.html">gstatModel</a>, we can generate predictions and estimate the associated uncertainty at any depth. In the last step, we need to prepare the 3D prediction locations i.e. grid cells that need to be mapped. In GSIF package, this can be done by using the <a href="make.3Dgrid-method.html">sp3D</a> function:</p>
 <pre class="R_code">&gt; new3D &lt;- sp3D(eberg_spc@predicted)</pre>
@@ -371,10 +348,16 @@ anis2<br />1 1.00000<br />2 0.00015</pre>
 <pre class="R_env">Generating predictions using the trend model (KED method)...
 [using universal kriging]</pre>
 <pre class="R_env">...</pre>
-<p>This operation can take time depending on the size of the grids and number of 3D points used to generate predictions. </p>
-<p>Finally, we can prepare the produced predictions and export them as <a href="GlobalSoilMap-class.html">GlobalSoilMap-class</a> object. First, we back-transform the predictions to the 0-100% scale:</p>
-<pre class="R_code">&gt; for(j in 1:length(sd.l)){ sd.l[[j]]@predicted$observedValue &lt;- exp(sd.l[[j]]@predicted$observedValue)/<br />+  (1+exp(sd.l[[j]]@predicted$observedValue))*100 }</pre>
-<p>and then  reproject the produced predictions to  geographical coordinates (<a href="http://spatialreference.org/ref/epsg/4326/" target="_blank">WGS84</a>) using the <a href="make.3Dgrid-method.html">make.3Dgrid</a> function: </p>
+<p>This operation can take time depending on the size of the grids and number of 3D points used to generate predictions. The final predictions can be back-transformed to the 0-100% scale by:</p>
+<pre class="R_code">&gt; invlogit = function(x){exp(x)/(1+exp(x))*100}
+&gt; for(j in 1:length(sd.l)){ sd.l[[j]]@predicted$observedValue &lt;- invlogit(sd.l[[j]]@predicted$observedValue) }
+&gt; summary(sd.l[[1]]@predicted$observedValue)</pre>
+<pre class="R_env">
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+-2.6720 -1.5930 -1.4090 -1.1210 -0.8748  1.8010      63
+</pre>
+<p>Finally, we can prepare the produced predictions and export them as a <a href="GlobalSoilMap-class.html">GlobalSoilMap-class</a> object. Before we can save the ouput object as a <a href="GlobalSoilMap-class.html">GlobalSoilMap-class</a> object, we need to reproject the produced predictions to  geographical coordinates (<a href="http://spatialreference.org/ref/epsg/4326/" target="_blank">WGS84</a>), which is possible by using the <a href="make.3Dgrid-method.html">make.3Dgrid</a> function:</p>
+
 <pre class="R_code">&gt; p = get(&quot;cellsize&quot;, envir = GSIF.opts)[2]
 &gt; s = get(&quot;stdepths&quot;, envir = GSIF.opts)
 &gt; s</pre>
@@ -396,7 +379,7 @@ anis2<br />1 1.00000<br />2 0.00015</pre>
    ..@ sd6           :Formal class 'SpatialPixelsDataFrame' [package &quot;sp&quot;] with 7 slots</pre>
 <pre class="R_code"><span class="R_code">&gt; save(SNDMHT.gsm, file=&quot;SNDMHT.rda&quot;, compress=&quot;xz&quot;)</span>  </pre>
 <p>and visualized  in Google Earth by using the <a href="http://plotkml.r-forge.r-project.org/">plotKML</a> package functionality: </p>
-<pre class="R_code">&gt;  z0 = mean(eberg_grid$DEMSRT6, na.rm=TRUE)
+<pre class="R_code">&gt; z0 = mean(eberg_grid$DEMSRT6, na.rm=TRUE)
 &gt; for(j in 1:length(sd.ll)){
 + kml(slot(SNDMHT.gsm, paste(&quot;sd&quot;, j, sep=&quot;&quot;)), folder.name = paste(&quot;eberg_sd&quot;, j, sep=&quot;&quot;), 
 +    file.name = paste(&quot;SNDMHT_sd&quot;, j, &quot;.kml&quot;, sep=&quot;&quot;), colour = observedValue, zlim=c(10,85), 
@@ -418,6 +401,22 @@ Closing  SNDMHT_sd6.kml</pre>
     <th scope="col"><a href="eberg_SNDMHT_6depths.zip"><img src="Fig_GSIF_predicted_layers.jpg" alt="Fig_GSIF_predicted_layers.jpg" width="500" border="0" /></a></th>
   </tr>
 </table>
+<p>To check how accurate these maps are, we can use the <a href="gstatModel-class.html">validate</a> method. This will interatively fit the gstatModels and then derive the residual error at validation points. The validate method is a total cross-validation as the cross-validation points are masked out from the model fitting, unlike in gstat where the krige.cv will use a constant model predicted using all data.</p>
+<pre class="R_code">&gt; rk.cv &lt;- validate(SNDMHT.m)</pre>
+<pre class="R_env">Estimating the predictionDomain...
+Estimated nearest neighbour distance (point pattern): 126
+Running 5-fold cross validation...
+Generating predictions using the trend model (KED method)...
+[using universal kriging]</pre>
+<pre class="R_env">100% done
+Generating predictions using the trend model (KED method)...
+[using universal kriging]</pre>
+<pre class="R_env">...
+</pre>
+<pre class="R_code">&gt; tvar &lt;- 1-var(rk.cv[[1]]$residual, na.rm=T)/var(rk.cv[[1]]$observed, na.rm=T)
+&gt; signif(tvar*100, 3)</pre>
+<pre class="R_env">[1] 59.3</pre>
+<p>This shows that the model is able to explain almost 60% of variability in the target variable at validation points. </p>
 <h3><a name="visualizing_uncertainty" id="visualizing_uncertainty"></a>Visualizing the uncertainty of predictions</h3>
 <p>According to the <a href="http://GlobalSoilMap.net/specifications">GlobalSoilMap.net specifications</a>, a requirement to submit the predicted soil property maps is to estimate the 95% upper and lower confidence intervals and attach them to the predictions (thus, two extra maps). By using the above describe methodology (i.e. the <a href="gstatModel-class.html">gstatModel</a> class objects), one can derive confidence intervals for any arbitraty point in the 3D continuum. Here is an example of the calculus for some arbitrary 3D point:</p>
 <pre class="R_code">&gt; loc &lt;- eberg_spc@predicted[1200:1201,]
@@ -460,19 +459,19 @@ Closing  SNDMHT_sd6.kml</pre>
 [using universal kriging]</pre>
 <pre class="R_env">100% done</pre>
 <pre class="R_code">&gt; int95 &lt;- sd.loc@predicted$var1.pred[1] + c(-1.96, 1.96)*sqrt(sd.loc@predicted$var1.var[1])
-&gt; exp(int95)/(1+exp(int95))*100</pre>
-<pre class="R_env">[1] 10.97703 30.69503</pre>
+&gt; invlogit(int95)</pre>
+<pre class="R_env">[1] 8.091463 26.261304</pre>
 <pre class="R_code">&gt; new3D.loc[[1]]@coords[1,]</pre>
 <pre class="R_env">longitude    latitude    altitude 
 3579950.000 5716850.000      -0.025</pre>
-<p>This means that the 95% confidence interval of predictions for this 3D location is 11-31% of sand. Because the <a href="gstatModel-class.html">gstatModel</a> is basically a global 3D model for this soil property, we can estimate uncertainty at any new 3D location, the only requirement is that values of covariates at this location are known, and that the location is submitted as SpatialPixelsDataFrame object. </p>
+<p>This means that the 95% confidence interval of predictions for this 3D location is 8-26% of sand. Because the <a href="gstatModel-class.html">gstatModel</a> is basically a global 3D model for this soil property, we can estimate uncertainty at any new 3D location, the only requirement is that values of covariates at this location are known, and that the location is submitted as SpatialPixelsDataFrame object. </p>
 <p>To visualize uncertainty, you can consider using geostatistical simulations:</p>
 <pre class="R_code">&gt; SNDMHT.xy &lt;- spTransform(SNDMHT.geo, CRS(&quot;+init=epsg:31467&quot;))<br />&gt; sel.stripe &lt;- eberg_spc@predicted@coords[,2] &gt; min(SNDMHT.xy@coords[,2])  # 2400 locations<br />&gt; loc &lt;- eberg_spc@predicted[sel.stripe,]<br />&gt; new3D.loc &lt;- sp3D(loc)<br />&gt; sd.loc &lt;- predict(SNDMHT.m, predictionLocations=new3D.loc[[1]], nsim=20, block=c(0,0,0))</pre>
 <pre class="R_env">Generating 20 conditional simulations using the trend model (KED method)...
 drawing 20 GLS realisations of beta...
 [using conditional Gaussian simulation]</pre>
 <pre class="R_env">  100% done</pre>
-<pre class="R_code">&gt; sd.loc@realizations &lt;- calc(sd.loc@realizations, fun=function(x){exp(x)/(1+exp(x))*100})</pre>
+<pre class="R_code">&gt; sd.loc@realizations &lt;- calc(sd.loc@realizations, fun=invlogit)</pre>
 <p>This function will create an object of class &quot;<a href="http://plotkml.r-forge.r-project.org/RasterBrickSimulations-class.html">RasterBrickSimulations</a>&quot;, then can then be visualized by using the <a href="http://plotkml.r-forge.r-project.org/tutorial.php">plotKML</a> package:</p>
 <pre class="R_code">&gt; str(sd.loc, max.level=2)</pre>
 <pre class="R_env">Formal class 'RasterBrickSimulations' [package &quot;plotKML&quot;] with 3 slots
