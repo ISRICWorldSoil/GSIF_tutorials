@@ -1,13 +1,16 @@
 Package: GSIF
 Type: Package
 Title: Global Soil Information Facilities
-Version: 0.2-3
-Date: 2012-10-18
-Author: Tomislav Hengl <tom.hengl@wur.nl>, Contributions by: Bas Kempen <bas.kempen@wur.nl>, Dylan Beaudette <debeaudette@ucdavis.edu>, Gerard B.M. Heuvelink <gerard.heuvelink@wur.nl>, Reuter I. Hannes <hannes.reuter@wur.nl>, Brendan Malone <brendan.malone@sydney.edu.au>
-Maintainer: Tomislav Hengl <tom.hengl@wur.nl>
+Version: 0.2-4
+Date: 2012-11-21
+Authors@R: c(person("Tomislav", "Hengl", role = c("cre", "aut"), email = "tom.hengl@wur.nl"),
+    person("Bas", "Kempen", role = "aut", email = "bas.kempen@wur.nl"),
+    person("Gerard", "Heuvelink", role = "aut", email = "gerard.heuvelink@wur.nl"),
+  	person("Brendan", "Malone", role = "ctb", email = "brendan.malone@sydney.edu.au"))
 Description: Global Soil Information Facilities - tools (standards and functions) and sample datasets for global soil mapping.
 License: GPL
 URL: http://gsif.r-forge.r-project.org/
 LazyLoad: yes
-Depends: R (>= 2.12.0), methods, stringr, XML, RCurl, sp, maptools, rgdal, raster, plotKML, aqp, dismo
-Suggests: soiltexture, RSAGA, splines, gstat, boot, mda, psych, fossil, nnet, SDMTools, rJava (>= 0.5-0)
+Depends: R (>= 2.13.0), plotKML, gstat, raster, sp 
+Imports: methods, stringr, RCurl, sp, maptools, rgdal, raster, aqp, dismo, plotKML, gstat, nortest, stats, plyr
+Suggests: soiltexture, spatstat, RSAGA, plyr, splines, XML, nortest, boot, mda, psych, fossil, nnet, SDMTools, rJava (>= 0.5-0)

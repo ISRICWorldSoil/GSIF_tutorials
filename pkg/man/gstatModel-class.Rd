@@ -38,6 +38,7 @@ set \code{nsim = 0}.
 }
 \examples{ 
 # load observations:
+library(plotKML)
 data(meuse)
 coordinates(meuse) <- ~x+y
 proj4string(meuse) <- CRS("+init=epsg:28992")
@@ -46,20 +47,13 @@ data(meuse.grid)
 coordinates(meuse.grid) <- ~x+y
 gridded(meuse.grid) <- TRUE
 proj4string(meuse.grid) <- CRS("+init=epsg:28992")
-\dontrun{# fit a model:
-omm <- fit.gstatModel(meuse, om~dist, family=gaussian(link="log"), meuse.grid)
+# fit a model:
+omm <- fit.gstatModel(meuse, om~dist+ffreq, family=gaussian(link="log"), meuse.grid)
 show(omm@regModel)
 # produce SpatialPredictions:
 om.rk <- predict(omm, predictionLocations = meuse.grid)
-# overview of the prediction process:
-show(om.rk)
-# plot the whole project and open in Google Earth:
-library(plotKML)
-plotKML(om.rk)
-# simulations (by default at block support):
-om.rksim <- predict(omm, predictionLocations = meuse.grid, nsim=2)
+# plotKML(om.rk)
 # run a proper cross-validation:
 rk.cv <- validate(omm)
-}
 }
 \keyword{classes}

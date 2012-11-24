@@ -112,7 +112,8 @@ mpspline(obj, var.name,
 <h3>Examples</h3>
 
 <pre>
-require(aqp)
+library(aqp)
+library(plyr)
 # sample profile from Nigeria:
 lon = 3.90; lat = 7.50; id = "ISRIC:NG0017"; FAO1988 = "LXp" 
 top = c(0, 18, 36, 65, 87, 127) 
@@ -127,10 +128,10 @@ coordinates(prof1) &lt;- ~ lon + lat
 proj4string(prof1) &lt;- CRS("+proj=longlat +datum=WGS84")
 ## Not run: # fit a spline:
 ORCDRC.s &lt;- mpspline(prof1, var.name="ORCDRC")
-ORCDRC.s
+str(ORCDRC.s)
 
 ## End(Not run)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.2-3 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.2-4 <a href="00Index.html">Index</a>]</div>
 </body></html>

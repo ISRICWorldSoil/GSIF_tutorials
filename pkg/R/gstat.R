@@ -41,6 +41,7 @@ write.data.geosamples <- function(obj, covariates = NULL, methodid, outfile, out
   }
  
 }
+
 setMethod("write.data", signature="geosamples", write.data.geosamples)
 
 ## write spatial points:
@@ -79,6 +80,7 @@ write.data.SpatialPoints <- function(obj, covariates = NULL, methodid, outfile, 
   }
  
 }
+
 setMethod("write.data", signature="SpatialPointsDataFrame", write.data.SpatialPoints)
 
 

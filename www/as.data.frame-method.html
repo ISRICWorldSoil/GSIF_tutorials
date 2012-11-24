@@ -67,7 +67,8 @@ as.data.frame(x, row.names = NULL, optional = FALSE, ...)
 <h3>Examples</h3>
 
 <pre>
-require(aqp)
+library(aqp)
+library(plyr)
 # sample profile from Nigeria:
 lon = 3.90; lat = 7.50; id = "ISRIC:NG0017"; FAO1988 = "LXp" 
 top = c(0, 18, 36, 65, 87, 127) 
@@ -86,7 +87,8 @@ x &lt;- as.data.frame(prof1)
 str(x)
 # horizons only
 horizons &lt;- getHorizons(x, idcol="id", sel=c("top", "bottom", "ORCDRC"))
+horizons
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.2-3 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.2-4 <a href="00Index.html">Index</a>]</div>
 </body></html>

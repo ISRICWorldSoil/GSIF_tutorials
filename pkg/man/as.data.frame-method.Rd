@@ -19,7 +19,8 @@
 \author{ Tomislav Hengl }
 \seealso{ \code{\link{as.geosamples}}, \code{\link{mpspline}} }
 \examples{
-require(aqp)
+library(aqp)
+library(plyr)
 # sample profile from Nigeria:
 lon = 3.90; lat = 7.50; id = "ISRIC:NG0017"; FAO1988 = "LXp" 
 top = c(0, 18, 36, 65, 87, 127) 
@@ -38,5 +39,6 @@ x <- as.data.frame(prof1)
 str(x)
 # horizons only
 horizons <- getHorizons(x, idcol="id", sel=c("top", "bottom", "ORCDRC"))
+horizons
 }
 \keyword{methods}

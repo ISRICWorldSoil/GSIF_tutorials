@@ -98,7 +98,7 @@ MaxEnt(occurrences, covariates,
 <h3>Examples</h3>
 
 <pre>
-## Not run: # load data:
+# load data:
 library(plotKML)
 data(eberg)
 data(eberg_grid)
@@ -111,6 +111,7 @@ gridded(eberg_grid) &lt;- ~x+y
 proj4string(eberg_grid) &lt;- CRS("+init=epsg:31467")
 # convert to a "ppp" object:
 library(spatstat)
+library(maptools)
 eberg.ppp &lt;- as.ppp(eberg.xy)
 library(dismo)
 # run MaxEnt analysis (evaluates sampling bias or mis-representation):
@@ -125,9 +126,7 @@ if(file.exists(jar)){
   points(me.eberg@occurrences, pch="+", cex=.7)
   image(me.eberg@sp.domain, col="grey", xlab="", ylab="")
 }
-
-## End(Not run)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.2-3 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.2-4 <a href="00Index.html">Index</a>]</div>
 </body></html>

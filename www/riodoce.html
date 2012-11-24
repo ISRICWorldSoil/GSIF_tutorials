@@ -137,6 +137,8 @@
 
 <pre>
 library(aqp)
+library(plyr)
+library(rgdal)
 data(riodoce)
 ## Not run: # Promote to SoilProfileCollection
 riodoce &lt;- join(riodoce$horizons, riodoce$sites, type='inner')
@@ -164,5 +166,5 @@ writeGDAL(riodoce.grids["EV1MOD3"], "EV1MOD3.tif", "GTiff", mvFlag=-99999)
 ## End(Not run)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.2-3 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.2-4 <a href="00Index.html">Index</a>]</div>
 </body></html>

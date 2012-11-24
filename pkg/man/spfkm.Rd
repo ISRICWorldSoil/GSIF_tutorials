@@ -27,7 +27,7 @@
 }
 \seealso{ \code{\link{spmultinom}}, \code{\link{SpatialMemberships-class}}, \code{nnet::multinom}}
 \examples{
-\dontrun{# load data:
+# load data:
 library(plotKML)
 data(eberg)
 # subset to 20%:
@@ -42,12 +42,14 @@ eberg_spc <- spc(eberg_grid, ~PRMGEO6+DEMSRT6+TWISRT6+TIRAST6)
 # predict memberships:
 formulaString = soiltype ~ PC1+PC2+PC3+PC4+PC5+PC6+PC7+PC8+PC9+PC10
 eberg_sm <- spfkm(formulaString, eberg, eberg_spc@predicted)
-# plot memberships:
+\dontrun{# plot memberships:
 pal = seq(0, 1, 1/50)
 spplot(eberg_sm@mu, col.regions=grey(rev(pal)))
 # predict soil properties using memberships:
-glm.formulaString = as.formula(paste("SNDMHT_A ~ ", paste(names(eberg_sm@mu), collapse="+"), "-1"))
-SNDMHT.m2 <- fit.gstatModel(observations=eberg, glm.formulaString, covariates=eberg_sm@mu)
+glm.formulaString = as.formula(paste("SNDMHT_A ~ ", 
+    paste(names(eberg_sm@mu), collapse="+"), "-1"))
+SNDMHT.m2 <- fit.gstatModel(observations=eberg, glm.formulaString, 
+    covariates=eberg_sm@mu)
 summary(SNDMHT.m2@regModel)
 # Coefficients correspond to the class centres;
 }

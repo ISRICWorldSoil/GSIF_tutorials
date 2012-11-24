@@ -38,7 +38,8 @@ All detphs are commonly expressed in centimeters. The returned values refer to p
 }
 \seealso{ \code{stats::spline} }
 \examples{
-require(aqp)
+library(aqp)
+library(plyr)
 # sample profile from Nigeria:
 lon = 3.90; lat = 7.50; id = "ISRIC:NG0017"; FAO1988 = "LXp" 
 top = c(0, 18, 36, 65, 87, 127) 
@@ -53,7 +54,7 @@ coordinates(prof1) <- ~ lon + lat
 proj4string(prof1) <- CRS("+proj=longlat +datum=WGS84")
 \dontrun{# fit a spline:
 ORCDRC.s <- mpspline(prof1, var.name="ORCDRC")
-ORCDRC.s
+str(ORCDRC.s)
 }
 }
 \keyword{methods}

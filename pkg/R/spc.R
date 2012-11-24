@@ -6,8 +6,6 @@
 
 
 setMethod("spc", signature(obj = "SpatialPixelsDataFrame", formulaString = "formula"), function(obj, formulaString, scale. = TRUE, silent = FALSE, ...){
- 
-  require(raster)
 
   # formula string:
   if(missing(formulaString)) {

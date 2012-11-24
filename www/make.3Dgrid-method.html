@@ -120,12 +120,12 @@ Note: this operation can be time consuming for large areas (e.g. &gt;&gt; 1e6 pi
 <h3>Examples</h3>
 
 <pre>
-## grids Ebergotzen:
+# grids Ebergotzen:
 library(plotKML)
 data(eberg_grid)
 gridded(eberg_grid) &lt;- ~x+y
 proj4string(eberg_grid) &lt;- CRS("+init=epsg:31467")
-## Not run: ##  convert to spatial components:
+## Not run: #  convert to spatial components:
 formulaString &lt;- ~ PRMGEO6+DEMSRT6+TWISRT6+TIRAST6
 eberg_spc &lt;- spc(eberg_grid, formulaString)
 # create 3D locations in the original coordinate system:
@@ -145,5 +145,5 @@ eberg_grid25@data &lt;- cbind(eberg_grid25@data,
 ## End(Not run)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.2-3 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.2-4 <a href="00Index.html">Index</a>]</div>
 </body></html>

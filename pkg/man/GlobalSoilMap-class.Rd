@@ -39,11 +39,14 @@ Gridded data submitted to \code{sd*} slots of the \code{"GlobalSoilMap"} class m
 \seealso{ \code{\link{SpatialComponents-class}}, \code{\link{geosamples-class}} 
 }
 \examples{
-\dontrun{# load soil samples from the plotKML package: 
+# load soil samples from the plotKML package: 
 library(plotKML)
+library(aqp)
+library(plyr)
+library(splines)
 data(eberg)
-# subset data to 30%:
-eberg <- eberg[runif(nrow(eberg)) < .3,]
+# subset data to 10%:
+eberg <- eberg[runif(nrow(eberg)) < .1,]
 # sites table:
 s.lst <- c("ID", "soiltype", "TAXGRSC", "X", "Y")
 h.lst <- c("UHDICM","LHDICM","SNDMHT","SLTMHT","CLYMHT")
@@ -71,6 +74,7 @@ eberg_spc <- spc(eberg_grid, formulaString)
 # build a 3D "gstatModel": 
 glm.formulaString = as.formula(paste("observedValue ~ ", 
      paste(names(eberg_spc@predicted), collapse="+"), "+ ns(altitude, df=4)"))
+\dontrun{
 SNDMHT.m <- fit.gstatModel(observations=eberg.geo, glm.formulaString, 
      covariates=eberg_spc@predicted, methodid="SNDMHT.t")
 summary(SNDMHT.m@regModel)
@@ -91,13 +95,14 @@ sd.ll <- sapply(1:length(sd.l), FUN=function(x){make.3Dgrid(sd.l[[x]]@predicted[
      pixsize=p, stdepths=s[x])})
 # save to a "GlobalSoilMap" object:
 SNDMHT.gsm <- GlobalSoilMap(varname="SNDMHT", sd.ll, period=c("1999-02-01", "2001-07-01"))
+str(SNDMHT.gsm, max.level=2)
 # visualize all maps in Google Earth:
 data(R_pal)
 z0 = mean(eberg_grid$DEMSRT6, na.rm=TRUE)
 # export grids:
 for(j in 1:length(sd.ll)){
   kml(slot(SNDMHT.gsm, paste("sd", j, sep="")), folder.name = paste("eberg_sd", j, sep=""),
-     file = paste("SNDMHT_sd", j, ".kml", sep=""), colour = observedValue, zlim=c(10,85),
+     file = paste("SNDMHT_sd", j, ".kml", sep=""), colour = observedValue, z.lim=c(10,85),
      raster_name = paste("SNDMHT_sd", j, ".png", sep=""), altitude = z0+5000+(s[j]*2500))
 }
 }

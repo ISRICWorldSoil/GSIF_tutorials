@@ -28,7 +28,6 @@ setClass("GlobalSoilMap", representation (varname = 'character', TimeSpan.begin 
    if(ncol(object@sd1)<2|ncol(object@sd2)<2|ncol(object@sd3)<2|ncol(object@sd4)<2|ncol(object@sd5)<2|ncol(object@sd6)<2)
       return("Object in slot 'sd' with at least two realizations (or predictions and variances) required")
    # check the projection system:
-   require(plotKML)
    if(!all(check_projection(object@sd1)|check_projection(object@sd2)|check_projection(object@sd3)|check_projection(object@sd4)|check_projection(object@sd5)|check_projection(object@sd6))){
       ref_CRS = get("ref_CRS", envir = GSIF.opts)
       return(paste("The GlobalSoilMap object requires grids to be projected in the", ref_CRS, "projection"))
@@ -43,7 +42,7 @@ setClass("GlobalSoilMap", representation (varname = 'character', TimeSpan.begin 
 })
 
 
-## georecord class:
+## geosamples class:
 setClass("geosamples", representation (registry = 'character', methods = 'data.frame', data = 'data.frame'), validity = function(object) {
    cnames <- c("observationid", "sampleid", "longitude", "latitude", "locationError", "TimeSpan.begin", "TimeSpan.end", "altitude", "altitudeMode", "sampleArea", "sampleThickness", "observedValue", "methodid", "measurementError")
    if(any(!(names(object@data) %in% cnames)))
@@ -132,6 +131,10 @@ if(!isGeneric("predict")){
   setGeneric("predict", function(object, ...){standardGeneric("predict")})
 }
 
+if(!isGeneric("overlay")){
+  setGeneric("overlay", function(x, y, ...){standardGeneric("overlay")})
+}
+
 if(!isGeneric("mpspline")){
   setGeneric("mpspline", function(obj, ...){standardGeneric("mpspline")})
 }
@@ -166,6 +169,14 @@ if(!isGeneric("make.3Dgrid")){
 
 if (!isGeneric("fit.gstatModel")){
   setGeneric("fit.gstatModel", function(observations, formulaString, covariates, ...){standardGeneric("fit.gstatModel")})
+}
+
+if (!isGeneric("fit.regModel")){
+  setGeneric("fit.regModel", function(formulaString, rmatrix, predictionDomain, method, ...){standardGeneric("fit.regModel")})
+}
+
+if (!isGeneric("fit.vgmModel")){
+  setGeneric("fit.vgmModel", function(formulaString, rmatrix, predictionDomain, ...){standardGeneric("fit.vgmModel")})
 }
 
 if (!isGeneric("spmultinom")){

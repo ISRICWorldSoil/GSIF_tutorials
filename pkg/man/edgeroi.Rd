@@ -64,6 +64,7 @@ Listed gridded layers follow a standard naming convention used by WorlGrids.org 
 }
 }
 \examples{
+library(rgdal)
 data(edgeroi)
 edgeroi$sites[edgeroi$sites$SOURCEID=="399_EDGEROI_ed095_1",]
 edgeroi$horizons[edgeroi$horizons$SOURCEID=="399_EDGEROI_ed095_1",]
@@ -71,9 +72,8 @@ edgeroi$horizons[edgeroi$horizons$SOURCEID=="399_EDGEROI_ed095_1",]
 sites <- edgeroi$sites
 coordinates(sites) <- ~ LONGDA94 + LATGDA94
 proj4string(sites) <- CRS("+proj=longlat +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +no_defs")
+\dontrun{# plot points and grids:
 pnts <- list("sp.points", spTransform(sites, CRS("+init=epsg:28355")), pch="+", col="black")
-
-\dontrun{
 # load the 250 m grids:
 download.file("http://worldgrids.org/rda/edgeroi.grids.rda", "edgeroi.grids.rda")
 load("edgeroi.grids.rda")

@@ -31,7 +31,7 @@
 }
 \seealso{ \code{dismo::maxent}, \code{plotKML::SpatialMaxEntOutput-class}}
 \examples{
-\dontrun{# load data:
+# load data:
 library(plotKML)
 data(eberg)
 data(eberg_grid)
@@ -44,6 +44,7 @@ gridded(eberg_grid) <- ~x+y
 proj4string(eberg_grid) <- CRS("+init=epsg:31467")
 # convert to a "ppp" object:
 library(spatstat)
+library(maptools)
 eberg.ppp <- as.ppp(eberg.xy)
 library(dismo)
 # run MaxEnt analysis (evaluates sampling bias or mis-representation):
@@ -57,7 +58,6 @@ if(file.exists(jar)){
     col=rev(heat.colors(25)), xlab="", ylab="")
   points(me.eberg@occurrences, pch="+", cex=.7)
   image(me.eberg@sp.domain, col="grey", xlab="", ylab="")
-}
 }
 }
 \keyword{methods}

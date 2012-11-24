@@ -85,10 +85,10 @@ spmultinom(formulaString,
 <h3>Examples</h3>
 
 <pre>
-## Not run: # load data:
+# load data:
 library(plotKML)
 data(eberg)
-# subset to 20
+# subset to 20%:
 eberg &lt;- eberg[runif(nrow(eberg))&lt;.2,]
 data(eberg_grid)
 coordinates(eberg) &lt;- ~X+Y
@@ -100,7 +100,7 @@ eberg_spc &lt;- spc(eberg_grid, ~PRMGEO6+DEMSRT6+TWISRT6+TIRAST6)
 # predict memberships:
 formulaString = soiltype ~ PC1+PC2+PC3+PC4+PC5+PC6+PC7+PC8+PC9+PC10
 eberg_sm &lt;- spmultinom(formulaString, eberg, eberg_spc@predicted)
-# plot memberships:
+## Not run: # plot memberships:
 pal = seq(0, 1, 1/50)
 spplot(eberg_sm@mu, col.regions=pal)
 image(eberg_sm@mu[1], col=pal)
@@ -113,5 +113,5 @@ spplot(eberg_sm@predicted, col.regions=rainbow(Ls)[rank(runif(Ls))], sp.layout=p
 ## End(Not run)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.2-3 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.2-4 <a href="00Index.html">Index</a>]</div>
 </body></html>

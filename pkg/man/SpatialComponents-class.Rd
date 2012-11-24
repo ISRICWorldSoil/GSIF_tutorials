@@ -12,36 +12,4 @@
 \author{ Tomislav Hengl }
 \seealso{ \code{\link{spc}}
 }
-\examples{ 
-\dontrun{# load soil samples from the plotKML package:
-library(plotKML)
-data(eberg)
-# 20 percent subsample:
-eberg <- eberg[runif(nrow(eberg)) < .2,]
-# sites table:
-s.lst <- c("ID", "soiltype", "TAXGRSC", "X", "Y")
-sites <- eberg[,s.lst]
-# get horizons table:
-horizons <- getHorizons(eberg, idcol="ID", sel=c("UHDICM","LHDICM","SNDMHT","SLTMHT","CLYMHT"))
-# create object of type "SoilProfileCollection"
-eberg.spc <- join(horizons, sites, type='inner')
-depths(eberg.spc) <- ID ~ UHDICM + LHDICM
-site(eberg.spc) <- as.formula(paste("~", paste(s.lst[-1], collapse="+"), sep=""))
-coordinates(eberg.spc) <- ~X+Y
-proj4string(eberg.spc) <- CRS("+init=epsg:31467")
-# convert to geosamples:
-eberg.geo <- as.geosamples(eberg.spc)
-# prepare covariates:
-data(eberg_grid)
-gridded(eberg_grid) <- ~x+y
-proj4string(eberg_grid) <- CRS("+init=epsg:31467")
-eberg_spc <- spc(eberg_grid, as.formula("~ PRMGEO6+DEMSRT6+TWISRT6+TIRAST6"))
-# overlay with SPCs (create the regression matrix):
-SNDMHT.eberg <- overlay(eberg_spc@predicted, eberg.geo, methodid="SNDMHT")
-# fit a glm:
-formulaString = observedValue~PC1+PC2+PC3+PC4+PC5+PC6+PC7+PC8+PC9+PC10+PC11+ns(altitude, df=4)
-SNDMHT.glm <- glm(formulaString, SNDMHT.eberg, family=gaussian())
-summary(SNDMHT.glm)
-}
-}
 \keyword{classes}

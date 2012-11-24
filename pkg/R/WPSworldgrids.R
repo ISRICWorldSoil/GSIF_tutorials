@@ -67,7 +67,7 @@ setMethod("overlay", signature(x = "WPS", y = "SpatialPoints"),
 ## subset grid
  
 setMethod("subset", signature(x = "WPS"), function(x, bbox, import = TRUE){
-  require(raster)
+
   require(RCurl)
   require(rgdal)
   # check that bbox is fine:

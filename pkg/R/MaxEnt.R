@@ -9,10 +9,8 @@
 setMethod("MaxEnt", signature(occurrences = "ppp", covariates = "SpatialPixelsDataFrame"), function(occurrences, covariates, nfold = 5, Npoints = 1000, sciname = as.character(NA), period = c(Sys.Date()-1, Sys.Date()),  ...){
   
   require(dismo)
-  require(raster)
   require(spatstat)
-  # require(plotKML)
-  # require(maptools)
+  require(maptools)
   
   # only run if the maxent.jar file is available, in the right folder
   jar <- paste(system.file(package="dismo"), "/java/maxent.jar", sep='')

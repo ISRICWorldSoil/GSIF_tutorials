@@ -157,7 +157,7 @@ data(ilin)
 coordinates(ilin$sites) &lt;- ~ LONNAD83 + LATNAD83
 proj4string(ilin$sites) &lt;- CRS("+proj=longlat +datum=NAD83")
 ## Not run: # obtain state borders:
-require(maps)
+library(maps)
 states.m = map('state', plot=FALSE, fill=TRUE)
 IDs &lt;- sapply(strsplit(states.m$names, ":"), function(x) x[1])
 require(maptools)
@@ -187,5 +187,5 @@ writeGDAL(ilin.grids["FORUSG2"], "FORUSG2.tif", "GTiff", mvFlag=-99999)
 ## End(Not run)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.2-3 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.2-4 <a href="00Index.html">Index</a>]</div>
 </body></html>

@@ -10,24 +10,36 @@
 
 <h3>Description</h3>
 
-<p>Tries to automatically fit a 2D or 3D regression-kriging model for a given set of points (object of type <code>"SpatialPointsDataFrame"</code> or <code>"geosamples"</code>) and covariates (object of type <code>"SpatialPixelsDataFrame"</code>). It first fits a Generalized Linear Model (GLM) following the <code>formulaString</code>, then fits variogram for residuals usign the <code>fit.variogram</code> method from the <a href="http://www.gstat.org">gstat</a> package. Creates an output object of class <code><a href="gstatModel-class.html">gstatModel-class</a></code>.</p>
+<p>Tries to automatically fit a 2D or 3D regression-kriging model for a given set of points (object of type <code>"SpatialPointsDataFrame"</code> or <code>"geosamples"</code>) and covariates (object of type <code>"SpatialPixelsDataFrame"</code>). It first fits a regression model (Generalized Linear Model) following the <code>formulaString</code>, then fits variogram for residuals usign the <code>fit.variogram</code> method from the <a href="http://www.gstat.org">gstat</a> package. Creates an output object of class <code><a href="gstatModel-class.html">gstatModel-class</a></code>.</p>
 
 
 <h3>Usage</h3>
 
 <pre> 
 ## S4 method for signature 'SpatialPointsDataFrame,formula,SpatialPixelsDataFrame'
-fit.gstatModel(observations, formulaString, covariates, family = gaussian, 
-     stepwise = TRUE, vgmFun = "Exp", rvgm = NULL, ...)
+fit.gstatModel(observations, formulaString, covariates, 
+     method = list("GLM", "cubist", "HB")[[1]], 
+     dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]],
+     family = gaussian, stepwise = TRUE, vgmFun = "Exp", rvgm = NULL,
+     subsample = 5000, ...)
 ## S4 method for signature 'geosamples,formula,SpatialPixelsDataFrame'
-fit.gstatModel(observations, formulaString, covariates, methodid, family = gaussian, 
-     stepwise = TRUE, vgmFun = "Exp", rvgm = NULL, ...)
+fit.gstatModel(observations, formulaString, covariates, 
+     methodid, method = list("GLM", "cubist", "HB")[[1]], 
+     dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]],
+     family = gaussian, stepwise = TRUE, 
+     vgmFun = "Exp", rvgm = NULL, subsample = 5000, ...)
 ## S4 method for signature 'geosamples,formula,list'
-fit.gstatModel(observations, formulaString, covariates, methodid, family = gaussian, 
-     stepwise = TRUE, vgmFun = "Exp", rvgm = NULL, ...)
+fit.gstatModel(observations, formulaString, covariates, 
+     methodid, method = list("GLM", "cubist", "HB")[[1]], 
+     dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]],
+     family = gaussian, stepwise = TRUE, 
+     vgmFun = "Exp", rvgm = NULL, subsample = 5000, ...)
 ## S4 method for signature 'geosamples,list,list'
-fit.gstatModel(observations, formulaString, covariates, methodid, family = gaussian, 
-     stepwise = TRUE, vgmFun = "Exp", rvgm = NULL, ...)
+fit.gstatModel(observations, formulaString, covariates, 
+     methodid, method = list("GLM", "cubist", "HB")[[1]], 
+     dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]],
+     family = gaussian, stepwise = TRUE, 
+     vgmFun = "Exp", rvgm = NULL, subsample = 5000, ...)
 </pre>
 
 
@@ -51,6 +63,14 @@ fit.gstatModel(observations, formulaString, covariates, methodid, family = gauss
 <td>
 <p>character; method name in the case of using the <code>"geosamples-class"</code></p>
 </td></tr>
+<tr valign="top"><td><code>method</code></td>
+<td>
+<p>character; family of methods considered e.g. <code>"GLM"</code></p>
+</td></tr>  
+<tr valign="top"><td><code>dimensions</code></td>
+<td>
+<p>character; <code>"3D"</code>, <code>"2D"</code>, <code>"2D+T"</code>, <code>"3D+T"</code> models</p>
+</td></tr>  
 <tr valign="top"><td><code>family</code></td>
 <td>
 <p>character string defyning the GLM family (for more info see <code>stats::glm</code>)</p>
@@ -67,6 +87,10 @@ fit.gstatModel(observations, formulaString, covariates, methodid, family = gauss
 <td>
 <p>residual variogram model can be passed from gstat, in which case <code>fit.gstatModel</code> will not try to fit the variogram</p>
 </td></tr>
+<tr valign="top"><td><code>subsample</code></td>
+<td>
+<p>integer; maximum number of observations to be taken for model fitting (to speed up variogram fitting)</p>
+</td></tr>
 <tr valign="top"><td><code>...</code></td>
 <td>
 <p>other optional arguments that can be passed to <code>glm</code> and/or <code>fit.variogram</code></p>
@@ -76,7 +100,7 @@ fit.gstatModel(observations, formulaString, covariates, methodid, family = gauss
 
 <h3>Details</h3>
 
-<p>The method by default assumes that the target variable follows a normal distribution <code>family = gaussian</code>. Other possible families are:
+<p>The GLM method by default assumes that the target variable follows a normal distribution <code>family = gaussian</code>. Other possible families are:
 </p>
 
 <dl>
@@ -90,6 +114,12 @@ fit.gstatModel(observations, formulaString, covariates, methodid, family = gauss
 </dd>
 </dl>
 
+
+
+<h3>Note</h3>
+
+<p>Residuals will be checked for normality and problems reported by default. The warning messages should be taken with care, as when the sample size is small, even big departures from normality will not be reported; when the sample size is large, even the smallest deviation from normality might lead to a warning. Likewise, if the variogram fitting fails, consider fitting a variogram manually or using the <code><a href="fit.vgmModel-method.html">fit.vgmModel</a></code> method.
+</p>
 
 
 <h3>Author(s)</h3>
@@ -113,28 +143,65 @@ fit.gstatModel(observations, formulaString, covariates, methodid, family = gauss
 
 <h3>See Also</h3>
 
- <p><code><a href="gstatModel-class.html">gstatModel-class</a></code>, <code><a href="glm.sp.html">glm.sp</a></code>, <code><a href="geosamples-class.html">geosamples-class</a></code>, <code>stats::glm</code>, <code>gstat::fit.variogram</code>
+ <p><code><a href="gstatModel-class.html">gstatModel-class</a></code>, <code><a href="fit.regModel-method.html">fit.regModel</a></code>, <code><a href="geosamples-class.html">geosamples-class</a></code>, <code>stats::glm</code>, <code>gstat::fit.variogram</code>
 </p>
 
 
 <h3>Examples</h3>
 
 <pre>
+# 2D model:
+library(sp)
 data(meuse)
 coordinates(meuse) &lt;- ~x+y
+proj4string(meuse) &lt;- CRS("+init=epsg:28992")
 # load grids:
 data(meuse.grid)
 coordinates(meuse.grid) &lt;- ~x+y
 gridded(meuse.grid) &lt;- TRUE
+proj4string(meuse.grid) &lt;- CRS("+init=epsg:28992")
 # fit a model with a gaussian log-link:
 omm &lt;- fit.gstatModel(meuse, om~dist, meuse.grid, family = gaussian(log))
+# it was succesful
 omm@regModel
 om.sp &lt;- SpatialPointsDataFrame(omm@sp, data = omm@regModel$model)
 ## Not run: # plot a variogram:
 plot(variogram(om~1, om.sp))
 
 ## End(Not run)
+
+# 3D model:
+library(aqp)
+library(plyr)
+library(splines)
+data(eberg)
+# list columns of interest:
+s.lst &lt;- c("ID", "soiltype", "TAXGRSC", "X", "Y")
+h.lst &lt;- c("UHDICM","LHDICM","SNDMHT","SLTMHT","CLYMHT")
+sel &lt;- runif(nrow(eberg))&lt;.05
+# get sites table:
+sites &lt;- eberg[sel,s.lst]
+# get horizons table:
+horizons &lt;- getHorizons(eberg[sel,], idcol="ID", sel=h.lst)
+# create object of type "SoilProfileCollection"
+eberg.spc &lt;- join(horizons, sites, type='inner')
+depths(eberg.spc) &lt;- ID ~ UHDICM + LHDICM
+site(eberg.spc) &lt;- as.formula(paste("~", paste(s.lst[-1], collapse="+"), sep=""))
+coordinates(eberg.spc) &lt;- ~X+Y
+proj4string(eberg.spc) &lt;- CRS("+init=epsg:31467")
+# convert to geosamples:
+eberg.geo &lt;- as.geosamples(eberg.spc)
+# covariates:
+data(eberg_grid)
+gridded(eberg_grid) &lt;- ~x+y
+proj4string(eberg_grid) &lt;- CRS("+init=epsg:31467")
+glm.formulaString = as.formula(paste("observedValue ~ ", 
+  paste(names(eberg_grid), collapse="+"), "+ ns(altitude, df=4)"))
+SNDMHT.m &lt;- fit.gstatModel(observations=eberg.geo, 
+  glm.formulaString, covariates=eberg_grid, methodid="SNDMHT")
+# problems with the variogram?
+SNDMHT.m@vgmModel
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.2-3 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.2-4 <a href="00Index.html">Index</a>]</div>
 </body></html>

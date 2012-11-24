@@ -38,14 +38,14 @@ makeGstatCmd(formString, vgmModel, outfile, easfile,
 }
 \seealso{ \code{\link{write.data}}, \code{\link{fit.gstatModel}}, \code{gstat::krige} }
 \examples{
-# universal kriging with Meuse data:
+\dontrun{# universal kriging with Meuse data:
 data(meuse)
 coordinates(meuse) <- ~x+y
 proj4string(meuse) <- CRS("+init=epsg:28992")
 data(meuse.grid)
 gridded(meuse.grid) <- ~x+y
 proj4string(meuse.grid) <- CRS("+init=epsg:28992")
-\dontrun{# fit a model:
+# fit a model:
 omm <- fit.gstatModel(observations = meuse, formulaString = om~dist, 
   family = gaussian(log), covariates = meuse.grid)
 str(omm@vgmModel)

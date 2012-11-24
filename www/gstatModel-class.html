@@ -72,6 +72,7 @@
 
 <pre> 
 # load observations:
+library(plotKML)
 data(meuse)
 coordinates(meuse) &lt;- ~x+y
 proj4string(meuse) &lt;- CRS("+init=epsg:28992")
@@ -80,23 +81,15 @@ data(meuse.grid)
 coordinates(meuse.grid) &lt;- ~x+y
 gridded(meuse.grid) &lt;- TRUE
 proj4string(meuse.grid) &lt;- CRS("+init=epsg:28992")
-## Not run: # fit a model:
-omm &lt;- fit.gstatModel(meuse, om~dist, family=gaussian(link="log"), meuse.grid)
+# fit a model:
+omm &lt;- fit.gstatModel(meuse, om~dist+ffreq, family=gaussian(link="log"), meuse.grid)
 show(omm@regModel)
 # produce SpatialPredictions:
 om.rk &lt;- predict(omm, predictionLocations = meuse.grid)
-# overview of the prediction process:
-show(om.rk)
-# plot the whole project and open in Google Earth:
-library(plotKML)
-plotKML(om.rk)
-# simulations (by default at block support):
-om.rksim &lt;- predict(omm, predictionLocations = meuse.grid, nsim=2)
+# plotKML(om.rk)
 # run a proper cross-validation:
 rk.cv &lt;- validate(omm)
-
-## End(Not run)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.2-3 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.2-4 <a href="00Index.html">Index</a>]</div>
 </body></html>

@@ -147,6 +147,7 @@ Listed gridded layers follow a standard naming convention used by WorlGrids.org 
 <h3>Examples</h3>
 
 <pre>
+library(rgdal)
 data(edgeroi)
 edgeroi$sites[edgeroi$sites$SOURCEID=="399_EDGEROI_ed095_1",]
 edgeroi$horizons[edgeroi$horizons$SOURCEID=="399_EDGEROI_ed095_1",]
@@ -154,9 +155,8 @@ edgeroi$horizons[edgeroi$horizons$SOURCEID=="399_EDGEROI_ed095_1",]
 sites &lt;- edgeroi$sites
 coordinates(sites) &lt;- ~ LONGDA94 + LATGDA94
 proj4string(sites) &lt;- CRS("+proj=longlat +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +no_defs")
+## Not run: # plot points and grids:
 pnts &lt;- list("sp.points", spTransform(sites, CRS("+init=epsg:28355")), pch="+", col="black")
-
-## Not run: 
 # load the 250 m grids:
 download.file("http://worldgrids.org/rda/edgeroi.grids.rda", "edgeroi.grids.rda")
 load("edgeroi.grids.rda")
@@ -173,5 +173,5 @@ spplot(edgeroi.grids100["TI1LAN6"], sp.layout=pnts)
 ## End(Not run)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.2-3 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.2-4 <a href="00Index.html">Index</a>]</div>
 </body></html>

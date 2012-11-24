@@ -52,12 +52,12 @@ Note: this operation can be time consuming for large areas (e.g. >> 1e6 pixels).
 \author{ Tomislav Hengl }
 \seealso{ \code{\link{spc}}, \code{\link{geosamples-class}}, \code{plotKML::reproject} }
 \examples{
-## grids Ebergotzen:
+# grids Ebergotzen:
 library(plotKML)
 data(eberg_grid)
 gridded(eberg_grid) <- ~x+y
 proj4string(eberg_grid) <- CRS("+init=epsg:31467")
-\dontrun{##  convert to spatial components:
+\dontrun{#  convert to spatial components:
 formulaString <- ~ PRMGEO6+DEMSRT6+TWISRT6+TIRAST6
 eberg_spc <- spc(eberg_grid, formulaString)
 # create 3D locations in the original coordinate system:

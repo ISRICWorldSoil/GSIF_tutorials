@@ -22,12 +22,11 @@
 </dd>
 <dt><code>methods</code>:</dt><dd><p>object of class <code>"data.frame"</code>; a table with method names (<code>"methodid"</code>), a one sentence description of each method (<code>"description"</code>), measurement units or levels (<code>"units"</code>), and associated detection limits (<code>"detectionLimit"</code>)</p>
 </dd>
-<dt><code>data</code>:</dt><dd><p>object of class <code>"data.frame"</code>; a standardized table with fixed column names: <code>"observationid"</code> (unique observation ID; as specified in the data registry service), <code>"sampleid"</code> (producer's ID; usually site ID and horizon ID or sequence number), <code>"longitude"</code> (longitude on the WGS84 ellipsoid), <code>"latitude"</code> (latitude on the WGS84 ellipsoid), <code>"locationError"</code> (error radius in meters), <code>"TimeSpan.begin"</code>, <code>"TimeSpan.end"</code>, <code>"altitude"</code>, <code>"altitudeMode"</code>, <code>"sampleArea"</code> (spatial support in square meters), <code>"sampleThickness"</code> (thickness of horizons in meters or vertical support), <code>"observedValue"</code> (measured value), <code>"methodid"</code> (method name), <code>"measurementError"</code> (estimated measurement error for that specific observation)</p>
+<dt><code>data</code>:</dt><dd><p>object of class <code>"data.frame"</code>; a standardized table with fixed column names: <code>"observationid"</code> (unique observation ID; as specified in the data registry service), <code>"sampleid"</code> (producer's ID; usually site ID and horizon ID or sequence number), <a href="https://developers.google.com/kml/documentation/kmlreference"><code>"longitude"</code></a> (longitude on the WGS84 ellipsoid), <a href="https://developers.google.com/kml/documentation/kmlreference"><code>"latitude"</code></a> (latitude on the WGS84 ellipsoid), <code>"locationError"</code> (error radius in meters), <a href="https://developers.google.com/kml/documentation/kmlreference"><code>"TimeSpan.begin"</code></a> (begin of the measurement period), <a href="https://developers.google.com/kml/documentation/kmlreference"><code>"TimeSpan.end"</code></a> (end of the measurement period), <a href="https://developers.google.com/kml/documentation/kmlreference"><code>"altitude"</code></a> (height above ground or above the sea level in meters), <a href="https://developers.google.com/kml/documentation/altitudemode"><code>"altitudeMode"</code></a> (one of the KML schema altitude modes), <code>"sampleArea"</code> (spatial support in square meters), <code>"sampleThickness"</code> (thickness of horizons in meters or vertical support), <code>"observedValue"</code> (measured value), <code>"methodid"</code> (method name; see <code>methods</code> table), <code>"measurementError"</code> (estimated measurement error for that specific observation)</p>
 </dd>
 </dl>
 
-<p>The column names in the data slot largely reflect the <a href="https://developers.google.com/kml/documentation/kmlreference">KML schema elements</a>. It also aims at being compatible with the <a href="http://www.opengeospatial.org/standards/om/">OGC Observations and measurements specifications</a>.<br> 
-Geosamples-class can be used to store and manipulate geological, hydrological, geochemical, biodiversity, soil science and similar field samples. Geological and soil samples can be registered via the <a href="http://www.geosamples.org/">geosamples.org</a>, in which case the <code>"observationid"</code> will correspond to the unique sample identifier (IGSN). <code>"sampleid"</code> column allows linking geosamples to the original ID's. 
+<p>The column names in the data slot largely reflect the <a href="https://developers.google.com/kml/documentation/kmlreference">KML schema elements</a>. Geosamples are interoperable with the <a href="http://www.opengeospatial.org/standards/om/">OGC Observations and measurements specifications</a>, but do not necessarily contain all required fields (i.e. there is no validity check for the OGC specifications). Geosamples-class can be used to store and manipulate geological, hydrological, geochemical, biodiversity, soil science and similar field samples near or below land surface. Geological and soil samples can also be registered via the <a href="http://www.geosamples.org/">geosamples.org</a>, in which case the <code>"observationid"</code> will correspond to the unique sample identifier. <code>"sampleid"</code> column allows linking geosamples to the original ID's. 
 </p>
 
 
@@ -36,13 +35,13 @@ Geosamples-class can be used to store and manipulate geological, hydrological, g
 
 
 <dl>
-<dt>show</dt><dd><p><code>signature(obj = "geosamples")</code>: summarize object by listing methods, total number of observations, total area covered etc. </p>
+<dt>show</dt><dd><p><code>signature(obj = "geosamples")</code>: summarize object by listing methods, total number of observations, total area covered etc.</p>
 </dd>
-<dt>subset</dt><dd><p><code>signature(obj = "geosamples")</code>: subset to a single variable type; returns a data frame </p>
+<dt>subset</dt><dd><p><code>signature(obj = "geosamples")</code>: subset to a single variable type; returns a data frame</p>
 </dd>
-<dt>overlay</dt><dd><p><code>signature(covariates = "SpatialPixelsDataFrame", observations = "geosamples")</code>: overlay geosamples and spatial pixels </p>
+<dt>overlay</dt><dd><p><code>signature(x = "SpatialPixelsDataFrame", y = "geosamples")</code>: overlay geosamples and spatial pixels</p>
 </dd>
-<dt>write.data</dt><dd><p><code>signature(obj = "geosamples")</code>: write geosamples to an external format e.g. GeoEAS </p>
+<dt>write.data</dt><dd><p><code>signature(obj = "geosamples")</code>: write geosamples to an external format e.g. GeoEAS</p>
 </dd>
 </dl>
 
@@ -80,5 +79,5 @@ Geosamples-class can be used to store and manipulate geological, hydrological, g
 
  <p><code><a href="as.geosamples-method.html">as.geosamples</a></code> </p>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.2-3 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.2-4 <a href="00Index.html">Index</a>]</div>
 </body></html>

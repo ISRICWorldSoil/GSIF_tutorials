@@ -10,7 +10,6 @@ setMethod("gdalwarp", signature(obj = "SpatialPixelsDataFrame"), function(obj, p
   
   require(stringr)
   # look for FWTools path:  
-  require(plotKML)
   gdalwarp <- get("gdalwarp", envir = plotKML.opts)
   # try to locate FWTools:
   if(nchar(gdalwarp)==0){
@@ -111,7 +110,6 @@ setMethod("make.3Dgrid", signature(obj = "SpatialPixelsDataFrame"), function(obj
 ## make prediction locations in WGS84 (from point to grid):
 setMethod("make.3Dgrid", signature(obj = "RasterBrick"),  function(obj, proj4s = get("ref_CRS", envir = GSIF.opts), pixsize = get("cellsize", envir = GSIF.opts)[2], resampling_method = "bilinear", NAflag = get("NAflag", envir = GSIF.opts), stdepths = get("stdepths", envir = GSIF.opts), tmp.file = TRUE, show.output.on.console = FALSE, ...){
     
-    library(plotKML)
     # for each layer layers:
     if (ncol(obj) > 1) {
 

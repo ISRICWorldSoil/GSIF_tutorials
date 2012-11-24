@@ -26,7 +26,7 @@
 }
 \seealso{ \code{\link{spfkm}}, \code{\link{SpatialMemberships-class}}}
 \examples{
-\dontrun{# load data:
+# load data:
 library(plotKML)
 data(eberg)
 # subset to 20%:
@@ -41,7 +41,7 @@ eberg_spc <- spc(eberg_grid, ~PRMGEO6+DEMSRT6+TWISRT6+TIRAST6)
 # predict memberships:
 formulaString = soiltype ~ PC1+PC2+PC3+PC4+PC5+PC6+PC7+PC8+PC9+PC10
 eberg_sm <- spmultinom(formulaString, eberg, eberg_spc@predicted)
-# plot memberships:
+\dontrun{# plot memberships:
 pal = seq(0, 1, 1/50)
 spplot(eberg_sm@mu, col.regions=pal)
 image(eberg_sm@mu[1], col=pal)

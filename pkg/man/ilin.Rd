@@ -67,7 +67,7 @@ data(ilin)
 coordinates(ilin$sites) <- ~ LONNAD83 + LATNAD83
 proj4string(ilin$sites) <- CRS("+proj=longlat +datum=NAD83")
 \dontrun{# obtain state borders:
-require(maps)
+library(maps)
 states.m = map('state', plot=FALSE, fill=TRUE)
 IDs <- sapply(strsplit(states.m$names, ":"), function(x) x[1])
 require(maptools)

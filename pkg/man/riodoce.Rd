@@ -60,6 +60,8 @@ The \code{riodoce.grids} data frame contains a list of soil covariates prepared 
 }
 \examples{
 library(aqp)
+library(plyr)
+library(rgdal)
 data(riodoce)
 \dontrun{# Promote to SoilProfileCollection
 riodoce <- join(riodoce$horizons, riodoce$sites, type='inner')

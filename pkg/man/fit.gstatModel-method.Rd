@@ -8,35 +8,52 @@
 \alias{fit.gstatModel,geosamples,formula,list-method}
 \alias{fit.gstatModel,geosamples,list,list-method}
 \title{Methods to fit a regression-kriging model}
-\description{Tries to automatically fit a 2D or 3D regression-kriging model for a given set of points (object of type \code{"SpatialPointsDataFrame"} or \code{"geosamples"}) and covariates (object of type \code{"SpatialPixelsDataFrame"}). It first fits a Generalized Linear Model (GLM) following the \code{formulaString}, then fits variogram for residuals usign the \code{fit.variogram} method from the \href{http://www.gstat.org}{gstat} package. Creates an output object of class \code{\link{gstatModel-class}}.}
+\description{Tries to automatically fit a 2D or 3D regression-kriging model for a given set of points (object of type \code{"SpatialPointsDataFrame"} or \code{"geosamples"}) and covariates (object of type \code{"SpatialPixelsDataFrame"}). It first fits a regression model (Generalized Linear Model) following the \code{formulaString}, then fits variogram for residuals usign the \code{fit.variogram} method from the \href{http://www.gstat.org}{gstat} package. Creates an output object of class \code{\link{gstatModel-class}}.}
 \usage{ 
-\S4method{fit.gstatModel}{SpatialPointsDataFrame,formula,SpatialPixelsDataFrame}(observations, formulaString, covariates, family = gaussian, 
-     stepwise = TRUE, vgmFun = "Exp", rvgm = NULL, \dots)
-\S4method{fit.gstatModel}{geosamples,formula,SpatialPixelsDataFrame}(observations, formulaString, covariates, methodid, family = gaussian, 
-     stepwise = TRUE, vgmFun = "Exp", rvgm = NULL, \dots)
-\S4method{fit.gstatModel}{geosamples,formula,list}(observations, formulaString, covariates, methodid, family = gaussian, 
-     stepwise = TRUE, vgmFun = "Exp", rvgm = NULL, \dots)
-\S4method{fit.gstatModel}{geosamples,list,list}(observations, formulaString, covariates, methodid, family = gaussian, 
-     stepwise = TRUE, vgmFun = "Exp", rvgm = NULL, \dots)
+\S4method{fit.gstatModel}{SpatialPointsDataFrame,formula,SpatialPixelsDataFrame}(observations, formulaString, covariates, 
+     method = list("GLM", "cubist", "HB")[[1]], 
+     dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]],
+     family = gaussian, stepwise = TRUE, vgmFun = "Exp", rvgm = NULL,
+     subsample = 5000, \dots)
+\S4method{fit.gstatModel}{geosamples,formula,SpatialPixelsDataFrame}(observations, formulaString, covariates, 
+     methodid, method = list("GLM", "cubist", "HB")[[1]], 
+     dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]],
+     family = gaussian, stepwise = TRUE, 
+     vgmFun = "Exp", rvgm = NULL, subsample = 5000, \dots)
+\S4method{fit.gstatModel}{geosamples,formula,list}(observations, formulaString, covariates, 
+     methodid, method = list("GLM", "cubist", "HB")[[1]], 
+     dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]],
+     family = gaussian, stepwise = TRUE, 
+     vgmFun = "Exp", rvgm = NULL, subsample = 5000, \dots)
+\S4method{fit.gstatModel}{geosamples,list,list}(observations, formulaString, covariates, 
+     methodid, method = list("GLM", "cubist", "HB")[[1]], 
+     dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]],
+     family = gaussian, stepwise = TRUE, 
+     vgmFun = "Exp", rvgm = NULL, subsample = 5000, \dots)
 }
 \arguments{
   \item{observations}{object of type \code{"SpatialPointsDataFrame"} or \code{"geosamples-class"}}
   \item{formulaString}{object of type \code{"formula"} or a list of formulas}
   \item{covariates}{object of type \code{"SpatialPixelsDataFrame"}, or list of grids}
   \item{methodid}{character; method name in the case of using the \code{"geosamples-class"}}
+  \item{method}{character; family of methods considered e.g. \code{"GLM"}}  
+  \item{dimensions}{character; \code{"3D"}, \code{"2D"}, \code{"2D+T"}, \code{"3D+T"} models}  
   \item{family}{character string defyning the GLM family (for more info see \code{stats::glm})}
   \item{stepwise}{specifies whether to run step-wise regression on top of GLM to get an optimal subset of predictors}
   \item{vgmFun}{variogram function (\code{"Exp"} by default)}
   \item{rvgm}{residual variogram model can be passed from gstat, in which case \code{fit.gstatModel} will not try to fit the variogram}
+  \item{subsample}{integer; maximum number of observations to be taken for model fitting (to speed up variogram fitting)}
   \item{\dots}{other optional arguments that can be passed to \code{glm} and/or \code{fit.variogram}}  
 }
-\details{The method by default assumes that the target variable follows a normal distribution \code{family = gaussian}. Other possible families are:
+\details{The GLM method by default assumes that the target variable follows a normal distribution \code{family = gaussian}. Other possible families are:
 \describe{
  \item{normal distribution}{\code{family = gaussian} (default setting)}
  \item{log-normal distribution}{\code{family = gaussian(log)}}
  \item{binomial variable}{\code{family = binomial(logit)}}
  \item{variable following a poisson distribution}{\code{family = poisson(log)}}
 }
+}
+\note{Residuals will be checked for normality and problems reported by default. The warning messages should be taken with care, as when the sample size is small, even big departures from normality will not be reported; when the sample size is large, even the smallest deviation from normality might lead to a warning. Likewise, if the variogram fitting fails, consider fitting a variogram manually or using the \code{\link{fit.vgmModel}} method.
 }
 \references{
 \itemize{
@@ -45,21 +62,58 @@
 }
 }
 \author{ Tomislav Hengl and Gerard B.M. Heuvelink}
-\seealso{ \code{\link{gstatModel-class}}, \code{\link{glm.sp}}, \code{\link{geosamples-class}}, \code{stats::glm}, \code{gstat::fit.variogram}
+\seealso{ \code{\link{gstatModel-class}}, \code{\link{fit.regModel}}, \code{\link{geosamples-class}}, \code{stats::glm}, \code{gstat::fit.variogram}
 }
 \examples{
+# 2D model:
+library(sp)
 data(meuse)
 coordinates(meuse) <- ~x+y
+proj4string(meuse) <- CRS("+init=epsg:28992")
 # load grids:
 data(meuse.grid)
 coordinates(meuse.grid) <- ~x+y
 gridded(meuse.grid) <- TRUE
+proj4string(meuse.grid) <- CRS("+init=epsg:28992")
 # fit a model with a gaussian log-link:
 omm <- fit.gstatModel(meuse, om~dist, meuse.grid, family = gaussian(log))
+# it was succesful
 omm@regModel
 om.sp <- SpatialPointsDataFrame(omm@sp, data = omm@regModel$model)
 \dontrun{# plot a variogram:
 plot(variogram(om~1, om.sp))
 }
+
+# 3D model:
+library(aqp)
+library(plyr)
+library(splines)
+data(eberg)
+# list columns of interest:
+s.lst <- c("ID", "soiltype", "TAXGRSC", "X", "Y")
+h.lst <- c("UHDICM","LHDICM","SNDMHT","SLTMHT","CLYMHT")
+sel <- runif(nrow(eberg))<.05
+# get sites table:
+sites <- eberg[sel,s.lst]
+# get horizons table:
+horizons <- getHorizons(eberg[sel,], idcol="ID", sel=h.lst)
+# create object of type "SoilProfileCollection"
+eberg.spc <- join(horizons, sites, type='inner')
+depths(eberg.spc) <- ID ~ UHDICM + LHDICM
+site(eberg.spc) <- as.formula(paste("~", paste(s.lst[-1], collapse="+"), sep=""))
+coordinates(eberg.spc) <- ~X+Y
+proj4string(eberg.spc) <- CRS("+init=epsg:31467")
+# convert to geosamples:
+eberg.geo <- as.geosamples(eberg.spc)
+# covariates:
+data(eberg_grid)
+gridded(eberg_grid) <- ~x+y
+proj4string(eberg_grid) <- CRS("+init=epsg:31467")
+glm.formulaString = as.formula(paste("observedValue ~ ", 
+  paste(names(eberg_grid), collapse="+"), "+ ns(altitude, df=4)"))
+SNDMHT.m <- fit.gstatModel(observations=eberg.geo, 
+  glm.formulaString, covariates=eberg_grid, methodid="SNDMHT")
+# problems with the variogram?
+SNDMHT.m@vgmModel
 }
 \keyword{methods}
