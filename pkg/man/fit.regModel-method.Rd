@@ -5,7 +5,7 @@
 \description{Fits a regression model (e.g. GLM) and variogram for the residuals using the default settings.}
 \usage{
 \S4method{fit.regModel}{formula,data.frame,SpatialPixelsDataFrame,character}(formulaString,
-      rmatrix, predictionDomain, method = list("GLM", "cubist", "HB")[[1]], 
+      rmatrix, predictionDomain, method = list("GLM", "CART", "HB")[[1]], 
       dimensions = NULL, family=gaussian, stepwise=TRUE, rvgm=NULL, 
       vgmFun="Exp", subsample = 5000, \dots)
 }

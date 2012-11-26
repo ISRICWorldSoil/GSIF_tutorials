@@ -151,6 +151,10 @@ if(!isGeneric("describe")){
   setGeneric("describe", function(x, ...){standardGeneric("describe")})
 }
 
+if(!isGeneric("summary")){
+  setGeneric("summary", function(object, ...){standardGeneric("summary")})
+}
+
 if(!isGeneric("merge")){
   setGeneric("merge", function(x, y, ...){standardGeneric("merge")})
 }

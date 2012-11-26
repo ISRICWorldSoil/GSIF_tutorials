@@ -265,6 +265,9 @@ setMethod("show", signature(object = "geosamples"),
   if(!any(y@data$altitudeMode == "relativeToGround")){
     warning("AltitudeMode accepts only 'relativeToGround' values")
   }
+  if(length(attr(x@coords, "dimnames")[[2]])>2){
+    warning("'SpatialPixelsDataFrame' object with two dimensions expected")
+  }
   
   pnts = .subset.geosamples(y, method=methodid)
   # reformat observed values:
@@ -278,10 +281,13 @@ setMethod("show", signature(object = "geosamples"),
   
   coordinates(pnts) <- ~longitude+latitude
   proj4string(pnts) <- get("ref_CRS", envir = GSIF.opts) 
+  pnts.t <- spTransform(pnts, x@proj4string)
+  attr(pnts.t@coords, "dimnames")[[2]] = attr(x@coords, "dimnames")[[2]]
+  attr(pnts.t@bbox, "dimnames")[[1]] = attr(x@bbox, "dimnames")[[2]]
   
-  index <- sp::overlay(x, spTransform(pnts, x@proj4string))                    
+  index <- sp::overlay(x, pnts.t)                    
   sel <- !is.na(index)
-  out <- cbind(data.frame(pnts[sel,]), x[index[sel],])
+  out <- cbind(data.frame(pnts[sel,]), x@data[index[sel],], data.frame(pnts.t@coords[sel,]))
   if(nrow(out)==0){ 
     warning("Overlay resulted in an empty table") 
   }

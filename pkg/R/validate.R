@@ -5,7 +5,7 @@
 # Note           : works only with linear models with normally distributed residuals;
 
 ## cross-validate a "gstatModel" object:
-setMethod("validate", signature(obj = "gstatModel"), function(obj, nfold = 5, predictionDomain = NULL, method = list("GLM", "cubist", "HB")[[1]], save.gstatModels = FALSE){
+setMethod("validate", signature(obj = "gstatModel"), function(obj, nfold = 5, predictionDomain = NULL, method = list("GLM", "CART", "HB")[[1]], save.gstatModels = FALSE){
 
    require(dismo)
    if(nfold < 2){ stop("'nfold' argument > 2 expected") }

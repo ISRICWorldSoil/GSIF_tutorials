@@ -11,22 +11,22 @@
 \description{Tries to automatically fit a 2D or 3D regression-kriging model for a given set of points (object of type \code{"SpatialPointsDataFrame"} or \code{"geosamples"}) and covariates (object of type \code{"SpatialPixelsDataFrame"}). It first fits a regression model (Generalized Linear Model) following the \code{formulaString}, then fits variogram for residuals usign the \code{fit.variogram} method from the \href{http://www.gstat.org}{gstat} package. Creates an output object of class \code{\link{gstatModel-class}}.}
 \usage{ 
 \S4method{fit.gstatModel}{SpatialPointsDataFrame,formula,SpatialPixelsDataFrame}(observations, formulaString, covariates, 
-     method = list("GLM", "cubist", "HB")[[1]], 
+     method = list("GLM", "CART", "HB")[[1]], 
      dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]],
      family = gaussian, stepwise = TRUE, vgmFun = "Exp", rvgm = NULL,
      subsample = 5000, \dots)
 \S4method{fit.gstatModel}{geosamples,formula,SpatialPixelsDataFrame}(observations, formulaString, covariates, 
-     methodid, method = list("GLM", "cubist", "HB")[[1]], 
+     methodid, method = list("GLM", "CART", "HB")[[1]], 
      dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]],
      family = gaussian, stepwise = TRUE, 
      vgmFun = "Exp", rvgm = NULL, subsample = 5000, \dots)
 \S4method{fit.gstatModel}{geosamples,formula,list}(observations, formulaString, covariates, 
-     methodid, method = list("GLM", "cubist", "HB")[[1]], 
+     methodid, method = list("GLM", "CART", "HB")[[1]], 
      dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]],
      family = gaussian, stepwise = TRUE, 
      vgmFun = "Exp", rvgm = NULL, subsample = 5000, \dots)
 \S4method{fit.gstatModel}{geosamples,list,list}(observations, formulaString, covariates, 
-     methodid, method = list("GLM", "cubist", "HB")[[1]], 
+     methodid, method = list("GLM", "CART", "HB")[[1]], 
      dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]],
      family = gaussian, stepwise = TRUE, 
      vgmFun = "Exp", rvgm = NULL, subsample = 5000, \dots)

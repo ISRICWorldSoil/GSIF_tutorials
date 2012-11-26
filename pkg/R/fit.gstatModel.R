@@ -6,7 +6,7 @@
 
 
 ## Fit a 'simple' 2D RK model:
-setMethod("fit.gstatModel", signature(observations = "SpatialPointsDataFrame", formulaString = "formula", covariates = "SpatialPixelsDataFrame"), function(observations, formulaString, covariates, method = list("GLM", "cubist", "HB")[[1]], dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]], family = gaussian, stepwise = TRUE, vgmFun = "Exp", rvgm = NULL, subsample = 5000, ...){
+setMethod("fit.gstatModel", signature(observations = "SpatialPointsDataFrame", formulaString = "formula", covariates = "SpatialPixelsDataFrame"), function(observations, formulaString, covariates, method = list("GLM", "CART", "HB")[[1]], dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]], family = gaussian, stepwise = TRUE, vgmFun = "Exp", rvgm = NULL, subsample = 5000, ...){
  
   ## the function only works with 2D maps:
   if(length(attr(coordinates(observations), "dimnames")[[2]])>2){
@@ -39,7 +39,7 @@ setMethod("fit.gstatModel", signature(observations = "SpatialPointsDataFrame", f
 
 
 ## Fit a RK model using geosamples class:
-setMethod("fit.gstatModel", signature(observations = "geosamples", formulaString = "formula", covariates = "SpatialPixelsDataFrame"), function(observations, formulaString, covariates, methodid, method = list("GLM", "cubist", "HB")[[1]], dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]], family = gaussian, stepwise = TRUE, vgmFun = "Exp", rvgm = NULL, subsample = 5000, ...){
+setMethod("fit.gstatModel", signature(observations = "geosamples", formulaString = "formula", covariates = "SpatialPixelsDataFrame"), function(observations, formulaString, covariates, methodid, method = list("GLM", "CART", "HB")[[1]], dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]], family = gaussian, stepwise = TRUE, vgmFun = "Exp", rvgm = NULL, subsample = 5000, ...){
    
   ## prepare regression matrix:
   ov <- overlay(x=covariates, y=observations, method=methodid, var.type = "numeric")
@@ -67,7 +67,7 @@ setMethod("fit.gstatModel", signature(observations = "geosamples", formulaString
 
 
 ## Fit a RK model to a list of covariates / formulas:
-setMethod("fit.gstatModel", signature(observations = "geosamples", formulaString = "list", covariates = "list"), function(observations, formulaString, covariates, methodid, method = list("GLM", "cubist", "HB")[[1]], dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]], family = gaussian, stepwise = TRUE, vgmFun = "Exp", rvgm = NULL, subsample = 5000, ...){
+setMethod("fit.gstatModel", signature(observations = "geosamples", formulaString = "list", covariates = "list"), function(observations, formulaString, covariates, methodid, method = list("GLM", "CART", "HB")[[1]], dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]], family = gaussian, stepwise = TRUE, vgmFun = "Exp", rvgm = NULL, subsample = 5000, ...){
     if(!length(formulaString)==length(covariates)){
       stop("'formulaString' and 'covariates' lists of same size expected")
     }
@@ -82,7 +82,7 @@ setMethod("fit.gstatModel", signature(observations = "geosamples", formulaString
 
 
 ## Fit a RK model and return an object of class "gstatModel" for a list of multiscale grids:
-setMethod("fit.gstatModel", signature(observations = "geosamples", formulaString = "formula", covariates = "list"), function(observations, formulaString, covariates, methodid, method = list("GLM", "cubist", "HB")[[1]], dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]], family = gaussian, stepwise = TRUE, vgmFun = "Exp", rvgm = NULL, subsample = 5000, ...){
+setMethod("fit.gstatModel", signature(observations = "geosamples", formulaString = "formula", covariates = "list"), function(observations, formulaString, covariates, methodid, method = list("GLM", "CART", "HB")[[1]], dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]], family = gaussian, stepwise = TRUE, vgmFun = "Exp", rvgm = NULL, subsample = 5000, ...){
 
   if(!any(sapply(covariates, class)=="SpatialPixelsDataFrame")){
     stop("List of covariates of class 'SpatialPixelsDataFrame' expected")

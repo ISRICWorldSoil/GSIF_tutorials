@@ -7,7 +7,7 @@
 
 ################## prediction #########################
 ## predict values using a RK model:
-predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30, debug.level = -1, predict.method = c("KED", "RK")[1], nfold = 5, verbose = FALSE, nsim = 0, mask.extra = TRUE, block = predictionLocations@grid@cellsize, method = list("GLM", "cubist", "HB")[[1]], zmin = -Inf, zmax = Inf, ...){
+predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30, debug.level = -1, predict.method = c("KED", "RK")[1], nfold = 5, verbose = FALSE, nsim = 0, mask.extra = TRUE, block = predictionLocations@grid@cellsize, method = list("GLM", "CART", "HB")[[1]], zmin = -Inf, zmax = Inf, subsample = length(object@sp), ...){
 
   if(nsim<0|!is.numeric(nsim)){
    stop("To invoke conditional simulations set 'nsim' argument to a positive integer number")
@@ -37,10 +37,24 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
   vgmmodel = object@vgmModel
   class(vgmmodel) <- c("variogramModel", "data.frame")
   ## if the variogram is not significant, then use a NULL model:
-  if(attr(vgmmodel, "singular")==TRUE|diff(vgmmodel$range)==0|diff(vgmmodel$psill)==0){ vgmmodel = NULL }
+  if(diff(vgmmodel$range)==0|diff(vgmmodel$psill)==0){ vgmmodel = NULL }
+
+  # subset to the prediction domain +- 10%:
+  if(class(predictionLocations)=="SpatialPixelsDataFrame"){
+    R = sqrt(areaSpatialGrid(predictionLocations))/3
+  } else {
+    R = sqrt(diff(predictionLocations@bbox[1,])*diff(predictionLocations@bbox[2,]))/3
+  }
+  
+  if(length(attr(predictionLocations@bbox, "dimnames")[[1]])==2){
+    selxy = object@sp@coords[,1] > predictionLocations@bbox[1,1]-.1*R & object@sp@coords[,1] < predictionLocations@bbox[1,2]+.1*R & object@sp@coords[,2] > predictionLocations@bbox[2,1]-.1*R & object@sp@coords[,2] < predictionLocations@bbox[2,2]+.1*R
+  } else {
+    Rv = diff(predictionLocations@bbox[3,])
+    selxy = object@sp@coords[,1] > predictionLocations@bbox[1,1]-.1*R & object@sp@coords[,1] < predictionLocations@bbox[1,2]+.1*R & object@sp@coords[,2] > predictionLocations@bbox[2,1]-.1*R & object@sp@coords[,2] < predictionLocations@bbox[2,2]+.1*R & object@sp@coords[,3] > predictionLocations@bbox[3,1]-.5*Rv & object@sp@coords[,3] < predictionLocations@bbox[3,2]+.5*Rv
+  }
 
   ## observed values:
-  observed <- SpatialPointsDataFrame(object@sp, data=object@regModel$model)
+  observed <- SpatialPointsDataFrame(object@sp[selxy,], data=object@regModel$model[selxy,]) 
   ## rename the column if necessary
   ## TH: this assumes that the first variable on the list is the target var:
   names(observed@data)[1] = variable
@@ -50,18 +64,19 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
     stop("proj4string at observed and predictionLocations don't match")
   }
   
-  ## physical limits:
+  ## try to guess physical limits:
   if(missing(zmin) & missing(zmax)){
     if(object@regModel$family$family == "gaussian" & object@regModel$family$link == "log"){ zmin = 0; zmax = Inf }
     if(object@regModel$family$link == "log"){ zmin = 0; zmax = Inf }    
     if(object@regModel$family$family == "binomial"){ zmin = 0; zmax = 1 }
+    if(object@regModel$family$family == "quasibinomial"){ zmin = 0; zmax = 1 }
     if(object@regModel$family$family == "poisson"){ zmin = 0; zmax = Inf }  
-    if(object@regModel$family$family == "gamma"){ zmin = 0; zmax = Inf }    
+    if(object@regModel$family$family == "Gamma"){ zmin = 0; zmax = Inf }
   }
   
   # values after transformation:
-  observed@data[,paste(variable, "glmfit", sep=".")] <- fitted.values(object@regModel)
-  observed@data[,paste(variable, "residual", sep=".")] <- residuals(object@regModel)
+  observed@data[,paste(variable, "glmfit", sep=".")] <- fitted.values(object@regModel)[selxy]
+  observed@data[,paste(variable, "residual", sep=".")] <- residuals(object@regModel)[selxy]
   
   ## remove duplicates as they can lead to singular matrix problems:
   if(length(zerodist(observed))>0){
@@ -88,6 +103,7 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
   predictionLocations@data[, paste(variable, "glmfit", sep=".")] <- rp$fit
   
   if(predict.method == "KED"){
+      ## Calibration of the trend...
       formString <- as.formula(paste(variable, "~", paste(variable, "glmfit", sep="."), sep=""))
       if(nsim==0){
         message("Generating predictions using the trend model (KED method)...")
@@ -104,7 +120,15 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
         ## cross-validation:
         if(nfold>0){      
           message(paste("Running ", nfold, "-fold cross validation...", sep=""))
-          cv <- gstat::krige.cv(formString, locations=observed, model=vgmmodel, nfold=nfold, verbose=verbose)
+            ## subset if necessary to speed up the computing:
+            if(subsample < length(observed)){
+              pcnt <- subsample/length(observed)
+              message(paste("Subsetting observations to", signif(pcnt*100, 3), "percent"))
+                observed.s <- observed[runif(length(observed))<pcnt,]
+                cv <- gstat::krige.cv(formString, locations=observed.s, model=vgmmodel, nfold=nfold, verbose=verbose)
+            } else {
+                cv <- gstat::krige.cv(formString, locations=observed, model=vgmmodel, nfold=nfold, verbose=verbose)            
+            }
           proj4string(cv) = observed@proj4string
         }
       }
@@ -160,7 +184,15 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
           if(nfold>0){
             formString <- as.formula(paste(variable, "~", paste(variable, "glmfit", sep="."), sep=""))
             message(paste("Running ", nfold, "-fold cross validation...", sep=""))
-            cv <- gstat::krige.cv(formString, locations=observed, model=vgmmodel, nfold=nfold, verbose=verbose)
+              ## subset if necessary to speed up the computing:
+              if(subsample < length(observed)){
+                pcnt <- subsample/length(observed)
+                message(paste("Subsetting observations to", signif(pcnt*100, 3), "percent"))
+                observed.s <- observed[runif(length(observed))<pcnt,]
+                cv <- gstat::krige.cv(formString, locations=observed.s, model=vgmmodel, nfold=nfold, verbose=verbose)
+              } else {
+                cv <- gstat::krige.cv(formString, locations=observed, model=vgmmodel, nfold=nfold, verbose=verbose)
+              }
             proj4string(cv) = observed@proj4string
           }
         }
@@ -222,14 +254,14 @@ setMethod("predict", signature(object = "gstatModel"), predict.gstatModel)
 
 
 ## predict multiple models independently:
-predict.gstatModelList <- function(object, predictionLocations, nmin = 10, nmax = 30, debug.level = -1, predict.method = c("KED", "RK")[1], nfold = 5, verbose = FALSE, nsim = 0, mask.extra = TRUE, ...){
+predict.gstatModelList <- function(object, predictionLocations, nmin = 10, nmax = 30, debug.level = -1, predict.method = c("KED", "RK")[1], nfold = 5, verbose = FALSE, nsim = 0, mask.extra = TRUE, block = predictionLocations@grid@cellsize, method = list("GLM", "CART", "HB")[[1]], zmin = -Inf, zmax = Inf, subsample = length(object@sp), ...){
     if(is.list(predictionLocations)&!length(object)==length(predictionLocations)){
       stop("'object' and 'predictionLocations' lists of same size expected")
     }
        
     rkp.l <- list(NULL)
     for(l in 1:length(object)){
-      rkp.l[[l]] <- predict(object[[l]], predictionLocations[[l]], nmin = nmin, nmax = nmax, debug.level = debug.level, predict.method = predict.method, nfold = nfold, verbose = verbose, nsim = nsim, mask.extra = mask.extra, ...)
+      rkp.l[[l]] <- predict(object[[l]], predictionLocations[[l]], nmin = nmin, nmax = nmax, debug.level = debug.level, predict.method = predict.method, nfold = nfold, verbose = verbose, nsim = nsim, mask.extra = mask.extra, block = block, method = method, zmin = zmin, zmax = zmax, subsample = subsample, ...)
     }
     
     return(rkp.l)
