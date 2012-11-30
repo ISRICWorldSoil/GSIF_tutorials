@@ -2,7 +2,7 @@
 \alias{fit.regModel}
 \alias{fit.regModel,formula,data.frame,SpatialPixelsDataFrame,character-method}
 \title{Fits a regression model to spatial data}
-\description{Fits a regression model (e.g. GLM) and variogram for the residuals using the default settings.}
+\description{Fits a regression model (e.g. GLM) and variogram for the response residuals using the default settings.}
 \usage{
 \S4method{fit.regModel}{formula,data.frame,SpatialPixelsDataFrame,character}(formulaString,
       rmatrix, predictionDomain, method = list("GLM", "CART", "HB")[[1]], 
@@ -19,7 +19,7 @@
   \item{stepwise}{specifies whether to run step-wise regression on top of GLM to get an optimal subset of predictors}
   \item{rvgm}{residual variogram (assumed to be unknown)}
   \item{vgmFun}{character; variogram function (\code{"Exp"} by default)}
-  \item{subsample}{integer; size of the subset}
+  \item{subsample}{integer; the threshold size at which the method will randomly subset the observations to speed up the model fitting}
   \item{\dots}{other optional arguments that can be passed to \code{glm} and/or \code{gstat::fit.variogram}}
 }
 \details{Produces an object of class \code{"gstatModel"} that contains: (1) fitted GLM, (2) fitted variogram, and (c) object of class \code{"SpatialPoints"} with observation locations. To combine overlay and model fitting operations, use \code{\link{fit.gstatModel}}.}

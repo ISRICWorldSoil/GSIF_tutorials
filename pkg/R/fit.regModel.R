@@ -35,8 +35,8 @@ setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.f
    
   ## mask out the missing values:
   if(any(names(rgm) == "na.action")){  rmatrix <- rmatrix[-rgm$na.action,] }
-  ## extract the residuals: 
-  rmatrix$residual <- residuals(rgm, type="response")
+  ## extract the response residuals: [http://stackoverflow.com/questions/2531489/understanding-glmresiduals-and-residglm] 
+  rmatrix$residual <- resid(rgm, type="response")
   
   ## test the normality of residuals:
   require(stats)

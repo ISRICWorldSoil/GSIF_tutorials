@@ -116,6 +116,9 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
         }
         ## mask out values outside physical limits:
         rk@data[,variable] <- ifelse(rk$var1.pred > zmax, zmax, ifelse(rk$var1.pred < zmin, zmin, rk$var1.pred))
+        if(object@regModel$family$family == "poisson"){
+          rk@data[,variable] <- as.integer(round(rk@data[,variable], 0))
+        }
         
         ## cross-validation:
         if(nfold>0){      
@@ -138,6 +141,9 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
         ## mask out values outside physical limits:
         for(i in 1:nsim){
           rk@data[,i] <- ifelse(rk@data[,i] > zmax, zmax, ifelse(rk@data[,i] < zmin, zmin, rk@data[,i]))
+          if(object@regModel$family$family == "poisson"){
+            rk@data[,i] <- as.integer(round(rk@data[,i], 0))
+          }
         }    
       }
   } else {  
@@ -180,6 +186,9 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
           ## TH: This formula assumes that the trend and residuals are independent; which is probably not true
           ## mask out values outside the physical limits:
           rk@data[,variable] <- ifelse(rk$var1.pred > zmax, zmax, ifelse(rk$var1.pred < zmin, zmin, rk$var1.pred))
+          if(object@regModel$family$family == "poisson"){
+            rk@data[,variable] <- as.integer(round(rk@data[,variable], 0))
+          }
 
           if(nfold>0){
             formString <- as.formula(paste(variable, "~", paste(variable, "glmfit", sep="."), sep=""))
@@ -216,6 +225,9 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
           rk@data[,i] <- xsim + rk@data[,i]
           ## TH: this is inexpensive but it assumes that the trend and residuals are independent!        
           rk@data[,i] <- ifelse(rk@data[,i] > zmax, zmax, ifelse(rk@data[,i] < zmin, zmin, rk@data[,i]))
+           if(object@regModel$family$family == "poisson"){
+             rk@data[,i] <- as.integer(round(rk@data[,i], 0))
+           }
         }
         names(rk) <- paste("sim", 1:nsim, sep="")
 

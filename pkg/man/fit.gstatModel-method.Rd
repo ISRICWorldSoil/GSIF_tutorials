@@ -53,7 +53,7 @@
  \item{variable following a poisson distribution}{\code{family = poisson(log)}}
 }
 }
-\note{Residuals will be checked for normality and problems reported by default. The warning messages should be taken with care, as when the sample size is small, even big departures from normality will not be reported; when the sample size is large, even the smallest deviation from normality might lead to a warning. Likewise, if the variogram fitting fails, consider fitting a variogram manually or using the \code{\link{fit.vgmModel}} method.
+\note{Residuals (response residuals from the model) will be checked for normality and problems reported by default. The warning messages should be taken with care, as when the sample size is small, even big departures from normality will not be reported; when the sample size is large, even the smallest deviation from normality might lead to a warning. Likewise, if the variogram fitting fails, consider fitting a variogram manually or using the \code{\link{fit.vgmModel}} method.
 }
 \references{
 \itemize{
@@ -76,12 +76,37 @@ coordinates(meuse.grid) <- ~x+y
 gridded(meuse.grid) <- TRUE
 proj4string(meuse.grid) <- CRS("+init=epsg:28992")
 # fit a model with a gaussian log-link:
-omm <- fit.gstatModel(meuse, om~dist, meuse.grid, family = gaussian(log))
+omm <- fit.gstatModel(meuse, om~dist+ffreq, meuse.grid, family = gaussian(log))
 # it was succesful
-omm@regModel
+summary(omm@regModel)
+v = omm@vgmModel; class(v) = c("variogramModel", "data.frame")
 om.sp <- SpatialPointsDataFrame(omm@sp, data = omm@regModel$model)
 \dontrun{# plot a variogram:
-plot(variogram(om~1, om.sp))
+vve = variogram(om~1, om.sp)
+vvres = variogram(om~dist+ffreq, om.sp)
+plot(x=vvres$dist, y=vvres$gamma, pch="+", xlab='distance',
+    cex=1.1, ylab='gamma', ylim = c(0, max(vve$gamma)))
+points(x=vve$dist, y=vve$gamma, pch="+", cex=1.1, col = "grey")
+vline <- variogramLine(v, maxdist=max(vvres$dist), n=length(vvres$dist))
+lines(x=vline$dist, y=vline$gamma, lwd=2)
+}
+om.rk <- predict(omm, meuse.grid)
+\dontrun{# plot the results in Google Earth:
+plotKML(om.rk)
+}
+
+# binary variable (0/1):
+som <- fit.gstatModel(meuse, I(soil==1)~dist+ffreq, meuse.grid, family = binomial(logit))
+summary(som@regModel)
+som.sp <- SpatialPointsDataFrame(som@sp, data = som@regModel$model)
+som.sp$I.soil = as.numeric(som.sp@data[,1])
+\dontrun{# plot a variogram:
+v2 = som@vgmModel; class(v2) = c("variogramModel", "data.frame")
+plot(variogram(I.soil~dist+ffreq, som.sp), v2)
+}
+som.rk <- predict(som, meuse.grid)
+\dontrun{# plot the results in Google Earth:
+plotKML(som.rk)
 }
 
 # 3D model:
@@ -114,6 +139,13 @@ glm.formulaString = as.formula(paste("observedValue ~ ",
 SNDMHT.m <- fit.gstatModel(observations=eberg.geo, 
   glm.formulaString, covariates=eberg_grid, methodid="SNDMHT")
 # problems with the variogram?
-SNDMHT.m@vgmModel
+\dontrun{# prepare new locations:
+new3D <- sp3D(eberg_grid)
+SNDMHT.rk.sd1 <- predict(SNDMHT.m, new3D[[1]])
+SNDMHT.rk.sd5 <- predict(SNDMHT.m, new3D[[5]])
+# plot the results in Google Earth:
+plotKML(SNDMHT.rk.sd1, z.lim=c(5,85))
+plotKML(SNDMHT.rk.sd5, z.lim=c(5,85))
+}
 }
 \keyword{methods}
