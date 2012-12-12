@@ -6,19 +6,17 @@
 
 
 ## resampling with FWTools:
-setMethod("gdalwarp", signature(obj = "SpatialPixelsDataFrame"), function(obj, proj4s = proj4string(obj), GridTopology = NULL, pixsize, resampling_method = "bilinear", NAflag = get("NAflag", envir = GSIF.opts), tmp.file = TRUE, show.output.on.console = FALSE){
+setMethod("gdalwarp", signature(obj = "SpatialPixelsDataFrame"), function(obj, proj4s = proj4string(obj), GridTopology = NULL, pixsize, resampling_method = "bilinear", NAflag = get("NAflag", envir = GSIF.opts), tmp.file = FALSE, show.output.on.console = FALSE){
   
-  require(stringr)
-  # look for FWTools path:  
-  gdalwarp <- get("gdalwarp", envir = plotKML.opts)
-  # try to locate FWTools:
-  if(nchar(gdalwarp)==0){
-      plotKML.env(silent = FALSE)
-      gdalwarp <- get("gdalwarp", envir = plotKML.opts)
+  if(.Platform$OS.type == "windows") {
+      fw.dir = .FWTools.path()        
+      program = shQuote(shortPathName(normalizePath(file.path(fw.dir, "bin/gdalwarp.exe"))))
+  } else {
+      program = "gdalwarp"
   }
   
-  if(!nchar(gdalwarp)==0){
-    message(paste('Resampling', length(names(obj)), 'layers to \"', stringr::str_trim(substr(proj4s, 1, 20)), ' ... ', '\" with grid cell size:', pixsize, '...'))
+  if(!nchar(program)==0){
+    message(paste('Resampling', length(names(obj)), 'layers to CRS(\"', stringr::str_trim(substr(proj4s, 1, 20)), ' ... ', '\") with grid cell size:', pixsize, '...'))
     
     pb <- txtProgressBar(min=0, max=ncol(obj), style=3)
     for(i in 1:ncol(obj)){
@@ -29,11 +27,11 @@ setMethod("gdalwarp", signature(obj = "SpatialPixelsDataFrame"), function(obj, p
     else { 
         tf <- paste(normalizeFilename(deparse(substitute(obj, env = parent.frame()))), names(obj)[i], sep="_")
        }
-
+     
         # write SPDF to a file:
         if(is.factor(obj@data[,i])){
           x <- writeRaster(raster(obj[i]), filename=paste(tf, ".tif", sep=""), format="GTiff", overwrite=TRUE)
-          if(maxValue(x)==0) { warning(paste("Layer", names(obj[i]), "is factor but contains no levels")) }
+          if(maxValue(x)==0) { warning(paste("Layer", names(obj[i]), "is of type 'factor' but contains no levels")) }
         }        
         else {
           writeGDAL(obj[i], paste(tf, ".tif", sep=""), "GTiff", mvFlag = NAflag)
@@ -41,12 +39,20 @@ setMethod("gdalwarp", signature(obj = "SpatialPixelsDataFrame"), function(obj, p
         
         # resample to WGS84 system:
         if(is.factor(obj@data[,i])){
-          if(is.null(GridTopology)){ 
-            system(paste(gdalwarp, ' ', tf, '.tif', ' -t_srs \"', proj4s, '\" ', tf, '_ll.tif -dstnodata \"255\" -r near -ot \"Byte\" -tr ', pixsize, ' ', pixsize, sep=""), show.output.on.console = show.output.on.console)
+          if(is.null(GridTopology)){
+            if(is.na(proj4string(obj))){
+              system(paste(program, ' ', tf, '.tif ', tf, '_ll.tif -dstnodata \"255\" -r near -ot \"Byte\" -tr ', pixsize, ' ', pixsize, sep=""), show.output.on.console = show.output.on.console)
             } else {
+              system(paste(program, ' ', tf, '.tif', ' -t_srs \"', proj4s, '\" ', tf, '_ll.tif -dstnodata \"255\" -r near -ot \"Byte\" -tr ', pixsize, ' ', pixsize, sep=""), show.output.on.console = show.output.on.console)
+            }
+          } else {
               if(class(GridTopology)=="GridTopology"){
                 bbox = bbox(SpatialGrid(GridTopology))
-                system(paste(gdalwarp, ' ', tf, '.tif', ' -t_srs \"', proj4s, '\" ', tf, '_ll.tif -dstnodata \"255\" -ot \"Byte\" -r near', ' -te ', bbox[1,1], ' ', bbox[2,1], ' ', bbox[1,2], ' ', bbox[2,2], ' -ts ', GridTopology@cells.dim[1], ' ', GridTopology@cells.dim[2], sep=""), show.output.on.console = show.output.on.console)
+                if(is.na(proj4string(obj))){
+                  system(paste(program, ' ', tf, '.tif ', tf, '_ll.tif -dstnodata \"255\" -ot \"Byte\" -r near', ' -te ', bbox[1,1], ' ', bbox[2,1], ' ', bbox[1,2], ' ', bbox[2,2], ' -ts ', GridTopology@cells.dim[1], ' ', GridTopology@cells.dim[2], sep=""), show.output.on.console = show.output.on.console)
+                } else {
+                  system(paste(program, ' ', tf, '.tif', ' -t_srs \"', proj4s, '\" ', tf, '_ll.tif -dstnodata \"255\" -ot \"Byte\" -r near', ' -te ', bbox[1,1], ' ', bbox[2,1], ' ', bbox[1,2], ' ', bbox[2,2], ' -ts ', GridTopology@cells.dim[1], ' ', GridTopology@cells.dim[2], sep=""), show.output.on.console = show.output.on.console)
+                }
               } else {
                 stop("'GridTopology-class' object required")
               }
@@ -54,11 +60,19 @@ setMethod("gdalwarp", signature(obj = "SpatialPixelsDataFrame"), function(obj, p
         }
         else {
           if(is.null(GridTopology)){ 
-            system(paste(gdalwarp, ' ', tf, '.tif', ' -t_srs \"', proj4s, '\" ', tf, '_ll.tif -dstnodata \"', NAflag, '\" -r ', resampling_method, ' -tr ', pixsize, ' ', pixsize, sep=""), show.output.on.console = show.output.on.console) 
+            if(is.na(proj4string(obj))){
+              system(paste(program, ' ', tf, '.tif ', tf, '_ll.tif -dstnodata \"', NAflag, '\" -r ', resampling_method, ' -tr ', pixsize, ' ', pixsize, sep=""), show.output.on.console = show.output.on.console) 
+            } else {
+              system(paste(program, ' ', tf, '.tif', ' -t_srs \"', proj4s, '\" ', tf, '_ll.tif -dstnodata \"', NAflag, '\" -r ', resampling_method, ' -tr ', pixsize, ' ', pixsize, sep=""), show.output.on.console = show.output.on.console)            
+            }
           } else {
               if(class(GridTopology)=="GridTopology"){
                 bbox = bbox(SpatialGrid(GridTopology))
-                system(paste(gdalwarp, ' ', tf, '.tif', ' -t_srs \"', proj4s, '\" ', tf, '_ll.tif -dstnodata \"', NAflag, '\" -r ', resampling_method, ' -te ', bbox[1,1], ' ', bbox[2,1], ' ', bbox[1,2], ' ', bbox[2,2], ' -ts ', GridTopology@cells.dim[1], ' ', GridTopology@cells.dim[2], sep=""), show.output.on.console = show.output.on.console)
+                if(is.na(proj4string(obj))){
+                  system(paste(program, ' ', tf, '.tif ', tf, '_ll.tif -dstnodata \"', NAflag, '\" -r ', resampling_method, ' -te ', bbox[1,1], ' ', bbox[2,1], ' ', bbox[1,2], ' ', bbox[2,2], ' -ts ', GridTopology@cells.dim[1], ' ', GridTopology@cells.dim[2], sep=""), show.output.on.console = show.output.on.console)
+                } else {
+                  system(paste(program, ' ', tf, '.tif', ' -t_srs \"', proj4s, '\" ', tf, '_ll.tif -dstnodata \"', NAflag, '\" -r ', resampling_method, ' -te ', bbox[1,1], ' ', bbox[2,1], ' ', bbox[1,2], ' ', bbox[2,2], ' -ts ', GridTopology@cells.dim[1], ' ', GridTopology@cells.dim[2], sep=""), show.output.on.console = show.output.on.console)                
+                }
               } else {
                 stop("'GridTopology-class' object required")
               }
@@ -66,11 +80,11 @@ setMethod("gdalwarp", signature(obj = "SpatialPixelsDataFrame"), function(obj, p
         }
         # read images back to R:
         if(i==1){
-          res <- readGDAL(paste(tf, "_ll.tif", sep=""), silent = TRUE)
+          res <- readGDAL(paste(tf, "_ll.tif", sep=""), silent = FALSE)
           names(res) <- names(obj)[i]
         }
         else{
-          res@data[,names(obj)[i]] <- readGDAL(paste(tf, "_ll.tif", sep=""), silent = TRUE)$band1
+          res@data[,names(obj)[i]] <- readGDAL(paste(tf, "_ll.tif", sep=""), silent = FALSE)$band1
         }
         
         # reformat to the original factors:

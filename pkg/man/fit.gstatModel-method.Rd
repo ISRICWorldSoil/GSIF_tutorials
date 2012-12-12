@@ -67,6 +67,11 @@
 \examples{
 # 2D model:
 library(sp)
+library(boot)
+library(aqp)
+library(plyr)
+library(splines)
+
 data(meuse)
 coordinates(meuse) <- ~x+y
 proj4string(meuse) <- CRS("+init=epsg:28992")
@@ -110,9 +115,7 @@ plotKML(som.rk)
 }
 
 # 3D model:
-library(aqp)
-library(plyr)
-library(splines)
+library(plotKML)
 data(eberg)
 # list columns of interest:
 s.lst <- c("ID", "soiltype", "TAXGRSC", "X", "Y")
@@ -139,13 +142,23 @@ glm.formulaString = as.formula(paste("observedValue ~ ",
 SNDMHT.m <- fit.gstatModel(observations=eberg.geo, 
   glm.formulaString, covariates=eberg_grid, methodid="SNDMHT")
 # problems with the variogram?
-\dontrun{# prepare new locations:
+\dontrun{# remove classes from the PRMGEO6 that are not represented in the model:
+fix.c = levels(eberg_grid$PRMGEO6)[!(levels(eberg_grid$PRMGEO6) \%in\% levels(SNDMHT.m@regModel$model$PRMGEO6))]
+summary(eberg_grid$PRMGEO6)
+for(j in fix.c){
+  eberg_grid$PRMGEO6[eberg_grid$PRMGEO6 == j] <- levels(eberg_grid$PRMGEO6)[7]
+}
+# prepare new locations:
 new3D <- sp3D(eberg_grid)
+# regression only:
+SNDMHT.rk.sd1 <- predict(SNDMHT.m, new3D[[1]], vgmmodel=NULL)
+SNDMHT.rk.sd1 <- predict(SNDMHT.m, new3D[[1]], predict.method="RK", vgmmodel=NULL)
+# simple kriging:
 SNDMHT.rk.sd1 <- predict(SNDMHT.m, new3D[[1]])
-SNDMHT.rk.sd5 <- predict(SNDMHT.m, new3D[[5]])
+# the RK method:
+SNDMHT.rk.sd1 <- predict(SNDMHT.m, new3D[[1]], predict.method="RK")
 # plot the results in Google Earth:
 plotKML(SNDMHT.rk.sd1, z.lim=c(5,85))
-plotKML(SNDMHT.rk.sd5, z.lim=c(5,85))
 }
 }
 \keyword{methods}

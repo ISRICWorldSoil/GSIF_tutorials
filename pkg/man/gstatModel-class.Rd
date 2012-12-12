@@ -1,12 +1,8 @@
 \name{gstatModel-class}
 \docType{class}
 \alias{gstatModel-class}
-\alias{predict,gstatModel-method}
 \alias{validate,gstatModel-method}
 \alias{validate}
-\alias{predict.gstatModel}
-\alias{predict,list-method}
-\alias{predict.gstatModelList}
 \title{A class for a linear geostatistical model}
 \description{A class containing fitted parameters of a linear geostatistical model. It comprises regression model (GLM), variogram model, and observation locations of sampled values used to fit the model.}
 \section{Slots}{
@@ -34,7 +30,7 @@ i.e. \emph{N} number of equiprobable realizations. To generate an object of type
 set \code{nsim = 0}. 
 }
 \author{ Tomislav Hengl and Gerard B.M. Heuvelink }
-\seealso{ \code{plotKML::SpatialPredictions-class}, \code{plotKML::RasterBrickSimulations-class}, \code{gstat::gstat}, \code{stats::glm}
+\seealso{ \code{\link{predict.gstatModel}}, \code{plotKML::SpatialPredictions-class}, \code{plotKML::RasterBrickSimulations-class}, \code{gstat::gstat}, \code{stats::glm}
 }
 \examples{ 
 # load observations:
@@ -52,7 +48,7 @@ omm <- fit.gstatModel(meuse, om~dist+ffreq, family=gaussian(link="log"), meuse.g
 show(omm@regModel)
 # produce SpatialPredictions:
 om.rk <- predict(omm, predictionLocations = meuse.grid)
-# plotKML(om.rk)
+#plotKML(om.rk)
 # run a proper cross-validation:
 rk.cv <- validate(omm)
 }

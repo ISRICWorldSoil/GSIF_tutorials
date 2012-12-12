@@ -26,19 +26,29 @@ setMethod("summary", signature(object = "SpatialPredictions"), function(object){
    z$family = object@glm$family$family
    RMSE <- sqrt(mean((object@validation$var1.pred-object@validation$observed)^2))
    z$RMSE = signif(RMSE, 4)
-   tvar <- 1-var(object@validation$residual, na.rm=T)/var(object@validation$observed, na.rm=T)
-   z$tvar = signif(tvar*100, 3)
-   asint <- as.integer(na.omit(round(object@predicted@data[,object@variable]/(RMSE*.5), 0)))
-   tmp <- tempfile()
-   save(asint, file=tmp, compress="gzip")
+   ## if cross-validation results are available:
+   if(is.na(RMSE)|is.null(RMSE)){
+    z$tvar = NA
+    z$breaks = NA
+    z$bonds = NA
+    z$Bytes = NA
+    z$compress = NA
+   } else {
+    tvar <- 1-var(object@validation$residual, na.rm=T)/var(object@validation$observed, na.rm=T)
+    z$tvar = signif(tvar*100, 3)
+    asint <- as.integer(na.omit(round(object@predicted@data[,object@variable]/(RMSE*.5), 0)))
+    tmp <- tempfile()
+    save(asint, file=tmp, compress="gzip")
+    # breaks:
+    xz <- range(object@predicted@data[,object@variable], na.rm = TRUE, finite = TRUE)
+    xc <- cut(object@predicted@data[,object@variable], breaks = seq(xz[1], xz[2], by=RMSE/2), include.lowest = TRUE)
+    z$breaks = seq(xz[1], xz[2], by=RMSE/2)
+    z$bonds = summary(xc)
+    z$Bytes = file.info(tmp)$size
+    z$compress = "gzip"
+   }
    z$npixels = length(object@predicted[,object@variable])
-   # breaks:
-   xz <- range(object@predicted@data[,object@variable], na.rm = TRUE, finite = TRUE)
-   xc <- cut(object@predicted@data[,object@variable], breaks = seq(xz[1], xz[2], by=RMSE/2), include.lowest = TRUE)
-   z$breaks = seq(xz[1], xz[2], by=RMSE/2)
-   z$bonds = summary(xc)
-   z$Bytes = file.info(tmp)$size
-   z$compress = "gzip"
+   
    return(z)
 })
 

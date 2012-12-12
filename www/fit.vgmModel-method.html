@@ -1,0 +1,102 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: Fits a 2D or 3D variogram model to spatial data</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="R.css">
+</head><body>
+
+<table width="100%" summary="page for fit.vgmModel-methods {GSIF}"><tr><td>fit.vgmModel-methods {GSIF}</td><td align="right">R Documentation</td></tr></table>
+
+<h2>Fits a 2D or 3D variogram model to spatial data</h2>
+
+<h3>Description</h3>
+
+<p>Fits a 2D or 3D variogram model based on a regression matrix and spatial domain of interest.</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+## S4 method for signature 'formula,data.frame,SpatialPixelsDataFrame'
+fit.vgmModel(formulaString,
+      rmatrix, predictionDomain, vgmFun = "Exp", 
+      dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]],
+      anis = NULL, subsample = nrow(rmatrix), ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+
+<table summary="R argblock">
+<tr valign="top"><td><code>formulaString</code></td>
+<td>
+<p>object of class <code>"formula"</code> &mdash; regression model</p>
+</td></tr> 
+<tr valign="top"><td><code>rmatrix</code></td>
+<td>
+<p>object of class <code>"data.frame"</code>; regression matrix produced as a result of spatial overlay</p>
+</td></tr>
+<tr valign="top"><td><code>predictionDomain</code></td>
+<td>
+<p>object of class <code>"SpatialPixelsDataFrame"</code>; spatial domain of interest</p>
+</td></tr>
+<tr valign="top"><td><code>vgmFun</code></td>
+<td>
+<p>character; variogram function (<code>"Exp"</code> by default)</p>
+</td></tr>
+<tr valign="top"><td><code>dimensions</code></td>
+<td>
+<p>character; <code>"3D"</code>, <code>"2D"</code>, <code>"2D+T"</code>, <code>"3D+T"</code> models</p>
+</td></tr>
+<tr valign="top"><td><code>anis</code></td>
+<td>
+<p>vector containing 2, 5 or more anisotropy parameters; see <code>gstat::vgm</code> for more info</p>
+</td></tr>
+<tr valign="top"><td><code>subsample</code></td>
+<td>
+<p>integer; size of the subset</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>other optional arguments that can be passed to <code>gstat::fit.variogram</code></p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>It will try to fit a variogram to multidimensional data. If the data set is large, this process can be time-consuming, hence one way to speed up fitting is to subset the regression matrix using the <code>subsample</code> argument (random subsetting).</p>
+
+
+<h3>Author(s)</h3>
+
+<p> Tomislav Hengl </p>
+
+
+<h3>See Also</h3>
+
+ <p><code><a href="fit.regModel-method.html">fit.regModel</a></code>, <code><a href="fit.gstatModel-method.html">fit.gstatModel</a></code>, <code>gstat::fit.variogram</code> </p>
+
+
+<h3>Examples</h3>
+
+<pre>
+# fit variogram to the Meuse data:
+data(meuse)
+coordinates(meuse) &lt;- ~x+y
+proj4string(meuse) &lt;- CRS("+init=epsg:28992")
+data(meuse.grid)
+gridded(meuse.grid) &lt;- ~x+y
+proj4string(meuse.grid) &lt;- CRS("+init=epsg:28992")
+# produce a regression matrix:
+index &lt;- overlay(meuse.grid, meuse)
+sel &lt;- !is.na(index)
+ov &lt;- data.frame(meuse.grid[index[sel],])
+ov$om &lt;- meuse@data[sel,"om"]
+# fit a model:
+v &lt;- fit.vgmModel(om~1, rmatrix=ov, meuse.grid, dimensions="2D")
+plot(variogram(om ~ 1, meuse[!is.na(meuse$om),]), v$vgm)
+</pre>
+
+<hr><div align="center">[Package <em>GSIF</em> version 0.2-4 <a href="00Index.html">Index</a>]</div>
+</body></html>

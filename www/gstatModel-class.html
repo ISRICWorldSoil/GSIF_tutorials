@@ -64,7 +64,7 @@
 
 <h3>See Also</h3>
 
- <p><code>plotKML::SpatialPredictions-class</code>, <code>plotKML::RasterBrickSimulations-class</code>, <code>gstat::gstat</code>, <code>stats::glm</code>
+ <p><code><a href="predict.gstatModel-method.html">predict.gstatModel</a></code>, <code>plotKML::SpatialPredictions-class</code>, <code>plotKML::RasterBrickSimulations-class</code>, <code>gstat::gstat</code>, <code>stats::glm</code>
 </p>
 
 
@@ -86,7 +86,7 @@ omm &lt;- fit.gstatModel(meuse, om~dist+ffreq, family=gaussian(link="log"), meus
 show(omm@regModel)
 # produce SpatialPredictions:
 om.rk &lt;- predict(omm, predictionLocations = meuse.grid)
-# plotKML(om.rk)
+#plotKML(om.rk)
 # run a proper cross-validation:
 rk.cv &lt;- validate(omm)
 </pre>

@@ -147,6 +147,14 @@ if(!isGeneric("getProcess")){
   setGeneric("getProcess", function(x, ...){standardGeneric("getProcess")})
 }
 
+if(!isGeneric("getSpatialTiles")){
+  setGeneric("getSpatialTiles", function(obj, ...){standardGeneric("getSpatialTiles")})
+}
+
+if(!isGeneric("tile")){
+  setGeneric("tile", function(x, ...){standardGeneric("tile")})
+}
+
 if(!isGeneric("describe")){
   setGeneric("describe", function(x, ...){standardGeneric("describe")})
 }
@@ -239,7 +247,7 @@ GSIF.env <- function(
     assign("cellsize", cellsize, envir=GSIF.opts)
     
     GSIF.opts <- list(wps.server, ref_CRS, NAflag, license_url, project_url, stdepths, stsize, cellsize)
-    names(GSIF.opts) <- c("location of the WPS", "referent CRS", "NA flag value", "lisence URL", "project home", "standard depths", "standard thicknesses", "grid cell size")
+    names(GSIF.opts) <- c("location of the WPS", "referent CRS", "NA flag value", "license URL", "project home", "standard depths", "standard thicknesses", "grid cell size")
     
     if(show.env){  return(GSIF.opts)  }
  
