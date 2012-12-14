@@ -7,7 +7,7 @@
 
 ################## prediction #########################
 ## predict values using a RK model:
-predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30, debug.level = -1, predict.method = c("KED", "RK")[1], nfold = 5, verbose = FALSE, nsim = 0, mask.extra = TRUE, block = predictionLocations@grid@cellsize, zmin = -Inf, zmax = Inf, subsample = length(object@sp), coarsening.factor = 1, vgmmodel = object@vgmModel, subset.observations = !is.na(object@sp@coords[,1]), betas = c(0,1), ...){
+predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30, debug.level = -1, predict.method = c("RK", "KED")[1], nfold = 5, verbose = FALSE, nsim = 0, mask.extra = TRUE, block = predictionLocations@grid@cellsize, zmin = -Inf, zmax = Inf, subsample = length(object@sp), coarsening.factor = 1, vgmmodel = object@vgmModel, subset.observations = !is.na(object@sp@coords[,1]), betas = c(0,1), ...){
 
   if(nsim<0|!is.numeric(nsim)){
    stop("To invoke conditional simulations set 'nsim' argument to a positive integer number")
@@ -237,8 +237,8 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
         names(rk) <- paste("sim", 1:nsim, sep="")
         } else {
         message(paste("Generating", nsim, "conditional simulations using the trend model (RK method)..."))
+        rk <- gstat::krige(formString, locations=observed, newdata=predictionLocations, model = vgmmodel, nmin = nmin, nmax = nmax, debug.level = debug.level, nsim = nsim, block = block, ...)
         for(i in 1:nsim){
-          rk <- gstat::krige(formString, locations=observed, newdata=predictionLocations, model = vgmmodel, nmin = nmin, nmax = nmax, debug.level = debug.level, nsim = 1, block = block, ...)
           # sum simulated values:
           xsim = rnorm(length(predictionLocations$se.fit), mean=predictionLocations@data[,paste(variable, "glmfit", sep=".")], sd=predictionLocations$se.fit)
           rk@data[,i] <- xsim + rk@data[,i]
@@ -248,8 +248,6 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
              rk@data[,i] <- as.integer(round(rk@data[,i], 0))
            }
         }
-        names(rk) <- paste("sim", 1:nsim, sep="")
-
         }
       }
   }
@@ -281,7 +279,7 @@ setMethod("predict", signature(object = "gstatModel"), predict.gstatModel)
 
 
 ## predict multiple models independently:
-predict.gstatModelList <- function(object, predictionLocations, nmin = 10, nmax = 30, debug.level = -1, predict.method = c("KED", "RK")[1], nfold = 5, verbose = FALSE, nsim = 0, mask.extra = TRUE, block = predictionLocations@grid@cellsize, zmin = -Inf, zmax = Inf, subsample = length(object@sp), ...){
+predict.gstatModelList <- function(object, predictionLocations, nmin = 10, nmax = 30, debug.level = -1, predict.method = c("RK", "KED")[1], nfold = 5, verbose = FALSE, nsim = 0, mask.extra = TRUE, block = predictionLocations@grid@cellsize, zmin = -Inf, zmax = Inf, subsample = length(object@sp), ...){
     if(is.list(predictionLocations)&!length(object)==length(predictionLocations)){
       stop("'object' and 'predictionLocations' lists of same size expected")
     }

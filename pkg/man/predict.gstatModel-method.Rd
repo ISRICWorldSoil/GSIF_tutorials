@@ -9,14 +9,14 @@
 \usage{ 
 \S4method{predict}{gstatModel}(object, 
      predictionLocations, nmin = 10, nmax = 30, debug.level = -1, 
-     predict.method = c("KED", "RK")[1], nfold = 5, verbose = FALSE, 
+     predict.method = c("RK", "KED")[1], nfold = 5, verbose = FALSE, 
      nsim = 0, mask.extra = TRUE, block = predictionLocations@grid@cellsize, 
      zmin = -Inf, zmax = Inf, subsample = length(object@sp), 
      coarsening.factor = 1, vgmmodel = object@vgmModel,
      subset.observations = !is.na(object@sp@coords[,1]), betas = c(0,1), \dots)
 \S4method{predict}{list}(object, 
      predictionLocations, nmin = 10, nmax = 30, debug.level = -1, 
-     predict.method = c("KED", "RK")[1], nfold = 5, verbose = FALSE, 
+     predict.method = c("RK", "KED")[1], nfold = 5, verbose = FALSE, 
      nsim = 0, mask.extra = TRUE, block = predictionLocations@grid@cellsize, 
      zmin = -Inf, zmax = Inf, subsample = length(object@sp), \dots)
 }
@@ -26,7 +26,7 @@
   \item{nmin}{integer; minimum number of nearest observations sent to \code{gstat::krige}}
   \item{nmax}{integer; maximum number of nearest observations sent to \code{gstat::krige}}
   \item{debug.level}{integer; default debug level mode sent to \code{gstat::krige}}
-  \item{predict.method}{character; mathematical implementation of the \code{gstat::krige} method: Kriging with External Drift (KED) or Regression-Kriging (RK)}
+  \item{predict.method}{character; mathematical implementation of the \code{gstat::krige} interpolation method with covariates: Regression-Kriging (RK) or Kriging with External Drift (KED)}
   \item{nfold}{integer; n-fold cross validation sent to \code{gstat::krige.cv}}  
   \item{verbose}{logical; specifies whether to supress the progress bar of the \code{gstat::krige.cv}}
   \item{nsim}{integer; triggers the geostatistical simulations}
