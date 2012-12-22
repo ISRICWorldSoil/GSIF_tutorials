@@ -19,7 +19,7 @@
 ## S4 method for signature 'gstatModel'
 predict(object, 
      predictionLocations, nmin = 10, nmax = 30, debug.level = -1, 
-     predict.method = c("KED", "RK")[1], nfold = 5, verbose = FALSE, 
+     predict.method = c("RK", "KED")[1], nfold = 5, verbose = FALSE, 
      nsim = 0, mask.extra = TRUE, block = predictionLocations@grid@cellsize, 
      zmin = -Inf, zmax = Inf, subsample = length(object@sp), 
      coarsening.factor = 1, vgmmodel = object@vgmModel,
@@ -27,7 +27,7 @@ predict(object,
 ## S4 method for signature 'list'
 predict(object, 
      predictionLocations, nmin = 10, nmax = 30, debug.level = -1, 
-     predict.method = c("KED", "RK")[1], nfold = 5, verbose = FALSE, 
+     predict.method = c("RK", "KED")[1], nfold = 5, verbose = FALSE, 
      nsim = 0, mask.extra = TRUE, block = predictionLocations@grid@cellsize, 
      zmin = -Inf, zmax = Inf, subsample = length(object@sp), ...)
 </pre>
@@ -59,7 +59,7 @@ predict(object,
 </td></tr>
 <tr valign="top"><td><code>predict.method</code></td>
 <td>
-<p>character; mathematical implementation of the <code>gstat::krige</code> method: Kriging with External Drift (KED) or Regression-Kriging (RK)</p>
+<p>character; mathematical implementation of the <code>gstat::krige</code> interpolation method with covariates: Regression-Kriging (RK) or Kriging with External Drift (KED)</p>
 </td></tr>
 <tr valign="top"><td><code>nfold</code></td>
 <td>
@@ -132,5 +132,5 @@ predict(object,
  <p><code><a href="gstatModel-class.html">gstatModel-class</a></code>, <code><a href="fit.regModel-method.html">fit.regModel</a></code>
 </p>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.2-4 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.2-5 <a href="00Index.html">Index</a>]</div>
 </body></html>

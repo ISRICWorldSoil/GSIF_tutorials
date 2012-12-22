@@ -152,11 +152,8 @@ for(j in fix.c){
 new3D <- sp3D(eberg_grid)
 # regression only:
 SNDMHT.rk.sd1 <- predict(SNDMHT.m, new3D[[1]], vgmmodel=NULL)
-SNDMHT.rk.sd1 <- predict(SNDMHT.m, new3D[[1]], predict.method="RK", vgmmodel=NULL)
-# simple kriging:
+# regression-kriging:
 SNDMHT.rk.sd1 <- predict(SNDMHT.m, new3D[[1]])
-# the RK method:
-SNDMHT.rk.sd1 <- predict(SNDMHT.m, new3D[[1]], predict.method="RK")
 # plot the results in Google Earth:
 plotKML(SNDMHT.rk.sd1, z.lim=c(5,85))
 }

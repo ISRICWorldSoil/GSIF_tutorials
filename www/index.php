@@ -71,8 +71,8 @@ echo $contents; } ?>
 &gt; install.packages(&quot;GSIF&quot;, repos=c(&quot;http://R-Forge.R-project.org&quot;))</p>
 <p>Alternatively, you can install the most recent snapshot of the package directly from the source by using e.g.:</p>
 <pre class="R_code">&gt; install.packages(c(&quot;RCurl&quot;, &quot;XML&quot;, &quot;rgdal&quot;, &quot;raster&quot;, &quot;sp&quot;, &quot;aqp&quot;, &quot;mda&quot;, &quot;gstat&quot;, &quot;plotKML&quot;, &quot;dismo&quot;, &quot;rJava&quot;))
-&gt; download.file(&quot;http://gsif.r-forge.r-project.org/GSIF_0.2-4.tar.gz&quot;, &quot;GSIF_0.2-4.tar.gz&quot;)
-&gt; system(&quot;R CMD INSTALL GSIF_0.2-4.tar.gz&quot;) </pre>
+&gt; download.file(&quot;http://gsif.r-forge.r-project.org/GSIF_0.2-5.tar.gz&quot;, &quot;GSIF_0.2-5.tar.gz&quot;)
+&gt; system(&quot;R CMD INSTALL GSIF_0.2-5.tar.gz&quot;) </pre>
 <p>GSIF package extensively uses a number of external software, hence it is highly recommended that, prior to starting GSIF, you first download and install:</p>
 <ol>
   <li><a href="http://fwtools.maptools.org" target="_blank">FWTools</a> (<em>required</em>) &#8212; this software is called by several functions (e.g. <a href="make.3Dgrid-method.html">make.3Dgrid</a>);</li>
@@ -82,6 +82,7 @@ echo $contents; } ?>
 <p>Read more:  installation and first steps with <strong><a href="http://plotkml.r-forge.r-project.org/">plotKML</a></strong>.</p>
 <p><strong>News:</strong></p>
 <ul>
+  <li>Dec 2012: added functionality for tiling large spatial objects; </li>
   <li>Nov 2012: revised gstatModel fitting functionality and reduced package dependencies; </li>
   <li>Aug 2012: added examples of how to <a href="http://plotkml.r-forge.r-project.org/tutorial.php">visualize</a> various (spatial) soil data; </li>
   <li>July 2012: added functionality for <a href="tutorial_eberg.php">3D regression-kriging and soil-class mapping</a>; </li>
