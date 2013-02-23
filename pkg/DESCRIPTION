@@ -1,16 +1,17 @@
 Package: GSIF
 Type: Package
 Title: Global Soil Information Facilities
-Version: 0.2-5
-Date: 2012-12-19
+Version: 0.3-0
+Date: 2013-02-07
 Authors@R: c(person("Tomislav", "Hengl", role = c("cre", "aut"), email = "tom.hengl@wur.nl"),
     person("Bas", "Kempen", role = "aut", email = "bas.kempen@wur.nl"),
     person("Gerard", "Heuvelink", role = "aut", email = "gerard.heuvelink@wur.nl"),
-  	person("Brendan", "Malone", role = "ctb", email = "brendan.malone@sydney.edu.au"))
+  	person("Brendan", "Malone", role = "ctb", email = "brendan.malone@sydney.edu.au"),
+    person("Hannes", "Reuter", role = "ctb", email = "hannes.reuter@wur.nl"))
 Description: Global Soil Information Facilities - tools (standards and functions) and sample datasets for global soil mapping.
 License: GPL
 URL: http://gsif.r-forge.r-project.org/
 LazyLoad: yes
 Depends: R (>= 2.13.0), raster, gstat 
-Imports: methods, sp, plotKML, RSAGA, stringr, RCurl, sp, maptools, rgdal, raster, aqp, dismo, plotKML, gstat, nortest, stats, plyr, nortest, boot
-Suggests: soiltexture, spatstat, plyr, splines, XML, nortest, mda, psych, fossil, nnet, SDMTools, rJava (>= 0.5-0)
+Imports: methods, sp, RSAGA, stringr, RCurl, maptools, rgdal, raster, aqp, dismo, plotKML, gstat, nortest, stats, plyr, boot, rpart, randomForest
+Suggests: soiltexture, spatstat, plyr, splines, XML, mda, psych, fossil, nnet, SDMTools, rJava (>= 0.5-0)

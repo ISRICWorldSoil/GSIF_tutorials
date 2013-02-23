@@ -140,6 +140,10 @@
 
 <pre>
 ## Not run: # load data and convert to SPC:
+library(rgdal)
+library(aqp)
+library(sp)
+
 data(afsp)
 sites &lt;- afsp$sites
 coordinates(sites) &lt;- ~ LONWGS84 + LATWGS84
@@ -168,5 +172,5 @@ writeGDAL(mw.grids["EV1MOD3"], "EV1MOD3.tif", "GTiff", mvFlag=-99999)
 ## End(Not run)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.2-5 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.3-0 <a href="00Index.html">Index</a>]</div>
 </body></html>

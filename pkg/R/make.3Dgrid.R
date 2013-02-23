@@ -153,7 +153,7 @@ setMethod("make.3Dgrid", signature(obj = "RasterBrick"),  function(obj, proj4s =
 setMethod("sp3D", signature(obj = "SpatialPixelsDataFrame"), function(obj, proj4s = proj4string(obj), stdepths = get("stdepths", envir = GSIF.opts), stsize = get("stsize", envir = GSIF.opts)){
     
   # convert to a data frame:
-  x <- as.data.frame(obj)
+  x <- data.frame(obj)
   # rename the column names so they correspond to the geosamples class:
   sel <- names(x) %in% attr(obj@coords, "dimnames")[[2]]
   # check if these are 2D or 3D grids:

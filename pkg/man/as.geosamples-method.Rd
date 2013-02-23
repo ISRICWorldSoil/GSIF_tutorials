@@ -33,6 +33,8 @@
 \examples{
 library(aqp)
 library(plyr)
+library(rgdal)
+library(sp)
 # sample profile from Nigeria:
 lon = 3.90; lat = 7.50; time = as.POSIXct("1978", format="\%Y") 
 id = "ISRIC:NG0017"; TAXNFAO8 = "LXp" 

@@ -79,6 +79,8 @@ spc(obj, formulaString, scale. = TRUE,
 <pre>
 # load data:
 library(plotKML)
+library(sp)
+
 pal = rev(rainbow(65)[1:48])
 data(eberg_grid)
 gridded(eberg_grid) &lt;- ~x+y
@@ -94,5 +96,5 @@ spplot(eberg_spc@predicted[1:4], at=sq, col.regions=pal)
 ## End(Not run)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.2-5 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.3-0 <a href="00Index.html">Index</a>]</div>
 </body></html>

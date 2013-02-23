@@ -6,7 +6,7 @@
 
 
 ## fit variogram to a 2D or 3D point object:
-setMethod("fit.vgmModel", signature(formulaString = "formula", rmatrix = "data.frame", predictionDomain = "SpatialPixelsDataFrame"), function(formulaString, rmatrix, predictionDomain, vgmFun = "Exp", dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]], anis = NULL, subsample = nrow(rmatrix), ...){
+setMethod("fit.vgmModel", signature(formulaString = "formula", rmatrix = "data.frame", predictionDomain = "SpatialPixelsDataFrame"), function(formulaString, rmatrix, predictionDomain, vgmFun = "Exp", dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]], anis = NULL, subsample = nrow(rmatrix), ivgm, ...){
 
   ## check input object:
   if(is.na(proj4string(predictionDomain))){ stop("proj4 string required for argument 'predictionDomain'") }
@@ -33,6 +33,11 @@ setMethod("fit.vgmModel", signature(formulaString = "formula", rmatrix = "data.f
   coordinates(rmatrix) <- as.formula(paste("~", paste(xyn, collapse = "+"), sep=""))
   proj4string(rmatrix) = predictionDomain@proj4string
   observations = as(rmatrix, "SpatialPoints")
+
+  ## model does not have to be fitted?
+  if(vgmFun == "Nug"){
+    rvgm <- vgm(nugget=var(rmatrix@data[,tv]), model=vgmFun, range=0, psill=var(rmatrix@data[,tv]))
+  } else {
 
   ## subset if necessary to speed up the computing:
   if(subsample < nrow(rmatrix)){
@@ -84,19 +89,23 @@ setMethod("fit.vgmModel", signature(formulaString = "formula", rmatrix = "data.f
   }
   
   ## initial variogram:    
-  if(dimensions == "2D"|dimensions == "3D"){
-    ivgm <- vgm(nugget=0, model=vgmFun, range=Range, psill=var(rmatrix@data[,tv]), anis = anis)
+  if(missing(ivgm)){
+    if(dimensions == "2D"|dimensions == "3D"){
+      ivgm <- vgm(nugget=0, model=vgmFun, range=Range, psill=var(rmatrix@data[,tv]), anis = anis)
+    }
   }
   ## TH: 2D+T and 3D+T variogram fitting will be added;
 
   ## try to fit a variogram:
-  try(rvgm <- gstat::fit.variogram(variogram(formulaString, rmatrix), ivgm, ...))   
+  try(rvgm <- gstat::fit.variogram(variogram(formulaString, rmatrix), model=ivgm, ...))   
   if(class(.Last.value)[1]=="try-error"){ 
     stop("Variogram model could not be fitted.") 
   }
     
   if(any(!(names(rvgm) %in% c("range", "psill"))) & diff(rvgm$range)==0|diff(rvgm$psill)==0){
     warning("Variogram shows no spatial dependence")     
+  }
+  
   }
   
   return(list(vgm=rvgm, observations=observations))

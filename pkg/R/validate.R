@@ -5,11 +5,13 @@
 # Note           : works only with linear models with normally distributed residuals;
 
 ## cross-validate a "gstatModel" object:
-setMethod("validate", signature(obj = "gstatModel"), function(obj, nfold = 5, predictionDomain = NULL, method = list("GLM", "CART", "HB")[[1]], save.gstatModels = FALSE){
+setMethod("validate", signature(obj = "gstatModel"), function(obj, nfold = 5, predictionDomain = NULL, method = list("GLM", "rpart", "randomForest", "HB")[[1]], save.gstatModels = FALSE){
 
    require(dismo)
    if(nfold < 2){ stop("'nfold' argument > 2 expected") }
 
+   if(!any(method %in% list("GLM", "rpart", "randomForest"))){ stop(paste(method, "method not available at the moment.")) }
+   
    if(method == "GLM"){
    # get the formString:
    formulaString <- formula(obj@regModel)
@@ -61,12 +63,9 @@ setMethod("validate", signature(obj = "gstatModel"), function(obj, nfold = 5, pr
     cv <- list(do.call(rbind, cv.l))
     names(cv) <- "validation"
    }
+   }
     
-   return(cv) 
-   
-  } else {
-    stop(paste(method, "method not available at the moment."))
-  }  
+   return(cv)   
 
 })
 

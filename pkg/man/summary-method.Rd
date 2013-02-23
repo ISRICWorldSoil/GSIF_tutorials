@@ -37,19 +37,12 @@ The summary returns a data.frame with the following columns:
 \item Hengl, T., Nikolic, M., MacMillan, R.A., (2012) \href{http://dx.doi.org/10.1016/j.jag.2012.02.005}{Mapping efficiency and information content}. International Journal of Applied Earth Observation and Geoinformation, special issue Spatial Statistics Conference.
 }
 }
-\seealso{ \code{\link{SpatialPredictions-class}} }
+\seealso{ \code{plotKML::SpatialPredictions-class} }
 \examples{
 # load observations:
 library(sp)
 library(rgdal)
-data(meuse)
-coordinates(meuse) <- ~x+y
-proj4string(meuse) <- CRS("+init=epsg:28992")
-# load grids:
-data(meuse.grid)
-coordinates(meuse.grid) <- ~x+y
-gridded(meuse.grid) <- TRUE
-proj4string(meuse.grid) <- CRS("+init=epsg:28992")
+loadMeuse()
 # fit a model:
 omm <- fit.gstatModel(meuse, om~dist, family=gaussian(link="log"), meuse.grid)
 show(omm@regModel)

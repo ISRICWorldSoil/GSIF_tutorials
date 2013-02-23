@@ -65,6 +65,9 @@ Listed gridded layers follow a standard naming convention used by WorlGrids.org 
 }
 \examples{
 library(rgdal)
+library(aqp)
+library(sp)
+
 data(edgeroi)
 edgeroi$sites[edgeroi$sites$SOURCEID=="399_EDGEROI_ed095_1",]
 edgeroi$horizons[edgeroi$horizons$SOURCEID=="399_EDGEROI_ed095_1",]

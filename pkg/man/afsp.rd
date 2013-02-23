@@ -62,6 +62,10 @@ The \code{mw.grids} data frame contains a list of soil covariates prepared for M
 }
 \examples{
 \dontrun{# load data and convert to SPC:
+library(rgdal)
+library(aqp)
+library(sp)
+
 data(afsp)
 sites <- afsp$sites
 coordinates(sites) <- ~ LONWGS84 + LATWGS84

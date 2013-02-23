@@ -44,6 +44,8 @@ library(plotKML)
 library(aqp)
 library(plyr)
 library(splines)
+library(rgdal)
+
 data(eberg)
 # subset data to 10%:
 eberg <- eberg[runif(nrow(eberg)) < .1,]

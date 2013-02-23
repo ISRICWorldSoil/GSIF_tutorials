@@ -148,6 +148,9 @@ Listed gridded layers follow a standard naming convention used by WorlGrids.org 
 
 <pre>
 library(rgdal)
+library(aqp)
+library(sp)
+
 data(edgeroi)
 edgeroi$sites[edgeroi$sites$SOURCEID=="399_EDGEROI_ed095_1",]
 edgeroi$horizons[edgeroi$horizons$SOURCEID=="399_EDGEROI_ed095_1",]
@@ -173,5 +176,5 @@ spplot(edgeroi.grids100["TI1LAN6"], sp.layout=pnts)
 ## End(Not run)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.2-5 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.3-0 <a href="00Index.html">Index</a>]</div>
 </body></html>

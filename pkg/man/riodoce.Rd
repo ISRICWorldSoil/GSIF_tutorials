@@ -63,6 +63,7 @@ library(aqp)
 library(plyr)
 library(rgdal)
 data(riodoce)
+
 \dontrun{# Promote to SoilProfileCollection
 riodoce <- join(riodoce$horizons, riodoce$sites, type='inner')
 # specify point IDs and depths:

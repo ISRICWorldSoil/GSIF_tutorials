@@ -54,6 +54,8 @@ Note: this operation can be time consuming for large areas (e.g. >> 1e6 pixels).
 \examples{
 # grids Ebergotzen:
 library(plotKML)
+library(rgdal)
+
 data(eberg_grid)
 gridded(eberg_grid) <- ~x+y
 proj4string(eberg_grid) <- CRS("+init=epsg:31467")

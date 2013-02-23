@@ -27,6 +27,8 @@
 \examples{
 # load data:
 library(plotKML)
+library(sp)
+
 pal = rev(rainbow(65)[1:48])
 data(eberg_grid)
 gridded(eberg_grid) <- ~x+y

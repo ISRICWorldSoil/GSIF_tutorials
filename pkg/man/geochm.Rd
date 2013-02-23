@@ -46,6 +46,8 @@ Data frame; contains the following columns:
 \note{Negative values of the heavy metal concetrations indicate a determination that is below the limit of detection for the analytic method used. The magnitude of the negative number indicates the detection limit. For example, -10 ppm means the result should be regarded as < 10 ppm.
 }
 \examples{
+library(sp)
+
 # Load the NGS data:
 data(geochm)
 coordinates(geochm) <- ~LONGITUDE+LATITUDE

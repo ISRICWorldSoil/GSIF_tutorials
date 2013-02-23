@@ -79,10 +79,13 @@
 <h3>Examples</h3>
 
 <pre>
+library(rgdal)
+library(sp)
+
 data(landmask)
 gridded(landmask) &lt;- ~x+y
 proj4string(landmask) &lt;- "+proj=longlat +datum=WGS84"
-## Not run:  # plot maps:
+## Not run:  ## plot maps:
 require(maps)
 country.m = map('world', plot=FALSE, fill=TRUE)
 IDs &lt;- sapply(strsplit(country.m$names, ":"), function(x) x[1])
@@ -90,9 +93,12 @@ require(maptools)
 country &lt;- as(map2SpatialPolygons(country.m, IDs=IDs), "SpatialLines")
 spplot(landmask["mask"], col.regions="grey", sp.layout=list("sp.lines", country))
 spplot(landmask["soilmask"], col.regions="grey", sp.layout=list("sp.lines", country))
+## also available in the Robinson projection at 20 km grid:
+data(landmask20km)
+image(landmask20km)
 
 ## End(Not run)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.2-5 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.3-0 <a href="00Index.html">Index</a>]</div>
 </body></html>

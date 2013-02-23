@@ -21,6 +21,8 @@
 \examples{
 library(aqp)
 library(plyr)
+library(rgdal)
+library(sp)
 # sample profile from Nigeria:
 lon = 3.90; lat = 7.50; id = "ISRIC:NG0017"; FAO1988 = "LXp" 
 top = c(0, 18, 36, 65, 87, 127) 

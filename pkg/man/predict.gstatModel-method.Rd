@@ -5,7 +5,7 @@
 \alias{predict,list-method}
 \alias{predict.gstatModelList}
 \title{Predict from an object of class \code{"gstatModel"}}
-\description{Predicts from an object of class \code{\link{gstatModel-class}} using new prediction locations. It combines GLM modeling and kriging.}
+\description{Predicts from an object of class \code{\link{gstatModel-class}} using new prediction locations. It combines predictions by regression (e.g. GLM) and interpolation of residuals (kriging).}
 \usage{ 
 \S4method{predict}{gstatModel}(object, 
      predictionLocations, nmin = 10, nmax = 30, debug.level = -1, 
@@ -41,9 +41,12 @@
   \item{betas}{numeric; vector of the beta coefficients to be passed to the \code{gstat::krige}}
   \item{\dots}{other optional arguments that can be passed to \code{gstat::krige} and/or \code{predict.glm}}  
 }
-\details{Selecting \code{predict.method = "KED"} invokes simple kriging with external drift with betas set at 0 (intercept) and 1 (regression line coefficient). This assumes that the regression model already results in an unbiased estimator of the trend model. If not speficied otherwise, \code{subset.observations} by default selects only obserations within the spatial domain (bounding box) of the \code{predictionLocations} plus 50\% of the one third of the extent of the area. Predictions can be speed up by using the \code{predict.method = RK} and larger \code{coarsening.factor} e.g. 2 to 5; in which case the ordinary kriging on residuals will run at a coarser resolution, and the output would be then downscaled to the original resolution using splines (via the \code{\link{gdalwarp}} method). In the case of \code{predict.method = RK}, the kriging variance is derived as a sum of the GLM variance and the OK variance, which is statistically sub-optimal.
+\details{Selecting \code{predict.method = "KED"} invokes simple kriging with external drift with betas set at 0 (intercept) and 1 (regression predictions i.e. single covariate). This assumes that the regression model already results in an unbiased estimator of the trend model.\cr 
+If not speficied otherwise, \code{subset.observations} by default selects only obserations within the spatial domain (bounding box) of the \code{predictionLocations} plus 50\% of the one third of the extent of the area.\cr 
+Predictions can be speed up by using a larger \code{coarsening.factor} e.g. 2 to 5, in which case the ordinary kriging on residuals will run at a coarser resolution, and the output would be then downscaled to the original resolution using splines (via the \code{\link{gdalwarp}} method). In the case of \code{predict.method = RK}, the kriging variance is derived as a sum of the GLM variance and the OK variance, which is statistically sub-optimal.
 }
-\author{ Tomislav Hengl and Gerard B.M. Heuvelink}
-\seealso{ \code{\link{gstatModel-class}}, \code{\link{fit.regModel}}
+\note{Predictions using \code{predict.method = "KED"} (the default gstat setting) can be time consuming for large data set and can result in instabilities (singular matrix problems) if the search radius is small and/or if all covariates contain exactly the same values.}
+\author{ Tomislav Hengl, Gerard B.M. Heuvelink and Bas Kempen}
+\seealso{ \code{\link{gstatModel-class}}, \code{\link{fit.gstatModel}}
 }
 \keyword{methods}

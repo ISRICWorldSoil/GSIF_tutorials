@@ -22,8 +22,8 @@ setMethod("summary", signature(object = "SpatialPredictions"), function(object){
       }
    z$area.units = areaunits
 #  z$cell.size = object@predicted@grid@cellsize
-   z$covariates = all.vars(object@glm$terms)[-1]
-   z$family = object@glm$family$family
+   z$covariates = all.vars(object@regModel.summary$terms)[-1]
+   z$family = object@regModel.summary$family$family
    RMSE <- sqrt(mean((object@validation$var1.pred-object@validation$observed)^2))
    z$RMSE = signif(RMSE, 4)
    ## if cross-validation results are available:
@@ -75,9 +75,11 @@ setMethod("show", signature(object = "SpatialPredictions"), function(object){
   cat("  Resolution (x)     :", object@predicted@grid@cellsize[1], "\n")
   cat("  Resolution (y)     :", object@predicted@grid@cellsize[2], "\n")
   cat("  Resolution (units) :", lengthunits, "\n")
-  cat("  GLM call formula   :", deparse(object@glm$call$formula), "\n")
-  cat("  Family             :", object@glm$family$family, "\n")  
-  cat("  Link function      :", object@glm$family$link, "\n")    
+  if(class(object@regModel.summary)=="summary.glm"){
+    cat("  GLM call formula   :", deparse(object@regModel.summary$call$formula), "\n")
+    cat("  Family             :", object@regModel.summary$family$family, "\n")  
+    cat("  Link function      :", object@regModel.summary$family$link, "\n")    
+  }
   cat("  Vgm model          :", paste(object@vgmModel$model[2]), "\n")
   cat("  Nugget (residual)  :", signif(object@vgmModel$psill[1], 3), "\n")
   cat("  Sill (residual)    :", signif(object@vgmModel$psill[2], 3), "\n")

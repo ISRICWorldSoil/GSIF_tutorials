@@ -8,7 +8,10 @@
 ################## NEW GSIF CLASSES ##############
 
 ## A new class for models fitted in gstat:
-setClass("gstatModel", representation(regModel = "glm", vgmModel = "data.frame", sp = "SpatialPoints"), validity = function(object) {
+setClass("gstatModel", representation(regModel = "ANY", vgmModel = "data.frame", sp = "SpatialPoints"), validity = function(object) {
+    ml = c("lm", "glm", "rpart", "randomForest")
+    if(!any(class(object@regModel) %in% ml))
+      return(paste("Only models of type", paste(ml, collapse=", "), "are accepted"))
     cn = c("model", "psill", "range", "kappa", "ang1", "ang2", "ang3", "anis1", "anis2")
     if(any(!(names(object@vgmModel) %in% cn)))
       return(paste("Expecting only column names:", paste(cn, collapse=", ")))

@@ -28,6 +28,7 @@
 \examples{
 # load data:
 library(plotKML)
+
 data(eberg)
 # subset to 20%:
 eberg <- eberg[runif(nrow(eberg))<.2,]
