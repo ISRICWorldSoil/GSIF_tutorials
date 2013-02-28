@@ -7,28 +7,27 @@
 ## cross-validate a "gstatModel" object:
 setMethod("validate", signature(obj = "gstatModel"), function(obj, nfold = 5, predictionDomain = NULL, method = list("GLM", "rpart", "randomForest", "HB")[[1]], save.gstatModels = FALSE){
 
-   require(dismo)
    if(nfold < 2){ stop("'nfold' argument > 2 expected") }
 
    if(!any(method %in% list("GLM", "rpart", "randomForest"))){ stop(paste(method, "method not available at the moment.")) }
    
    if(method == "GLM"){
-   # get the formString:
-   formulaString <- formula(obj@regModel)
-   mfamily <- obj@regModel$family
-   # get the regression matrix:
-   ov <- obj@regModel$data[-obj@regModel$na.action,]
-   if(nfold > nrow(ov)){ stop("'nfold' argument must not exceed total number of points") }
-   # get the covariates:
-   seln = all.vars(formulaString)[-1]
-   tv = all.vars(formulaString)[1]
-   tm = obj@regModel$terms[[2]]
+    # get the formString:
+    formulaString <- formula(obj@regModel)
+    mfamily <- obj@regModel$family
+    # get the regression matrix:
+    ov <- obj@regModel$data[-obj@regModel$na.action,]
+    if(nfold > nrow(ov)){ stop("'nfold' argument must not exceed total number of points") }
+    # get the covariates:
+    seln = all.vars(formulaString)[-1]
+    tv = all.vars(formulaString)[1]
+    tm = obj@regModel$terms[[2]]
    
-   # get the variogram:
-   vgmmodel = obj@vgmModel
-   class(vgmmodel) <- c("variogramModel", "data.frame")
-   # predictionDomain:
-   if(is.null(predictionDomain)){
+    # get the variogram:
+    vgmmodel = obj@vgmModel
+    class(vgmmodel) <- c("variogramModel", "data.frame")
+    # predictionDomain:
+    if(is.null(predictionDomain)){
      obj2D = data.frame(obj@sp@coords[,1:2])
      coordinates(obj2D) <- names(obj2D)
      message("Estimating the predictionDomain...")
@@ -41,12 +40,17 @@ setMethod("validate", signature(obj = "gstatModel"), function(obj, nfold = 5, pr
    m.l <- list(NULL)
    cv.l <- list(NULL)
    sel <- kfold(ov, k=nfold)
-   message(paste("Running ", nfold, "-fold cross validation...", sep=""))
+   message(paste("Running ", nfold, "-fold cross validation with model re-fitting...", sep=""))
    for(j in 1:nfold){
       rmatrix <- ov[!sel==j,]
       nlocs <- ov[sel==j,]
       nlocs <- SpatialPointsDataFrame(obj@sp[sel==j,], data=nlocs)
-      m.l[[j]] <- fit.regModel(formulaString=formulaString, rmatrix=rmatrix, predictionDomain=predictionDomain, method = method, family=mfamily, stepwise=TRUE, vgmFun=vgmmodel$model[2])
+      if(ncol(nlocs@coords)==2){ 
+         dimensions = "2D"
+      } else {
+         dimensions = "3D"      
+      }
+      m.l[[j]] <- fit.regModel(formulaString=formulaString, rmatrix=rmatrix, predictionDomain=predictionDomain, method=method, family=mfamily, dimensions=dimensions, stepwise=TRUE, vgmFun=vgmmodel$model[2])
       cv.l[[j]] <- predict.gstatModel(object=m.l[[j]], predictionLocations=nlocs, nfold=0, block=rep(0, ncol(obj@sp@coords)), mask.extra = FALSE)$predicted
       cv.l[[j]]$observed <- eval(tm, nlocs@data)
       cv.l[[j]]$residual <- cv.l[[j]]$observed - cv.l[[j]]$var1.pred

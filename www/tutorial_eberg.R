@@ -1,8 +1,8 @@
 # title         : tutorial_eberg.R
 # purpose       : Pedometric mapping using the Ebergotzen data set;
 # reference     : [http://gsif.r-forge.r-project.org/tutorial_eberg.php]
-# producer      : Prepared by T. Hengl, Bas Kempen, Gerard Heuvelink
-# last update   : In Wageningen, NL, Oct 19, 2012.
+# producer      : Prepared by T. Hengl and Bas Kempen
+# last update   : In Wageningen, NL, Feb 27, 2013.
 # inputs        : Ebergotzen data set [http://plotkml.r-forge.r-project.org/eberg.html]; 3670 observations of soil classes and textures; 100 m and 25 resolution grids (covariates)
 # outputs       : 3D predictions of soil properties and classes;
 
@@ -14,6 +14,7 @@
 library(plotKML)
 library(GSIF)
 library(raster)
+library(aqp)
 
 # load data:
 data(eberg)
@@ -95,12 +96,16 @@ spplot(eberg_spc@predicted[1:4], at=seq(rd[1], rd[2], length.out=48), col.region
 ## http://gsif.r-forge.r-project.org/Fig_eberg_SPCs1_4.png
 
 ## Build a 3D "gstatModel" 
-glm.formulaString = as.formula(paste("log((observedValue/100)/(1-observedValue/100)) ~ ", paste(names(eberg_spc@predicted), collapse="+"), "+ ns(altitude, df=4)"))
+glm.formulaString = as.formula(paste("log((SNDMHT/100)/(1-SNDMHT/100)) ~ ", paste(names(eberg_spc@predicted), collapse="+"), "+ ns(altitude, df=4)"))
+require(splines)
 ## Note: we have to use logits to prevent the output predictions to be outside the range [0-1];
 glm.formulaString
-SNDMHT.m <- fit.gstatModel(observations=eberg.geo, glm.formulaString, covariates=eberg_spc@predicted, methodid="SNDMHT")
+SNDMHT.m <- fit.gstatModel(observations=eberg.geo, glm.formulaString, covariates=eberg_spc@predicted)
 summary(SNDMHT.m@regModel)
 SNDMHT.m@vgmModel
+## compare with "rpart":
+SNDMHT.m2 <- fit.gstatModel(observations=eberg.geo, glm.formulaString, covariates=eberg_spc@predicted, method="rpart")
+
 # run a proper cross-validation:
 rk.cv <- validate(SNDMHT.m)
 tvar <- 1-var(rk.cv[[1]]$residual, na.rm=T)/var(rk.cv[[1]]$observed, na.rm=T)
@@ -117,8 +122,8 @@ str(new3D[[1]]@grid)
 sd.l <- lapply(new3D, FUN=function(x){predict(SNDMHT.m, predictionLocations=x, nfold=0)})
 ## back-transform:
 invlogit = function(x){exp(x)/(1+exp(x))*100}
-for(j in 1:length(sd.l)){ sd.l[[j]]@predicted$observedValue <- invlogit(sd.l[[j]]@predicted$observedValue) }
-summary(sd.l[[1]]@predicted$observedValue)
+for(j in 1:length(sd.l)){ sd.l[[j]]@predicted$SNDMHT <- invlogit(sd.l[[j]]@predicted$SNDMHT) }
+summary(sd.l[[1]]@predicted$SNDMHT)
 
 ## reproject to WGS84 system (100 m resolution):
 p = get("cellsize", envir = GSIF.opts)[2]
@@ -133,7 +138,7 @@ save(SNDMHT.gsm, file="SNDMHT.rda", compress="xz")
 z0 = mean(eberg_grid$DEMSRT6, na.rm=TRUE)
 ## export grids:
 for(j in 1:length(sd.ll)){
-  kml(slot(SNDMHT.gsm, paste("sd", j, sep="")), folder.name=paste("eberg_sd", j, sep=""), file=paste("SNDMHT_sd", j, ".kml", sep=""), colour=observedValue, zlim=c(10,85), raster_name=paste("SNDMHT_sd", j, ".png", sep=""), altitude=z0+5000+(s[j]*2500))
+  kml(slot(SNDMHT.gsm, paste("sd", j, sep="")), folder.name=paste("eberg_sd", j, sep=""), file=paste("SNDMHT_sd", j, ".kml", sep=""), colour=observedValue, z.lim=c(10,85), raster_name=paste("SNDMHT_sd", j, ".png", sep=""), altitude=z0+5000+(s[j]*2500))
 }
 ## export points:
 SNDMHT.geo <- subset(eberg.geo, method="SNDMHT")
@@ -142,7 +147,7 @@ SNDMHT.geo$observedValue <- as.numeric(SNDMHT.geo$observedValue)
 coordinates(SNDMHT.geo) <- ~ longitude + latitude + altitude
 proj4string(SNDMHT.geo) <- CRS("+proj=longlat +datum=WGS84")
 shape = "http://maps.google.com/mapfiles/kml/pal2/icon18.png"
-kml(SNDMHT.geo, shape=shape, colour=observedValue, zlim=c(10,85), file.name="SNDMHT_eberg.kml", altitude=z0+5000+(SNDMHT.geo@coords[,3]*2500), balloon=FALSE, labels="", extrude=FALSE, altitudeMode="relativeToGround", size=.3)
+kml(SNDMHT.geo, shape=shape, colour=observedValue, z.lim=c(10,85), file.name="SNDMHT_eberg.kml", altitude=z0+5000+(SNDMHT.geo@coords[,3]*2500), balloon=FALSE, labels="", extrude=FALSE, altitudeMode="relativeToGround", size=.3)
 
 ## Uncertainty at two arbitrary locations:
 loc <- eberg_spc@predicted[1200:1201,]
@@ -163,7 +168,7 @@ sd.loc <- predict(SNDMHT.m, predictionLocations=new3D.loc[[1]], nsim=10, block=c
 ## back-transform the values:
 sd.loc@realizations <- calc(sd.loc@realizations, fun=invlogit)
 str(sd.loc, max.level=2)
-plotKML(sd.loc, file.name="SNDMHT_sims.kml", zlim=c(10,85))
+plotKML(sd.loc, file.name="SNDMHT_sims.kml", z.lim=c(10,85))
 ## http://gsif.r-forge.r-project.org/Fig_eberg_sims_cross_section.png
 
 
@@ -226,7 +231,7 @@ points(eberg.xy, pch="+", cex=.5)
 image(raster(sd.l[[1]]@predicted["observedValue"]), col=SAGA_pal[[1]], main="100 m", axes = FALSE, xlab="", ylab="", zlim=rg, asp=1)
 points(eberg.xy, pch="+", cex=.5)
 ## http://gsif.r-forge.r-project.org/Fig_eberg_comparison_25_100_m.png
-plotKML(sd.l2@predicted["observedValue"], file.name="SNDMHT_25m.kml", zlim=c(10,85))
+plotKML(sd.l2@predicted["observedValue"], file.name="SNDMHT_25m.kml", z.lim=c(10,85))
 
 ## Predicting with multisource data:
 formulaString.l <- list(~ PRMGEO6+DEMSRT6+TWISRT6+TIRAST6, ~ DEMTOPx+TWITOPx+NVILANx)

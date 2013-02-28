@@ -10,7 +10,7 @@
 
 <h3>Description</h3>
 
-<p>Tries to automatically fit a 2D or 3D regression-kriging model for a given set of points (object of type <code>"SpatialPointsDataFrame"</code> or <code>"geosamples"</code>) and covariates (object of type <code>"SpatialPixelsDataFrame"</code>). It first fits a regression model (e.g. Generalized Linear Model, regression tree, random forest model or similar) following the <code>formulaString</code>, then fits variogram for residuals usign the <code>fit.variogram</code> method from the <a href="http://www.gstat.org">gstat</a> package. Creates an output object of class <code><a href="gstatModel-class.html">gstatModel-class</a></code>.</p>
+<p>Tries to automatically fit a 2D or 3D regression-kriging model for a given set of points (object of type <code>"SpatialPointsDataFrame"</code> or <code>"geosamples"</code>) and covariates (object of type <code>"SpatialPixelsDataFrame"</code>). It first fits a regression model (e.g. Generalized Linear Model, regression tree, random forest model or similar) following the <code>formulaString</code>, then fits variogram for residuals usign the <code>fit.variogram</code> method from the <a href="http://www.gstat.org">gstat</a> package. Creates an output object of class <code><a href="gstatModel.html">gstatModel-class</a></code>.</p>
 
 
 <h3>Usage</h3>
@@ -110,7 +110,7 @@ fit.gstatModel(observations, formulaString, covariates,
 
 <h3>Note</h3>
 
-<p>Residuals (response residuals from the model) will be checked for normality and problems reported by default. The warning messages should be taken with care, as when the sample size is small, even big departures from normality will not be reported; when the sample size is large, even the smallest deviation from normality might lead to a warning. Likewise, if the variogram fitting fails, consider fitting a variogram manually or using the <code><a href="fit.vgmModel-method.html">fit.vgmModel</a></code> method.
+<p>Residuals (response residuals from the model) will be checked for normality and problems reported by default. The warning messages should be taken with care, as when the sample size is small, even big departures from normality will not be reported; when the sample size is large, even the smallest deviation from normality might lead to a warning. Likewise, if the variogram fitting fails, consider fitting a variogram manually or using the <code><a href="fit.vgmModel.html">fit.vgmModel</a></code> method.
 </p>
 
 
@@ -135,7 +135,7 @@ fit.gstatModel(observations, formulaString, covariates,
 
 <h3>See Also</h3>
 
- <p><code><a href="gstatModel-class.html">gstatModel-class</a></code>, <code><a href="fit.regModel-method.html">fit.regModel</a></code>, <code><a href="geosamples-class.html">geosamples-class</a></code>, <code>stats::glm</code>, <code>gstat::fit.variogram</code>
+ <p><code><a href="gstatModel.html">gstatModel-class</a></code>, <code><a href="fit.regModel.html">fit.regModel</a></code>, <code><a href="geosamples.html">geosamples-class</a></code>, <code>stats::glm</code>, <code>gstat::fit.variogram</code>
 </p>
 
 

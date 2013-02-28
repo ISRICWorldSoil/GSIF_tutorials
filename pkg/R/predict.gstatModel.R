@@ -41,9 +41,9 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
   if(any(class(object@regModel) %in% "randomForest")){
     rp <- list(predict(object@regModel, predictionLocations, type="response"))
   }  
+  ## rename the target variable:   
   if(any(class(object@regModel) %in% c("randomForest", "rpart"))){
-    names(rp) = "fit"
-    ## target variable name: 
+    names(rp)[1] = "fit"
     variable = all.vars(attr(object@regModel$terms, "variables"))[1]
   }
        
@@ -81,7 +81,7 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
   }
   
   ## TH: Rename the column? is this necessary?
-  ## TH: this assumes that the first variable on the list is the target var:
+  ## (TH: this assumes that the first variable on the list is always the target var)
   names(observed@data)[1] = variable
 
   ## check that the proj4 strings match:
@@ -105,13 +105,15 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
     observed@data[,paste(variable, "residual", sep=".")] <- residuals(object@regModel)[subset.observations]
   }
   
-  if(any(class(object@regModel) %in% "rpart")){
+  if(any(class(object@regModel)=="rpart")){
     observed@data[,paste(variable, "modelFit", sep=".")] <- predict(object@regModel)[subset.observations]
-    observed@data[,paste(variable, "residual", sep=".")] <- (observed@data[,paste(variable, "modelFit", sep=".")] - object@regModel$y)[subset.observations]    
   }
-  if(any(class(object@regModel) %in% "randomForest")){
+  if(any(class(object@regModel)=="randomForest")){
     observed@data[,paste(variable, "modelFit", sep=".")] <- object@regModel$predicted[subset.observations]
-    observed@data[,paste(variable, "residual", sep=".")] <- (object@regModel$predicted - object@regModel$y)[subset.observations]    
+  }
+  if(any(class(object@regModel) %in% c("rpart", "randomForest"))){
+    observed@data[,paste(variable, "residual", sep=".")] <- (object@regModel$y - observed@data[,paste(variable, "modelFit", sep=".")])[subset.observations]
+    rp[["residual.scale"]] <- sqrt(mean((observed@data[,paste(variable, "residual", sep=".")])^2, na.rm=TRUE))    
   }
   
   ## remove duplicates as they can lead to singular matrix problems:
@@ -120,7 +122,7 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
   }
   
   ## skip cross-validation if nfold = 0
-  if(nfold==0){ 
+  if(nfold==0 | !any(class(object@regModel)=="glm")){ 
     cv <- observed[1]
     names(cv) <- "observed"
     cv$var1.pred <- rep(NA, length(cv$observed))
@@ -138,13 +140,13 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
   predictionLocations@data[, paste(variable, "modelFit", sep=".")] <- rp[["fit"]]
   
   ## Kriging with External Drift or Universal kriging:
+  ## TH: a simplified implementation
   if(predict.method == "KED"){
-      ## Calibration of the trend...
+      ## Calibration of the trend (single predictor)...
       formString <- as.formula(paste(variable, "~", paste(variable, "modelFit", sep="."), sep=""))
       
       if(nsim==0){
         message("Generating predictions using the trend model (KED method)...")
-        ## TH: this is a simplified implementation!
         rk <- gstat::krige(formula=formString, locations=observed, newdata=predictionLocations, model = vgmmodel, beta = betas, nmin = nmin, nmax = nmax, debug.level = debug.level, block = block, ...)
         
         ## mask extrapolation areas:
@@ -158,7 +160,7 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
           rk@data[,variable] <- as.integer(round(rk@data[,variable], 0))
         }
         
-        ## cross-validation:
+        ## cross-validation (default implementation by gstat):
         if(nfold>0){      
           message(paste("Running ", nfold, "-fold cross validation...", sep=""))
             ## subset if necessary to speed up the computing:
@@ -185,16 +187,16 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
         }    
       }
   
-  ## Regression-kriging:
+  ## Regression-kriging (the default approach):
   } else {  
    if(predict.method == "RK"){
       if(any(class(object@regModel)=="glm")){
-        ## GH: formula for prediction error (regression model only)
+        ## GH: prediction variance (regression model only)
         ## [http://en.wikipedia.org/wiki/Confidence_and_prediction_bands]
-        predictionLocations@data[,"se.fit"] <- rp[["se.fit"]]^2 + rp[["residual.scale"]]^2
+        predictionLocations@data[,"fit.var"] <- rp[["se.fit"]]^2
       } else {
-        ## TH: How to derive prediction error for rpart / randomForest?
-        predictionLocations@data[,"se.fit"] <- NA
+        ## TH: Prediction error for rpart / randomForest (unknown?):
+        predictionLocations@data[,"fit.var"] <- 0
       }
 
       ## predict the residuals:
@@ -204,17 +206,18 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
         # TH: if the vgmmodel is null leave the inverse distance interpolation out?
         if(is.null(vgmmodel)){
           # generate empty grid:
-          rk = predictionLocations["se.fit"]
+          rk = predictionLocations["fit.var"]
           rk@data[,variable] <- predictionLocations@data[,paste(variable, "modelFit", sep=".")] 
-          rk@data[,paste(variable, "svar", sep=".")] <- predictionLocations$se.fit/var(observed@data[,variable], na.rm=TRUE)
-          rk@data[,"se.fit"] <- NULL
-          # cross-validation using GLM:
-          if(nfold>0){
+          rk@data[,paste(variable, "svar", sep=".")] <- (predictionLocations$fit.var + rp[["residual.scale"]]^2)/var(observed@data[,variable], na.rm=TRUE)
+          rk@data[,"fit.var"] <- NULL
+          
+          ## cross-validation using GLM:
+          if(nfold>0 & any(class(object@regModel)=="glm")){
             cv <- observed[variable]
             names(cv) <- "observed"
             cv$var1.pred <- fitted.values(object@regModel)[subset.observations]
             rp.cv <- stats::predict.glm(object@regModel, newdata=object@regModel$data, type="response", se.fit = TRUE)
-            cv$var1.var <- rp.cv[["se.fit"]][-object@regModel$na.action][subset.observations]^2 + rp.cv[["residual.scale"]]^2
+            cv$var1.var <- (rp.cv[["se.fit"]][-object@regModel$na.action][subset.observations])^2 + (rp.cv[["residual.scale"]])^2
             try(cv.err <- glm.diag(object@regModel), silent=TRUE)
             # cv.err <- boot::cv.glm(data=object@regModel$data, modelFit=object@regModel, K=nfold)
             ## TH: boot::cv.glm fails for unknow reason? 
@@ -231,7 +234,7 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
         ## Predict at coarser grid to speed up the processing (only for 2D maps!)
           if(coarsening.factor>1){
             warning("Downscaling ordinary kriging predictions can lead to artifacts", call.=FALSE, immediate.=TRUE)
-            predictionLocations.S = spsample(SpatialPixels(SpatialPoints(predictionLocations["se.fit"]@coords[,1:2], predictionLocations@proj4string)), type="regular", cellsize=coarsening.factor*predictionLocations@grid@cellsize[1])
+            predictionLocations.S = spsample(SpatialPixels(SpatialPoints(predictionLocations["fit.var"]@coords[,1:2], predictionLocations@proj4string)), type="regular", cellsize=coarsening.factor*predictionLocations@grid@cellsize[1])
             gridded(predictionLocations.S) <- TRUE
             rk.S <- gstat::krige(formString, locations=observed, newdata=predictionLocations.S, model = vgmmodel, nmin = nmin, nmax = nmax, debug.level = debug.level, ...)
             rk <- gdalwarp(rk.S, GridTopology = predictionLocations@grid, pixsize=predictionLocations@grid@cellsize[1], resampling_method="cubicspline", tmp.file=TRUE)        
@@ -242,7 +245,7 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
           }
           ## sum regression and kriging:
           rk@data[,"var1.pred"] <- predictionLocations@data[,paste(variable, "modelFit", sep=".")] + rk@data[,"var1.pred"]
-          rk@data[,paste(variable, "svar", sep=".")] <- (predictionLocations$se.fit + rk@data[,"var1.var"]) / var(observed@data[,variable], na.rm=TRUE)  
+          rk@data[,paste(variable, "svar", sep=".")] <- (predictionLocations$fit.var + rk@data[,"var1.var"]) / var(observed@data[,variable], na.rm=TRUE)  
           ## TH: This formula assumes that the trend and residuals are independent; which is probably not true
           ## mask out values outside the physical limits:
           rk@data[,variable] <- ifelse(rk$var1.pred > zmax, zmax, ifelse(rk$var1.pred < zmin, zmin, rk$var1.pred))
@@ -253,7 +256,7 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
           if(nfold>0){
             ## TH: cross-validation for RK model is not implemented in gstat, so we use the KED model for this purpose:
             formString <- as.formula(paste(variable, "~", paste(variable, "modelFit", sep="."), sep=""))
-            message(paste("Running ", nfold, "-fold cross validation...", sep=""))
+            message(paste("Running ", nfold, "-fold cross validation using 'krige.cv'...", sep=""))
               ## subset if necessary to speed up the computing:
               if(subsample < length(observed)){
                 pcnt <- subsample/length(observed)
@@ -271,9 +274,9 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
         if(is.null(vgmmodel)){
         message(paste("Generating", nsim, "'rnorm' simulations using the trend model (RK method)..."))
         # simple rnorm simulations:
-        rk = predictionLocations["se.fit"]
+        rk = predictionLocations["fit.var"]
         for(i in 1:nsim){ 
-          xsim <- rnorm(length(predictionLocations$se.fit), mean=predictionLocations@data[,paste(variable, "modelFit", sep=".")], sd=predictionLocations$se.fit)
+          xsim <- rnorm(length(predictionLocations$fit.var), mean=predictionLocations@data[,paste(variable, "modelFit", sep=".")], sd=predictionLocations$fit.var)
           rk@data[,i] <- ifelse(xsim > zmax, zmax, ifelse(xsim < zmin, zmin, xsim))
         }
         names(rk) <- paste("sim", 1:nsim, sep="")
@@ -282,7 +285,7 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
         rk <- gstat::krige(formString, locations=observed, newdata=predictionLocations, model = vgmmodel, nmin = nmin, nmax = nmax, debug.level = debug.level, nsim = nsim, block = block, ...)
         for(i in 1:nsim){
           # sum simulated values:
-          xsim = rnorm(length(predictionLocations$se.fit), mean=predictionLocations@data[,paste(variable, "modelFit", sep=".")], sd=predictionLocations$se.fit)
+          xsim = rnorm(length(predictionLocations$fit.var), mean=predictionLocations@data[,paste(variable, "modelFit", sep=".")], sd=predictionLocations$fit.var)
           rk@data[,i] <- xsim + rk@data[,i]
           ## TH: this does not costs so much time to compute, but it assumes that the trend and residuals are independent!        
           rk@data[,i] <- ifelse(rk@data[,i] > zmax, zmax, ifelse(rk@data[,i] < zmin, zmin, rk@data[,i]))

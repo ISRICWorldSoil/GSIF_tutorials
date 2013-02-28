@@ -8,7 +8,7 @@
 ## Fit a 'simple' 2D RK model:
 setMethod("fit.gstatModel", signature(observations = "SpatialPointsDataFrame", formulaString = "formula", covariates = "SpatialPixelsDataFrame"), function(observations, formulaString, covariates, method = list("GLM", "rpart", "randomForest", "HB")[[1]], dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]], family = gaussian, stepwise = TRUE, vgmFun = "Exp", subsample = 5000, ...){
  
-  ## the function only works with 2D maps:
+  ## TH: the function only works with 2D maps at the moment:
   if(length(attr(coordinates(observations), "dimnames")[[2]])>2){
     warning("This method uses only 2D coordinates of the points. For 3D data consider using the 'geosamples-class'.")
   }
