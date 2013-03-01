@@ -169,11 +169,11 @@ setMethod("sp3D", signature(obj = "SpatialPixelsDataFrame"), function(obj, proj4
     XYD$altitude <- rep(stdepths[j], nrow(XYD))
     # sp complains by default, so better mask out the warnings:
     suppressWarnings(gridded(XYD) <- ~ longitude + latitude + altitude)
-    proj4string(XYD) <- proj4s
     # fix the cell size and cellcentre.offset:
     XYD@grid@cellsize[3] <- stsize[j]
     XYD@bbox[3,1] <- stdepths[j]-stsize[j]/2
     XYD@bbox[3,2] <- stdepths[j]+stsize[j]/2    
+    proj4string(XYD) <- proj4s
     out[[j]] <- XYD
   }
   

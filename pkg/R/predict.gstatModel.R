@@ -85,8 +85,10 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
   names(observed@data)[1] = variable
 
   ## check that the proj4 strings match:
-  if(!proj4string(observed)==proj4string(predictionLocations)){
+  if(!check_projection(observed, ref_CRS=proj4string(predictionLocations))){
     stop("proj4string at observed and predictionLocations don't match")
+  } else { ## force the two proj strings to be exactly the same otherwise gstat has problems:
+    suppressWarnings(proj4string(observed) <- proj4string(predictionLocations))
   }
   
   ## try to guess physical limits:
