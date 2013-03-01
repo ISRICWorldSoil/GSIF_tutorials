@@ -75,43 +75,57 @@
 </dd>
 <dt><code>ORCDRC</code></dt><dd><p>numeric; soil organic carbon content in permille (<code>OrgC</code> in the AFSP)</p>
 </dd>
+<dt><code>CEC</code></dt><dd><p>numeric; Cation Exchange Capacity in percent (<code>CecSoil</code> in the AFSP)</p>
+</dd>
 </dl>
 
-<p>The <code>mw.grids</code> data frame contains a list of soil covariates prepared for Malawi (94,215 grid nodes):
+<p>The <code>afgrid20</code> <code>"SpatialPixelsDataFrame"</code> object contains a list of soil covariates prepared for Africa at 20 km resolution (45,997 grid nodes) obtained from WorldGrids.org:
 </p>
 
 <dl>
-<dt><code>DEMSRT3</code></dt><dd><p>numeric; SRTM DEM</p>
-</dd>  
-<dt><code>EV1MOD3</code></dt><dd><p>numeric; first principal component of the monthly MODIS EVI time series data</p>
+<dt><code>LMTGSH0</code></dt><dd><p>integer; land mask based on <a href="http://www.ngdc.noaa.gov/mgg/shorelines/gshhs.html">GSHHS</a></p>
 </dd>
-<dt><code>EV2MOD3</code></dt><dd><p>numeric; second principal component of the monthly MODIS EVI time series data</p>
+<dt><code>SMKMOD0</code></dt><dd><p>integer; mask map indicating soil productive areas</p>
 </dd>
-<dt><code>GLCESA3</code></dt><dd><p>factor; general land cover class based on the <a href="http://ionia1.esrin.esa.int">GlobCov v2.2</a></p>
+<dt><code>DEMSRE0</code></dt><dd><p>integer; global relief model based on SRTM 30+ and ETOPO DEM at 1/120 arcdeegres</p>
 </dd>
-<dt><code>INSSRT3</code></dt><dd><p>numeric; potential incoming solar radiation derived in SAGA GIS</p>
+<dt><code>SLPSRT0</code></dt><dd><p>integer; slope map in percent derived using the DEMSRE</p>
 </dd>
-<dt><code>SLPSRT3</code></dt><dd><p>numeric; slope in degrees based on the SRTM DEM</p>
+<dt><code>TWISRE0</code></dt><dd><p>numeric; SAGA Topographic Wetness Index based on the SRTM DEM</p>
 </dd>
-<dt><code>TAXWRB3</code></dt><dd><p>factor; dominant soil class (group) following the World Reference Base soil classification system derived from the general soil polygon map of Malawi</p>
+<dt><code>G01ESA0</code></dt><dd><p>integer; percentage of land cover class 1 based on the <a href="http://ionia1.esrin.esa.int">GlobCov v2.2</a></p>
 </dd>
-<dt><code>TD1MOD3</code></dt><dd><p>numeric; first principal component of the 8-day MODIS day-time LST time series data</p>
-</dd>         
-<dt><code>TN1MOD3</code></dt><dd><p>numeric; first principal component of the 8-day MODIS night-time LST time series data</p>
-</dd> 
-<dt><code>TWISRT2</code></dt><dd><p>numeric; SAGA Topographic Wetness Index based on the SRTM DEM</p>
+<dt><code>...</code></dt><dd><p>other land cover classes</p>
 </dd>
-<dt><code>x</code></dt><dd><p>numeric; x-coordinate in the UTM 36S coordiante system with WGS84 ellipsoid</p>
+<dt><code>IFLGRE0</code></dt><dd><p>integer; intact forest landscapes based on Greenpeace</p>
 </dd>
-<dt><code>y</code></dt><dd><p>numeric; y-coordinate in the UTM 36S coordiante system with WGS84 ellipsoid</p>
+<dt><code>L3POBI0</code></dt><dd><p>factor; physiographic landform units (<a href="http://dx.doi.org/10.1016/j.geomorph.2011.12.001">SCALA project</a>)</p>
 </dd>
+<dt><code>PREGSM0</code></dt><dd><p>numeric; mean monthly precipitation (annual)</p>
+</dd>
+<dt><code>TDHMOD0</code></dt><dd><p>integer; maximum value of the 8-day MODIS day-time LST time series data</p>
+</dd>
+<dt><code>TDMMOD0</code></dt><dd><p>integer; mean value the 8-day MODIS day-time LST time series data</p>
+</dd>
+<dt><code>TDSMOD0</code></dt><dd><p>integer; standard deviation of the 8-day MODIS day-time LST time series data</p>
+</dd>
+<dt><code>TNMMOD0</code></dt><dd><p>integer; mean value the 8-day MODIS night-time LST time series data</p>
+</dd>
+<dt><code>TNSMOD0</code></dt><dd><p>integer; standard deviation of the 8-day MODIS night-time LST time series data</p>
+</dd>
+<dt><code>EVMMOD0</code></dt><dd><p>numeric; mean value of the monthly MODIS EVI time series data</p>
+</dd>
+<dt><code>EVSMOD0</code></dt><dd><p>integer; standard deviation of the monthly MODIS EVI time series data</p>
+</dd>
+<dt><code>SGEUSG0</code></dt><dd><p>factor; parent material class based on the <a href="http://pubs.usgs.gov/of/1997/ofr-97-470/OF97-470A/">USGS Surface Geology map</a></p>
+</dd>      
 </dl>
 
 
 
 <h3>Note</h3>
 
-<p>The landscape of Malawi is a series of dissected plateaus and mountainous areas along the Rift Valley i.e. lake Malawi. The size of the country is 118,000 square kilometers (the size of the rectangular block is 349 by 860 km). Dominat soil type map (<code>TAXWRB3</code>) was derived from the 1:600k scale soils map of Malawi and rasterized to 1 km resolution. Listed gridded layers follow a standard naming convention used by WorlGrids.org (the standard 8.3 filename convention with at most eight characters): first three letter are used for the variable type e.g. <code>DEM</code> (digital elevation model); the next three letters represent the data source or collection method e.g. <code>SRT</code> (SRTM); the 6th character is the effective scale e.g. <code>3</code> indicates the 2nd standard scale i.e. 1/120 decimal degrees (about 1 km).</p>
+<p>The soil covariate layers were selected to represent the standard soil forming factors: climate, organism, relief, and parent materials (CLORPT). Listed gridded layers follow a standard naming convention used by WorlGrids.org (the standard 8.3 filename convention with at most eight characters): first three letter are used for the variable type e.g. <code>DEM</code> (digital elevation model); the next three letters represent the data source or collection method e.g. <code>SRE</code> (SRTM/ETOPO); the 6th character is the effective scale e.g. <code>0</code> indicates grid size of i.e. 1/5 decimal degrees (about 20 km).</p>
 
 
 <h3>Author(s)</h3>
@@ -148,26 +162,26 @@ data(afsp)
 sites &lt;- afsp$sites
 coordinates(sites) &lt;- ~ LONWGS84 + LATWGS84
 proj4string(sites) &lt;- "+proj=latlong +datum=WGS84"
-# obtain country borders:
+## obtain country borders:
 library(maps)
 country.m = map('world', plot=FALSE, fill=TRUE)
 IDs &lt;- sapply(strsplit(country.m$names, ":"), function(x) x[1])
 require(maptools)
 country &lt;- as(map2SpatialPolygons(country.m, IDs=IDs), "SpatialLines")
-# overlay and plot points and maps:
+proj4string(country) = "+proj=latlong +datum=WGS84" 
+## overlay and plot points and maps:
 plot(country, col="darkgrey", xlim=c(-25.3,57.8), ylim=c(-34.8, 37.4))
 points(sites, pch=21, bg="white", cex=.6, col="black")
-# load gridded data for Malawi:
-download.file("http://worldgrids.org/rda/mw.grids.rda", "mw.grids.rda")
-load("mw.grids.rda")
-gridded(mw.grids) &lt;- ~x+y
-proj4string(mw.grids) &lt;- CRS(utm.csy)
-# plot maps:
+## load gridded data for Malawi:
+download.file("http://worldgrids.org/rda/afgrid20.rda", "afgrid20.rda")
+load("afgrid20.rda")
+## plot maps:
 col = grey(rev(seq(0.1,0.975,0.025)))
-names(mw.grids)
-spplot(mw.grids[1], col.regions=col)
-# write to a GIS format:
-writeGDAL(mw.grids["EV1MOD3"], "EV1MOD3.tif", "GTiff", mvFlag=-99999)
+names(afgrid20)
+lns = list("sp.lines", spTransform(country, afgrid20@proj4string))
+spplot(afgrid20["TDMMOD0a"], col.regions=col, sp.layout=lns)
+## write to a GIS format:
+writeGDAL(afgrid20["TDMMOD0a"], "TDMMOD0a.tif", "GTiff", mvFlag=-99999)
 
 ## End(Not run)
 </pre>

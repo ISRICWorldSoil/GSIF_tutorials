@@ -21,7 +21,7 @@
 }
 \details{Produces an object of class \code{"gstatModel"} that contains: (1) fitted regression model (e.g. a GLM, cubist model, randomForest model or a hierarchical Bayes model), (2) fitted variogram, and (c) object of class \code{"SpatialPoints"} with observation locations. To combine overlay and model fitting operations, consider using \code{\link{fit.gstatModel}}.}
 \author{ Tomislav Hengl, Gerard B.M. Heuvelink and Bas Kempen }
-\seealso{ \code{\link{fit.gstatModel}}, \code{stats::glm}, \code{gstat::fit.variogram}, \code{randomForest::randomForest}, \code{Cubist::cubist} }
+\seealso{ \code{\link{fit.gstatModel}}, \code{stats::glm}, \code{gstat::fit.variogram}, \code{randomForest::randomForest} }
 \examples{
 ## Meuse data:
 library(sp)

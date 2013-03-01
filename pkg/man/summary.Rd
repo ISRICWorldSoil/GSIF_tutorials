@@ -34,7 +34,7 @@ The summary returns a data.frame with the following columns:
 \author{ Tomislav Hengl }
 \references{
 \itemize{
-\item Hengl, T., Nikolic, M., MacMillan, R.A., (2012) \href{http://dx.doi.org/10.1016/j.jag.2012.02.005}{Mapping efficiency and information content}. International Journal of Applied Earth Observation and Geoinformation, special issue Spatial Statistics Conference.
+\item Hengl, T., Nikolic, M., MacMillan, R.A., (2013) \href{http://dx.doi.org/10.1016/j.jag.2012.02.005}{Mapping efficiency and information content}. International Journal of Applied Earth Observation and Geoinformation, special issue Spatial Statistics Conference, 22: 127--138.
 }
 }
 \seealso{ \code{plotKML::SpatialPredictions-class} }

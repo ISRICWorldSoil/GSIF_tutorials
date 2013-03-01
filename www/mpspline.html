@@ -10,7 +10,7 @@
 
 <h3>Description</h3>
 
-<p>Fits a mass preserving spline to a soil profile data. Target variable needs to be a numeric vector measured at least 3 horizons. It is assumed that soil variables collected per horizon refer to block support i.e. they represent composite values for the whole horizon.</p>
+<p>Fits a mass preserving spline to a soil profile data.</p>
 
 
 <h3>Usage</h3>
@@ -82,7 +82,7 @@ mpspline(obj, var.name,
 
 <h3>Note</h3>
 
-<p>This operation can be time-consuming for large data sets.</p>
+<p>Target variable needs to be a numeric vector measured at least 3 horizons. Only positive numbers for upper and lower depths can be accepted and the maximum depth is set at 200 cm if not otherwise indicated. It is assumed that soil variables collected per horizon refer to block support i.e. they represent composite values for the whole horizon. This operation can be time-consuming for large data sets.</p>
 
 
 <h3>Author(s)</h3>
