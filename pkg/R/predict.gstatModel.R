@@ -85,10 +85,12 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
   names(observed@data)[1] = variable
 
   ## check that the proj4 strings match:
-  if(!check_projection(observed, ref_CRS=proj4string(predictionLocations))){
-    stop("proj4string at observed and predictionLocations don't match")
-  } else { ## force the two proj strings to be exactly the same otherwise gstat has problems:
+  if(!proj4string(observed)==proj4string(predictionLocations)){
+    if(!check_projection(observed, ref_CRS=proj4string(predictionLocations))){
+      stop("proj4string at observed and predictionLocations don't match")
+    } else { ## force the two proj strings to be exactly the same otherwise gstat has problems:
     suppressWarnings(proj4string(observed) <- proj4string(predictionLocations))
+    }
   }
   
   ## try to guess physical limits:
@@ -208,10 +210,10 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
         # TH: if the vgmmodel is null leave the inverse distance interpolation out?
         if(is.null(vgmmodel)){
           # generate empty grid:
-          rk = predictionLocations["fit.var"]
+          rk = predictionLocations["fit.var"] + rp[["residual.scale"]]^2
+          names(rk) = "var1.var"
           rk@data[,variable] <- predictionLocations@data[,paste(variable, "modelFit", sep=".")] 
-          rk@data[,paste(variable, "svar", sep=".")] <- (predictionLocations$fit.var + rp[["residual.scale"]]^2)/var(observed@data[,variable], na.rm=TRUE)
-          rk@data[,"fit.var"] <- NULL
+          rk@data[,paste(variable, "svar", sep=".")] <- predictionLocations$var1.var / var(observed@data[,variable], na.rm=TRUE)
           
           ## cross-validation using GLM:
           if(nfold>0 & any(class(object@regModel)=="glm")){
@@ -247,8 +249,9 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
           }
           ## sum regression and kriging:
           rk@data[,"var1.pred"] <- predictionLocations@data[,paste(variable, "modelFit", sep=".")] + rk@data[,"var1.pred"]
-          rk@data[,paste(variable, "svar", sep=".")] <- (predictionLocations$fit.var + rk@data[,"var1.var"]) / var(observed@data[,variable], na.rm=TRUE)  
+          rk@data[,"var1.var"] <- (predictionLocations@data[,"fit.var"] + rk@data[,"var1.var"])
           ## TH: This formula assumes that the trend and residuals are independent; which is probably not true
+          rk@data[,paste(variable, "svar", sep=".")] <- rk@data[,"var1.var"] / var(observed@data[,variable], na.rm=TRUE)  
           ## mask out values outside the physical limits:
           rk@data[,variable] <- ifelse(rk$var1.pred > zmax, zmax, ifelse(rk$var1.pred < zmin, zmin, rk$var1.pred))
           if(object@regModel$family$family == "poisson"){
@@ -278,7 +281,7 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
         # simple rnorm simulations:
         rk = predictionLocations["fit.var"]
         for(i in 1:nsim){ 
-          xsim <- rnorm(length(predictionLocations$fit.var), mean=predictionLocations@data[,paste(variable, "modelFit", sep=".")], sd=predictionLocations$fit.var)
+          xsim <- rnorm(length(predictionLocations$fit.var), mean=predictionLocations@data[,paste(variable, "modelFit", sep=".")], sd=sqrt(predictionLocations$fit.var + rp[["residual.scale"]]^2))
           rk@data[,i] <- ifelse(xsim > zmax, zmax, ifelse(xsim < zmin, zmin, xsim))
         }
         names(rk) <- paste("sim", 1:nsim, sep="")
@@ -287,7 +290,7 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
         rk <- gstat::krige(formString, locations=observed, newdata=predictionLocations, model = vgmmodel, nmin = nmin, nmax = nmax, debug.level = debug.level, nsim = nsim, block = block, ...)
         for(i in 1:nsim){
           # sum simulated values:
-          xsim = rnorm(length(predictionLocations$fit.var), mean=predictionLocations@data[,paste(variable, "modelFit", sep=".")], sd=predictionLocations$fit.var)
+          xsim = rnorm(length(predictionLocations$fit.var), mean=predictionLocations@data[,paste(variable, "modelFit", sep=".")], sd=sqrt(predictionLocations$fit.var))
           rk@data[,i] <- xsim + rk@data[,i]
           ## TH: this does not costs so much time to compute, but it assumes that the trend and residuals are independent!        
           rk@data[,i] <- ifelse(rk@data[,i] > zmax, zmax, ifelse(rk@data[,i] < zmin, zmin, rk@data[,i]))

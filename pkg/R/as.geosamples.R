@@ -270,7 +270,12 @@ setMethod("show", signature(object = "geosamples"),
   }
   
   pnts = .subset.geosamples(y, method=methodid)
-  # reformat observed values:
+  ## check if it results in an empty set:
+  if(nrow(pnts)==0|is.null(pnts)){
+    stop(paste("Subsetting the geosamples based on method", methodid, "results in an empy set."))
+  }
+  
+  ## reformat observed values:
   if(var.type=="numeric"){
     pnts$observedValue = as.numeric(pnts$observedValue)
   } else { 
