@@ -1,0 +1,133 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: Africa Sentinel Site data</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="R.css">
+</head><body>
+
+<table width="100%" summary="page for afss {GSIF}"><tr><td>afss {GSIF}</td><td align="right">R Documentation</td></tr></table>
+
+<h2>Africa Sentinel Site data</h2>
+
+<h3>Description</h3>
+
+<p>Africa soil sampled collected at AfSIS sentinel sites. Part of the <a href="http://www.africasoils.net/data/ldsf-description">African Land Degradation Surveillance Framework</a> (LDSF) Field Database.</p>
+
+
+<h3>Usage</h3>
+
+<pre>data(afss)</pre>
+
+
+<h3>Format</h3>
+
+<p>The <code>afss</code> data set contains two data frames &mdash; sites and horizons. Sites table contains the following columns:
+</p>
+
+<dl>
+<dt><code>SOURCEID</code></dt><dd><p>factor; study soil profile ID (<code>SPID</code> in the LDSF Field Database)</p>
+</dd>
+<dt><code>CNTISOC</code></dt><dd><p>factor; ISO country code (<code>CC</code> in the LDSF Field Database)</p>
+</dd>
+<dt><code>LOCNAME</code></dt><dd><p>factor; sentinel site name referring to the closest populated place (<code>Site</code> in the LDSF Field Database)</p>
+</dd>
+<dt><code>LONWGS84</code></dt><dd><p>numeric; longitude in decimal degrees on the WGS84 datum (<code>Lon</code> in the LDSF Field Database)</p>
+</dd>
+<dt><code>LATWGS84</code></dt><dd><p>numeric; latitude in decimal degrees on the WGS84 datum (<code>Lat</code> in the LDSF Field Database)</p>
+</dd>
+</dl>
+
+<p>Horizons table contains the following columns:
+</p>
+
+<dl>
+<dt><code>SOURCEID</code></dt><dd><p>factor; study soil profile ID (<code>SPID</code> in the LDSF Field Database)</p>
+</dd>
+<dt><code>SAMPLEID</code></dt><dd><p>factor; soil sample ID (<code>SSID</code> in the LDSF Field Database)</p>
+</dd>
+<dt><code>UHDICM</code></dt><dd><p>numeric; upper sampling depth from the surface in cm</p>
+</dd>
+<dt><code>LHDICM</code></dt><dd><p>numeric; lower sampling depth from the surface in cm</p>
+</dd>
+<dt><code>CLYPPT</code></dt><dd><p>numeric; weight percentage of the clay particles (&lt;0.0002 mm; <code>Clay</code> in the LDSF Field Database)</p>
+</dd>
+<dt><code>SNDPPT</code></dt><dd><p>numeric; weight percentage of the silt particles (0.0002&ndash;0.05 mm; <code>Sand</code> in the LDSF Field Database)</p>
+</dd>
+<dt><code>PHIHO5</code></dt><dd><p>numeric; pH index measured in water solution(<code>pH</code> in the LDSF Field Database)</p>
+</dd>
+<dt><code>BST</code></dt><dd><p>numeric; the exchangeable bases sum of exchangeable Ca, Mg, K \&amp; Na of the sample in cmol/kg (<code>ExBas</code> in the LDSF Field Database)</p>
+</dd>
+<dt><code>ORCDRC</code></dt><dd><p>numeric; soil organic carbon content in permille (<code>SOC</code> in the LDSF Field Database)</p>
+</dd>
+</dl>
+
+<p><code>afss.spec</code> table contains the following columns:
+</p>
+
+<dl>
+<dt><code>SAMPLEID</code></dt><dd><p>factor; soil sample ID (<code>SSID</code> in the LDSF Field Database)</p>
+</dd>
+<dt><code>m4003.5</code></dt><dd><p>numeric; mid-infrared raw absorbance for denoted wavenumbers (Bruker-LTS instrument)</p>
+</dd>
+<dt>...</dt><dd><p>other raw absorbance values</p>
+</dd>
+</dl>
+
+
+
+<h3>Note</h3>
+
+<p>The soil samples from the sentinel site network were collected using three stage sampling scheme: a number of sentinel sites (about 10 by 10 kilometers in size) have been first selected over the whole continent (60 sites in 2012). Each sentinel site is stratied into 16 grid cells (each 1 square kilometer), and sampling cluster centroids are randomly located within the grid cells. Around each centroid, 10 sampling plots are randomly located and soil samples taken (or 160 points per sentinel site). At each sampling plot, soil samples were taken at two depths: 0&ndash;20, and 20&ndash;50 cm. The block size of each sampling plot is 1000 square meters or 0.1 ha.</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Africa Soil Information Service (<a href="http://africasoils.net">http://africasoils.net</a>)</p>
+
+
+<h3>References</h3>
+
+
+<ul>
+<li><p> Vagen, T., Shepherd, K. D., Walsh, M. G., Winowiecki, L., Desta, L. T., \&amp; Tondoh, J. E. (2010) <a href="http://worldagroforestry.org/sites/default/files/afsisSoilHealthTechSpecs_v1_smaller.pdf">AfSIS technical specifications: soil health surveillance</a>. World Agroforestry Centre, Nairobi, Kenya.
+</p>
+</li>
+<li><p> Africa Soil Information Service (<a href="http://africasoils.net">http://africasoils.net</a>) 
+</p>
+</li></ul>
+
+
+
+<h3>Examples</h3>
+
+<pre>
+## Not run: 
+library(sp)
+library(rgdal)
+
+data(afss)
+xy &lt;- afss$sites
+coordinates(xy) &lt;- ~ LONWGS84 + LATWGS84
+proj4string(xy) &lt;- "+proj=latlong +datum=WGS84"
+## obtain country borders:
+if(is.na(file.info("admin.af.rda")$size)){
+download.file("http://gsif.isric.org/lib/exe/fetch.php?media=admin.af.rda", 
+   "admin.af.rda")
+}
+try(load("admin.af.rda"))
+proj4string(admin.af) &lt;- get("ref_CRS", envir = plotKML.opts)
+admin.af &lt;- as(admin.af, "SpatialLines") 
+## overlay and plot points and maps:
+plot(admin.af, col="darkgrey", xlim=xy@bbox[1,], ylim=xy@bbox[2,])
+points(xy, pch=21, bg="white", cex=.6, col="black")
+## obtain MIR measurements:
+if(is.na(file.info("afss.spec.rda")$size)){
+download.file("http://gsif.isric.org/lib/exe/fetch.php?media=afss.spec.rda", 
+  "afss.spec.rda")
+}
+try(load("afss.spec.rda"))
+
+## End(Not run)
+</pre>
+
+<hr><div align="center">[Package <em>GSIF</em> version 0.3-0 <a href="00Index.html">Index</a>]</div>
+</body></html>

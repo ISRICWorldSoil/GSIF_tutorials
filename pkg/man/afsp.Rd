@@ -2,7 +2,6 @@
 \docType{data}
 \encoding{latin1}
 \alias{afsp}
-\alias{mw.grids}
 \title{Africa Soil Profiles Database}
 \description{A subset of the \href{http://africasoils.net/data/legacyprofile}{Africa Soil Profiles Database} (AFSP) that contains over 12,000 geo-referenced legacy soil profile records for 37 countries.}
 \usage{data(afsp)}
@@ -40,7 +39,7 @@ The \code{afgrid20} \code{"SpatialPixelsDataFrame"} object contains a list of so
   \describe{
   \item{\code{LMTGSH0}}{integer; land mask based on \href{http://www.ngdc.noaa.gov/mgg/shorelines/gshhs.html}{GSHHS}}
   \item{\code{SMKMOD0}}{integer; mask map indicating soil productive areas}
-  \item{\code{DEMSRE0}}{integer; global relief model based on SRTM 30+ and ETOPO DEM at 1/120 arcdeegres}
+  \item{\code{DEMSRE0}}{integer; global relief model based on SRTM 30+ and ETOPO DEM at 1/120 arc degrees}
   \item{\code{SLPSRT0}}{integer; slope map in percent derived using the DEMSRE}
   \item{\code{TWISRE0}}{numeric; SAGA Topographic Wetness Index based on the SRTM DEM}
   \item{\code{G01ESA0}}{integer; percentage of land cover class 1 based on the \href{http://ionia1.esrin.esa.int}{GlobCov v2.2}}
@@ -63,12 +62,11 @@ The \code{afgrid20} \code{"SpatialPixelsDataFrame"} object contains a list of so
 \references{
 \itemize{
 \item Leenaars, J.G.B. (2012) \href{http://www.isric.org/content/publications}{Africa Soil Profiles Database, Version 1.0. A compilation of geo-referenced and standardized legacy soil profile data for Sub Saharan Africa (with dataset)}. ISRIC report 2012/03. Africa Soil Information Service (AfSIS) project and ISRIC --- World Soil Information, Wageningen, the Netherlands.
-\item Ministry of Agriculture Malawi / FAO, (1992) Soils map of Malawi. Land Resources Evaluation Project /MLW/85/011. Land Resources Conservation Board, Lilongwe.
 \item Africa Soil Information Service (\url{http://africasoils.net}) 
 }
 }
 \examples{
-\dontrun{# load data and convert to SPC:
+\dontrun{
 library(rgdal)
 library(aqp)
 library(sp)
@@ -87,7 +85,7 @@ proj4string(country) = "+proj=latlong +datum=WGS84"
 ## overlay and plot points and maps:
 plot(country, col="darkgrey", xlim=c(-25.3,57.8), ylim=c(-34.8, 37.4))
 points(sites, pch=21, bg="white", cex=.6, col="black")
-## load gridded data for Malawi:
+## load gridded data for whole of Africa:
 download.file("http://worldgrids.org/rda/afgrid20.rda", "afgrid20.rda")
 load("afgrid20.rda")
 ## plot maps:
