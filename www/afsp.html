@@ -20,7 +20,6 @@
 
 <h3>Format</h3>
 
-
 <p>The <code>afsp</code> data set contains two data frames &mdash; sites and horizons. Sites table contains the following columns:
 </p>
 
@@ -87,7 +86,7 @@
 </dd>
 <dt><code>SMKMOD0</code></dt><dd><p>integer; mask map indicating soil productive areas</p>
 </dd>
-<dt><code>DEMSRE0</code></dt><dd><p>integer; global relief model based on SRTM 30+ and ETOPO DEM at 1/120 arcdeegres</p>
+<dt><code>DEMSRE0</code></dt><dd><p>integer; global relief model based on SRTM 30+ and ETOPO DEM at 1/120 arc degrees</p>
 </dd>
 <dt><code>SLPSRT0</code></dt><dd><p>integer; slope map in percent derived using the DEMSRE</p>
 </dd>
@@ -136,12 +135,8 @@
 <h3>References</h3>
 
 
-
 <ul>
 <li><p> Leenaars, J.G.B. (2012) <a href="http://www.isric.org/content/publications">Africa Soil Profiles Database, Version 1.0. A compilation of geo-referenced and standardized legacy soil profile data for Sub Saharan Africa (with dataset)</a>. ISRIC report 2012/03. Africa Soil Information Service (AfSIS) project and ISRIC &mdash; World Soil Information, Wageningen, the Netherlands.
-</p>
-</li>
-<li><p> Ministry of Agriculture Malawi / FAO, (1992) Soils map of Malawi. Land Resources Evaluation Project /MLW/85/011. Land Resources Conservation Board, Lilongwe.
 </p>
 </li>
 <li><p> Africa Soil Information Service (<a href="http://africasoils.net">http://africasoils.net</a>) 
@@ -153,7 +148,7 @@
 <h3>Examples</h3>
 
 <pre>
-## Not run: # load data and convert to SPC:
+## Not run: 
 library(rgdal)
 library(aqp)
 library(sp)
@@ -172,7 +167,7 @@ proj4string(country) = "+proj=latlong +datum=WGS84"
 ## overlay and plot points and maps:
 plot(country, col="darkgrey", xlim=c(-25.3,57.8), ylim=c(-34.8, 37.4))
 points(sites, pch=21, bg="white", cex=.6, col="black")
-## load gridded data for Malawi:
+## load gridded data for whole of Africa:
 download.file("http://worldgrids.org/rda/afgrid20.rda", "afgrid20.rda")
 load("afgrid20.rda")
 ## plot maps:
