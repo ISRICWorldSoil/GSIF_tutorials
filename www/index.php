@@ -53,7 +53,7 @@ echo $contents; } ?>
 <!-- end of project description -->
 
 <div>
-  <p>This package contains tools and procedures to handle soil data and produce gridded soil property maps to support the global soil data initivatives such as the GlobalSoilMap.net project.</p>
+  <p>This package contains tools and procedures to handle soil data and produce gridded soil property maps to support the global soil data initivatives such as the GlobalSoilMap.net project. This package was developed as a support to the <a href="http://africasoils.net" target="_blank">Africa Soil Information Service project</a>.</p>
 </div>
 <table border="0" cellspacing="0" cellpadding="10">
   <tr>
@@ -82,6 +82,7 @@ echo $contents; } ?>
 <p>Read more:  installation and first steps with <strong><a href="http://plotkml.r-forge.r-project.org/">plotKML</a></strong>.</p>
 <p><strong>News:</strong></p>
 <ul>
+  <li>Mar 2013: finished producing soil property maps of Africa at 1 km resolution; </li>
   <li>Feb 2013: GSIF package tutorial moved to the <a href="http://gsif.isric.org/doku.php?id=wiki:tutorial_eberg">DokuWiki page</a>; </li>
   <li>Dec 2012: added functionality for tiling large spatial objects; </li>
   <li>Nov 2012: revised gstatModel fitting functionality and reduced package dependencies; </li>
