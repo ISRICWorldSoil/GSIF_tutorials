@@ -2,7 +2,7 @@
 # purpose       : Pedometric mapping using the Ebergotzen data set;
 # reference     : [http://gsif.r-forge.r-project.org/tutorial_eberg.php]
 # producer      : Prepared by T. Hengl and Bas Kempen
-# last update   : In Wageningen, NL, Feb 27, 2013.
+# last update   : In Wageningen, NL, Mar 25, 2013.
 # inputs        : Ebergotzen data set [http://plotkml.r-forge.r-project.org/eberg.html]; 3670 observations of soil classes and textures; 100 m and 25 resolution grids (covariates)
 # outputs       : 3D predictions of soil properties and classes;
 
@@ -14,6 +14,7 @@
 library(plotKML)
 library(GSIF)
 library(raster)
+library(plyr)
 library(aqp)
 
 # load data:
@@ -96,7 +97,8 @@ spplot(eberg_spc@predicted[1:4], at=seq(rd[1], rd[2], length.out=48), col.region
 ## http://gsif.r-forge.r-project.org/Fig_eberg_SPCs1_4.png
 
 ## Build a 3D "gstatModel" 
-glm.formulaString = as.formula(paste("log((SNDMHT/100)/(1-SNDMHT/100)) ~ ", paste(names(eberg_spc@predicted), collapse="+"), "+ ns(altitude, df=4)"))
+logits = function(x){log((x/100)/(1-x/100))}
+glm.formulaString = as.formula(paste("logits(SNDMHT) ~ ", paste(names(eberg_spc@predicted), collapse="+"), "+ ns(altitude, df=4)"))
 require(splines)
 ## Note: we have to use logits to prevent the output predictions to be outside the range [0-1];
 glm.formulaString
@@ -122,8 +124,9 @@ str(new3D[[1]]@grid)
 sd.l <- lapply(new3D, FUN=function(x){predict(SNDMHT.m, predictionLocations=x, nfold=0)})
 ## back-transform:
 invlogit = function(x){exp(x)/(1+exp(x))*100}
-for(j in 1:length(sd.l)){ sd.l[[j]]@predicted$SNDMHT <- invlogit(sd.l[[j]]@predicted$SNDMHT) }
-summary(sd.l[[1]]@predicted$SNDMHT)
+invlogit.m = function(x, v){((1+exp(-x))^(-1)-.5*v*exp(-x)*(1-exp(-x))*(1+exp(-x))^(-3) )*100}
+for(j in 1:length(sd.l)){ sd.l[[j]]@predicted$SNDMHT.t <- invlogit.m(sd.l[[j]]@predicted$SNDMHT, sd.l[[j]]@predicted$var1.var) }
+summary(sd.l[[1]]@predicted$SNDMHT.t)
 
 ## reproject to WGS84 system (100 m resolution):
 p = get("cellsize", envir = GSIF.opts)[2]
@@ -155,10 +158,11 @@ new3D.loc <- sp3D(loc)
 str(new3D.loc[[1]])
 sd.loc <- predict(SNDMHT.m, predictionLocations=new3D.loc[[1]], nfold=0)
 ## 95% interval:
-int95 <- sd.loc@predicted$var1.pred[1] + c(-1.96, 1.96)*sqrt(sd.loc@predicted$var1.var[1])
+int95 <- sd.loc@predicted$var1.pred[1] + c(-1.645, 1.645)*sqrt(sd.loc@predicted$var1.var[1])
 invlogit(int95)
 new3D.loc[[1]]@coords[1,]
 ## Subset / stripe:
+library(rgdal)
 SNDMHT.xy <- spTransform(SNDMHT.geo, CRS("+init=epsg:31467"))
 sel.stripe <- eberg_spc@predicted@coords[,2] > min(SNDMHT.xy@coords[,2])  # 2400 locations
 loc <- eberg_spc@predicted[sel.stripe,]
@@ -195,8 +199,8 @@ summary(SNDMHT.m2@regModel)
 ## Predicting with multiscale data:
 eberg_grids <- list(eberg_grid, eberg_grid25)
 unlist(sapply(eberg_grids, names))
-glm.formulaString3 = observedValue ~ PRMGEO6+DEMSRT6+TWISRT6+TIRAST6+LNCCOR6+TWITOPx+NVILANx+ns(altitude, df=4)
-SNDMHT.m3 <- fit.gstatModel(observations=eberg.geo, glm.formulaString3, covariates=eberg_grids, methodid="SNDMHT.t")  # this takes slightly more time...
+glm.formulaString3 = logits(SNDMHT) ~ PRMGEO6+DEMSRT6+TWISRT6+TIRAST6+LNCCOR6+TWITOPx+NVILANx+ns(altitude, df=4)
+SNDMHT.m3 <- fit.gstatModel(observations=eberg.geo, glm.formulaString3, covariates=eberg_grids)  # this takes slightly more time...
 summary(SNDMHT.m3@regModel)
 # new3D2s <- sp3D(eberg_grids, stdepths=-0.025)
 # sd.l2 <- predict(SNDMHT.m3, predictionLocations=new3D2s[[1]], nfold=0)
@@ -213,31 +217,31 @@ eberg_spc25 <- spc(eberg_grid25p, formulaString2)
 ## http://gsif.r-forge.r-project.org/Fig_eberg_SPCs2_4.png
 
 ## fit the model:
-glm.formulaString3 = as.formula(paste("observedValue ~ ", paste(names(eberg_spc25@predicted), collapse="+"), "+ ns(altitude, df=4)"))
+glm.formulaString3 = as.formula(paste("logits(SNDMHT) ~ ", paste(names(eberg_spc25@predicted), collapse="+"), "+ ns(altitude, df=4)"))
 glm.formulaString3
-SNDMHT.m3 <- fit.gstatModel(observations=eberg.geo, glm.formulaString3, covariates=eberg_spc25@predicted, methodid="SNDMHT.t")
+SNDMHT.m3 <- fit.gstatModel(observations=eberg.geo, glm.formulaString3, covariates=eberg_spc25@predicted)
 summary(SNDMHT.m3@regModel)
 ## Prepare prediction locations (this requires downscaling!):
 new3D2s <- sp3D(eberg_spc25@predicted, stdepths=-0.025)
 sd.l2 <- predict(SNDMHT.m3, predictionLocations=new3D2s[[1]], nfold=0) ## this can take 3-5 mins!
-sd.l2@predicted$observedValue <- exp(sd.l2@predicted$observedValue)/(1+exp(sd.l2@predicted$observedValue))*100
+sd.l2@predicted$SNDMHT.t <- logits.m(sd.l2@predicted$SNDMHT, sd.l2@predicted$var1.var)
 ## compare predictions at two scales:
 data(SAGA_pal)
-rg <- range(sd.l2@predicted$observedValue, na.rm=TRUE)
+rg <- range(sd.l2@predicted$SNDMHT.t, na.rm=TRUE)
 rx <- rev(as.character(round(c(round(rg[1], 0), NA, round(mean(rg), 0), NA, round(rg[2], 0)), 2))) 
 par(mfrow=c(1,2), mar=c(.5,.5,3.5,0.5), oma=c(0,0,0,0))
-image(raster(sd.l2@predicted["observedValue"]), col=SAGA_pal[[1]], main="25 m", axes = FALSE, xlab="", ylab="", zlim=rg, asp=1)
+image(raster(sd.l2@predicted["SNDMHT.t"]), col=SAGA_pal[[1]], main="25 m", axes = FALSE, xlab="", ylab="", zlim=rg, asp=1)
 points(eberg.xy, pch="+", cex=.5)
-image(raster(sd.l[[1]]@predicted["observedValue"]), col=SAGA_pal[[1]], main="100 m", axes = FALSE, xlab="", ylab="", zlim=rg, asp=1)
+image(raster(sd.l[[1]]@predicted["SNDMHT.t"]), col=SAGA_pal[[1]], main="100 m", axes = FALSE, xlab="", ylab="", zlim=rg, asp=1)
 points(eberg.xy, pch="+", cex=.5)
 ## http://gsif.r-forge.r-project.org/Fig_eberg_comparison_25_100_m.png
-plotKML(sd.l2@predicted["observedValue"], file.name="SNDMHT_25m.kml", z.lim=c(10,85))
+plotKML(sd.l2@predicted["SNDMHT.t"], file.name="SNDMHT_25m.kml", z.lim=c(10,85))
 
 ## Predicting with multisource data:
 formulaString.l <- list(~ PRMGEO6+DEMSRT6+TWISRT6+TIRAST6, ~ DEMTOPx+TWITOPx+NVILANx)
 eberg_grids_spc <- spc(eberg_grids, formulaString.l)
 ## fit a list of models:
-glm.formulaString.l <- lapply(eberg_grids_spc, FUN=function(x){as.formula(paste("observedValue ~ ", paste(names(x@predicted), collapse="+"), "+ ns(altitude, df=4)"))})
+glm.formulaString.l <- lapply(eberg_grids_spc, FUN=function(x){as.formula(paste("logits(SNDMHT.t) ~ ", paste(names(x@predicted), collapse="+"), "+ ns(altitude, df=4)"))})
 glm.formulaString.l
 ## focus on the regression model (this returns a list of models):
 SNDMHT.ml <- fit.gstatModel(observations=eberg.geo, glm.formulaString.l, lapply(eberg_grids_spc, slot, "predicted"), methodid="SNDMHT.t")
