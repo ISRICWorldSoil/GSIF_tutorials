@@ -29,11 +29,11 @@ Horizons table contains the following columns:
   \item{\code{SNDPPT}}{numeric; weight percentage of the silt particles (0.0002--0.05 mm; \code{Sand} in the AFSP)}
   \item{\code{SLTPPT}}{numeric; weight percentage of the sand particles (0.05--2 mm; \code{Silt} in the AFSP)}
   \item{\code{CLYPPT}}{numeric; weight percentage of the clay particles (<0.0002 mm; \code{Clay} in the AFSP)}
-  \item{\code{BLD}}{bulk density in kg per cubic meter (\code{BlkDens} in the AFSP)}
-  \item{\code{PHIHO5}}{numeric; pH index measured in water solution(\code{PHH2O} in the AFSP)}
+  \item{\code{BLD}}{bulk density in tones per cubic-meter (\code{BlkDens} in the AFSP)}
+  \item{\code{PHIHO5}}{numeric; pH index measured in water solution (\code{PHH2O} in the AFSP)}
   \item{\code{PHIKCL}}{numeric; pH index measured in KCl solution (\code{PHKCl} in the AFSP)}
-  \item{\code{ORCDRC}}{numeric; soil organic carbon content in permille (\code{OrgC} in the AFSP)}
-  \item{\code{CEC}}{numeric; Cation Exchange Capacity in percent (\code{CecSoil} in the AFSP)}
+  \item{\code{ORCDRC}}{numeric; soil organic carbon content in permilles (\code{OrgC} in the AFSP)}
+  \item{\code{CEC}}{numeric; Cation Exchange Capacity in cmol/kg (\code{CecSoil} in the AFSP)}
 }
 The \code{afgrid20} \code{"SpatialPixelsDataFrame"} object contains a list of soil covariates prepared for Africa at 20 km resolution (45,997 grid nodes) obtained from WorldGrids.org:
   \describe{
@@ -58,7 +58,7 @@ The \code{afgrid20} \code{"SpatialPixelsDataFrame"} object contains a list of so
 }
 }
 \note{The soil covariate layers were selected to represent the standard soil forming factors: climate, organism, relief, and parent materials (CLORPT). Listed gridded layers follow a standard naming convention used by WorlGrids.org (the standard 8.3 filename convention with at most eight characters): first three letter are used for the variable type e.g. \code{DEM} (digital elevation model); the next three letters represent the data source or collection method e.g. \code{SRE} (SRTM/ETOPO); the 6th character is the effective scale e.g. \code{0} indicates grid size of i.e. 1/5 decimal degrees (about 20 km).}
-\author{The Africa Soil Profiles Database have been prepared by Johan Leenaars <johan.leenaars@wur.nl>. This is a subset of the original database that can be downloaded via \href{http://www.isric.org/sites/default/files/private/datasets/AfSP01Qry_ISRIC.zip}{www.isric.org}. The processing steps used to prepare this data are described in \href{http://gsif.r-forge.r-project.org/rw_AFSP.R}{this script}.}
+\author{The Africa Soil Profiles Database have been prepared by Johan Leenaars <johan.leenaars@wur.nl>. This is a subset of the original database that can be downloaded via \href{http://www.isric.org/content/africa-soil-profiles-database}{www.isric.org}. The processing steps used to prepare this data are described in \href{http://gsif.r-forge.r-project.org/rw_AFSP.R}{this script}.}
 \references{
 \itemize{
 \item Leenaars, J.G.B. (2012) \href{http://www.isric.org/content/publications}{Africa Soil Profiles Database, Version 1.0. A compilation of geo-referenced and standardized legacy soil profile data for Sub Saharan Africa (with dataset)}. ISRIC report 2012/03. Africa Soil Information Service (AfSIS) project and ISRIC --- World Soil Information, Wageningen, the Netherlands.
