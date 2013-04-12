@@ -39,7 +39,6 @@ Horizons table contains the following columns:
 \references{
 \itemize{
 \item Vagen, T., Shepherd, K. D., Walsh, M. G., Winowiecki, L., Desta, L. T., \& Tondoh, J. E. (2010) \href{http://worldagroforestry.org/sites/default/files/afsisSoilHealthTechSpecs_v1_smaller.pdf}{AfSIS technical specifications: soil health surveillance}. World Agroforestry Centre, Nairobi, Kenya.
-\item Africa Soil Information Service (\url{http://africasoils.net}) 
 }
 }
 \examples{

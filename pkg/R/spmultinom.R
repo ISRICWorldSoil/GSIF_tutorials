@@ -8,32 +8,32 @@
 ## fit a multinomial logistic regression and make predictions:
 setMethod("spmultinom", signature(formulaString = "formula", observations = "SpatialPointsDataFrame", covariates = "SpatialPixelsDataFrame"), function(formulaString, observations, covariates, class.stats = TRUE, predict.probs = TRUE, ...){
 
-  # generate formula if missing:
+  ## generate formula if missing:
   if(missing(formulaString)) {  
     formulaString <- as.formula(paste(names(observations)[1], "~", paste(names(covariates), collapse="+"), sep=""))
   }
-  # check the formula string:
+  ## check the formula string:
   if(!is.formula(formulaString)){
       stop("'formulaString' object of class 'formula' required")
   }
   
-  # selected variables:
+  ## selected variables:
   tv = all.vars(formulaString)[1]
   sel = names(covariates) %in% all.vars(formulaString)[-1]
   if(all(sel==FALSE)|length(sel)==0){
       stop("None of the covariates in the 'formulaString' matches the column names in the 'covariates' object")
   }
 
-  # overlay observations and covariates:
-  index <- overlay(covariates[sel], observations)  
-  ov <- cbind(data.frame(observations[tv]), covariates@data[index,sel])
+  ## over observations and covariates:
+  ov <- over(observations, covariates[sel])  
+  ov <- cbind(data.frame(observations[tv]), ov)
     
   require(nnet)
   message("Fitting a multinomial logistic regression model...")
-  mout <- multinom(formulaString, ov, ...)
+  mout <- nnet::multinom(formulaString, ov, ...)
   cout <- as.factor(paste(predict(mout, newdata=covariates, na.action = na.pass)))
 
-  # predict probabilities if required:
+  ## predict probabilities if required:
   if(predict.probs == TRUE){
      probs <- predict(mout, newdata=covariates, type="probs", na.action = na.pass)
      mm <- covariates[1]
@@ -42,11 +42,12 @@ setMethod("spmultinom", signature(formulaString = "formula", observations = "Spa
      pm@data[,tv] <- cout
      pm@data[,names(covariates)[1]] <- NULL    
      
-     # kappa statistics:
+     ## kappa statistics:
      require(mda)
      require(psych)
-     cf <- confusion(cout[index][which(!is.na(index))], as.character(ov[which(!is.na(index)),tv]))
-     # remove missing classes:
+     cout.m <- as.factor(paste(predict(mout, newdata=ov, na.action = na.pass)))
+     cf <- confusion(cout.m, as.character(ov[,tv]))
+     ## remove missing classes:
      a = attr(cf, "dimnames")[[1]] %in% attr(cf, "dimnames")[[2]] 
      b = attr(cf, "dimnames")[[2]] %in% attr(cf, "dimnames")[[1]]
      c.kappa = cohen.kappa(cf[a,b])
@@ -55,7 +56,7 @@ setMethod("spmultinom", signature(formulaString = "formula", observations = "Spa
      message(paste("Map purity:", signif(ac, 3)))
   }
   
-  # remove object class for consistency:
+  ## remove object class for consistency:
   class(mout) = "list"
 
   # estimate class centres using the results of multinom:

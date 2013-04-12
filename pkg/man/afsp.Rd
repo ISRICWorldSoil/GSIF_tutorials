@@ -15,7 +15,8 @@ The \code{afsp} data set contains two data frames --- sites and horizons. Sites 
   \item{\code{STDXYZ}}{numeric; profile location accuracy in decimal degrees (\code{XYAccur} in the AFSP)}
   \item{\code{TIMESTRR}}{character; the date on which this particular soil was described or sampled (\code{T_Year} in the AFSP)}
   \item{\code{TAXNWRB}}{factor; full soil classification name based on the WRB classification system (\code{ProfileID} in the AFSP)}
-  \item{\code{WRB06}}{factor; abbreviated soil group based on the WRB classification system (\code{WRB06rg} in the AFSP)}
+  \item{\code{TAXNFAO}}{factor; full soil classification code based on the FAO 1988 classification system (\code{FAO88} in the AFSP)}
+  \item{\code{TAXGWRB}}{factor; abbreviated soil group based on the WRB classification system (\code{WRB06rg} in the AFSP)}
   \item{\code{TAXNUSDA}}{factor; Keys to Soil Taxonomy taxon name e.g. \code{"Plinthic Udoxic Dystropept"} (\code{USDA} in the AFSP)}
 }
 Horizons table contains the following columns:
@@ -33,7 +34,7 @@ Horizons table contains the following columns:
   \item{\code{PHIHO5}}{numeric; pH index measured in water solution (\code{PHH2O} in the AFSP)}
   \item{\code{PHIKCL}}{numeric; pH index measured in KCl solution (\code{PHKCl} in the AFSP)}
   \item{\code{ORCDRC}}{numeric; soil organic carbon content in permilles (\code{OrgC} in the AFSP)}
-  \item{\code{CEC}}{numeric; Cation Exchange Capacity in cmol/kg (\code{CecSoil} in the AFSP)}
+  \item{\code{CEC}}{numeric; Cation Exchange Capacity in cmol+/kg (\code{CecSoil} in the AFSP)}
 }
 The \code{afgrid20} \code{"SpatialPixelsDataFrame"} object contains a list of soil covariates prepared for Africa at 20 km resolution (45,997 grid nodes) obtained from WorldGrids.org:
   \describe{
@@ -58,7 +59,7 @@ The \code{afgrid20} \code{"SpatialPixelsDataFrame"} object contains a list of so
 }
 }
 \note{The soil covariate layers were selected to represent the standard soil forming factors: climate, organism, relief, and parent materials (CLORPT). Listed gridded layers follow a standard naming convention used by WorlGrids.org (the standard 8.3 filename convention with at most eight characters): first three letter are used for the variable type e.g. \code{DEM} (digital elevation model); the next three letters represent the data source or collection method e.g. \code{SRE} (SRTM/ETOPO); the 6th character is the effective scale e.g. \code{0} indicates grid size of i.e. 1/5 decimal degrees (about 20 km).}
-\author{The Africa Soil Profiles Database have been prepared by Johan Leenaars <johan.leenaars@wur.nl>. This is a subset of the original database that can be downloaded via \href{http://www.isric.org/content/africa-soil-profiles-database}{www.isric.org}. The processing steps used to prepare this data are described in \href{http://gsif.r-forge.r-project.org/rw_AFSP.R}{this script}.}
+\author{The Africa Soil Profiles Database have been prepared by Johan Leenaars <johan.leenaars@wur.nl>. This is a subset of the original database that can be downloaded via \href{http://www.isric.org/content/africa-soil-profiles-database}{www.isric.org}. The processing steps used to prepare this data are described in \href{https://code.google.com/p/gsif/source/browse/trunk/AFRICA/ASPDB/rw_AFSP.R}{this script}.}
 \references{
 \itemize{
 \item Leenaars, J.G.B. (2012) \href{http://www.isric.org/content/publications}{Africa Soil Profiles Database, Version 1.0. A compilation of geo-referenced and standardized legacy soil profile data for Sub Saharan Africa (with dataset)}. ISRIC report 2012/03. Africa Soil Information Service (AfSIS) project and ISRIC --- World Soil Information, Wageningen, the Netherlands.

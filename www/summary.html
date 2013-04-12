@@ -99,19 +99,18 @@ summary(object)
 <h3>Examples</h3>
 
 <pre>
-# load observations:
+## load observations:
 library(sp)
 library(rgdal)
 loadMeuse()
-# fit a model:
+## fit a model:
 omm &lt;- fit.gstatModel(meuse, om~dist, family=gaussian(link="log"), meuse.grid)
 show(omm@regModel)
-# produce SpatialPredictions:
+## produce SpatialPredictions:
 om.rk &lt;- predict(omm, predictionLocations = meuse.grid)
 x = summary(om.rk)
 str(x)
-show(om.rk)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.3-0 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.3-1 <a href="00Index.html">Index</a>]</div>
 </body></html>

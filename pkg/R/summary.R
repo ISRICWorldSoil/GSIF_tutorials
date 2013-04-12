@@ -14,7 +14,7 @@ setMethod("summary", signature(object = "SpatialPredictions"), function(object){
    z$maximum = range(object@observed@data[,object@variable])[2]
    z$npoints = length(object@observed@data[,object@variable])
    z$area = paste(length(object@predicted[,object@variable]) * object@predicted@grid@cellsize[1] * object@predicted@grid@cellsize[2])
-   prj = plotKML::parse_proj4(p4s = proj4string(object@observed), params = as.list("\\+proj="))
+   try(prj <- plotKML::parse_proj4(p4s = rgdal::CRSargs(CRS(proj4string(object@observed))), params = as.list("\\+proj=")))
       if(prj=="longlat")  {
           areaunits = "square-arcdegrees"
       } else {  
@@ -62,7 +62,7 @@ setMethod("show", signature(object = "SpatialPredictions"), function(object){
   cat("  Size               :", length(object@observed@data[,object@variable]), "\n")  
   # check the projection system:
   Tarea <- length(object@predicted[,object@variable]) * object@predicted@grid@cellsize[1] * object@predicted@grid@cellsize[2]
-  prj = plotKML::parse_proj4(p4s = proj4string(object@observed), params = as.list("\\+proj="))
+  try(prj <- plotKML::parse_proj4(p4s = rgdal::CRSargs(CRS(proj4string(object@observed))), params = as.list("\\+proj=")))
       if(prj=="longlat")  {
           areaunits = "square-arcdegrees"
           lengthunits = "arcdegrees" 

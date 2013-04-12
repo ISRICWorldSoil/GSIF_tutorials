@@ -71,19 +71,19 @@ library(sp)
 data(edgeroi)
 edgeroi$sites[edgeroi$sites$SOURCEID=="399_EDGEROI_ed095_1",]
 edgeroi$horizons[edgeroi$horizons$SOURCEID=="399_EDGEROI_ed095_1",]
-# spPoints:
+## spPoints:
 sites <- edgeroi$sites
 coordinates(sites) <- ~ LONGDA94 + LATGDA94
 proj4string(sites) <- CRS("+proj=longlat +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +no_defs")
-\dontrun{# plot points and grids:
+\dontrun{## plot points and grids:
 pnts <- list("sp.points", spTransform(sites, CRS("+init=epsg:28355")), pch="+", col="black")
-# load the 250 m grids:
+## load the 250 m grids:
 download.file("http://worldgrids.org/rda/edgeroi.grids.rda", "edgeroi.grids.rda")
 load("edgeroi.grids.rda")
 gridded(edgeroi.grids) <- ~x+y
 proj4string(edgeroi.grids) <- CRS("+init=epsg:28355")
 spplot(edgeroi.grids[1], sp.layout=pnts)
-# load the 100 m grids:
+## load the 100 m grids:
 download.file("http://worldgrids.org/rda/edgeroi.grids100.rda", "edgeroi.grids100.rda")
 load("edgeroi.grids100.rda")
 gridded(edgeroi.grids100) <- ~x+y

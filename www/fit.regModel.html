@@ -88,11 +88,12 @@ library(sp)
 library(randomForest)
 library(rpart)
 
-loadMeuse()
+## load the Meuse data set:
+demo(meuse, echo=FALSE)
+
 ## produce a regression matrix:
-index &lt;- overlay(meuse.grid, meuse)
-sel &lt;- !is.na(index)
-ov &lt;- cbind(data.frame(meuse[sel,"om"]), meuse.grid[index[sel],])
+ov &lt;- over(meuse, meuse.grid)
+ov &lt;- cbind(data.frame(meuse["om"]), ov)
 ## skip variogram fitting:
 m &lt;- fit.regModel(om~dist+ffreq, rmatrix=ov, meuse.grid, 
     family=gaussian(log), method="GLM", rvgm=NULL)
@@ -107,5 +108,5 @@ m2 &lt;- fit.regModel(log1p(om)~dist+ffreq, rmatrix=ov, meuse.grid,
      method="rpart")
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.3-0 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.3-1 <a href="00Index.html">Index</a>]</div>
 </body></html>

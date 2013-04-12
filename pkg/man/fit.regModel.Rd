@@ -28,11 +28,12 @@ library(sp)
 library(randomForest)
 library(rpart)
 
-loadMeuse()
+## load the Meuse data set:
+demo(meuse, echo=FALSE)
+
 ## produce a regression matrix:
-index <- overlay(meuse.grid, meuse)
-sel <- !is.na(index)
-ov <- cbind(data.frame(meuse[sel,"om"]), meuse.grid[index[sel],])
+ov <- over(meuse, meuse.grid)
+ov <- cbind(data.frame(meuse["om"]), ov)
 ## skip variogram fitting:
 m <- fit.regModel(om~dist+ffreq, rmatrix=ov, meuse.grid, 
     family=gaussian(log), method="GLM", rvgm=NULL)

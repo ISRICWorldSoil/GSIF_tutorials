@@ -13,7 +13,7 @@ write.data.geosamples <- function(obj, covariates = NULL, methodid, outfile, out
     # subset to XYZV:
     ov <- obj@data[,c("longitude", "latitude", "altitude", "observedValue")]
   } else {
-    ov <- overlay(x=covariates, y=obj, methodid=methodid, var.type = "numeric")
+    ov <- over(x=covariates, y=obj, methodid=methodid, var.type = "numeric")
     ov <- ov[,c(attr(covariates@coords, "dimnames")[[2]], "altitude", "observedValue", names(covariates))]
     names(ov)[which(names(ov) %in% attr(covariates@coords, "dimnames")[[2]])] <- c("longitude", "latitude")
   }
@@ -54,8 +54,8 @@ write.data.SpatialPoints <- function(obj, covariates = NULL, methodid, outfile, 
     # re-order:
     ov <- ov[,c(attr(obj@coords, "dimnames")[[2]], methodid)]
   } else {
-    index <- overlay(x=covariates, y=obj)
-    ov <- cbind(data.frame(obj[methodid]), covariates[index,])
+    ov <- sp::over(x=obj, y=covariates)
+    ov <- cbind(data.frame(obj[methodid]), ov)
     # re-order:
     ov <- ov[,c(attr(obj@coords, "dimnames")[[2]], methodid, names(covariates))]
   }

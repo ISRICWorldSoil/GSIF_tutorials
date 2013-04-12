@@ -73,7 +73,7 @@ setMethod("getSpatialTiles", signature(obj = "Spatial"), function(obj, block.x, 
       y <- getSpatialTiles(x, block.x = block.x, ...) 
     }
     ## subset by tiles:
-    ov <- overlay(y, x)
+    ov <- over(x, y)
     t.lst <- sapply(slot(y, "polygons"), slot, "ID")
     bbox.lst <- lapply(slot(y, "polygons"), bbox)
     message(paste('Subseting object of class \"', class(x), '\"...', sep=""))

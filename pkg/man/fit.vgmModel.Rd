@@ -26,18 +26,11 @@
 \examples{
 library(sp)
 
-# fit variogram to the Meuse data:
-data(meuse)
-coordinates(meuse) <- ~x+y
-proj4string(meuse) <- CRS("+init=epsg:28992")
-data(meuse.grid)
-gridded(meuse.grid) <- ~x+y
-proj4string(meuse.grid) <- CRS("+init=epsg:28992")
+## fit variogram to the Meuse data:
+demo(meuse, echo=FALSE)
 # produce a regression matrix:
-index <- overlay(meuse.grid, meuse)
-sel <- !is.na(index)
-ov <- data.frame(meuse.grid[index[sel],])
-ov$om <- meuse@data[sel,"om"]
+ov <- over(meuse, meuse.grid)
+ov <- cbind(data.frame(meuse["om"]), ov)
 # fit a model:
 v <- fit.vgmModel(om~1, rmatrix=ov, meuse.grid, dimensions="2D")
 plot(variogram(om ~ 1, meuse[!is.na(meuse$om),]), v$vgm)

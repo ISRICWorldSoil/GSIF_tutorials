@@ -260,7 +260,7 @@ setMethod("show", signature(object = "geosamples"),
 
 ## Extract regression matrix:
 
-.overlay.geosamples <- function(x, y, methodid, var.type = "numeric"){
+.over.geosamples <- function(x, y, methodid, var.type = "numeric"){
   
   if(!any(y@data$altitudeMode == "relativeToGround")){
     warning("AltitudeMode accepts only 'relativeToGround' values")
@@ -290,9 +290,8 @@ setMethod("show", signature(object = "geosamples"),
   attr(pnts.t@coords, "dimnames")[[2]] = attr(x@coords, "dimnames")[[2]]
   attr(pnts.t@bbox, "dimnames")[[1]] = attr(x@bbox, "dimnames")[[2]]
   
-  index <- sp::overlay(x, pnts.t)                    
-  sel <- !is.na(index)
-  out <- cbind(data.frame(pnts[sel,]), x@data[index[sel],], data.frame(pnts.t@coords[sel,]))
+  ov <- sp::over(pnts.t, x)                    
+  out <- cbind(data.frame(pnts), ov, data.frame(pnts.t@coords))
   if(nrow(out)==0){ 
     warning("Overlay resulted in an empty table") 
   }
@@ -301,7 +300,7 @@ setMethod("show", signature(object = "geosamples"),
   
 }
 
-setMethod("overlay", signature(x = "SpatialPixelsDataFrame", y = "geosamples"), .overlay.geosamples)
+setMethod("over", signature(x = "SpatialPixelsDataFrame", y = "geosamples"), .over.geosamples)
 
 
 # end of script;

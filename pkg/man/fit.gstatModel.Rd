@@ -72,7 +72,7 @@ library(rpart)
 library(splines)
 
 ## load the Meuse data set:
-loadMeuse()
+demo(meuse, echo=FALSE)
 
 ## fit a regression-tree:
 omm <- fit.gstatModel(meuse, log1p(om)~dist+ffreq, meuse.grid, method="rpart")

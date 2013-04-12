@@ -3,7 +3,7 @@
 \alias{geosamples-class}
 \alias{subset,geosamples-method}
 \alias{show,geosamples-method}
-\alias{overlay,SpatialPixelsDataFrame,geosamples-method}
+\alias{over,SpatialPixelsDataFrame,geosamples-method}
 \alias{write.data}
 \alias{write.data,geosamples-method}
 \alias{write.data.geosamples}
@@ -23,7 +23,7 @@ The column names in the data slot largely reflect the \href{https://developers.g
   \describe{
 	\item{show}{\code{signature(obj = "geosamples")}: summarize object by listing methods, total number of observations, total area covered etc.}
 	\item{subset}{\code{signature(obj = "geosamples")}: subset to a single variable type; returns a data frame}
-  \item{overlay}{\code{signature(x = "SpatialPixelsDataFrame", y = "geosamples")}: overlay geosamples and spatial pixels}
+  \item{over}{\code{signature(x = "SpatialPixelsDataFrame", y = "geosamples")}: overlay geosamples and spatial pixels}
   \item{write.data}{\code{signature(obj = "geosamples")}: write geosamples to an external format e.g. GeoEAS}
   }
 }

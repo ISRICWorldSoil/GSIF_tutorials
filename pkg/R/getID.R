@@ -11,11 +11,11 @@ setMethod("getID", signature(obj = "SpatialPolygons"), function(obj, pixsize = 3
     stop('Object of type "SpatialPolygons" projected in the geographical coordinates (WGS84) required')
   }
 
-  # overlay polygons and landmask to get a list of IDs:
+  # over polygons and landmask to get a list of IDs:
   load(system.file("data/landmask.rda", package="GSIF"))
   gridded(landmask) <- ~x+y
   proj4string(landmask) <- "+proj=longlat +datum=WGS84"
-  list.id <- overlay(landmask, obj)
+  list.id <- over(landmask, obj)
   names.id <- NULL
   
   for(j in which(!is.na(list.id))){ 

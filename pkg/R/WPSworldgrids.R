@@ -39,8 +39,8 @@ setMethod("describe", signature(x = "WPS"), function(x, request = "describeproce
   return(ret)  
 })
 
-## overlay points (single point overlay)
-setMethod("overlay", signature(x = "WPS", y = "SpatialPoints"), 
+## overlay points (single point)
+setMethod("over", signature(x = "WPS", y = "SpatialPoints"), 
   function(x, y) 
   {
 

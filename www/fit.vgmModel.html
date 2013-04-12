@@ -86,22 +86,15 @@ fit.vgmModel(formulaString,
 <pre>
 library(sp)
 
-# fit variogram to the Meuse data:
-data(meuse)
-coordinates(meuse) &lt;- ~x+y
-proj4string(meuse) &lt;- CRS("+init=epsg:28992")
-data(meuse.grid)
-gridded(meuse.grid) &lt;- ~x+y
-proj4string(meuse.grid) &lt;- CRS("+init=epsg:28992")
+## fit variogram to the Meuse data:
+demo(meuse, echo=FALSE)
 # produce a regression matrix:
-index &lt;- overlay(meuse.grid, meuse)
-sel &lt;- !is.na(index)
-ov &lt;- data.frame(meuse.grid[index[sel],])
-ov$om &lt;- meuse@data[sel,"om"]
+ov &lt;- over(meuse, meuse.grid)
+ov &lt;- cbind(data.frame(meuse["om"]), ov)
 # fit a model:
 v &lt;- fit.vgmModel(om~1, rmatrix=ov, meuse.grid, dimensions="2D")
 plot(variogram(om ~ 1, meuse[!is.na(meuse$om),]), v$vgm)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.3-0 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.3-1 <a href="00Index.html">Index</a>]</div>
 </body></html>

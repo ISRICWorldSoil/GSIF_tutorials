@@ -39,16 +39,15 @@ The summary returns a data.frame with the following columns:
 }
 \seealso{ \code{plotKML::SpatialPredictions-class} }
 \examples{
-# load observations:
+## load observations:
 library(sp)
 library(rgdal)
 loadMeuse()
-# fit a model:
+## fit a model:
 omm <- fit.gstatModel(meuse, om~dist, family=gaussian(link="log"), meuse.grid)
 show(omm@regModel)
-# produce SpatialPredictions:
+## produce SpatialPredictions:
 om.rk <- predict(omm, predictionLocations = meuse.grid)
 x = summary(om.rk)
 str(x)
-show(om.rk)
 }

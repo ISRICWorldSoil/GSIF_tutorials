@@ -35,7 +35,7 @@
 </dd>
 <dt>describe</dt><dd><p><code>signature(x = "WPS")</code>: lists parameters specific to some service identifier</p>
 </dd>
-<dt>overlay</dt><dd><p><code>signature(x = "WPS", y = "SpatialPoints")</code>: overlays spatial points and the target grids defined via the WPS-class (point-by-point)</p>
+<dt>over</dt><dd><p><code>signature(x = "WPS", y = "SpatialPoints")</code>: overlays spatial points and the target grids defined via the WPS-class (point-by-point)</p>
 </dd>
 <dt>subset</dt><dd><p><code>signature(x = "WPS")</code>: subsets a grid (from server) and loads it to R; use <code>bbox</code> argument to specify the bounding box</p>
 </dd>
@@ -76,6 +76,7 @@
 
 <pre>
 ## Not run: 
+library(XML)
 URI = "http://wps.worldgrids.org/pywps.cgi"
 server &lt;- list(URI=URI, request="execute", 
     version="version=1.0.0", service.name="service=wps", 
@@ -89,7 +90,7 @@ p1 &lt;- data.frame(lon=10, lat=10)
 coordinates(p1) &lt;- ~lon+lat
 proj4string(p1) &lt;- CRS("+proj=longlat +datum=WGS84")
 p1
-overlay(biocl15.wps, p1)
+over(biocl15.wps, p1)
 # fetch grids and load the to R:
 biocl15 &lt;- subset(biocl15.wps, bbox=matrix(c(-20,30,40,60), nrow=2))
 image(biocl15)
@@ -97,5 +98,5 @@ image(biocl15)
 ## End(Not run)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.3-0 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.3-1 <a href="00Index.html">Index</a>]</div>
 </body></html>

@@ -15,9 +15,8 @@ setMethod("fit.gstatModel", signature(observations = "SpatialPointsDataFrame", f
 
   if(!missing(family) & !method=="GLM"){ warning("'family' argument will be ignored. Use 'method=\"GLM\"' instead.")  }
 
-  ## overlay points:
-  index <- overlay(covariates, observations)
-  sel <- !is.na(index)
+  ## overlay:
+  ov <- over(observations, covariates)
   ## all variables of interest:
   tv = all.vars(formulaString)[1]
   seln = names(covariates) %in% all.vars(formulaString)[-1]
@@ -25,11 +24,11 @@ setMethod("fit.gstatModel", signature(observations = "SpatialPointsDataFrame", f
   if(length(seln)==0){
       stop("None of the covariates in the 'formulaString' do not match the names in the'covariates' object")
   }
-  ov <- cbind(data.frame(observations[sel,tv]), covariates[index[sel],])  
+  ov <- cbind(data.frame(observations[,tv]), ov)  
 
   # check the size of the output:
   if(nrow(ov)==0|is.null(ov[,tv])) {
-    stop("The overlay operations resulted in an empty set.")
+    stop("The 'over' operations resulted in an empty set.")
   }
   
   # fit/filter the regression model:
@@ -49,9 +48,9 @@ setMethod("fit.gstatModel", signature(observations = "geosamples", formulaString
   xyn = attr(covariates@bbox, "dimnames")[[1]]
   
   ## prepare regression matrix:
-  ov <- overlay(x=covariates, y=observations, method=methodid, var.type = "numeric")
+  ov <- over(x=covariates, y=observations, method=methodid, var.type = "numeric")
   if(nrow(ov)==0|is.null(ov$observedValue)) {
-    warning("The overlay operations resulted in an empty set. Check 'methodid' column.")
+    warning("The 'over' operations resulted in an empty set. Check 'methodid' column.")
   }
   ## geostats only possible with numeric variables:
   ov[,methodid] = as.numeric(ov$observedValue)
@@ -103,9 +102,9 @@ setMethod("fit.gstatModel", signature(observations = "geosamples", formulaString
   # prepare regression matrix:
   ov <- list(NULL)
   for(j in 1:length(covariates)){
-    ov[[j]] <- overlay(x=covariates[[j]], y=observations, method=methodid, var.type = "numeric")
+    ov[[j]] <- over(x=covariates[[j]], y=observations, method=methodid, var.type = "numeric")
       if(nrow(ov[[j]])==0|is.null(ov[[j]]$observedValue)) {
-      warning("The overlay operations resulted in an empty set. Check 'methodid' column.")
+      warning("The 'over' operations resulted in an empty set. Check 'methodid' column.")
       }
   }
   gn <- names(observations@data)[!(names(observations@data) %in% "observationid")]
@@ -119,7 +118,7 @@ setMethod("fit.gstatModel", signature(observations = "geosamples", formulaString
   
   # check the size of the output object:
   if(nrow(ov)==0|is.null(ov$observedValue)) {
-    warning("The overlay operations resulted in an empty set. Check 'methodid' column.")
+    warning("The 'over' operations resulted in an empty set. Check 'methodid' column.")
   }
   
   # fit/filter the regression model:

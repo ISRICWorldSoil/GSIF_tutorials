@@ -1,7 +1,7 @@
 \name{WPS-class}
 \docType{class}
 \alias{WPS-class}
-\alias{overlay,WPS,SpatialPoints-method}
+\alias{over,WPS,SpatialPoints-method}
 \alias{describe,WPS-method}
 \alias{getProcess,WPS-method}
 \alias{getProcess}
@@ -21,7 +21,7 @@
 	\item{show}{\code{signature(object = "WPS")}: gets the complete server capabilities }
 	\item{getProcess}{\code{signature(x = "WPS")}: gets a list of processes available from a server }
 	\item{describe}{\code{signature(x = "WPS")}: lists parameters specific to some service identifier}
-  \item{overlay}{\code{signature(x = "WPS", y = "SpatialPoints")}: overlays spatial points and the target grids defined via the WPS-class (point-by-point)}
+  \item{over}{\code{signature(x = "WPS", y = "SpatialPoints")}: overlays spatial points and the target grids defined via the WPS-class (point-by-point)}
   \item{subset}{\code{signature(x = "WPS")}: subsets a grid (from server) and loads it to R; use \code{bbox} argument to specify the bounding box}
   }
 }
@@ -37,6 +37,7 @@
 }
 \examples{
 \dontrun{
+library(XML)
 URI = "http://wps.worldgrids.org/pywps.cgi"
 server <- list(URI=URI, request="execute", 
     version="version=1.0.0", service.name="service=wps", 
@@ -50,7 +51,7 @@ p1 <- data.frame(lon=10, lat=10)
 coordinates(p1) <- ~lon+lat
 proj4string(p1) <- CRS("+proj=longlat +datum=WGS84")
 p1
-overlay(biocl15.wps, p1)
+over(biocl15.wps, p1)
 # fetch grids and load the to R:
 biocl15 <- subset(biocl15.wps, bbox=matrix(c(-20,30,40,60), nrow=2))
 image(biocl15)

@@ -134,8 +134,8 @@ if(!isGeneric("predict")){
   setGeneric("predict", function(object, ...){standardGeneric("predict")})
 }
 
-if(!isGeneric("overlay")){
-  setGeneric("overlay", function(x, y, ...){standardGeneric("overlay")})
+if(!isGeneric("over")){
+  setGeneric("over", function(x, y, ...){standardGeneric("over")})
 }
 
 if(!isGeneric("mpspline")){
