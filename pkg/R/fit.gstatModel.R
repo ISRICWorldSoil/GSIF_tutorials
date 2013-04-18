@@ -22,9 +22,17 @@ setMethod("fit.gstatModel", signature(observations = "SpatialPointsDataFrame", f
   seln = names(covariates) %in% all.vars(formulaString)[-1]
   ## check if all covariates are available: 
   if(length(seln)==0){
-      stop("None of the covariates in the 'formulaString' do not match the names in the'covariates' object")
+      stop("None of the covariates in the 'formulaString' matches the names in the 'covariates' object")
   }
   ov <- cbind(data.frame(observations[,tv]), ov)  
+  
+  ## copy coordinate column names for consistency:
+  xyn <- which(names(ov) %in% attr(observations@bbox, "dimnames")[[1]])
+  if(length(xyn)==2) { 
+    names(ov)[xyn] <- attr(covariates@bbox, "dimnames")[[1]][1:2] 
+    } else {
+    names(ov)[xyn] <- attr(covariates@bbox, "dimnames")[[1]]     
+  }
 
   # check the size of the output:
   if(nrow(ov)==0|is.null(ov[,tv])) {
@@ -90,7 +98,9 @@ setMethod("fit.gstatModel", signature(observations = "geosamples", formulaString
     stop("List of covariates of class 'SpatialPixelsDataFrame' expected")
   }
 
-  if(!missing(family) & !method=="GLM"){ warning("'family' argument will be ignored. Use 'method=\"GLM\"' instead.")  }
+  if(!missing(family) & !method=="GLM"){ 
+    warning("'family' argument will be ignored. Use 'method=\"GLM\"' instead.")  
+  }
 
   # covariate names:
   covs = unlist(sapply(covariates, FUN=function(x){names(x)}))
@@ -102,27 +112,32 @@ setMethod("fit.gstatModel", signature(observations = "geosamples", formulaString
   # prepare regression matrix:
   ov <- list(NULL)
   for(j in 1:length(covariates)){
-    ov[[j]] <- over(x=covariates[[j]], y=observations, method=methodid, var.type = "numeric")
+    ov[[j]] <- over(x=covariates[[j]], y=observations, method=methodid, var.type="numeric")
       if(nrow(ov[[j]])==0|is.null(ov[[j]]$observedValue)) {
       warning("The 'over' operations resulted in an empty set. Check 'methodid' column.")
       }
   }
-  gn <- names(observations@data)[!(names(observations@data) %in% "observationid")]
+  xyn = attr(covariates[[1]]@bbox, "dimnames")[[1]]
+  ## coordinates in the local space:
+  xy <- ov[[1]][,xyn]
+  
+  gn <- names(observations@data)[!(names(observations@data) %in% c("observationid", xyn))]
   # merge all regression matrices:
-  ov = Reduce(function(x,y) {merge(x[!(names(x) %in% gn)],y[!(names(y) %in% gn)], by="observationid")}, ov)
-  ov = merge(observations@data, ov[,c("observationid", covs)], by="observationid")
+  ov <- Reduce(function(x,y) {merge(x[!(names(x) %in% gn)],y[!(names(y) %in% gn)], by="observationid")}, ov)
+  ov <- merge(observations@data, ov[,c("observationid", covs)], by="observationid")
+  ov <- cbind(ov, xy) 
 
   # geostats only possible with numeric variables:  
-  ov[,methodid] = as.numeric(ov$observedValue)
-  ov$observedValue = NULL
+  ov[,methodid] <- as.numeric(ov$observedValue)
+  ov$observedValue <- NULL
   
   # check the size of the output object:
-  if(nrow(ov)==0|is.null(ov$observedValue)) {
+  if(nrow(ov)==0|is.null(ov[,methodid])) {
     warning("The 'over' operations resulted in an empty set. Check 'methodid' column.")
   }
   
   # fit/filter the regression model:
-  m <- fit.regModel(formulaString = formulaString, rmatrix = ov, predictionDomain = covariates[seln], method = method, dimensions = "3D", family = family, stepwise = stepwise, vgmFun = vgmFun, subsample = subsample, ...)
+  m <- fit.regModel(formulaString = formulaString, rmatrix = ov, predictionDomain = covariates[[1]], method = method, dimensions = "3D", family = family, stepwise = stepwise, vgmFun = vgmFun, subsample = subsample, ...)
   
   # save the fitted model:
   return(m) 

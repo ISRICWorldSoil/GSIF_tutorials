@@ -30,10 +30,12 @@ setMethod("gdalwarp", signature(obj = "SpatialPixelsDataFrame"), function(obj, p
      
         # write SPDF to a file:
         if(is.factor(obj@data[,i])){
+        require(raster)
           x <- writeRaster(raster(obj[i]), filename=paste(tf, ".tif", sep=""), format="GTiff", overwrite=TRUE)
           if(maxValue(x)==0) { warning(paste("Layer", names(obj[i]), "is of type 'factor' but contains no levels")) }
         }        
         else {
+        require(rgdal)
           writeGDAL(obj[i], paste(tf, ".tif", sep=""), "GTiff", mvFlag = NAflag)
         }
         
@@ -110,7 +112,7 @@ setMethod("gdalwarp", signature(obj = "SpatialPixelsDataFrame"), function(obj, p
 
 
 ## make prediction locations in WGS84 (from point to grid):
-setMethod("make.3Dgrid", signature(obj = "SpatialPixelsDataFrame"), function(obj, proj4s = get("ref_CRS", envir = GSIF.opts), pixsize = get("cellsize", envir = GSIF.opts)[2], resampling_method = "bilinear", NAflag = get("NAflag", envir = GSIF.opts), stdepths = get("stdepths", envir = GSIF.opts), tmp.file = TRUE, show.output.on.console = FALSE, ...){   
+setMethod("make.3Dgrid", signature(obj = "SpatialPixelsDataFrame"), function(obj, proj4s = get("ref_CRS", envir = GSIF.opts), pixsize = get("cellsize", envir = GSIF.opts)[2], resampling_method = "bilinear", NAflag = get("NAflag", envir = GSIF.opts), stdepths = get("stdepths", envir = GSIF.opts), tmp.file = TRUE, show.output.on.console = TRUE, ...){   
   
   res <- gdalwarp(obj, proj4s = proj4s, pixsize = pixsize, resampling_method = resampling_method, NAflag = NAflag, tmp.file = tmp.file, show.output.on.console = show.output.on.console)    
   # make a list of grids with standard depths:
@@ -122,7 +124,7 @@ setMethod("make.3Dgrid", signature(obj = "SpatialPixelsDataFrame"), function(obj
 
 
 ## make prediction locations in WGS84 (from point to grid):
-setMethod("make.3Dgrid", signature(obj = "RasterBrick"),  function(obj, proj4s = get("ref_CRS", envir = GSIF.opts), pixsize = get("cellsize", envir = GSIF.opts)[2], resampling_method = "bilinear", NAflag = get("NAflag", envir = GSIF.opts), stdepths = get("stdepths", envir = GSIF.opts), tmp.file = TRUE, show.output.on.console = FALSE, ...){
+setMethod("make.3Dgrid", signature(obj = "RasterBrick"),  function(obj, proj4s = get("ref_CRS", envir = GSIF.opts), pixsize = get("cellsize", envir = GSIF.opts)[2], resampling_method = "bilinear", NAflag = get("NAflag", envir = GSIF.opts), stdepths = get("stdepths", envir = GSIF.opts), tmp.file = TRUE, show.output.on.console = TRUE, ...){
     
     # for each layer layers:
     if (ncol(obj) > 1) {

@@ -13,7 +13,7 @@ setMethod("fit.vgmModel", signature(formulaString = "formula", rmatrix = "data.f
 
   ## target variable name:
   if(!any(names(rmatrix) %in% all.vars(formulaString))){
-    stop("'formulaString' variables not found in the 'rmatrix' object.")
+    stop("Variables in the 'formulaString' not found in the 'rmatrix' object.")
   }
   
   ## remove missing observations:

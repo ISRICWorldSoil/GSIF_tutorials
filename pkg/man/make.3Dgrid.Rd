@@ -18,14 +18,14 @@
       resampling_method = "bilinear", 
       NAflag = get("NAflag", envir = GSIF.opts), 
       stdepths = get("stdepths", envir = GSIF.opts), 
-      tmp.file = TRUE, show.output.on.console = FALSE, \dots)
+      tmp.file = TRUE, show.output.on.console = TRUE, \dots)
 \S4method{make.3Dgrid}{RasterBrick}(obj, 
       proj4s = get("ref_CRS", envir = GSIF.opts), 
       pixsize = get("cellsize", envir = GSIF.opts)[2], 
       resampling_method = "bilinear", 
       NAflag = get("NAflag", envir = GSIF.opts), 
       stdepths = get("stdepths", envir = GSIF.opts), 
-      tmp.file = TRUE, show.output.on.console = FALSE, \dots)
+      tmp.file = TRUE, show.output.on.console = TRUE, \dots)
 }
 \arguments{
   \item{obj}{object of class \code{"SpatialPixelsDataFrame"} or \code{"RasterBrick"}} 
@@ -52,14 +52,14 @@ Note: this operation can be time consuming for large areas (e.g. >> 1e6 pixels).
 \author{ Tomislav Hengl }
 \seealso{ \code{\link{spc}}, \code{\link{geosamples-class}}, \code{plotKML::reproject} }
 \examples{
-# grids Ebergotzen:
+## grids Ebergotzen:
 library(plotKML)
 library(rgdal)
 
 data(eberg_grid)
 gridded(eberg_grid) <- ~x+y
 proj4string(eberg_grid) <- CRS("+init=epsg:31467")
-\dontrun{#  convert to spatial components:
+\dontrun{##  convert to spatial components:
 formulaString <- ~ PRMGEO6+DEMSRT6+TWISRT6+TIRAST6
 eberg_spc <- spc(eberg_grid, formulaString)
 # create 3D locations in the original coordinate system:
@@ -67,14 +67,14 @@ eberg_3Dxy <- sp3D(eberg_spc@predicted)
 # wrapper function to create 3D locations in the default WGS84 system:
 eberg_3D <- make.3Dgrid(eberg_spc@predicted)
 image(eberg_3D[[1]]["PC1"])
-# downscale 100 m resolution imagery to 25 m:
+## downscale 100 m resolution imagery to 25 m:
 data(eberg_grid25)
 gridded(eberg_grid25) <- ~x+y
 proj4string(eberg_grid25) <- CRS("+init=epsg:31467")
 eberg_grid25@data <- cbind(eberg_grid25@data, 
     gdalwarp(eberg_grid, pixsize=eberg_grid25@grid@cellsize[1], 
     GridTopology=eberg_grid25@grid, resampling_method="cubicspline")@data)
-# this function requires FWTools!
+## this function requires FWTools!
 }
 }
 \keyword{methods}

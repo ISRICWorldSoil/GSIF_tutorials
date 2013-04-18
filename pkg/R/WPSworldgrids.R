@@ -84,7 +84,7 @@ setMethod("subset", signature(x = "WPS"), function(x, bbox, import = TRUE){
       }
       else { stop("Layer not avaialable. Visit www.worldgrids.org for more info.") }  
   }
-  else stop("Bounding box required as matrix with LatMin, LatMax, LonMin, LonMax")
+  else { stop("Bounding box required as matrix with LatMin, LatMax, LonMin, LonMax") }
 
   if(import == TRUE){
    out <- readGDAL(out)

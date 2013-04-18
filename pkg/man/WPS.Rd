@@ -42,19 +42,19 @@ URI = "http://wps.worldgrids.org/pywps.cgi"
 server <- list(URI=URI, request="execute", 
     version="version=1.0.0", service.name="service=wps", 
     identifier="identifier=sampler_local1pt_nogml")
-biocl15.wps <- new("WPS", server=server, inRastername="biocl15")
+glcesa3.wps <- new("WPS", server=server, inRastername="GLCESA3a")
 # show(biocl15.wps)
-prl <- getProcess(biocl15.wps)
+prl <- getProcess(glcesa3.wps)
 prl[7]
-describe(biocl15.wps, identifier="overlay")
-p1 <- data.frame(lon=10, lat=10)
+describe(glcesa3.wps, identifier="overlay")
+p1 <- data.frame(lon=15, lat=15)
 coordinates(p1) <- ~lon+lat
 proj4string(p1) <- CRS("+proj=longlat +datum=WGS84")
 p1
-over(biocl15.wps, p1)
+over(glcesa3.wps, p1)
 # fetch grids and load the to R:
-biocl15 <- subset(biocl15.wps, bbox=matrix(c(-20,30,40,60), nrow=2))
-image(biocl15)
+glcesa3 <- subset(glcesa3.wps, bbox=matrix(c(20,40,22,42), nrow=2))
+image(glcesa3)
 }
 }
 \keyword{classes}

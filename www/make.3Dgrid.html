@@ -23,7 +23,7 @@ make.3Dgrid(obj,
       resampling_method = "bilinear", 
       NAflag = get("NAflag", envir = GSIF.opts), 
       stdepths = get("stdepths", envir = GSIF.opts), 
-      tmp.file = TRUE, show.output.on.console = FALSE, ...)
+      tmp.file = TRUE, show.output.on.console = TRUE, ...)
 ## S4 method for signature 'RasterBrick'
 make.3Dgrid(obj, 
       proj4s = get("ref_CRS", envir = GSIF.opts), 
@@ -31,7 +31,7 @@ make.3Dgrid(obj,
       resampling_method = "bilinear", 
       NAflag = get("NAflag", envir = GSIF.opts), 
       stdepths = get("stdepths", envir = GSIF.opts), 
-      tmp.file = TRUE, show.output.on.console = FALSE, ...)
+      tmp.file = TRUE, show.output.on.console = TRUE, ...)
 </pre>
 
 
@@ -118,14 +118,14 @@ Note: this operation can be time consuming for large areas (e.g. &gt;&gt; 1e6 pi
 <h3>Examples</h3>
 
 <pre>
-# grids Ebergotzen:
+## grids Ebergotzen:
 library(plotKML)
 library(rgdal)
 
 data(eberg_grid)
 gridded(eberg_grid) &lt;- ~x+y
 proj4string(eberg_grid) &lt;- CRS("+init=epsg:31467")
-## Not run: #  convert to spatial components:
+## Not run: ##  convert to spatial components:
 formulaString &lt;- ~ PRMGEO6+DEMSRT6+TWISRT6+TIRAST6
 eberg_spc &lt;- spc(eberg_grid, formulaString)
 # create 3D locations in the original coordinate system:
@@ -133,14 +133,14 @@ eberg_3Dxy &lt;- sp3D(eberg_spc@predicted)
 # wrapper function to create 3D locations in the default WGS84 system:
 eberg_3D &lt;- make.3Dgrid(eberg_spc@predicted)
 image(eberg_3D[[1]]["PC1"])
-# downscale 100 m resolution imagery to 25 m:
+## downscale 100 m resolution imagery to 25 m:
 data(eberg_grid25)
 gridded(eberg_grid25) &lt;- ~x+y
 proj4string(eberg_grid25) &lt;- CRS("+init=epsg:31467")
 eberg_grid25@data &lt;- cbind(eberg_grid25@data, 
     gdalwarp(eberg_grid, pixsize=eberg_grid25@grid@cellsize[1], 
     GridTopology=eberg_grid25@grid, resampling_method="cubicspline")@data)
-# this function requires FWTools!
+## this function requires FWTools!
 
 ## End(Not run)
 </pre>
