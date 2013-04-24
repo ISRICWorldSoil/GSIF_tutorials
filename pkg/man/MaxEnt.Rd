@@ -34,6 +34,7 @@
 # load data:
 library(plotKML)
 library(dismo)
+library(spatstat)
 data(eberg)
 data(eberg_grid)
 # prepare data for spatial analysis:

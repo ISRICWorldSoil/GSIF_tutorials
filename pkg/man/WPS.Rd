@@ -42,7 +42,7 @@ URI = "http://wps.worldgrids.org/pywps.cgi"
 server <- list(URI=URI, request="execute", 
     version="version=1.0.0", service.name="service=wps", 
     identifier="identifier=sampler_local1pt_nogml")
-glcesa3.wps <- new("WPS", server=server, inRastername="GLCESA3a")
+glcesa3.wps <- new("WPS", server=server, inRastername="glcesa3a")
 # show(biocl15.wps)
 prl <- getProcess(glcesa3.wps)
 prl[7]

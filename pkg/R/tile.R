@@ -110,8 +110,7 @@ setMethod("tile", signature(x = "SpatialPixelsDataFrame"), .subsetTiles)
     } else {
       tf <- normalizeFilename(deparse(substitute(x, env = parent.frame())))
     } 
-    if(class(x)=="SpatialPolygonsDataFrame"){ writePolyShape(x, set.file.extension(tf, ".shp")) }
-    if(class(x)=="SpatialLinesDataFrame"){ writeLinesShape(x, set.file.extension(tf, ".shp")) }    
+    writeOGR(x, set.file.extension(tf, ".shp"), layer=".", driver="ESRI Shapefile")
 
     ## clip by tiles:
     x.lst <- list()
@@ -122,13 +121,16 @@ setMethod("tile", signature(x = "SpatialPixelsDataFrame"), .subsetTiles)
       } else {
         outname <- paste(normalizeFilename(deparse(substitute(x, env = parent.frame()))), j, sep="_")
       }
+      layername <- strsplit(outname, "\\\\")[[1]]
+      layername = layername[length(layername)]
+      
       if(class(x)=="SpatialPolygonsDataFrame"){
         try(system(paste(program, '-where \"OGR_GEOMETRY=\'Polygon\'\" -f \"ESRI Shapefile\"', set.file.extension(outname, ".shp"), set.file.extension(tf, ".shp"), '-clipsrc',  y[j,1], y[j,2], y[j,3], y[j,4], '-skipfailures'), show.output.on.console = show.output.on.console))
-        try(x.lst[[j]] <- readShapePoly(normalizePath(set.file.extension(outname, ".shp")), proj4string=x@proj4string))
+        try(x.lst[[j]] <- readOGR(normalizePath(set.file.extension(outname, ".shp")), layername, p4s=x@proj4string))
       }
       if(class(x)=="SpatialLinesDataFrame"){
         try(system(paste(program, '-where \"OGR_GEOMETRY=\'Linestring\'\" -f \"ESRI Shapefile\"', set.file.extension(outname, ".shp"), set.file.extension(tf, ".shp"), '-clipsrc',  y[j,1], y[j,2], y[j,3], y[j,4], '-skipfailures'), show.output.on.console = show.output.on.console))
-        try(x.lst[[j]] <- readShapeLines(normalizePath(set.file.extension(outname, ".shp")), proj4string=x@proj4string))
+        try(x.lst[[j]] <- readOGR(normalizePath(set.file.extension(outname, ".shp")), layername, p4s=x@proj4string))
       }
     }
     return(x.lst)

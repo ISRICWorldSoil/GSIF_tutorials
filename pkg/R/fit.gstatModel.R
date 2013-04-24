@@ -65,11 +65,11 @@ setMethod("fit.gstatModel", signature(observations = "geosamples", formulaString
   ov$observedValue = NULL
    
   ## subset to columns of interest:  
-  if(length(xyn)==2){ ov <- ov[, c(methodid, names(covariates)[seln], xyn, "altitude")] }
-  if(length(xyn)==3){ ov <- ov[, c(methodid, names(covariates)[seln], xyn)] }
+  if(dimensions == "3D"){ ov <- ov[, c(methodid, names(covariates)[seln], xyn, "altitude")] }
+  if(dimensions == "2D"){ ov <- ov[, c(methodid, names(covariates)[seln], xyn)] }
   
   ## fit/filter the regression model:
-  m <- fit.regModel(formulaString = formulaString, rmatrix = ov, predictionDomain = covariates[seln], method = method, dimensions = "3D", family = family, stepwise = stepwise, vgmFun = vgmFun, subsample = subsample, ...)
+  m <- fit.regModel(formulaString = formulaString, rmatrix = ov, predictionDomain = covariates[seln], method = method, dimensions = dimensions, family = family, stepwise = stepwise, vgmFun = vgmFun, subsample = subsample, ...)
   
   return(m)  
 
