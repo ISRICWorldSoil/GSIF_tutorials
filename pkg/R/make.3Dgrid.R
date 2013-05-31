@@ -6,14 +6,15 @@
 
 
 ## resampling with FWTools:
-setMethod("gdalwarp", signature(obj = "SpatialPixelsDataFrame"), function(obj, proj4s = proj4string(obj), GridTopology = NULL, pixsize, resampling_method = "bilinear", NAflag = get("NAflag", envir = GSIF.opts), tmp.file = FALSE, show.output.on.console = FALSE){
+setMethod("gdalwarp", signature(obj = "SpatialPixelsDataFrame"), function(obj, proj4s = proj4string(obj), GridTopology = NULL, pixsize, resampling_method = "bilinear", NAflag = get("NAflag", envir = GSIF.opts), tmp.file = FALSE, show.output.on.console = FALSE, program){
   
-  if(.Platform$OS.type == "windows") {
+  if(missing(program)){
+    if(.Platform$OS.type == "windows") {
       fw.dir = .FWTools.path()        
       program = shQuote(shortPathName(normalizePath(file.path(fw.dir, "bin/gdalwarp.exe"))))
-  } else {
+    } else {
       program = "gdalwarp"
-  }
+  }}
   
   if(!nchar(program)==0){
     message(paste('Resampling', length(names(obj)), 'layers to CRS(\"', stringr::str_trim(substr(proj4s, 1, 20)), ' ... ', '\") with grid cell size:', pixsize, '...'))

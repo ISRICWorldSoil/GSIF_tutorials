@@ -81,7 +81,7 @@ URI = "http://wps.worldgrids.org/pywps.cgi"
 server &lt;- list(URI=URI, request="execute", 
     version="version=1.0.0", service.name="service=wps", 
     identifier="identifier=sampler_local1pt_nogml")
-glcesa3.wps &lt;- new("WPS", server=server, inRastername="GLCESA3a")
+glcesa3.wps &lt;- new("WPS", server=server, inRastername="glcesa3a")
 # show(biocl15.wps)
 prl &lt;- getProcess(glcesa3.wps)
 prl[7]
@@ -98,5 +98,5 @@ image(glcesa3)
 ## End(Not run)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.3-1 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.3-2 <a href="00Index.html">Index</a>]</div>
 </body></html>

@@ -20,8 +20,8 @@
        warning("Install FWTools and add to PATH. See http://fwtools.maptools.org for more info.")      
       }
     } else { 
-      if(!length(x <- grep(paths <- strsplit(Sys.getenv('PATH')[[1]], ":")[[1]], pattern="FWTools"))==0) { 
-        fw.dir <- paths[grep(paths, pattern="FWTools")[1]] 
+      if(!length(x <- grep(paths <- strsplit(Sys.getenv('PATH')[[1]], ":")[[1]], pattern="FWTools", ignore.case = TRUE))==0)   { 
+        fw.dir <- paths[grep(paths, pattern="FWTools", ignore.case = TRUE)[1]] 
       } else {
         warning("Install FWTools and add to PATH. See http://fwtools.maptools.org for more info.")      
       }

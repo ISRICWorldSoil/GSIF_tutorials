@@ -128,9 +128,9 @@ proj4string(eberg_grid) &lt;- CRS("+init=epsg:31467")
 ## Not run: ##  convert to spatial components:
 formulaString &lt;- ~ PRMGEO6+DEMSRT6+TWISRT6+TIRAST6
 eberg_spc &lt;- spc(eberg_grid, formulaString)
-# create 3D locations in the original coordinate system:
+## create 3D locations in the original coordinate system:
 eberg_3Dxy &lt;- sp3D(eberg_spc@predicted)
-# wrapper function to create 3D locations in the default WGS84 system:
+## wrapper function to create 3D locations in the default WGS84 system:
 eberg_3D &lt;- make.3Dgrid(eberg_spc@predicted)
 image(eberg_3D[[1]]["PC1"])
 ## downscale 100 m resolution imagery to 25 m:
@@ -145,5 +145,5 @@ eberg_grid25@data &lt;- cbind(eberg_grid25@data,
 ## End(Not run)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.3-1 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.3-2 <a href="00Index.html">Index</a>]</div>
 </body></html>
