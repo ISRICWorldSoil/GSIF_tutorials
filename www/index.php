@@ -75,7 +75,7 @@ echo $contents; } ?>
 &gt; system(&quot;R CMD INSTALL GSIF_0.3-2.tar.gz&quot;) </pre>
 <p>GSIF package extensively uses a number of external software, hence it is highly recommended that, prior to starting GSIF, you first download and install:</p>
 <ol>
-  <li><a href="http://fwtools.maptools.org" target="_blank">FWTools</a> (<em>required</em>) &#8212; this software is called by several functions (e.g. <a href="make.3Dgrid-method.html">make.3Dgrid</a>);</li>
+  <li><a href="http://fwtools.maptools.org" target="_blank">FWTools</a> (<em>required</em>) &#8212; this software is called by several functions (e.g. <a href="make.3Dgrid.html">make.3Dgrid</a>);</li>
   <li><a href="http://www.saga-gis.org" target="_blank">SAGA GIS</a> (<em>optional</em>) &#8212; this software is highly recommend but not required;</li>
   <li><a href="http://www.python.org/getit/" target="_blank">Python</a> (<em>optional</em>) &#8212; this allows processing of large data;</li>
 </ol>
