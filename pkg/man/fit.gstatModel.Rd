@@ -7,6 +7,8 @@
 \alias{fit.gstatModel,geosamples,formula,SpatialPixelsDataFrame-method}
 \alias{fit.gstatModel,geosamples,formula,list-method}
 \alias{fit.gstatModel,geosamples,list,list-method}
+\alias{test.gstatModel}
+\alias{test.gstatModel,SpatialPointsDataFrame,formula,SpatialPixelsDataFrame-method}
 \title{Methods to fit a regression-kriging model}
 \description{Tries to automatically fit a 2D or 3D regression-kriging model for a given set of points (object of type \code{"SpatialPointsDataFrame"} or \code{"geosamples"}) and covariates (object of type \code{"SpatialPixelsDataFrame"}). It first fits a regression model (e.g. Generalized Linear Model, regression tree, random forest model or similar) following the \code{formulaString}, then fits variogram for residuals usign the \code{fit.variogram} method from the \href{http://www.gstat.org}{gstat} package. Creates an output object of class \code{\link{gstatModel-class}}.}
 \usage{ 
@@ -92,7 +94,7 @@ omm <- fit.gstatModel(meuse, om~dist+ffreq, meuse.grid, family = gaussian(log))
 summary(omm@regModel)
 v = omm@vgmModel; class(v) = c("variogramModel", "data.frame")
 om.sp <- SpatialPointsDataFrame(omm@sp, data = omm@regModel$model)
-\dontrun{# plot a variogram:
+\dontrun{## plot a variogram:
 vve = variogram(om~1, om.sp)
 vvres = variogram(om~dist+ffreq, om.sp)
 plot(x=vvres$dist, y=vvres$gamma, pch=20, xlab='distance',
@@ -102,8 +104,10 @@ vline <- variogramLine(v, maxdist=max(vvres$dist), n=length(vvres$dist))
 lines(x=vline$dist, y=vline$gamma)
 }
 om.rk <- predict(omm, meuse.grid)
-\dontrun{# plot the results in Google Earth:
+\dontrun{## plot the results in Google Earth:
 plotKML(om.rk)
+## model diagnostics:
+t1 <- test.gstatModel(meuse, om~dist+ffreq, meuse.grid, family = gaussian(log), Ns=c(80, 100, 120, 140, 155))
 }
 
 ## binary variable (0/1):
@@ -148,7 +152,7 @@ glm.formulaString = as.formula(paste("SNDMHT ~ ",
 SNDMHT.m <- fit.gstatModel(observations=eberg.geo, glm.formulaString, 
   covariates=eberg_grid)
 ## problems with the variogram?
-\dontrun{# remove classes from the PRMGEO6 that are not represented in the model:
+\dontrun{## remove classes from the PRMGEO6 that are not represented in the model:
 fix.c = levels(eberg_grid$PRMGEO6)[!(levels(eberg_grid$PRMGEO6) \%in\% levels(SNDMHT.m@regModel$model$PRMGEO6))]
 summary(eberg_grid$PRMGEO6)
 for(j in fix.c){

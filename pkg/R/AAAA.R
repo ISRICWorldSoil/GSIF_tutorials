@@ -186,6 +186,10 @@ if (!isGeneric("fit.gstatModel")){
   setGeneric("fit.gstatModel", function(observations, formulaString, covariates, ...){standardGeneric("fit.gstatModel")})
 }
 
+if (!isGeneric("test.gstatModel")){
+  setGeneric("test.gstatModel", function(observations, formulaString, covariates, ...){standardGeneric("test.gstatModel")})
+}
+
 if (!isGeneric("fit.regModel")){
   setGeneric("fit.regModel", function(formulaString, rmatrix, predictionDomain, method, ...){standardGeneric("fit.regModel")})
 }

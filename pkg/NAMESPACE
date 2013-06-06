@@ -24,5 +24,5 @@ importClassesFrom("sp", SpatialPointsDataFrame, SpatialPixelsDataFrame, SpatialP
 importClassesFrom("dismo", DistModel, MaxEnt)
 
 exportClasses(geosamples, WPS, SpatialComponents, gstatModel, GlobalSoilMap)
-exportMethods(as.data.frame, mpspline, as.geosamples, getID, getProcess, describe, over, spc, fit.gstatModel, fit.vgmModel, fit.regModel, spfkm, spmultinom, make.3Dgrid, sp3D, gdalwarp, subset, write.data, MaxEnt, merge, predict, validate, summary, tile, getSpatialTiles)
+exportMethods(as.data.frame, mpspline, as.geosamples, getID, getProcess, describe, over, spc, fit.gstatModel, fit.vgmModel, fit.regModel, test.gstatModel, spfkm, spmultinom, make.3Dgrid, sp3D, gdalwarp, subset, write.data, MaxEnt, merge, predict, validate, summary, tile, getSpatialTiles)
 exportPattern("^[^\\.]")
