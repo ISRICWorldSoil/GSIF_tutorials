@@ -102,6 +102,8 @@ setMethod("gdalwarp", signature(obj = "SpatialPixelsDataFrame"), function(obj, p
     setTxtProgressBar(pb, i)          
     }
   close(pb)
+  cat(i, "\r")
+  flush.console()
   
   } else { 
     stop("Could not locate FWTools. First install and test FWTools. See 'plotKML.env()' for more info.") 

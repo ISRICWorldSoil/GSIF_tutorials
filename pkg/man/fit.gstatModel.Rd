@@ -7,8 +7,6 @@
 \alias{fit.gstatModel,geosamples,formula,SpatialPixelsDataFrame-method}
 \alias{fit.gstatModel,geosamples,formula,list-method}
 \alias{fit.gstatModel,geosamples,list,list-method}
-\alias{test.gstatModel}
-\alias{test.gstatModel,SpatialPointsDataFrame,formula,SpatialPixelsDataFrame-method}
 \title{Methods to fit a regression-kriging model}
 \description{Tries to automatically fit a 2D or 3D regression-kriging model for a given set of points (object of type \code{"SpatialPointsDataFrame"} or \code{"geosamples"}) and covariates (object of type \code{"SpatialPixelsDataFrame"}). It first fits a regression model (e.g. Generalized Linear Model, regression tree, random forest model or similar) following the \code{formulaString}, then fits variogram for residuals usign the \code{fit.variogram} method from the \href{http://www.gstat.org}{gstat} package. Creates an output object of class \code{\link{gstatModel-class}}.}
 \usage{ 
@@ -62,7 +60,7 @@
 }
 }
 \author{ Tomislav Hengl, Gerard B.M. Heuvelink and Bas Kempen }
-\seealso{ \code{\link{gstatModel-class}}, \code{\link{fit.regModel}}, \code{\link{geosamples-class}}, \code{stats::glm}, \code{gstat::fit.variogram}
+\seealso{ \code{\link{gstatModel-class}}, \code{\link{fit.regModel}}, \code{\link{test.gstatModel}}, \code{\link{geosamples-class}}, \code{stats::glm}, \code{gstat::fit.variogram}
 }
 \examples{
 # 2D model:
@@ -106,8 +104,6 @@ lines(x=vline$dist, y=vline$gamma)
 om.rk <- predict(omm, meuse.grid)
 \dontrun{## plot the results in Google Earth:
 plotKML(om.rk)
-## model diagnostics:
-t1 <- test.gstatModel(meuse, om~dist+ffreq, meuse.grid, family = gaussian(log), Ns=c(80, 100, 120, 140, 155))
 }
 
 ## binary variable (0/1):

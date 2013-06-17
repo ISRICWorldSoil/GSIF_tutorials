@@ -15,7 +15,11 @@ setMethod("validate", signature(obj = "gstatModel"), function(obj, nfold = 5, pr
    formulaString <- formula(obj@regModel)
    mfamily <- obj@regModel$family
    ## get the regression matrix:
-   ov <- obj@regModel$data[-obj@regModel$na.action,]
+   if(!is.null(obj@regModel$na.action)){
+     if(length(obj@regModel$na.action)>0){
+       ov <- obj@regModel$data[-obj@regModel$na.action,]
+     }
+   }
    if(nfold > nrow(ov)){ stop("'nfold' argument must not exceed total number of points") }
    ## get the covariates:
    seln = all.vars(formulaString)[-1]

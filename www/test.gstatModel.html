@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: Methods to test predictability of a regression-kriging model</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="R.css">
+</head><body>
+
+<table width="100%" summary="page for test.gstatModel-methods {GSIF}"><tr><td>test.gstatModel-methods {GSIF}</td><td align="right">R Documentation</td></tr></table>
+
+<h2>Methods to test predictability of a regression-kriging model</h2>
+
+<h3>Description</h3>
+
+<p>Test predictability of a regression-kriging model. Automates model fitting, cross-validation and prediction and prints out: (1) amount of variance explained under different sampling intensities, (2) number of predictions per second and (3) number of prediction failures (failure = predictions where cross-validation z-scores exceed +/- 1.5 or cross-validation residuals exceed three standard deviations).</p>
+
+
+<h3>Usage</h3>
+
+<pre> 
+## S4 method for signature 'SpatialPointsDataFrame,formula,SpatialPixelsDataFrame'
+test.gstatModel(observations, formulaString, covariates, Ns, 
+ predictionLocations = covariates, save.predictions = FALSE, ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>observations</code></td>
+<td>
+<p>object of type <code>"SpatialPointsDataFrame"</code> or <code>"geosamples-class"</code></p>
+</td></tr>
+<tr valign="top"><td><code>formulaString</code></td>
+<td>
+<p>object of type <code>"formula"</code> or a list of formulas</p>
+</td></tr>
+<tr valign="top"><td><code>covariates</code></td>
+<td>
+<p>object of type <code>"SpatialPixelsDataFrame"</code>, or list of grids</p>
+</td></tr>
+<tr valign="top"><td><code>Ns</code></td>
+<td>
+<p>vector; list of sampling intensities (maximum should not exceed the total number of samples)</p>
+</td></tr>
+<tr valign="top"><td><code>save.predictions</code></td>
+<td>
+<p>logical; indicates whether the prediction results should also be saved</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>other optional arguments that can be passed to <code>fit.gstatModel</code></p>
+</td></tr>  
+</table>
+
+
+<h3>Note</h3>
+
+<p>Vector of sampling intensities, if not provided, will be estimated as 10 numbers on square root scale (N minimum is determined as 20 + number of covariates times 10). Where no model can be fitted, function returns an empty set. This function can be time consuming for large data sets.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p> Tomislav Hengl, Gerard B.M. Heuvelink and Bas Kempen </p>
+
+
+<h3>See Also</h3>
+
+ <p><code><a href="fit.gstatModel.html">fit.gstatModel</a></code>, <code><a href="gstatModel.html">gstatModel-class</a></code> </p>
+
+
+<h3>Examples</h3>
+
+<pre>
+# 2D model:
+library(sp)
+## load the Meuse data set:
+demo(meuse, echo=FALSE)
+## model diagnostics:
+t1 &lt;- test.gstatModel(meuse, om~dist+ffreq, meuse.grid, family = gaussian(log), Ns=c(80, 155))
+t2 &lt;- test.gstatModel(meuse, log1p(om)~dist+ffreq, meuse.grid, Ns=c(80, 155))
+t1
+t2
+</pre>
+
+<hr><div align="center">[Package <em>GSIF</em> version 0.3-2 <a href="00Index.html">Index</a>]</div>
+</body></html>
