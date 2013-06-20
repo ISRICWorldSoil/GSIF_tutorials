@@ -98,8 +98,11 @@ setMethod("fit.vgmModel", signature(formulaString = "formula", rmatrix = "data.f
 
   ## try to fit a variogram:
   try(rvgm <- gstat::fit.variogram(variogram(formulaString, rmatrix), model=ivgm, ...))   
-  if(class(.Last.value)[1]=="try-error"){ 
-    stop("Variogram model could not be fitted.") 
+  if(class(.Last.value)[1]=="try-error"){
+    try(rvgm <- gstat::fit.variogram(variogram(formulaString, rmatrix), model=ivgm, fit.ranges = FALSE, ...))
+    if(class(.Last.value)[1]=="try-error"){    
+      stop("Variogram model could not be fitted.") 
+    }
   }
     
   if(any(!(names(rvgm) %in% c("range", "psill"))) & diff(rvgm$range)==0|diff(rvgm$psill)==0){
