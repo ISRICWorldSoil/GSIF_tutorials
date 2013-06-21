@@ -160,8 +160,10 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
         }
         ## mask out values outside physical limits:
         rk@data[,variable] <- ifelse(rk$var1.pred > zmax, zmax, ifelse(rk$var1.pred < zmin, zmin, rk$var1.pred))
-        if(object@regModel$family$family == "poisson"){
-          rk@data[,variable] <- as.integer(round(rk@data[,variable], 0))
+        if(any(class(object@regModel)=="glm")){
+          if(object@regModel$family$family == "poisson"){
+            rk@data[,variable] <- as.integer(round(rk@data[,variable], 0))
+          }
         }
         
         ## cross-validation (default implementation by gstat):
@@ -185,8 +187,10 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
         ## mask out values outside physical limits:
         for(i in 1:nsim){
           rk@data[,i] <- ifelse(rk@data[,i] > zmax, zmax, ifelse(rk@data[,i] < zmin, zmin, rk@data[,i]))
-          if(object@regModel$family$family == "poisson"){
-            rk@data[,i] <- as.integer(round(rk@data[,i], 0))
+          if(any(class(object@regModel)=="glm")){
+            if(object@regModel$family$family == "poisson"){
+              rk@data[,i] <- as.integer(round(rk@data[,i], 0))
+            }
           }
         }    
       }
@@ -254,8 +258,10 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
           rk@data[,paste(variable, "svar", sep=".")] <- rk@data[,"var1.var"] / var(observed@data[,variable], na.rm=TRUE)  
           ## mask out values outside the physical limits:
           rk@data[,variable] <- ifelse(rk$var1.pred > zmax, zmax, ifelse(rk$var1.pred < zmin, zmin, rk$var1.pred))
-          if(object@regModel$family$family == "poisson"){
-            rk@data[,variable] <- as.integer(round(rk@data[,variable], 0))
+          if(any(class(object@regModel)=="glm")){
+            if(object@regModel$family$family == "poisson"){
+              rk@data[,variable] <- as.integer(round(rk@data[,variable], 0))
+            }
           }
 
           if(nfold>0){
@@ -294,9 +300,11 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
           rk@data[,i] <- xsim + rk@data[,i]
           ## TH: this does not costs so much time to compute, but it assumes that the trend and residuals are independent!        
           rk@data[,i] <- ifelse(rk@data[,i] > zmax, zmax, ifelse(rk@data[,i] < zmin, zmin, rk@data[,i]))
+          if(any(class(object@regModel)=="glm")){
            if(object@regModel$family$family == "poisson"){
              rk@data[,i] <- as.integer(round(rk@data[,i], 0))
            }
+          }
         }
         }
       }
