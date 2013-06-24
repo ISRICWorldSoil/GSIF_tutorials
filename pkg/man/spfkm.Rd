@@ -29,6 +29,7 @@
 \examples{
 # load data:
 library(plotKML)
+library(sp)
 
 data(eberg)
 # subset to 20%:

@@ -37,6 +37,8 @@ set \code{nsim = 0}.
 \examples{ 
 ## load observations:
 library(plotKML)
+library(sp)
+demo(meuse, echo=FALSE)
 data(meuse)
 coordinates(meuse) <- ~x+y
 proj4string(meuse) <- CRS("+init=epsg:28992")

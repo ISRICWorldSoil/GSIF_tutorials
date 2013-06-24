@@ -11,7 +11,7 @@
 	pkg.info <- drop(read.dcf(file=system.file("DESCRIPTION", package=pkgname,  lib.loc=libname), fields=c("Version","Date")))
 	packageStartupMessage(paste(pkgname, " version ", pkg.info["Version"], " (", pkg.info["Date"], ")", sep=""))
 
-	tst <- try( removeTmpFiles(), silent=TRUE )
+	#tst <- try( removeTmpFiles(), silent=TRUE )
 
   # create env variables:
   GSIF.env(show.env = FALSE)

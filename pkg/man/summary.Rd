@@ -42,7 +42,8 @@ The summary returns a data.frame with the following columns:
 ## load observations:
 library(sp)
 library(rgdal)
-loadMeuse()
+library(gstat)
+demo(meuse, echo=FALSE)
 ## fit a model:
 omm <- fit.gstatModel(meuse, om~dist, family=gaussian(link="log"), meuse.grid)
 show(omm@regModel)

@@ -25,6 +25,7 @@
 \seealso{ \code{\link{fit.regModel}}, \code{\link{fit.gstatModel}}, \code{gstat::fit.variogram} }
 \examples{
 library(sp)
+library(gstat)
 
 ## fit variogram to the Meuse data:
 demo(meuse, echo=FALSE)

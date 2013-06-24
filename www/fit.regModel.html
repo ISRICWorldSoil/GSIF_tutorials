@@ -18,7 +18,7 @@
 <pre>
 ## S4 method for signature 'formula,data.frame,SpatialPixelsDataFrame,character'
 fit.regModel(formulaString, rmatrix, predictionDomain, 
-      method = list("GLM", "rpart", "randomForest", "HB")[[1]], 
+      method = list("GLM", "rpart", "randomForest", "quantregForest")[[1]], 
       dimensions = NULL, family=gaussian, stepwise=TRUE, rvgm, ...)
 </pre>
 
@@ -40,7 +40,7 @@ fit.regModel(formulaString, rmatrix, predictionDomain,
 </td></tr>
 <tr valign="top"><td><code>method</code></td>
 <td>
-<p>character; family of methods considered e.g. <code>"GLM"</code>, <code>"rpart"</code> (regression trees), <code>"randomForest"</code></p>
+<p>character; family of methods considered e.g. <code>"GLM"</code>, <code>"rpart"</code> (regression trees), <code>"randomForest"</code> (random forest)</p>
 </td></tr>
 <tr valign="top"><td><code>dimensions</code></td>
 <td>
@@ -67,7 +67,7 @@ fit.regModel(formulaString, rmatrix, predictionDomain,
 
 <h3>Details</h3>
 
-<p>Produces an object of class <code>"gstatModel"</code> that contains: (1) fitted regression model (e.g. a GLM, cubist model, randomForest model or a hierarchical Bayes model), (2) fitted variogram, and (c) object of class <code>"SpatialPoints"</code> with observation locations. To combine overlay and model fitting operations, consider using <code><a href="fit.gstatModel.html">fit.gstatModel</a></code>.</p>
+<p>Produces an object of class <code>"gstatModel"</code> that contains: (1) fitted regression model (e.g. a GLM, cubist model, or randomForest model), (2) fitted variogram, and (c) object of class <code>"SpatialPoints"</code> with observation locations. To combine overlay and model fitting operations, consider using <code><a href="fit.gstatModel.html">fit.gstatModel</a></code>.</p>
 
 
 <h3>Author(s)</h3>
@@ -85,7 +85,6 @@ fit.regModel(formulaString, rmatrix, predictionDomain,
 <pre>
 ## Meuse data:
 library(sp)
-library(randomForest)
 library(rpart)
 
 ## load the Meuse data set:
@@ -108,5 +107,5 @@ m2 &lt;- fit.regModel(log1p(om)~dist+ffreq, rmatrix=ov, meuse.grid,
      method="rpart")
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.3-2 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.3-3 <a href="00Index.html">Index</a>]</div>
 </body></html>

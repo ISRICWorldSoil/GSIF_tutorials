@@ -53,6 +53,7 @@ Note: this operation can be time consuming for large areas (e.g. >> 1e6 pixels).
 ## grids Ebergotzen:
 library(plotKML)
 library(rgdal)
+library(raster)
 
 data(eberg_grid)
 gridded(eberg_grid) <- ~x+y

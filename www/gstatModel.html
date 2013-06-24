@@ -77,6 +77,8 @@
 <pre> 
 ## load observations:
 library(plotKML)
+library(sp)
+demo(meuse, echo=FALSE)
 data(meuse)
 coordinates(meuse) &lt;- ~x+y
 proj4string(meuse) &lt;- CRS("+init=epsg:28992")
@@ -97,5 +99,5 @@ rk.cv &lt;- validate(omm)
 sqrt(mean((rk.cv$validation$var1.pred-rk.cv$validation$observed)^2))
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.3-2 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.3-3 <a href="00Index.html">Index</a>]</div>
 </body></html>

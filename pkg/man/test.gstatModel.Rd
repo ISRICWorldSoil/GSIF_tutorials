@@ -14,6 +14,7 @@
   \item{formulaString}{object of type \code{"formula"} or a list of formulas}
   \item{covariates}{object of type \code{"SpatialPixelsDataFrame"}, or list of grids}
   \item{Ns}{vector; list of sampling intensities (maximum should not exceed the total number of samples)}
+  \item{predictionLocations}{object of class \code{"SpatialPixelsDataFrame"}; if not specified then the same as the covariates}
   \item{save.predictions}{logical; indicates whether the prediction results should also be saved}
   \item{\dots}{other optional arguments that can be passed to \code{fit.gstatModel}}  
 }
@@ -28,8 +29,6 @@ library(sp)
 demo(meuse, echo=FALSE)
 ## model diagnostics:
 t1 <- test.gstatModel(meuse, om~dist+ffreq, meuse.grid, family = gaussian(log), Ns=c(80, 155))
-t2 <- test.gstatModel(meuse, log1p(om)~dist+ffreq, meuse.grid, Ns=c(80, 155))
 t1
-t2
 }
 \keyword{methods}

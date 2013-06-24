@@ -38,6 +38,7 @@
 \examples{
 \dontrun{
 library(XML)
+library(sp)
 URI = "http://wps.worldgrids.org/pywps.cgi"
 server <- list(URI=URI, request="execute", 
     version="version=1.0.0", service.name="service=wps", 

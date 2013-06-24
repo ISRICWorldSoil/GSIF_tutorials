@@ -75,7 +75,7 @@ setMethod("show", signature(object = "SpatialPredictions"), function(object){
   cat("  Resolution (x)     :", object@predicted@grid@cellsize[1], "\n")
   cat("  Resolution (y)     :", object@predicted@grid@cellsize[2], "\n")
   cat("  Resolution (units) :", lengthunits, "\n")
-  if(class(object@regModel.summary)=="summary.glm"){
+  if(any(class(object@regModel.summary)=="summary.glm")){
     cat("  GLM call formula   :", deparse(object@regModel.summary$call$formula), "\n")
     cat("  Family             :", object@regModel.summary$family$family, "\n")  
     cat("  Link function      :", object@regModel.summary$family$link, "\n")    

@@ -125,7 +125,7 @@ Predictions can be speed up by using a larger <code>coarsening.factor</code> e.g
 
 <h3>Note</h3>
 
-<p>Predictions using <code>predict.method = "KED"</code> (the default gstat setting) can be time consuming for large data set and can result in instabilities (singular matrix problems) if the search radius is small and/or if all covariates contain exactly the same values.</p>
+<p>Predictions using <code>predict.method = "KED"</code> (the default gstat setting) can be time consuming for large data set and can result in instabilities (singular matrix problems) if the search radius is small and/or if all covariates contain exactly the same values. Predictions using <code>predict.method = "RK"</code> will typically underestimate the prediction variance (taken as a simple sum of the regression and ordinary kriging variances) as compared to the &quot;KED&quot; variance that includes also a cross-term (see <a href="http://dx.doi.org/10.1016/j.cageo.2007.05.001">Hengl et al. 2007</a> for more details).</p>
 
 
 <h3>Author(s)</h3>
@@ -133,10 +133,20 @@ Predictions can be speed up by using a larger <code>coarsening.factor</code> e.g
 <p> Tomislav Hengl, Gerard B.M. Heuvelink and Bas Kempen</p>
 
 
+<h3>References</h3>
+
+ 
+<ul>
+<li><p> Hengl T., Heuvelink G.B.M., Rossiter D.G., 2007. <a href="http://dx.doi.org/10.1016/j.cageo.2007.05.001">About regression-kriging: from equations to case studies</a>. Computers and Geosciences, 33(10): 1301-1315.
+</p>
+</li></ul>
+
+
+
 <h3>See Also</h3>
 
  <p><code><a href="gstatModel.html">gstatModel-class</a></code>, <code><a href="fit.gstatModel.html">fit.gstatModel</a></code>
 </p>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.3-2 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.3-3 <a href="00Index.html">Index</a>]</div>
 </body></html>

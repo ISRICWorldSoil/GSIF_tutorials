@@ -40,6 +40,7 @@ All detphs are commonly expressed in centimeters. The returned values refer to p
 \examples{
 library(aqp)
 library(plyr)
+library(sp)
 ## sample profile from Nigeria:
 lon = 3.90; lat = 7.50; id = "ISRIC:NG0017"; FAO1988 = "LXp" 
 top = c(0, 18, 36, 65, 87, 127) 

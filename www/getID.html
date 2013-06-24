@@ -73,6 +73,7 @@ getID(obj, pixsize = 3/3600, empty.tif = FALSE,
 <h3>Examples</h3>
 
 <pre>
+library(sp)
 ## Bounding box for Malawi:
 bbox = expand.grid(lon=c(32.67152, 35.915046), lat=c(-17.12721, -9.363796))
 bbox[5,] &lt;- bbox[1,]
@@ -81,5 +82,5 @@ x &lt;- SpatialPolygons(list(Polygons(list(Polygon(bbox)), ID="1")), proj4string
 ID.lst &lt;- getID(x)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.3-2 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.3-3 <a href="00Index.html">Index</a>]</div>
 </body></html>

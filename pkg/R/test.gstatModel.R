@@ -7,9 +7,9 @@
 setMethod("test.gstatModel", signature(observations = "SpatialPointsDataFrame", formulaString = "formula", covariates = "SpatialPixelsDataFrame"), function(observations, formulaString, covariates, Ns, predictionLocations = covariates, save.predictions = FALSE, ...){
                             
   ## derive Ns if not available:  
-  Nmin = round(20 + length(formulaString)*10)
   Nmax = round(nrow(observations))
   if(missing(Ns)){
+    Nmin = round(20 + length(formulaString)*10)
     ss = round((runif(10)*sqrt(Nmax-Nmin))^2+Nmin)
     Ns <- sort(c(Nmin, ss, Nmax))
   }

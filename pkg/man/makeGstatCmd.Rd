@@ -40,9 +40,10 @@ makeGstatCmd(formString, vgmModel, outfile, easfile,
 \examples{
 \dontrun{
 library(sp)
+library(gstat)
 
 # Meuse data:
-loadMeuse()
+demo(meuse, echo=FALSE)
 # fit a model:
 omm <- fit.gstatModel(observations = meuse, formulaString = om~dist, 
   family = gaussian(log), covariates = meuse.grid)

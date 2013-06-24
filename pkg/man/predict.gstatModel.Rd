@@ -45,7 +45,12 @@
 If not speficied otherwise, \code{subset.observations} by default selects only obserations within the spatial domain (bounding box) of the \code{predictionLocations} plus 50\% of the one third of the extent of the area.\cr 
 Predictions can be speed up by using a larger \code{coarsening.factor} e.g. 2 to 5, in which case the ordinary kriging on residuals will run at a coarser resolution, and the output would be then downscaled to the original resolution using splines (via the \code{\link{gdalwarp}} method). In the case of \code{predict.method = RK}, the kriging variance is derived as a sum of the GLM variance and the OK variance, which is statistically sub-optimal.
 }
-\note{Predictions using \code{predict.method = "KED"} (the default gstat setting) can be time consuming for large data set and can result in instabilities (singular matrix problems) if the search radius is small and/or if all covariates contain exactly the same values.}
+\note{Predictions using \code{predict.method = "KED"} (the default gstat setting) can be time consuming for large data set and can result in instabilities (singular matrix problems) if the search radius is small and/or if all covariates contain exactly the same values. Predictions using \code{predict.method = "RK"} will typically underestimate the prediction variance (taken as a simple sum of the regression and ordinary kriging variances) as compared to the "KED" variance that includes also a cross-term (see \href{http://dx.doi.org/10.1016/j.cageo.2007.05.001}{Hengl et al. 2007} for more details).}
+\references{
+\itemize{ 
+\item Hengl T., Heuvelink G.B.M., Rossiter D.G., 2007. \href{http://dx.doi.org/10.1016/j.cageo.2007.05.001}{About regression-kriging: from equations to case studies}. Computers and Geosciences, 33(10): 1301-1315.
+}
+}
 \author{ Tomislav Hengl, Gerard B.M. Heuvelink and Bas Kempen}
 \seealso{ \code{\link{gstatModel-class}}, \code{\link{fit.gstatModel}}
 }

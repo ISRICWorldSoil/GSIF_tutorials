@@ -10,7 +10,7 @@
 
 <h3>Description</h3>
 
-<p>Merges objects of class <code>"SpatialPredictions"</code> or <code>"RasterBrickSimulations"</code> and produces average predictions where the two objects overlap spatially. If the predictions are available at different resolutions, then it downscales all other grids to the smallest grid cell size using bicubic splines (for predictions) i.e. nearest neighbor algorithm (for simulations). Weigths can be passed via the <code>RMSE.l</code> argument, otherwise they will be estimated from <code>validation</code> slot (in the case of the <code>"SpatialPredictions"</code> class objects).
+<p>Merges objects of class <code>"SpatialPredictions"</code> or <code>"RasterBrickSimulations"</code> and produces average predictions where the two objects overlap spatially. If the predictions are available at different resolutions, then it downscales all other grids to the smallest grid cell size using bicubic splines (for predictions) i.e. nearest neighbor algorithm (for simulations). Weigths can be passed via the <code>RMSE.l</code> argument, otherwise they will be estimated from <code>validation</code> slot (if objects are of the class <code>"SpatialPredictions"</code>).
 </p>
 
 
@@ -18,8 +18,7 @@
 
 <pre>
 ## S4 method for signature 'SpatialPredictions,SpatialPredictions'
-merge(x, y, ..., 
-          RMSE.l = NULL, silent = TRUE)
+merge(x, y, ..., RMSE.l = NULL, silent = TRUE)
 </pre>
 
 
@@ -49,15 +48,15 @@ merge(x, y, ...,
 </table>
 
 
-<h3>Details</h3>
-
-<p>Merging of multiple predictions using weighted averaging is a heuristic approach to mapping. The main problem is that this method assumes that the predictions are completely independent (independent covariates, independent models), but this not might be the case and hence the predictions will be sub-optimal. Merging multiple predictions is however attractive for situations where the predictions do not have the same extent, so that a more global map can be used to fill in the gaps in locally produced predictions.</p>
-
-
 <h3>Value</h3>
 
 <p>Returns an object of type <code>"SpatialPixelsDataFrame"</code> or <code>"RasterBrickSimulations"</code> that contains only the merged values.
 </p>
+
+
+<h3>Note</h3>
+
+<p>Merging of multiple spatial predictions using weighted averaging is a heuristic approach to mapping. This method assumes that the predictions are completely independent (independent covariates, independent models), but this not might be the case and hence the merged predictions will be sub-optimal. Merging multiple predictions is however attractive for situations where the predictions do not have the same extent, so that spatial predictions with larger coverage can be used to fill in the gaps in locally produced predictions.</p>
 
 
 <h3>Author(s)</h3>
@@ -74,5 +73,5 @@ merge(x, y, ...,
 </li></ul>
 
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.3-2 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.3-3 <a href="00Index.html">Index</a>]</div>
 </body></html>

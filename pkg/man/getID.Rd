@@ -23,6 +23,7 @@ The output is a vector of grid cell ID names e.g. \code{W79_N83}. These can be f
 \seealso{ \code{\link{landmask}}
 }
 \examples{
+library(sp)
 ## Bounding box for Malawi:
 bbox = expand.grid(lon=c(32.67152, 35.915046), lat=c(-17.12721, -9.363796))
 bbox[5,] <- bbox[1,]

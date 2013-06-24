@@ -41,6 +41,10 @@ test.gstatModel(observations, formulaString, covariates, Ns,
 <td>
 <p>vector; list of sampling intensities (maximum should not exceed the total number of samples)</p>
 </td></tr>
+<tr valign="top"><td><code>predictionLocations</code></td>
+<td>
+<p>object of class <code>"SpatialPixelsDataFrame"</code>; if not specified then the same as the covariates</p>
+</td></tr>
 <tr valign="top"><td><code>save.predictions</code></td>
 <td>
 <p>logical; indicates whether the prediction results should also be saved</p>
@@ -77,10 +81,8 @@ library(sp)
 demo(meuse, echo=FALSE)
 ## model diagnostics:
 t1 &lt;- test.gstatModel(meuse, om~dist+ffreq, meuse.grid, family = gaussian(log), Ns=c(80, 155))
-t2 &lt;- test.gstatModel(meuse, log1p(om)~dist+ffreq, meuse.grid, Ns=c(80, 155))
 t1
-t2
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.3-2 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.3-3 <a href="00Index.html">Index</a>]</div>
 </body></html>

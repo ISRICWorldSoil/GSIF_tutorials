@@ -6,7 +6,7 @@
 
 
 ## Fit a GLM to spatial data:
-setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.frame", predictionDomain = "SpatialPixelsDataFrame", method = "character"), function(formulaString, rmatrix, predictionDomain, method = list("GLM", "rpart", "randomForest", "HB")[[1]], dimensions = NULL, family=gaussian, stepwise=TRUE, rvgm, ...){
+setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.frame", predictionDomain = "SpatialPixelsDataFrame", method = "character"), function(formulaString, rmatrix, predictionDomain, method = list("GLM", "rpart", "randomForest", "quantregForest")[[1]], dimensions = NULL, family=gaussian, stepwise=TRUE, rvgm, ...){
 
   ## target variable name:
   tv = all.vars(formulaString)[1]  
@@ -26,7 +26,7 @@ setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.f
   }
 
   ## check if the method exists:
-  if(!any(method %in% list("GLM", "rpart", "randomForest"))){ stop(paste(method, "method not available.")) }
+  if(!any(method %in% list("GLM", "rpart", "randomForest", "quantregForest"))){ stop(paste(method, "method not available.")) }
     
   if(method == "GLM"){  
     ## fit/filter the regression model:
@@ -71,13 +71,18 @@ setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.f
     rmatrix$residual <- resid(rgm)  
   }
   
-  if(method == "randomForest"){
-   ## fit/filter the regression model:
+  if(method == "randomForest"|method == "quantregForest"){
+    ## fit/filter the regression model:
     message("Fitting a randomForest model...")
     ## NA not permitted in response:
     rmatrix <- rmatrix[!is.na(rmatrix[,tv]),]
-    rgm <- randomForest(formulaString, data=rmatrix, na.action=na.pass)
-  
+    if(method == "randomForest"){
+      rgm <- randomForest(formulaString, data=rmatrix, na.action=na.pass)
+    } else {
+      ## TH: the quantreg package developed by Nicolai Meinshausen <meinshausen@stats.ox.ac.uk> is slower but more flexible      
+      rgm <- quantregForest(y=eval(formulaString[[2]], rmatrix), x=rmatrix[,all.vars(formulaString)[-1]])
+      attr(rgm$y, "name") <- tv  
+    }
     ## extract the residuals:
     rmatrix$residual <- rgm$predicted - rgm$y
   }

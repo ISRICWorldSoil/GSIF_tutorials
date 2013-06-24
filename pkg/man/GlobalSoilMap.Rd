@@ -45,6 +45,7 @@ library(aqp)
 library(plyr)
 library(splines)
 library(rgdal)
+library(raster)
 
 data(eberg)
 # subset data to 10%:

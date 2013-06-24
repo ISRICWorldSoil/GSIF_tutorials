@@ -18,25 +18,25 @@
 <pre> 
 ## S4 method for signature 'SpatialPointsDataFrame,formula,SpatialPixelsDataFrame'
 fit.gstatModel(observations, formulaString, covariates, 
-     method = list("GLM", "rpart", "randomForest", "HB")[[1]], 
+     method = list("GLM", "rpart", "randomForest", "quantregForest")[[1]], 
      dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]],
      family = gaussian, stepwise = TRUE, vgmFun = "Exp", 
      subsample = 5000, ...)
 ## S4 method for signature 'geosamples,formula,SpatialPixelsDataFrame'
 fit.gstatModel(observations, formulaString, covariates, 
-     method = list("GLM", "rpart", "randomForest", "HB")[[1]], 
+     method = list("GLM", "rpart", "randomForest", "quantregForest")[[1]], 
      dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]],
      family = gaussian, stepwise = TRUE, 
      vgmFun = "Exp", subsample = 5000, ...)
 ## S4 method for signature 'geosamples,formula,list'
 fit.gstatModel(observations, formulaString, covariates, 
-     method = list("GLM", "rpart", "randomForest", "HB")[[1]], 
+     method = list("GLM", "rpart", "randomForest", "quantregForest")[[1]], 
      dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]],
      family = gaussian, stepwise = TRUE, 
      vgmFun = "Exp", subsample = 5000, ...)
 ## S4 method for signature 'geosamples,list,list'
 fit.gstatModel(observations, formulaString, covariates, 
-     method = list("GLM", "rpart", "randomForest", "HB")[[1]], 
+     method = list("GLM", "rpart", "randomForest", "quantregForest")[[1]], 
      dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]],
      family = gaussian, stepwise = TRUE, 
      vgmFun = "Exp", subsample = 5000, ...)
@@ -133,7 +133,7 @@ fit.gstatModel(observations, formulaString, covariates,
 
 <h3>See Also</h3>
 
- <p><code><a href="gstatModel.html">gstatModel-class</a></code>, <code><a href="fit.regModel.html">fit.regModel</a></code>, <code><a href="geosamples.html">geosamples-class</a></code>, <code>stats::glm</code>, <code>gstat::fit.variogram</code>
+ <p><code><a href="gstatModel.html">gstatModel-class</a></code>, <code><a href="fit.regModel.html">fit.regModel</a></code>, <code><a href="test.gstatModel.html">test.gstatModel</a></code>, <code><a href="geosamples.html">geosamples-class</a></code>, <code>stats::glm</code>, <code>gstat::fit.variogram</code>
 </p>
 
 
@@ -147,6 +147,7 @@ library(aqp)
 library(plyr)
 library(rpart)
 library(splines)
+library(gstat)
 
 ## load the Meuse data set:
 demo(meuse, echo=FALSE)
@@ -169,7 +170,7 @@ omm &lt;- fit.gstatModel(meuse, om~dist+ffreq, meuse.grid, family = gaussian(log
 summary(omm@regModel)
 v = omm@vgmModel; class(v) = c("variogramModel", "data.frame")
 om.sp &lt;- SpatialPointsDataFrame(omm@sp, data = omm@regModel$model)
-## Not run: # plot a variogram:
+## Not run: ## plot a variogram:
 vve = variogram(om~1, om.sp)
 vvres = variogram(om~dist+ffreq, om.sp)
 plot(x=vvres$dist, y=vvres$gamma, pch=20, xlab='distance',
@@ -180,7 +181,7 @@ lines(x=vline$dist, y=vline$gamma)
 
 ## End(Not run)
 om.rk &lt;- predict(omm, meuse.grid)
-## Not run: # plot the results in Google Earth:
+## Not run: ## plot the results in Google Earth:
 plotKML(om.rk)
 
 ## End(Not run)
@@ -229,7 +230,7 @@ glm.formulaString = as.formula(paste("SNDMHT ~ ",
 SNDMHT.m &lt;- fit.gstatModel(observations=eberg.geo, glm.formulaString, 
   covariates=eberg_grid)
 ## problems with the variogram?
-## Not run: # remove classes from the PRMGEO6 that are not represented in the model:
+## Not run: ## remove classes from the PRMGEO6 that are not represented in the model:
 fix.c = levels(eberg_grid$PRMGEO6)[!(levels(eberg_grid$PRMGEO6) %in% levels(SNDMHT.m@regModel$model$PRMGEO6))]
 summary(eberg_grid$PRMGEO6)
 for(j in fix.c){
@@ -247,5 +248,5 @@ plotKML(SNDMHT.rk.sd1, z.lim=c(5,85))
 ## End(Not run)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.3-2 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.3-3 <a href="00Index.html">Index</a>]</div>
 </body></html>
