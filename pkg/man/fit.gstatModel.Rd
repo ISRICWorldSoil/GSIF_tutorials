@@ -150,7 +150,8 @@ SNDMHT.m <- fit.gstatModel(observations=eberg.geo, glm.formulaString,
   covariates=eberg_grid)
 ## problems with the variogram?
 \dontrun{## remove classes from the PRMGEO6 that are not represented in the model:
-fix.c = levels(eberg_grid$PRMGEO6)[!(levels(eberg_grid$PRMGEO6) \%in\% levels(SNDMHT.m@regModel$model$PRMGEO6))]
+sel = !(levels(eberg_grid$PRMGEO6) \%in\% levels(SNDMHT.m@regModel$model$PRMGEO6))
+fix.c = levels(eberg_grid$PRMGEO6)[sel]
 summary(eberg_grid$PRMGEO6)
 for(j in fix.c){
   eberg_grid$PRMGEO6[eberg_grid$PRMGEO6 == j] <- levels(eberg_grid$PRMGEO6)[7]

@@ -31,9 +31,23 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
  
   ## predict regression model (output is a list):
   if(any(class(object@regModel)=="glm")){
+  ## target variable name: 
+  variable = all.vars(object@regModel$formula)[1]
+
+    ## filter the missing classes
+    ## TH: this is a simplified solution!
+    if(any(x <- sapply(object@regModel$model, is.factor))){
+      factors <- names(object@regModel$model)[x]
+      for(k in 1:length(factors)){
+        dom.class <- summary(object@regModel$model[,factors[k]])
+        dom.class <- attr(sort(dom.class, decreasing = TRUE)[1], "names")
+        fix.c <- levels(predictionLocations@data[,factors[k]])[!(levels(predictionLocations@data[,factors[k]]) %in% levels(object@regModel$model[,factors[k]]))]
+        for(j in fix.c){
+          predictionLocations@data[,factors[k]][predictionLocations@data[,factors[k]] == j] <- dom.class
+        }
+      }
+    }
     rp <- stats::predict.glm(object@regModel, newdata=predictionLocations, type="response", se.fit = TRUE, na.action = na.pass)
-    ## target variable name: 
-    variable = all.vars(object@regModel$formula)[1]
   }
   if(any(class(object@regModel)=="rpart")){
     rp <- list(predict(object@regModel, predictionLocations))

@@ -5,7 +5,7 @@
 # Note           : works only with linear models with normally distributed residuals;
 
 ## cross-validate a "gstatModel" object:
-setMethod("validate", signature(obj = "gstatModel"), function(obj, nfold = 5, predictionDomain = NULL, save.gstatModels = FALSE){
+setMethod("validate", signature(obj = "gstatModel"), function(obj, nfold = 5, predictionDomain = NULL, save.gstatModels = FALSE, ...){
 
    if(nfold < 2){ stop("'nfold' argument > 2 expected") }
 
@@ -54,7 +54,7 @@ setMethod("validate", signature(obj = "gstatModel"), function(obj, nfold = 5, pr
          dimensions = "3D"      
       }
       m.l[[j]] <- fit.regModel(formulaString=formulaString, rmatrix=rmatrix, predictionDomain=predictionDomain, method="GLM", family=mfamily, dimensions=dimensions, stepwise=TRUE, vgmFun=vgmmodel$model[2])
-      cv.l[[j]] <- predict.gstatModel(object=m.l[[j]], predictionLocations=nlocs, nfold=0, block=rep(0, ncol(obj@sp@coords)), mask.extra = FALSE)$predicted
+      cv.l[[j]] <- predict.gstatModel(object=m.l[[j]], predictionLocations=nlocs, nfold=0, block=rep(0, ncol(obj@sp@coords)), mask.extra = FALSE, ...)$predicted
       cv.l[[j]]$observed <- eval(tm, nlocs@data)
       cv.l[[j]]$residual <- cv.l[[j]]$observed - cv.l[[j]]$var1.pred
       cv.l[[j]]$zscore <- cv.l[[j]]$residual/sqrt(cv.l[[j]]$var1.var)

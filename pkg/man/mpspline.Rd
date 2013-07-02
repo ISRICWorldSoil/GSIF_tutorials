@@ -48,7 +48,8 @@ bottom = c(18, 36, 65, 87, 127, 181)
 ORCDRC = c(18.4, 4.4, 3.6, 3.6, 3.2, 1.2)
 munsell = c("7.5YR3/2", "7.5YR4/4", "2.5YR5/6", "5YR5/8", "5YR5/4", "10YR7/3")
 ## prepare a SoilProfileCollection:
-prof1 <- join(data.frame(id, top, bottom, ORCDRC, munsell), data.frame(id, lon, lat, FAO1988), type='inner')
+prof1 <- join(data.frame(id, top, bottom, ORCDRC, munsell), 
+         data.frame(id, lon, lat, FAO1988), type='inner')
 depths(prof1) <- id ~ top + bottom
 site(prof1) <- ~ lon + lat + FAO1988 
 coordinates(prof1) <- ~ lon + lat

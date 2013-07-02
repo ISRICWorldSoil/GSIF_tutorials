@@ -265,6 +265,8 @@ setMethod('mpspline', signature(obj = "SoilProfileCollection"),
     setTxtProgressBar(pb, st)          
   }
   close(pb)
+  cat(j, "\r")
+  flush.console()
 
   yave <- ifelse(yave<vlow, vlow, yave) 
   dave <- ifelse(dave<vlow, vlow, dave) 
