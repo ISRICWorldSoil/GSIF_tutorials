@@ -10,12 +10,12 @@
 
 <h3>Description</h3>
 
-<p>A class containing fitted parameters of a geostatistical model to be used to run predictions by regression-kriging. It comprises regression model (e.g. GLM), variogram model, and observation locations of sampled values used to fit the model.</p>
+<p>A class containing fitted parameters of a geostatistical model to be used to run predictions by regression-kriging. It comprises regression model (e.g. a GLM), variogram model, and observation locations of sampled values used to fit the model.</p>
 
 
 <h3>Details</h3>
 
-<p> Any model passed to the <code>regModel</code> slot must come with generic functions such as <code>residuals</code>, <code>fitted.values</code>, <code>summary</code> and <code>predict</code>.
+<p> Any model passed to the <code>regModel</code> slot must come with generic functions such as <code>residuals</code>, <code>fitted.values</code>, <code>summary</code>, <code>formula</code> and <code>predict</code>.
 </p>
 
 
@@ -41,7 +41,7 @@
 </dd>
 <dt>predict</dt><dd><p><code>signature(obj = "gstatModel")</code>: makes predictions for a set of given predictionLocations (gridded maps) at block support corresponding to the <code>cellsize</code> slot in the object of class <code>"SpatialPixelsDataFrame"</code>; to produce predictions at point support, submit the <code>predictionLocations</code> as <code>"SpatialPointsDataFrame"</code> </p>
 </dd>
-<dt>validate</dt><dd><p><code>signature(obj = "gstatModel")</code>: runs <EM>n</EM>-fold cross-validation of the existing gstatModel (it re-fits the model using existing formula string and then validates the predictions at validation locations)</p>
+<dt>validate</dt><dd><p><code>signature(obj = "gstatModel")</code>: runs <EM>n</EM>-fold cross-validation of the existing gstatModel (it re-fits the model using existing formula string and model data, then estimates the mapping error at validation locations)</p>
 </dd>
 </dl>
 
@@ -99,5 +99,5 @@ rk.cv &lt;- validate(omm)
 sqrt(mean((rk.cv$validation$var1.pred-rk.cv$validation$observed)^2))
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.3-3 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.3-4 <a href="00Index.html">Index</a>]</div>
 </body></html>

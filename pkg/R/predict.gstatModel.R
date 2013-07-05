@@ -135,9 +135,10 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
   if(any(class(object@regModel)=="randomForest")){
     observed@data[,paste(variable, "modelFit", sep=".")] <- object@regModel$predicted[subset.observations]
   }
-  if(any(class(object@regModel) %in% c("rpart", "randomForest"))){
-    observed@data[,paste(variable, "residual", sep=".")] <- (object@regModel$y - observed@data[,paste(variable, "modelFit", sep=".")])[subset.observations]
-    rp[["residual.scale"]] <- sqrt(mean((observed@data[,paste(variable, "residual", sep=".")])^2, na.rm=TRUE))    
+  if(any(class(object@regModel) %in% c("rpart", "randomForest"))&!is.null(object@regModel$y)){
+    observed@data[,paste(variable, "residual", sep=".")] <- (object@regModel$y[subset.observations] - observed@data[,paste(variable, "modelFit", sep=".")])
+    rp[["residual.scale"]] <- sqrt(mean((observed@data[,paste(variable, "residual", sep=".")])^2, na.rm=TRUE))
+    if(is.null(rp[["residual.scale"]])){ rp[["residual.scale"]] = NA }    
   }
   
   ## remove duplicates as they can lead to singular matrix problems:
@@ -238,9 +239,9 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
       formString <- as.formula(paste(paste(variable, "residual", sep="."), "~", 1, sep=""))
       if(nsim==0){
         message("Generating predictions using the trend model (RK method)...")        
-        # TH: if the vgmmodel is null leave the inverse distance interpolation out?
+        ## TH: if the vgmmodel is null, should we use inverse distance interpolation?
         if(is.null(vgmmodel)){
-          # generate empty grid:
+          ## generate empty grid:
           rk = predictionLocations["fit.var"] + rp[["residual.scale"]]^2
           names(rk) = "var1.var"
           rk@data[,variable] <- predictionLocations@data[,paste(variable, "modelFit", sep=".")] 
