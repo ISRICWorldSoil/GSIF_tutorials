@@ -97,8 +97,9 @@ setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.f
   if(method == "randomForest"|method == "quantregForest"){
     ## fit/filter the regression model:
     message("Fitting a randomForest model...")
-    ## NA's not permitted in response:
-    rmatrix <- rmatrix[!is.na(rmatrix[,tv]),]
+    ## NA's not permitted and need to be filtered out:
+    f <- rowSums(!is.na(rmatrix[,all.vars(formulaString)]))== length(all.vars(formulaString))
+    rmatrix <- rmatrix[f,]    
     if(method == "randomForest"){
       rgm <- randomForest(formulaString, data=rmatrix, na.action=na.pass)
     } else {

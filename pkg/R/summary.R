@@ -22,8 +22,13 @@ setMethod("summary", signature(object = "SpatialPredictions"), function(object){
       }
    z$area.units = areaunits
 #  z$cell.size = object@predicted@grid@cellsize
-   z$covariates = all.vars(object@regModel.summary$terms)[-1]
-   z$family = object@regModel.summary$family$family
+   if(any(class(object@regModel.summary)=="summary.glm")){
+     z$covariates = all.vars(object@regModel.summary$terms)[-1]
+     z$family = object@regModel.summary$family$family
+   } else {
+     z$covariates = NA
+     z$family = NA
+   }
    RMSE <- sqrt(mean((object@validation$var1.pred-object@validation$observed)^2))
    z$RMSE = signif(RMSE, 4)
    ## if cross-validation results are available:
