@@ -104,7 +104,11 @@ library(rgdal)
 data(afss)
 xy &lt;- afss$sites
 coordinates(xy) &lt;- ~ LONWGS84 + LATWGS84
-proj4string(xy) &lt;- "+proj=latlong +datum=WGS84"
+proj4string(xy) &lt;- "+proj=longlat +datum=WGS84"
+xy$PHIHO5_d1 &lt;- merge(xy@data, afss$horizons[afss$horizons$UHDICM==0,], all.x=TRUE)$PHIHO5
+library(plotKML)
+data(R_pal)
+plotKML(xy["PHIHO5_d1"], colour_scale=R_pal[["pH_pal"]])
 ## obtain country borders:
 if(is.na(file.info("admin.af.rda")$size)){
 download.file("http://gsif.isric.org/lib/exe/fetch.php?media=admin.af.rda", 

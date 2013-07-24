@@ -29,10 +29,13 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
     predictionLocations <- as(predictionLocations, "SpatialPixelsDataFrame")
   }
  
+  ## target variable name: 
+  if(any(class(object@regModel)=="glm"|class(object@regModel)=="lme"|class(object@regModel)=="gls")){
+    variable = all.vars(formula(object@regModel))[1]
+  }
+  
   ## predict regression model (output is a list):
   if(any(class(object@regModel)=="glm")){
-  ## target variable name: 
-  variable = all.vars(object@regModel$formula)[1]
 
     ## filter the missing classes
     ## TH: this is a simplified solution!
@@ -49,6 +52,15 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
     }
     rp <- stats::predict.glm(object@regModel, newdata=predictionLocations, type="response", se.fit = TRUE, na.action = na.pass)
   }
+  ## predict outputs from the nlme package:
+  if(any(class(object@regModel)=="lme")){
+    require(AICcmodavg)
+    rp <- AICcmodavg::predictSE.lme(object@regModel, predictionLocations)
+  }
+  if(any(class(object@regModel)=="gls")){  
+    rp <- list(predict(object@regModel, predictionLocations, na.action = na.pass))
+  }
+  
   if(any(class(object@regModel)=="rpart")){
     rp <- list(predict(object@regModel, predictionLocations))
     variable = all.vars(attr(object@regModel$terms, "variables"))[1]
@@ -63,7 +75,7 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
     variable = all.vars(attr(object@regModel$terms, "variables"))[1]
   }  
   ## rename the target variable:   
-  if(any(class(object@regModel) %in% c("randomForest", "rpart"))){
+  if(any(class(object@regModel) %in% c("randomForest", "rpart", "gls"))){
     names(rp)[1] = "fit"
   }
        
@@ -99,16 +111,19 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
   if(any(class(object@regModel) %in% c("randomForest", "rpart"))){
     observed <- SpatialPointsDataFrame(object@sp[subset.observations,], data=data.frame(object@regModel$y[subset.observations])) 
   }
+  if(any(class(object@regModel) %in% c("gls", "lme"))){
+    observed <- SpatialPointsDataFrame(object@sp[subset.observations,], data=data.frame(fitted.values(object@regModel)[subset.observations] + resid(object@regModel)[subset.observations]))
+  }
   
   ## TH: Rename the column? is this necessary?
-  ## (TH: this assumes that the first variable on the list is always the target var)
+  ## (this assumes that the first variable on the list is always the target var)
   names(observed@data)[1] = variable
 
   ## check that the proj4 strings match:
   if(!proj4string(observed)==proj4string(predictionLocations)){
     if(!check_projection(observed, ref_CRS=proj4string(predictionLocations))){
       stop("proj4string at observed and predictionLocations don't match")
-    } else { ## force the two proj strings to be exactly the same otherwise gstat has problems:
+    } else { ## force the two proj strings to be exactly the same otherwise gstat has problems!
     suppressWarnings(proj4string(observed) <- proj4string(predictionLocations))
     }
   }
@@ -123,10 +138,11 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
       if(object@regModel$family$family == "poisson"){ zmin = 0; zmax = Inf }  
       if(object@regModel$family$family == "Gamma"){ zmin = 0; zmax = Inf }
     }
-  
+  }
+  if(any(class(object@regModel) %in% c("glm", "lme", "gls"))){
   ## get fitted valus and residuals:
     observed@data[,paste(variable, "modelFit", sep=".")] <- fitted.values(object@regModel)[subset.observations]
-    observed@data[,paste(variable, "residual", sep=".")] <- residuals(object@regModel)[subset.observations]
+    observed@data[,paste(variable, "residual", sep=".")] <- resid(object@regModel)[subset.observations]
   }
   
   if(any(class(object@regModel)=="rpart")){
@@ -219,20 +235,20 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
   ## Regression-kriging (the default approach):
   } else {  
    if(predict.method == "RK"){
-      if(any(class(object@regModel)=="glm")){
+      if(any(class(object@regModel)=="glm")|any(class(object@regModel)=="lme")){
         ## GH: prediction variance (regression model only)
         ## [http://en.wikipedia.org/wiki/Confidence_and_prediction_bands]
         predictionLocations@data[,"fit.var"] <- rp[["se.fit"]]^2
       } else {
-        if(any(class(object@regModel)=="quantregForest")){     
-          ## TH: Prediction error for randomForest
-          message("Prediction error for 'randomForest' model estimated using the 'quantreg' package.")
-          var.rf <- predict(object@regModel, predictionLocations@data[,covs], quantiles=c((1-.682)/2, 1-(1-.682)/2))
-          ## TH: this assumes Normal distribution! [https://en.wikipedia.org/wiki/File:Standard_deviation_diagram.svg]
-          predictionLocations@data[,"fit.var"] <- ((var.rf[,1] - var.rf[,2])/2)^2
-        } else {
-          predictionLocations@data[,"fit.var"] <- 0
-        } 
+          if(any(class(object@regModel)=="quantregForest")){     
+            ## TH: Prediction error for randomForest
+            message("Prediction error for 'randomForest' model estimated using the 'quantreg' package.")
+            var.rf <- predict(object@regModel, predictionLocations@data[,covs], quantiles=c((1-.682)/2, 1-(1-.682)/2))
+            ## TH: this assumes Normal distribution! [https://en.wikipedia.org/wiki/File:Standard_deviation_diagram.svg]
+            predictionLocations@data[,"fit.var"] <- ((var.rf[,1] - var.rf[,2])/2)^2
+          } else {
+            predictionLocations@data[,"fit.var"] <- 0
+          }
       }
 
       ## predict the residuals:
@@ -242,7 +258,12 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
         ## TH: if the vgmmodel is null, should we use inverse distance interpolation?
         if(is.null(vgmmodel)){
           ## generate empty grid:
-          rk = predictionLocations["fit.var"] + rp[["residual.scale"]]^2
+          if(any(class(object@regModel)=="glm")){
+            rk = predictionLocations["fit.var"] + rp[["residual.scale"]]^2
+          }
+          if(any(class(object@regModel)=="lme")){
+            rk = predictionLocations["fit.var"]      
+          }
           names(rk) = "var1.var"
           rk@data[,variable] <- predictionLocations@data[,paste(variable, "modelFit", sep=".")] 
           rk@data[,paste(variable, "svar", sep=".")] <- predictionLocations$var1.var / var(observed@data[,variable], na.rm=TRUE)

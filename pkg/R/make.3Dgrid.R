@@ -17,6 +17,7 @@ setMethod("gdalwarp", signature(obj = "SpatialPixelsDataFrame"), function(obj, p
   }}
   
   if(!nchar(program)==0){
+    require(stringr)
     message(paste('Resampling', length(names(obj)), 'layers to CRS(\"', stringr::str_trim(substr(proj4s, 1, 20)), ' ... ', '\") with grid cell size:', pixsize, '...'))
     
     pb <- txtProgressBar(min=0, max=ncol(obj), style=3)

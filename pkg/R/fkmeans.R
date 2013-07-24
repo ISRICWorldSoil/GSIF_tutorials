@@ -8,12 +8,13 @@
 # Fit a supervised fuzzy kmeans model and predict memberships:
 setMethod("spfkm", signature(formulaString = "formula", observations = "SpatialPointsDataFrame", covariates = "SpatialPixelsDataFrame"), function(formulaString, observations, covariates, class.c = NULL, class.sd = NULL, fuzzy.e = 1.2){
   
+  require(plyr)
   ## generate formula if missing:
   if(missing(formulaString)) {  
     formulaString <- as.formula(paste(names(observations)[1], "~", paste(names(covariates), collapse="+"), sep=""))
   }
   ## check the formula string:
-  if(!is.formula(formulaString)){
+  if(!plyr::is.formula(formulaString)){
       stop("'formulaString' object of class 'formula' required")
   }
   

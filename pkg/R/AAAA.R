@@ -9,7 +9,7 @@
 
 ## A new class for models fitted in gstat:
 setClass("gstatModel", representation(regModel = "ANY", vgmModel = "data.frame", sp = "SpatialPoints"), validity = function(object) {
-    ml = c("lm", "glm", "rpart", "randomForest")
+    ml = c("lm", "glm", "rpart", "randomForest", "lme", "gls")
     if(!any(class(object@regModel) %in% ml))
       return(paste("Only models of type", paste(ml, collapse=", "), "are accepted"))
     cn = c("model", "psill", "range", "kappa", "ang1", "ang2", "ang3", "anis1", "anis2")
@@ -111,7 +111,7 @@ setClass("SpatialMemberships", representation (predicted = "SpatialPixelsDataFra
    if(ncol(object@mu@data)<2)
       return("A minimum of two membership maps required")   
    # check if all mu's sum to 1 (plus minus 1%):
-   if(!all(rowSums(object@mu@data)>.99&rowSums(object@mu@data)<1.01))
+   if(!all(rowSums(object@mu@data, na.rm=TRUE)>.99&rowSums(object@mu@data, na.rm=TRUE)<1.01))
       return("Some rows in the 'mu' slot do not sum up to 1")
    # check if the confusion matrix has kappa > 0
    if(length(object@confusion)==0|attr(object@confusion, "error")==0)
@@ -121,6 +121,10 @@ setClass("SpatialMemberships", representation (predicted = "SpatialPixelsDataFra
 
 
 ################## generic functions ##############
+
+if(!isClass("ppp")){
+  setClass("ppp")
+}
 
 if(!isGeneric("getID")){
   setGeneric("getID", function(obj, ...){standardGeneric("getID")})

@@ -6,9 +6,10 @@
 
 ## get capacities:
 setMethod("show", signature(object = "WPS"), function(object){
+  require(XML)
   uri = paste(paste(object@server$URI, "?", sep=""), paste(object@server$service, object@server$version, "request=GetCapabilities", sep="&"), sep="")
-  ret <- xmlTreeParse(uri, useInternalNodes = TRUE)
-  ret <- unlist(xmlToList(ret, addAttributes=FALSE))
+  ret <- XML::xmlTreeParse(uri, useInternalNodes = TRUE)
+  ret <- unlist(XML::xmlToList(ret, addAttributes=FALSE))
   # convert to a table:
   ret <- data.frame(field=gsub("\\.", "_", attr(ret, "names")), value=paste(ret), stringsAsFactors = FALSE)
     cat("Raster layers", ":", object@inRastername, "\n")
@@ -19,9 +20,10 @@ setMethod("show", signature(object = "WPS"), function(object){
 
 ## get processes:
 setMethod("getProcess", signature(x = "WPS"), function(x){
+  require(XML)
   uri = paste(paste(x@server$URI, "?", sep=""), paste(x@server$service, x@server$version, "request=GetCapabilities", sep="&"), sep="")
-  ret <- xmlTreeParse(uri, useInternalNodes = TRUE)
-  ret <- unlist(xmlToList(ret, addAttributes=FALSE))
+  ret <- XML::xmlTreeParse(uri, useInternalNodes = TRUE)
+  ret <- unlist(XML::xmlToList(ret, addAttributes=FALSE))
   # convert to a table:
   ret <- data.frame(field=gsub("\\.", "_", attr(ret, "names")), value=paste(ret), stringsAsFactors = FALSE)
   proc <- ret[grep(ret$field, pattern="Process1"),"value"]
@@ -31,9 +33,10 @@ setMethod("getProcess", signature(x = "WPS"), function(x){
 
 ## get arguments:
 setMethod("describe", signature(x = "WPS"), function(x, request = "describeprocess", identifier){
+  require(XML)
   uri = paste(paste(x@server$URI, "?", sep=""), paste(x@server$service, x@server$version, paste("request=", request, sep=""), paste("identifier=", identifier, sep=""), sep="&"), sep="")
-  ret <- xmlTreeParse(uri, useInternalNodes = TRUE)
-  ret <- unlist(xmlToList(ret, addAttributes=FALSE))
+  ret <- XML::xmlTreeParse(uri, useInternalNodes = TRUE)
+  ret <- unlist(XML::xmlToList(ret, addAttributes=FALSE))
   # convert to a table:
   ret <- data.frame(field=gsub("\\.", "_", attr(ret, "names")), value=paste(ret), stringsAsFactors = FALSE)
   return(ret)  
@@ -45,16 +48,16 @@ setMethod("over", signature(x = "WPS", y = "SpatialPoints"),
   {
 
   require(RCurl)
-  require(sp)
+  require(XML)
   # point by point
   out <- NULL
   for(i in 1:length(nrow(y@coords))){
     ret <- paste("[x=", y@coords[i,1], ";y=", y@coords[i,2], ";inRastername=", x@inRastername,"]", sep="")
     uri = paste(paste(x@server$URI, "?", sep=""), paste(x@server$service, x@server$version, "request=execute", "identifier=sampler_local1pt_nogml", paste("datainputs=", ret, sep=""), sep="&"), sep="")
-    ret <- xmlTreeParse(getURL(uri), useInternalNodes = TRUE)
-    nx <- unlist(xmlToList(ret, addAttributes=FALSE))
+    ret <- XML::xmlTreeParse(getURL(uri), useInternalNodes = TRUE)
+    nx <- unlist(XML::xmlToList(ret, addAttributes=FALSE))
       if(any(nx %in% "OutData")){
-      out[i] <- xmlValue(ret[["//wps:LiteralData"]])
+      out[i] <- XML::xmlValue(ret[["//wps:LiteralData"]])
       }
       else {
       out[i] <- NA
@@ -69,15 +72,15 @@ setMethod("over", signature(x = "WPS", y = "SpatialPoints"),
 setMethod("subset", signature(x = "WPS"), function(x, bbox, import = TRUE){
 
   require(RCurl)
-  require(rgdal)
+  require(XML)
   # check that bbox is fine:
   if(nrow(bbox)==2&ncol(bbox)==2&bbox[1,2]<180&bbox[2,2]<90&bbox[1,2]>bbox[1,1]&bbox[1,1]>-180&bbox[2,1]>-90&bbox[2,2]>bbox[2,1]){
     ret <- paste('[bbox=', bbox[1,1], ',', bbox[2,1], ',', bbox[1,2], ',', bbox[2,2], ';inRastername=', x@inRastername, ']', sep="")
     uri = paste(paste(x@server$URI, "?", sep=""), paste(x@server$service, x@server$version, "request=execute", "identifier=subset", paste("datainputs=", ret, sep=""), "responsedocument=OutData=@asreference=true", sep="&"), sep="")
-    ret <- xmlTreeParse(getURL(uri), useInternalNodes = TRUE)  
-    nx <- unlist(xmlToList(ret, addAttributes=FALSE))
+    ret <- XML::xmlTreeParse(getURL(uri), useInternalNodes = TRUE)  
+    nx <- unlist(XML::xmlToList(ret, addAttributes=FALSE))
     if(any(nx %in% "Output Subset data")){
-       objectname <- xmlAttrs(ret[["//wps:Reference"]], FALSE, FALSE)
+       objectname <- XML::xmlAttrs(ret[["//wps:Reference"]], FALSE, FALSE)
        objectname <- objectname[names(objectname)=="href"]
        out <- set.file.extension(paste(x@inRastername, paste(as.vector(bbox), collapse="_"), sep="_"), ".tif")
        try(download.file(objectname, destfile=out, mode="wb"))

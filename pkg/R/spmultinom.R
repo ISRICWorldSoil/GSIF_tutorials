@@ -8,12 +8,13 @@
 ## fit a multinomial logistic regression and make predictions:
 setMethod("spmultinom", signature(formulaString = "formula", observations = "SpatialPointsDataFrame", covariates = "SpatialPixelsDataFrame"), function(formulaString, observations, covariates, class.stats = TRUE, predict.probs = TRUE, ...){
 
+  require(plyr)
   ## generate formula if missing:
   if(missing(formulaString)) {  
     formulaString <- as.formula(paste(names(observations)[1], "~", paste(names(covariates), collapse="+"), sep=""))
   }
   ## check the formula string:
-  if(!is.formula(formulaString)){
+  if(!plyr::is.formula(formulaString)){
       stop("'formulaString' object of class 'formula' required")
   }
   
@@ -77,7 +78,11 @@ setMethod("spmultinom", signature(formulaString = "formula", observations = "Spa
     
   # create the output object:
   if(predict.probs == TRUE){
-    out <- new("SpatialMemberships", predicted = pm, model = mout, mu = mm, class.c = class.c, class.sd = class.sd, confusion = cf)
+    if(all(!is.na(rowSums(mm@data, na.rm=TRUE)))){
+      out <- new("SpatialMemberships", predicted = pm, model = mout, mu = mm, class.c = class.c, class.sd = class.sd, confusion = cf)
+    } else {
+      stop("Predicted probabilities contain missing values. Consider removing some classes or setting 'predict.probs == FALSE'") 
+    }
   } else {  
     out <- list(model=mout, fit=cout, class.c=class.c, class.sd=class.sd)
   }

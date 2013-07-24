@@ -37,8 +37,6 @@
 
 
 <dl>
-<dt>summary</dt><dd><p><code>signature(obj = "gstatModel")</code>: summarize object by showing the mapping accuracy (cross-validation) and the amount of variation explained by the model </p>
-</dd>
 <dt>predict</dt><dd><p><code>signature(obj = "gstatModel")</code>: makes predictions for a set of given predictionLocations (gridded maps) at block support corresponding to the <code>cellsize</code> slot in the object of class <code>"SpatialPixelsDataFrame"</code>; to produce predictions at point support, submit the <code>predictionLocations</code> as <code>"SpatialPointsDataFrame"</code> </p>
 </dd>
 <dt>validate</dt><dd><p><code>signature(obj = "gstatModel")</code>: runs <EM>n</EM>-fold cross-validation of the existing gstatModel (it re-fits the model using existing formula string and model data, then estimates the mapping error at validation locations)</p>
@@ -68,7 +66,7 @@
 
 <h3>See Also</h3>
 
- <p><code><a href="predict.gstatModel.html">predict.gstatModel</a></code>, <code>plotKML::SpatialPredictions-class</code>, <code>plotKML::RasterBrickSimulations-class</code>, <code>gstat::gstat</code>, <code>stats::glm</code>
+ <p><code><a href="predict.gstatModel.html">predict.gstatModel</a></code>, <code><a href="test.gstatModel.html">test.gstatModel</a></code>, <code>plotKML::SpatialPredictions-class</code>, <code>plotKML::RasterBrickSimulations-class</code>, <code>gstat::gstat</code>, <code>stats::glm</code>
 </p>
 
 

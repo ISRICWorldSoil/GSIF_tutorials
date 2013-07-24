@@ -3,6 +3,7 @@
 \alias{gstatModel-class}
 \alias{validate,gstatModel-method}
 \alias{validate}
+\alias{print.gstatModel}
 \title{A class for a geostatistical model}
 \description{A class containing fitted parameters of a geostatistical model to be used to run predictions by regression-kriging. It comprises regression model (e.g. a GLM), variogram model, and observation locations of sampled values used to fit the model.}
 \section{Slots}{
@@ -14,7 +15,6 @@
 }
 \section{Methods}{
   \describe{
-	\item{summary}{\code{signature(obj = "gstatModel")}: summarize object by showing the mapping accuracy (cross-validation) and the amount of variation explained by the model }
 	\item{predict}{\code{signature(obj = "gstatModel")}: makes predictions for a set of given predictionLocations (gridded maps) at block support corresponding to the \code{cellsize} slot in the object of class \code{"SpatialPixelsDataFrame"}; to produce predictions at point support, submit the \code{predictionLocations} as \code{"SpatialPointsDataFrame"} }
 	\item{validate}{\code{signature(obj = "gstatModel")}: runs \emph{n}-fold cross-validation of the existing gstatModel (it re-fits the model using existing formula string and model data, then estimates the mapping error at validation locations)}
   }
@@ -32,7 +32,7 @@ i.e. \emph{N} number of equiprobable realizations. To generate an object of type
 set \code{nsim = 0}. 
 }
 \author{ Tomislav Hengl and Gerard B.M. Heuvelink }
-\seealso{ \code{\link{predict.gstatModel}}, \code{plotKML::SpatialPredictions-class}, \code{plotKML::RasterBrickSimulations-class}, \code{gstat::gstat}, \code{stats::glm}
+\seealso{ \code{\link{predict.gstatModel}}, \code{\link{test.gstatModel}}, \code{plotKML::SpatialPredictions-class}, \code{plotKML::RasterBrickSimulations-class}, \code{gstat::gstat}, \code{stats::glm}
 }
 \examples{ 
 ## load observations:

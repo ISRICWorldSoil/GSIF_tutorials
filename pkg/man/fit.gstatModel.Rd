@@ -13,22 +13,22 @@
 \S4method{fit.gstatModel}{SpatialPointsDataFrame,formula,SpatialPixelsDataFrame}(observations, formulaString, covariates, 
      method = list("GLM", "rpart", "randomForest", "quantregForest")[[1]], 
      dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]],
-     family = gaussian, stepwise = TRUE, vgmFun = "Exp", 
+     family = gaussian(), stepwise = TRUE, vgmFun = "Exp", 
      subsample = 5000, \dots)
 \S4method{fit.gstatModel}{geosamples,formula,SpatialPixelsDataFrame}(observations, formulaString, covariates, 
      method = list("GLM", "rpart", "randomForest", "quantregForest")[[1]], 
      dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]],
-     family = gaussian, stepwise = TRUE, 
+     family = gaussian(), stepwise = TRUE, 
      vgmFun = "Exp", subsample = 5000, \dots)
 \S4method{fit.gstatModel}{geosamples,formula,list}(observations, formulaString, covariates, 
      method = list("GLM", "rpart", "randomForest", "quantregForest")[[1]], 
      dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]],
-     family = gaussian, stepwise = TRUE, 
+     family = gaussian(), stepwise = TRUE, 
      vgmFun = "Exp", subsample = 5000, \dots)
 \S4method{fit.gstatModel}{geosamples,list,list}(observations, formulaString, covariates, 
      method = list("GLM", "rpart", "randomForest", "quantregForest")[[1]], 
      dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]],
-     family = gaussian, stepwise = TRUE, 
+     family = gaussian(), stepwise = TRUE, 
      vgmFun = "Exp", subsample = 5000, \dots)
 }
 \arguments{

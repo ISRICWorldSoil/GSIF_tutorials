@@ -8,16 +8,16 @@
 \description{Tests predictability of a regression-kriging model on a sample data set. Automates model fitting, cross-validation and prediction and prints out: (1) RMSE at validation points under different sampling intensities, (2) number of predictions per second and (3) number of prediction failures (failure = predictions where cross-validation z-scores exceed value of +/- 1.5 or cross-validation residuals exceed three standard deviations of the observed values).}
 \usage{ 
 \S4method{test.gstatModel}{SpatialPointsDataFrame,formula,SpatialPixelsDataFrame}(observations, formulaString, covariates, Ns, 
-    predictionLocations = covariates, save.predictions = TRUE, debug.level = 0, nfold = 5, \dots)
+    predictionLocations, save.predictions = TRUE, debug.level = 0, nfold = 5, \dots)
 \S4method{test.gstatModel}{geosamples,formula,SpatialPixelsDataFrame}(observations, formulaString, covariates, Ns, 
-    predictionLocations = covariates, save.predictions = TRUE, debug.level = 0, nfold = 5, \dots)
+    predictionLocations, save.predictions = TRUE, debug.level = 0, nfold = 5, \dots)
 }
 \arguments{
   \item{observations}{object of type \code{"SpatialPointsDataFrame"} or \code{"geosamples-class"}}
   \item{formulaString}{object of type \code{"formula"} or a list of formulas}
   \item{covariates}{object of type \code{"SpatialPixelsDataFrame"}, or list of grids}
   \item{Ns}{vector; list of sampling intensities (maximum should not exceed the total number of samples)}
-  \item{predictionLocations}{object of class \code{"SpatialPixelsDataFrame"}; if not specified then the same as the covariates}
+  \item{predictionLocations}{object of class \code{"SpatialPixelsDataFrame"}; if not specified then passes the object \code{covariates}}
   \item{save.predictions}{logical; indicates whether the prediction results should also be saved}
   \item{debug.level}{integer; gstat's setting to hide the progress output}
   \item{nfold}{integer; number of folds for cross-validation}

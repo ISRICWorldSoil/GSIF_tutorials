@@ -18,10 +18,10 @@
 <pre> 
 ## S4 method for signature 'SpatialPointsDataFrame,formula,SpatialPixelsDataFrame'
 test.gstatModel(observations, formulaString, covariates, Ns, 
-    predictionLocations = covariates, save.predictions = TRUE, debug.level = 0, nfold = 5, ...)
+    predictionLocations, save.predictions = TRUE, debug.level = 0, nfold = 5, ...)
 ## S4 method for signature 'geosamples,formula,SpatialPixelsDataFrame'
 test.gstatModel(observations, formulaString, covariates, Ns, 
-    predictionLocations = covariates, save.predictions = TRUE, debug.level = 0, nfold = 5, ...)
+    predictionLocations, save.predictions = TRUE, debug.level = 0, nfold = 5, ...)
 </pre>
 
 
@@ -46,7 +46,7 @@ test.gstatModel(observations, formulaString, covariates, Ns,
 </td></tr>
 <tr valign="top"><td><code>predictionLocations</code></td>
 <td>
-<p>object of class <code>"SpatialPixelsDataFrame"</code>; if not specified then the same as the covariates</p>
+<p>object of class <code>"SpatialPixelsDataFrame"</code>; if not specified then passes the object <code>covariates</code></p>
 </td></tr>
 <tr valign="top"><td><code>save.predictions</code></td>
 <td>

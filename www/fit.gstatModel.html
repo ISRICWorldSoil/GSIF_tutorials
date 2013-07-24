@@ -20,25 +20,25 @@
 fit.gstatModel(observations, formulaString, covariates, 
      method = list("GLM", "rpart", "randomForest", "quantregForest")[[1]], 
      dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]],
-     family = gaussian, stepwise = TRUE, vgmFun = "Exp", 
+     family = gaussian(), stepwise = TRUE, vgmFun = "Exp", 
      subsample = 5000, ...)
 ## S4 method for signature 'geosamples,formula,SpatialPixelsDataFrame'
 fit.gstatModel(observations, formulaString, covariates, 
      method = list("GLM", "rpart", "randomForest", "quantregForest")[[1]], 
      dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]],
-     family = gaussian, stepwise = TRUE, 
+     family = gaussian(), stepwise = TRUE, 
      vgmFun = "Exp", subsample = 5000, ...)
 ## S4 method for signature 'geosamples,formula,list'
 fit.gstatModel(observations, formulaString, covariates, 
      method = list("GLM", "rpart", "randomForest", "quantregForest")[[1]], 
      dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]],
-     family = gaussian, stepwise = TRUE, 
+     family = gaussian(), stepwise = TRUE, 
      vgmFun = "Exp", subsample = 5000, ...)
 ## S4 method for signature 'geosamples,list,list'
 fit.gstatModel(observations, formulaString, covariates, 
      method = list("GLM", "rpart", "randomForest", "quantregForest")[[1]], 
      dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]],
-     family = gaussian, stepwise = TRUE, 
+     family = gaussian(), stepwise = TRUE, 
      vgmFun = "Exp", subsample = 5000, ...)
 </pre>
 

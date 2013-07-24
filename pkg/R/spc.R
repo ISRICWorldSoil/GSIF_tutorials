@@ -45,12 +45,15 @@ setMethod("spc", signature(obj = "SpatialPixelsDataFrame", formulaString = "form
     x[is.na(x)] <- 0
     x <- as.data.frame(x)
     sd.l <- lapply(x, sd)
-    if(any(x0 <- sd.l == 0)){
+    x0 <- sd.l==0
+    if(any(x0)){
       message(paste("Columns with zero variance removed:", names(x)[which(x0)]), immediate. = TRUE)
+      formulaString.f = as.formula(paste("~", paste(varsn[-which(x0)], collapse="+")))
+      ## principal component analysis:
+      pcs <- prcomp(formula=formulaString.f, x)
+    } else {
+      pcs <- prcomp(formula=formulaString, x)
     }
-    formulaString.f = as.formula(paste("~", paste(varsn[-which(x0)], collapse="+")))
-    ## principal component analysis:
-    pcs <- prcomp(formula=formulaString.f, x)
   } else {
     pcs <- prcomp(formula=formulaString, obj@data) 
   }

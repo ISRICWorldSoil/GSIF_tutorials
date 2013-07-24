@@ -18,8 +18,9 @@
 <pre>
 ## S4 method for signature 'formula,data.frame,SpatialPixelsDataFrame,character'
 fit.regModel(formulaString, rmatrix, predictionDomain, 
-      method = list("GLM", "rpart", "randomForest", "quantregForest")[[1]], 
-      dimensions = NULL, family=gaussian, stepwise=TRUE, rvgm, ...)
+      method = list("GLM", "rpart", "randomForest", "quantregForest", "lme")[[1]], 
+      dimensions = NULL, family = gaussian(), stepwise = TRUE, rvgm, 
+      GLS = FALSE, random, ...)
 </pre>
 
 
@@ -58,6 +59,14 @@ fit.regModel(formulaString, rmatrix, predictionDomain,
 <td>
 <p>residual variogram (to avoid fitting the variogram set as NULL)</p>
 </td></tr>
+<tr valign="top"><td><code>GLS</code></td>
+<td>
+<p>fit trend model using Generalized Least Squares implemented in the nlme package</p>
+</td></tr>
+<tr valign="top"><td><code>random</code></td>
+<td>
+<p>specify the random function model; see <code>nlme::lme</code> for more details</p>
+</td></tr>
 <tr valign="top"><td><code>...</code></td>
 <td>
 <p>other optional arguments that can be passed to <code>gstat::fit.variogram</code></p>
@@ -86,11 +95,12 @@ fit.regModel(formulaString, rmatrix, predictionDomain,
 ## Meuse data:
 library(sp)
 library(rpart)
+library(nlme)
 
 ## load the Meuse data set:
 demo(meuse, echo=FALSE)
 
-## produce a regression matrix:
+## prepare the regression matrix:
 ov &lt;- over(meuse, meuse.grid)
 ov &lt;- cbind(data.frame(meuse["om"]), ov)
 ## skip variogram fitting:
@@ -105,6 +115,9 @@ m1@vgmModel
 ## fit a regression tree with variogram:
 m2 &lt;- fit.regModel(log1p(om)~dist+ffreq, rmatrix=ov, meuse.grid,
      method="rpart")
+## fit a lme model with variogram:
+m3 &lt;- fit.regModel(log1p(om)~dist, rmatrix=ov, meuse.grid,
+     method="lme", random=~1|ffreq)
 </pre>
 
 <hr><div align="center">[Package <em>GSIF</em> version 0.3-4 <a href="00Index.html">Index</a>]</div>
