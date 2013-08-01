@@ -275,10 +275,11 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
             cv$var1.pred <- fitted.values(object@regModel)[subset.observations]
             rp.cv <- stats::predict.glm(object@regModel, newdata=object@regModel$data, type="response", se.fit = TRUE)
             cv$var1.var <- (rp.cv[["se.fit"]][-object@regModel$na.action][subset.observations])^2 + (rp.cv[["residual.scale"]])^2
-            try(cv.err <- glm.diag(object@regModel), silent=TRUE)
-            # cv.err <- boot::cv.glm(data=object@regModel$data, modelFit=object@regModel, K=nfold)
-            ## TH: boot::cv.glm fails for unknow reason? 
-            if(class(.Last.value)[1]=="try-error") { cv.err <- data.frame(res = rep(NA, length(cv$observed)), rd = rep(NA, length(cv$observed))) }
+            message("Running GLM cross-validation without any extra model-fitting...")
+            try( cv.err <- glm.diag(object@regModel), silent=TRUE)
+            if(class(.Last.value)[1]=="try-error") { 
+              cv.err <- data.frame(res = rep(NA, length(cv$observed)), rd = rep(NA, length(cv$observed))) 
+            }
             cv$residual <- cv.err$res[subset.observations]
             cv$zscore <- cv.err$rd[subset.observations]
             cv$fold <- rep(1, length(cv$observed))

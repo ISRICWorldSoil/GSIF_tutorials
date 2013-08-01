@@ -1,16 +1,16 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><head><title>R: 1-degree cell land mask for Global soil mapping purposes</title>
+<html><head><title>R: 1-degree cell resolution global land mask</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <link rel="stylesheet" type="text/css" href="R.css">
 </head><body>
 
 <table width="100%" summary="page for landmask {GSIF}"><tr><td>landmask {GSIF}</td><td align="right">R Documentation</td></tr></table>
 
-<h2>1-degree cell land mask for Global soil mapping purposes</h2>
+<h2>1-degree cell resolution global land mask</h2>
 
 <h3>Description</h3>
 
-<p>Land mask showing the 1-degree cells (about 19 thousand in total) in the geographical coordinates, and the productive soils mask (areas with a positive Leaf Area Index at least once in the period 2002&ndash;2011). The land mask is based on the <a href="http://www.ngdc.noaa.gov/mgg/shorelines/gshhs.html">Global Self-consistent, Hierarchical, High-resolution Shoreline Database</a> data (GSHHS 2.1), and the productive soils mask on the MODIS Leaf Area Index monthtly product (<a href="https://lpdaac.usgs.gov/lpdaac/products/modis_products_table/leaf_area_index_fraction_of_photosynthetically_active_radiation/8_day_l4_global_1km/mcd15a2">MOD15A2</a>).</p>
+<p>Land mask showing the 1-degree cells (about 19 thousand in total) in the geographical coordinates, and the productive soils mask (areas with a positive Leaf Area Index at least once in the period 2002&ndash;2011). The land mask is based on the <a href="http://www.ngdc.noaa.gov/mgg/shorelines/gshhs.html">Global Self-consistent, Hierarchical, High-resolution Shoreline Database</a> data (GSHHS 2.1), the productive soils mask on the MODIS Leaf Area Index monthtly product (<a href="https://lpdaac.usgs.gov/lpdaac/products/modis_products_table/leaf_area_index_fraction_of_photosynthetically_active_radiation/8_day_l4_global_1km/mcd15a2">MOD15A2</a>), and the water mask is based on the <a href="http://glcf.umd.edu/data/watermask/">MOD44W</a> product. The map of the Keys to Soil Taxonomy soil suborders of the world at 20 km is based on the <a href="http://soils.usda.gov/use/worldsoils/mapindex/order.html">USDA-NRCS map of the global soil regions</a>.</p>
 
 
 <h3>Usage</h3>
@@ -20,13 +20,15 @@
 
 <h3>Format</h3>
 
-<p>Data frame with the following columns:
+<p><code>landmask</code> data set is a data frame with the following columns:
 </p>
 
 <dl>
-<dt><code>mask</code></dt><dd><p>boolean; land mask value</p>
+<dt><code>mask</code></dt><dd><p>percent; land mask value</p>
 </dd>
 <dt><code>soilmask</code></dt><dd><p>boolean; soil mask value</p>
+</dd>
+<dt><code>watermask</code></dt><dd><p>percent; water mask value</p>
 </dd>
 <dt><code>Lon_it</code></dt><dd><p>indication of the longitude quadrant (W or E)</p>
 </dd>
@@ -40,11 +42,21 @@
 </dd>  	
 </dl>
 
+<p><code>landmask20km</code> data set is an object of class <code>SpatialGridDataFrame</code> with the following columns:
+</p>
+
+<dl>
+<dt><code>mask</code></dt><dd><p>percent; land mask value</p>
+</dd>
+<dt><code>suborder</code></dt><dd><p>factor; Keys to Soil Taxonomy suborder class e.g. Histels, Udolls, Calcids, ...</p>
+</dd>
+</dl>
+
 
 
 <h3>Note</h3>
 
-<p>The land mask has been generated from the layer <code>GSHHS_shp/h/GSHHS_h_L1.shp</code> (level-1 boundaries). For practical purposes, all latitudes beyond 65S and 84N (polar land masses) have been masked out.
+<p>The land mask has been generated from the layer <code>GSHHS_shp/h/GSHHS_h_L1.shp</code> (level-1 boundaries).
 </p>
 
 
@@ -57,13 +69,19 @@
 
 
 <ul>
-<li><p> Wessel, P., Smith, W.H.F., (1996) <a href="http://dx.doi.org/10.1029/96JB00104">A Global Self-consistent, Hierarchical, High-resolution Shoreline Database</a>. Journal of Geophysical Research, 101, 8741-8743.
+<li><p> Carroll, M., Townshend, J., DiMiceli, C., Noojipady, P., Sohlberg, R. (2009) <a href="http://dx.doi.org/10.1080/17538940902951401">A New Global Raster Water Mask at 250 Meter Resolution</a>. International Journal of Digital Earth, 2(4).
+</p>
+</li>
+<li><p> Global Self-consistent, Hierarchical, High-resolution Shoreline Database (<a href="http://en.wikipedia.org/wiki/GSHHS">http://en.wikipedia.org/wiki/GSHHS</a>)
+</p>
+</li>
+<li><p> USDA-NRCS Global Soil Regions Map (<a href="http://soils.usda.gov/use/worldsoils/">http://soils.usda.gov/use/worldsoils/</a>)
 </p>
 </li>
 <li><p> Savtchenko, A., D. Ouzounov, S. Ahmad, J. Acker, G. Leptoukh, J. Koziana, and D. Nickless, (2004) <a href="http://dx.doi.org/10.1016/j.asr.2004.03.012">Terra and Aqua MODIS products available from NASA GES DAAC</a>. Advances in Space Research 34(4), 710-714.
 </p>
 </li>
-<li><p> Global Self-consistent, Hierarchical, High-resolution Shoreline Database (<a href="http://en.wikipedia.org/wiki/GSHHS">http://en.wikipedia.org/wiki/GSHHS</a>)
+<li><p> Wessel, P., Smith, W.H.F., (1996) <a href="http://dx.doi.org/10.1029/96JB00104">A Global Self-consistent, Hierarchical, High-resolution Shoreline Database</a>. Journal of Geophysical Research, 101, 8741-8743.
 </p>
 </li></ul>
 
@@ -93,7 +111,8 @@ spplot(landmask["mask"], col.regions="grey", sp.layout=list("sp.lines", country)
 spplot(landmask["soilmask"], col.regions="grey", sp.layout=list("sp.lines", country))
 ## also available in the Robinson projection at 20 km grid:
 data(landmask20km)
-image(landmask20km)
+image(landmask20km[1])
+summary(landmask20km$suborder)
 
 ## End(Not run)
 </pre>
