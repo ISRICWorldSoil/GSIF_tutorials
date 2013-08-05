@@ -23,7 +23,6 @@
   \item{\code{suborder}}{factor; Keys to Soil Taxonomy suborder class e.g. Histels, Udolls, Calcids, \dots}
 }
 }
-\author{ Tomislav Hengl }
 \references{
 \itemize{
 \item Carroll, M., Townshend, J., DiMiceli, C., Noojipady, P., Sohlberg, R. (2009) \href{http://dx.doi.org/10.1080/17538940902951401}{A New Global Raster Water Mask at 250 Meter Resolution}. International Journal of Digital Earth, 2(4).

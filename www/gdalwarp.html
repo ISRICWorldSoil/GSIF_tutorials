@@ -22,6 +22,12 @@ gdalwarp(obj, proj4s = proj4string(obj),
       resampling_method = "bilinear", 
       NAflag = get("NAflag", envir = GSIF.opts), 
       tmp.file = FALSE, show.output.on.console = FALSE, program)
+## S4 method for signature 'RasterLayer'
+gdalwarp(obj, proj4s = proj4string(obj), 
+      GridTopology = NULL, pixsize, 
+      resampling_method = "bilinear", 
+      NAflag = get("NAflag", envir = GSIF.opts), 
+      tmp.file = FALSE, show.output.on.console = FALSE, program)
 </pre>
 
 
@@ -30,7 +36,7 @@ gdalwarp(obj, proj4s = proj4string(obj),
 <table summary="R argblock">
 <tr valign="top"><td><code>obj</code></td>
 <td>
-<p>object of class <code>"SpatialPixelsDataFrame"</code></p>
+<p>object of class <code>"SpatialPixelsDataFrame"</code> or class <code>"RasterLayer"</code></p>
 </td></tr> 
 <tr valign="top"><td><code>proj4s</code></td>
 <td>

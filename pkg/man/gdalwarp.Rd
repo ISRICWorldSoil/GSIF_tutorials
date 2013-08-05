@@ -2,6 +2,7 @@
 \docType{methods}
 \alias{gdalwarp}
 \alias{gdalwarp,SpatialPixelsDataFrame-method}
+\alias{gdalwarp,RasterLayer-method}
 \title{GDAL warp function from FWTools}
 \description{Runs GDAL warp program available via FWTools.}
 \usage{
@@ -10,9 +11,14 @@
       resampling_method = "bilinear", 
       NAflag = get("NAflag", envir = GSIF.opts), 
       tmp.file = FALSE, show.output.on.console = FALSE, program)
+\S4method{gdalwarp}{RasterLayer}(obj, proj4s = proj4string(obj), 
+      GridTopology = NULL, pixsize, 
+      resampling_method = "bilinear", 
+      NAflag = get("NAflag", envir = GSIF.opts), 
+      tmp.file = FALSE, show.output.on.console = FALSE, program)
 }
 \arguments{
-  \item{obj}{object of class \code{"SpatialPixelsDataFrame"}} 
+  \item{obj}{object of class \code{"SpatialPixelsDataFrame"} or class \code{"RasterLayer"}} 
   \item{proj4s}{character; proj4string describing the target coordinate system}
   \item{GridTopology}{optional grid topology from sp package}
   \item{pixsize}{grid cell size in decimal degrees} 

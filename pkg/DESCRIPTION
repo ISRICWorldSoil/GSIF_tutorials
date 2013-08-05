@@ -14,4 +14,4 @@ URL: http://gsif.r-forge.r-project.org/
 LazyLoad: yes
 Depends: R (>= 2.15.0)
 Imports: methods, sp (>= 1.0-8), RSAGA, dismo, rgdal, raster, aqp, plotKML, gstat, stats, boot, rpart, quantregForest, randomForest, nlme
-Suggests: RCurl, soiltexture, spatstat, stringr, plyr, XML, splines, mda, psych, nortest, fossil, AICcmodavg, maptools, nnet, SDMTools, rJava (>= 0.5-0)
+Suggests: RCurl, tools, soiltexture, spatstat, stringr, plyr, XML, splines, mda, psych, nortest, fossil, AICcmodavg, maptools, nnet, SDMTools, rJava (>= 0.5-0)
