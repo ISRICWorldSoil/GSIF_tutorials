@@ -71,8 +71,8 @@ echo $contents; } ?>
 &gt; install.packages(&quot;GSIF&quot;, repos=c(&quot;http://R-Forge.R-project.org&quot;))</p>
 <p>Alternatively, you can install the most recent snapshot of the package directly from the source by using e.g.:</p>
 <pre class="R_code">&gt; install.packages(c(&quot;RCurl&quot;, &quot;XML&quot;, &quot;rgdal&quot;, &quot;raster&quot;, &quot;sp&quot;, &quot;aqp&quot;, &quot;mda&quot;, &quot;gstat&quot;, &quot;plotKML&quot;, &quot;dismo&quot;, &quot;rJava&quot;, &quot;rpart&quot;, &quot;maptools&quot;, &quot;nortest&quot;, &quot;randomForest&quot;))
-&gt; download.file(&quot;http://gsif.r-forge.r-project.org/GSIF_0.3-4.tar.gz&quot;, &quot;GSIF_0.3-4.tar.gz&quot;)
-&gt; system(&quot;R CMD INSTALL GSIF_0.3-4.tar.gz&quot;) </pre>
+&gt; download.file(&quot;http://gsif.r-forge.r-project.org/GSIF_0.3-5.tar.gz&quot;, &quot;GSIF_0.3-5.tar.gz&quot;)
+&gt; system(&quot;R CMD INSTALL GSIF_0.3-5.tar.gz&quot;) </pre>
 <p>GSIF package extensively uses a number of external software, hence it is highly recommended that, prior to starting GSIF, you first download and install:</p>
 <ol>
   <li><a href="http://fwtools.maptools.org" target="_blank">FWTools</a> (<em>required</em>) &#8212; this software is called by several functions (e.g. <a href="make.3Dgrid.html">make.3Dgrid</a>);</li>

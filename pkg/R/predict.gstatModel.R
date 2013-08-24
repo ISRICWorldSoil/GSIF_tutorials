@@ -258,14 +258,12 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
         ## TH: if the vgmmodel is null, should we use inverse distance interpolation?
         if(is.null(vgmmodel)){
           ## generate empty grid:
+          rk <- predictionLocations["fit.var"]
           if(any(class(object@regModel)=="glm")){
-            rk = predictionLocations["fit.var"] + rp[["residual.scale"]]^2
-          }
-          if(any(class(object@regModel)=="lme")){
-            rk = predictionLocations["fit.var"]      
+            rk@data[,"fit.var"] <- rk@data[,"fit.var"] + rp[["residual.scale"]]^2
           }
           names(rk) = "var1.var"
-          rk@data[,variable] <- predictionLocations@data[,paste(variable, "modelFit", sep=".")] 
+          rk@data[,paste(variable)] <- predictionLocations@data[,paste(variable, "modelFit", sep=".")] 
           rk@data[,paste(variable, "svar", sep=".")] <- predictionLocations$var1.var / var(observed@data[,variable], na.rm=TRUE)
           
           ## cross-validation using GLM:
