@@ -27,8 +27,8 @@ Horizons table contains the following columns:
   \item{\code{LHDICM}}{numeric; lower horizon depth from the surface in cm (\code{LowDpth} in the AFSP)}
   \item{\code{MCOMNS}}{factor; Munsell color moist (\code{ColorM} in the NSCD)}
   \item{\code{CRFVOL}}{numeric; volume percentage of coarse fragments (> 2 mm; \code{CfPc} in the AFSP)}
-  \item{\code{SNDPPT}}{numeric; weight percentage of the silt particles (0.0002--0.05 mm; \code{Sand} in the AFSP)}
-  \item{\code{SLTPPT}}{numeric; weight percentage of the sand particles (0.05--2 mm; \code{Silt} in the AFSP)}
+  \item{\code{SNDPPT}}{numeric; weight percentage of the sand particles (0.0002--0.05 mm; \code{Sand} in the AFSP)}
+  \item{\code{SLTPPT}}{numeric; weight percentage of the silt particles (0.05--2 mm; \code{Silt} in the AFSP)}
   \item{\code{CLYPPT}}{numeric; weight percentage of the clay particles (<0.0002 mm; \code{Clay} in the AFSP)}
   \item{\code{BLD}}{bulk density in tones per cubic-meter (\code{BlkDens} in the AFSP)}
   \item{\code{PHIHO5}}{numeric; pH index measured in water solution (\code{PHH2O} in the AFSP)}
@@ -75,14 +75,14 @@ library(sp)
 data(afsp)
 sites <- afsp$sites
 coordinates(sites) <- ~ LONWGS84 + LATWGS84
-proj4string(sites) <- "+proj=latlong +datum=WGS84"
+proj4string(sites) <- "+proj=longlat +datum=WGS84"
 ## obtain country borders:
 library(maps)
 country.m = map('world', plot=FALSE, fill=TRUE)
 IDs <- sapply(strsplit(country.m$names, ":"), function(x) x[1])
 require(maptools)
 country <- as(map2SpatialPolygons(country.m, IDs=IDs), "SpatialLines")
-proj4string(country) = "+proj=latlong +datum=WGS84" 
+proj4string(country) = "+proj=longlat +datum=WGS84" 
 ## overlay and plot points and maps:
 plot(country, col="darkgrey", xlim=c(-25.3,57.8), ylim=c(-34.8, 37.4))
 points(sites, pch=21, bg="white", cex=.6, col="black")
