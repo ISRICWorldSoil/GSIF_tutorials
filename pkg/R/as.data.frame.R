@@ -30,10 +30,10 @@
     HOR.list.m[[j]] <- merge(sid, HOR.list[[j]], all.x=TRUE, by=paste(x@idcol))
   }   
 
-  # Merge all profile tables to one single table:
+  # Merge all horizon tables to one single table:
   tmp <- do.call(cbind, HOR.list.m)
   
-  # Finally, merge all profile tables to one single table:
+  # Finally, merge all profile + horizon tables to one single table:
   sel <- which(names(tmp) %in% paste(x@idcol))[-1] # delete copies of IDs:
   tmp2 <- cbind(coordinates(x@sp), x@site)
   fdb <- merge(tmp2, tmp[,-sel], all.x=TRUE, by=paste(x@idcol), ...)
@@ -49,14 +49,32 @@ setMethod('as.data.frame', signature(x = "SoilProfileCollection"), .as.data.fram
 
 
 # Reverse function -- extract horizons from a data.frame:
-getHorizons <- function(x, idcol, sel){
-    h.lst <- sapply(sel, FUN=function(l){grep(l, names(x))})
-    m.lst <- rep(list(data.frame(x[,idcol])), nrow(h.lst))
-    for(j in 1:nrow(h.lst)){
-      names(m.lst[[j]]) <- idcol
-      m.lst[[j]][,sel] <- x[,h.lst[j,]]
+getHorizons <- function(x, idcol, sel, pattern=paste("_", LETTERS[1:15], sep="")){
+    require(plyr)
+    if(!length(unique(sel))==length(sel)){
+      stop("'sel' argument must contain unique column names")
     }
-    horizons <- do.call(rbind, m.lst)
+    ## check that all horizon names from selection follow the pattern:
+    t.lst <- expand.grid(sel, pattern, KEEP.OUT.ATTRS=FALSE, stringsAsFactors=FALSE)
+    nn <- paste(t.lst[,1], t.lst[,2], sep="")
+    h.lst <- as.vector(unlist(sapply(sel, FUN=function(l){grep(l, names(x))})))
+    if(!all(names(x)[h.lst] %in% nn)){
+      stop("Some column names do not follow the 'pattern'. Consider renaming.")
+    }
+    ## horizon list:
+    h.lst <- lapply(sel, FUN=function(l){grep(l, names(x))})
+    mm <- max(sapply(h.lst, length))
+    m.lst <- rep(list(data.frame(x[,idcol])), mm)
+    for(j in 1:mm){
+      names(m.lst[[j]]) <- idcol
+      for(i in sel){ 
+        csel <- grep(paste(i, pattern[j], sep=""), names(x))
+        if(length(csel)==1){
+          m.lst[[j]][,i] <- x[,csel]
+        }
+      }
+    }
+    horizons <- do.call(plyr:::rbind.fill, m.lst)
     return(horizons)
 }
 
