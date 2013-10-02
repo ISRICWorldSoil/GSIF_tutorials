@@ -31,11 +31,9 @@ setMethod("as.geosamples", signature(obj = "SoilProfileCollection"),
   if(!missing(TimeSpan.begin)&!missing(TimeSpan.end)){
     if(!length(TimeSpan.begin)==length(TimeSpan.end)){ stop("Arguments 'TimeSpan.begin' and 'TimeSpan.end' of the same length required") }
     if(!any(class(TimeSpan.begin)=="POSIXct")&!any(class(TimeSpan.end)=="POSIXct")){ stop("Arguments 'TimeSpan.begin' and 'TimeSpan.end' of class 'POSIXct' required") }
-    XYT <- data.frame(cbind(obj@sp@coords, time=(unclass(TimeSpan.begin)+unclass(TimeSpan.end))/2))
-    dtime = (unclass(TimeSpan.end) - unclass(TimeSpan.begin))/2
+    XYT <- data.frame(cbind(obj@sp@coords, time=(unclass(TimeSpan.begin)+unclass(TimeSpan.end))/2), dtime=(unclass(TimeSpan.end) - unclass(TimeSpan.begin))/2)
   } else {
-      XYT <- data.frame(cbind(obj@sp@coords, time=rep(NA, nrow(obj@sp@coords))))
-      dtime <- 0
+    XYT <- data.frame(cbind(obj@sp@coords, time=rep(NA, nrow(obj@sp@coords))), dtime=0)
   }
 
   names(XYT)[1:2] <- c("x", "y")
@@ -64,7 +62,7 @@ setMethod("as.geosamples", signature(obj = "SoilProfileCollection"),
     if(is.null(measurementError)) { measurementError = rep(as.character(NA), ll) }
     sampleArea = attr(site[,names(site)[j]], "sampleArea")
     if(is.null(sampleArea)) { sampleArea = rep(sample.area, ll) }    
-    x[[j]] <- data.frame(observationid = as.character(observationid), sampleid = obj@site[,obj@idcol], longitude = XYT[,1], latitude = XYT[,2], locationError = as.numeric(locationError), TimeSpan.begin = as.POSIXct(XYT[,3]-dtime/2, origin="1970-01-01"), TimeSpan.end = as.POSIXct(XYT[,3]+dtime/2, origin="1970-01-01"), altitude = as.numeric(rep(0, ll)), altitudeMode = rep("relativeToGround", ll), sampleArea = sampleArea, sampleThickness = rep(mxd*sample.area, ll), observedValue = as.character(site[,names(site)[j]]), methodid = rep(names(site)[j], ll), measurementError = as.numeric(measurementError), stringsAsFactors = FALSE) 
+    x[[j]] <- data.frame(observationid = as.character(observationid), sampleid = obj@site[,obj@idcol], longitude = XYT[,1], latitude = XYT[,2], locationError = as.numeric(locationError), TimeSpan.begin = as.POSIXct(XYT[,3]-XYT[,"dtime"]/2, origin="1970-01-01"), TimeSpan.end = as.POSIXct(XYT[,3]+XYT[,"dtime"]/2, origin="1970-01-01"), altitude = as.numeric(rep(0, ll)), altitudeMode = rep("relativeToGround", ll), sampleArea = sampleArea, sampleThickness = rep(mxd*sample.area, ll), observedValue = as.character(site[,names(site)[j]]), methodid = rep(names(site)[j], ll), measurementError = as.numeric(measurementError), stringsAsFactors = FALSE) 
   }
     rx <- do.call(rbind, x)
   } else {
@@ -81,23 +79,23 @@ setMethod("as.geosamples", signature(obj = "SoilProfileCollection"),
   
   ## if empty skip this step:
   if(ncol(hors)>0){
-  # add coordinates:
-  XYTh <- merge(data.frame(ID=obj@horizons[,obj@idcol], dtime=dtime), XYT, by="ID", all.x=TRUE)
+    # add coordinates:
+    XYTh <- merge(data.frame(ID=obj@horizons[,obj@idcol]), XYT, by="ID", all.x=TRUE)
   
   # for each soil variable
-  for(j in 1:length(names(hors))){
-    ll <- length(hors[,names(hors)[j]])
-    observationid = attr(hors[,names(hors)[j]], "IGSN")
-    if(is.null(observationid)) { observationid = rep(as.character(NA), ll) } 
-    measurementError = attr(hors[,names(hors)[j]], "measurementError")
-    if(is.null(measurementError)) { measurementError = rep(as.character(NA), ll) }
-    sampleArea = attr(hors[,names(hors)[j]], "sampleArea")
-    if(is.null(sampleArea)) { sampleArea = rep(sample.area, ll) }
-    y[[j]] <- data.frame(observationid = as.character(observationid), sampleid = XYTh$ID, longitude = XYTh$x, latitude = XYTh$y, locationError = as.numeric(XYTh$locationError), TimeSpan.begin = as.POSIXct(XYTh$time-XYTh$dtime/2, origin="1970-01-01"), TimeSpan.end = as.POSIXct(XYTh$time+XYTh$dtime/2, origin="1970-01-01"), altitude = as.numeric(depths), altitudeMode = rep("relativeToGround", ll), sampleArea = sampleArea, sampleThickness = sampleThickness, observedValue = as.character(hors[,names(hors)[j]]), methodid = rep(names(hors)[j], ll), measurementError = as.numeric(measurementError), stringsAsFactors = FALSE) 
-  }
-  ry <- do.call(rbind, y)
+    for(j in 1:length(names(hors))){
+      ll <- length(hors[,names(hors)[j]])
+      observationid = attr(hors[,names(hors)[j]], "IGSN")
+      if(is.null(observationid)) { observationid = rep(as.character(NA), ll) } 
+      measurementError = attr(hors[,names(hors)[j]], "measurementError")
+      if(is.null(measurementError)) { measurementError = rep(as.character(NA), ll) }
+      sampleArea = attr(hors[,names(hors)[j]], "sampleArea")
+      if(is.null(sampleArea)) { sampleArea = rep(sample.area, ll) }
+        y[[j]] <- data.frame(observationid = as.character(observationid), sampleid = XYTh$ID, longitude = XYTh$x, latitude = XYTh$y, locationError = as.numeric(XYTh$locationError), TimeSpan.begin = as.POSIXct(XYTh$time-XYTh$dtime/2, origin="1970-01-01"), TimeSpan.end = as.POSIXct(XYTh$time+XYTh$dtime/2, origin="1970-01-01"), altitude = as.numeric(depths), altitudeMode = rep("relativeToGround", ll), sampleArea = sampleArea, sampleThickness = sampleThickness, observedValue = as.character(hors[,names(hors)[j]]), methodid = rep(names(hors)[j], ll), measurementError = as.numeric(measurementError), stringsAsFactors = FALSE) 
+    }
+    ry <- do.call(rbind, y)
   } else {
-  ry <- NULL
+    ry <- NULL
   }
   
   # merge the sites and horizons tables:
@@ -147,22 +145,37 @@ setMethod("as.geosamples", signature(obj = "SpatialPointsDataFrame"),
 
   ## altitudeMode
   altitudeMode = attr(obj@coords, "altitudeMode")
-  if(is.null(altitudeMode)) { altitudeMode = "relativeToGround" }  
+    if(is.null(altitudeMode)) { altitudeMode = "relativeToGround" }  
   
   ## look for location error:
   locationError = attr(obj@coords, "locationError")
-  if(is.null(locationError)) { locationError = as.character(NA) }
+    if(is.null(locationError)) { locationError = as.character(NA) }
   ## sampleArea/thickness:
   sampleArea = attr(obj@coords, "sampleArea")
     if(is.null(sampleArea)) { sampleArea = sample.area }
   sampleThickness = attr(obj@coords, "sampleThickness")
     if(is.null(sampleThickness)) { sampleThickness = 0 }
   
-  ## observation ID:
-  if("observationid" %in% names(obj@data)){ 
+  ## look for observation ID:
+  if("observationid" %in% names(obj@data)){
+    attr(obj@data, "observationid") <- obj@data[,"observationid"]
+    obj@data[,"observationid"] <- NULL
+  }
+
+  ## look for sample ID:
+  if("sampleid" %in% names(obj@data)){
     sampleid = obj@data[,"sampleid"]
+    obj@data[,"sampleid"] <- NULL
   } else {
-    sampleid = as.character(1:length(obj))
+    sampleid = attr(obj@data, "sampleid")
+    if(is.null(sampleid)){
+      sampleid = as.character(1:length(obj))
+  }}
+  ## look for measurement error:
+  if("measurementError" %in% names(obj@data) & length(names(obj@data))==2){
+    ## TH: Only works for a single column data frames!
+    attr(obj@data, "measurementError") <- obj@data[,"measurementError"]
+    obj@data[,"measurementError"] <- NULL
   }
 
   ## Try to get the times:
@@ -185,11 +198,14 @@ setMethod("as.geosamples", signature(obj = "SpatialPointsDataFrame"),
 
   ## observed values:
   observedValue = as.vector(sapply(as.list(obj@data), function(x){paste(x)}))
-  methodid = as.factor(as.vector(sapply(names(obj), function(x){rep(x, nrow(obj))})))
-  observationid = as.vector(unlist(sapply(names(obj), function(x){attr(obj@data[,x], "observationid")})))
+  methodid = as.vector(sapply(names(obj), function(x){rep(x, nrow(obj))}))
+  observationid = rep(attr(obj@data, "observationid"), length(names(obj)))
     if(is.null(observationid)) { observationid = rep(as.character(NA), length(observedValue)) }
-  measurementError = as.vector(unlist(sapply(names(obj), function(x){attr(obj@data[,x], "measurementError")})))
-    if(is.null(measurementError)) { measurementError = rep(as.character(NA), length(observedValue)) }
+  if(ncol(obj@data)==1 & !is.null(attr(obj@data, "measurementError"))){
+    measurementError = attr(obj@data, "measurementError")
+  } else { 
+    measurementError = rep(as.character(NA), length(observedValue))
+  }  
   sampleid2 <- rep(sampleid, ncol(obj@data))
   
   ## second table:
@@ -199,16 +215,19 @@ setMethod("as.geosamples", signature(obj = "SpatialPointsDataFrame"),
   tb <- merge(rx, ry, by="sampleid")
   
   ## look for description of the methods:
-  description = attr(obj@data, "description") 
-  if(is.null(description)) { 
+  if(ncol(obj@data)==1 & !is.null(attr(obj@data, "description"))){
+    description = attr(obj@data, "description")
+  } else {
     description = rep(as.character(NA), length(names(obj))) 
   }
-  units = attr(obj@data, "units")
-  if(is.null(units)) {  
+  if(ncol(obj@data)==1 & !is.null(attr(obj@data, "units"))){
+    units = attr(obj@data, "units")
+  } else {   
     units = rep(as.character(NA), length(names(obj)))
   }
-  detectionLimit = attr(obj@data, "detectionLimit")  
-  if(is.null(detectionLimit)) {
+  if(ncol(obj@data)==1 & !is.null(attr(obj@data, "detectionLimit"))){
+    detectionLimit = attr(obj@data, "detectionLimit")
+  } else {
     detectionLimit = rep(as.character(NA), length(names(obj)))
   }
   

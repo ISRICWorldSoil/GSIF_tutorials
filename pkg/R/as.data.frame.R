@@ -74,7 +74,7 @@ getHorizons <- function(x, idcol, sel, pattern=paste("_", LETTERS[1:15], sep="")
         }
       }
     }
-    horizons <- do.call(plyr:::rbind.fill, m.lst)
+    horizons <- do.call(plyr::rbind.fill, m.lst)
     return(horizons)
 }
 
