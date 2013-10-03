@@ -10,14 +10,14 @@
 \S4method{predict}{gstatModel}(object, 
      predictionLocations, nmin = 10, nmax = 30, debug.level = -1, 
      predict.method = c("RK", "KED")[1], nfold = 5, verbose = FALSE, 
-     nsim = 0, mask.extra = TRUE, block = predictionLocations@grid@cellsize, 
+     nsim = 0, mask.extra = TRUE, block, 
      zmin = -Inf, zmax = Inf, subsample = length(object@sp), 
      coarsening.factor = 1, vgmmodel = object@vgmModel,
      subset.observations = !is.na(object@sp@coords[,1]), betas = c(0,1), \dots)
 \S4method{predict}{list}(object, 
      predictionLocations, nmin = 10, nmax = 30, debug.level = -1, 
      predict.method = c("RK", "KED")[1], nfold = 5, verbose = FALSE, 
-     nsim = 0, mask.extra = TRUE, block = predictionLocations@grid@cellsize, 
+     nsim = 0, mask.extra = TRUE, block, 
      zmin = -Inf, zmax = Inf, subsample = length(object@sp), \dots)
 }
 \arguments{
@@ -31,7 +31,7 @@
   \item{verbose}{logical; specifies whether to supress the progress bar of the \code{gstat::krige.cv}}
   \item{nsim}{integer; triggers the geostatistical simulations}
   \item{mask.extra}{logical; specifies whether to mask out the extrapolation pixels (prediction variance exceeding the global variance)}
-  \item{block}{numeric; support size (block predictions by default)}
+  \item{block}{numeric; support size (block support for objects of type \code{"SpatialPixelsDataFrame"} is chosen by default)}
   \item{zmin}{numeric; lower physical limit for the target variable}
   \item{zmax}{numeric; upper physical limit for the target variable}
   \item{subsample}{integer; sub-sample point observations to speed up the processing}

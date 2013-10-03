@@ -7,7 +7,7 @@
 
 ################## prediction #########################
 ## predict values using a RK model:
-predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30, debug.level = -1, predict.method = c("RK", "KED")[1], nfold = 5, verbose = FALSE, nsim = 0, mask.extra = TRUE, block = predictionLocations@grid@cellsize, zmin = -Inf, zmax = Inf, subsample = length(object@sp), coarsening.factor = 1, vgmmodel = object@vgmModel, subset.observations = !is.na(object@sp@coords[,1]), betas = c(0,1), ...){
+predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30, debug.level = -1, predict.method = c("RK", "KED")[1], nfold = 5, verbose = FALSE, nsim = 0, mask.extra = TRUE, block, zmin = -Inf, zmax = Inf, subsample = length(object@sp), coarsening.factor = 1, vgmmodel = object@vgmModel, subset.observations = !is.na(object@sp@coords[,1]), betas = c(0,1), ...){
 
   if(nsim<0|!is.numeric(nsim)){
    stop("To invoke conditional simulations set 'nsim' argument to a positive integer number")
@@ -27,6 +27,15 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
   ## force SpatialPixels:
   if(!class(predictionLocations)=="SpatialPointsDataFrame"){
     predictionLocations <- as(predictionLocations, "SpatialPixelsDataFrame")
+  }
+
+  ## point or block support:
+  if(missing(block)){
+    if(class(predictionLocations)=="SpatialPixelsDataFrame"){
+      block = predictionLocations@grid@cellsize
+    } else {
+      block = 0
+    }
   }
  
   ## target variable name: 
@@ -99,7 +108,7 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
       subset.observations = object@sp@coords[,1] > predictionLocations@bbox[1,1]-.1*R & object@sp@coords[,1] < predictionLocations@bbox[1,2]+.1*R & object@sp@coords[,2] > predictionLocations@bbox[2,1]-.1*R & object@sp@coords[,2] < predictionLocations@bbox[2,2]+.1*R
     } else {
     ## 3D:
-      Rv = diff(predictionLocations@bbox[3,])
+      Rv = sd(object@sp@coords[,3])/3
       subset.observations = object@sp@coords[,1] > predictionLocations@bbox[1,1]-.1*R & object@sp@coords[,1] < predictionLocations@bbox[1,2]+.1*R & object@sp@coords[,2] > predictionLocations@bbox[2,1]-.1*R & object@sp@coords[,2] < predictionLocations@bbox[2,2]+.1*R & object@sp@coords[,3] > predictionLocations@bbox[3,1]-1.5*Rv & object@sp@coords[,3] < predictionLocations@bbox[3,2]+1.5*Rv
     }
   }
@@ -158,9 +167,10 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
   }
   
   ## remove duplicates as they can lead to singular matrix problems:
-  if(length(zerodist(observed))>0){
-    observed <- remove.duplicates(observed)
-  }
+  if(is.projected(observed)){
+    if(length(zerodist(observed))>0){
+      observed <- remove.duplicates(observed)
+  }}
   
   ## skip cross-validation if nfold = 0
   if(nfold==0 | !any(class(object@regModel)=="glm")){ 
