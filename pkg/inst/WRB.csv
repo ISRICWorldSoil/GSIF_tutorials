@@ -1,0 +1,33 @@
+Number,Code,Group,Description,Generic,R,G,B
+1,AC,Acrisol,"Red, brown or yellow coloured soil, develops in areas of intense weathering, has a clay rich B horizon.",Soils with a clay-enriched subsoil,253,164,99
+2,AB,Albeluvisol,Albeluvic tonguing.,Soils with a clay-enriched subsoil,255,235,190
+3,AL,Alisol,"Low base status, high-activity clay.",Soils with a clay-enriched subsoil,255,255,204
+4,AN,Andosol,"Soil developed from volcanic material, are young immature soils, characteristics depend on type of volcanic material.",Soils set by Fe/Al chemistry,252,107,93
+5,AT,Anthrosol,Soils with long and intensive agricultural use.,Soils with strong human influence,101,99,138
+6,AR,Arenosol,Sandy soil with no more profile development than an A horizon.,Relatively young soils or soils with little or no profile development,254,231,192
+7,CL,Calcisol,Soil with a substantial secondary accumulation of lime.,Accumulation of less soluble salts or non-saline substances,255,239,81
+8,CM,Cambisol,Transformation of soil matter (Fe particularly) in situ without moving in profile. Mostly brownish color.,Relatively young soils or soils with little or no profile development,253,206,112
+9,CH,Chernozem,"Fertile black-coloured soil containing a high percentage of organic matter, phosphoric acids.","Accumulation of organic matter, high base status",229,199,93
+10,CR,Cryosol,"Soil in permafrost areas, exhibits cryoturbation and is usually rich in organic matter.",Soils with limited rooting due to shallow permafrost or stoniness,146,125,158
+11,DU,Durisol,"Soil of some arid and semi-arid environments, contains cemented secondary silica.",Accumulation of less soluble salts or non-saline substances,250,235,198
+12,FR,Ferralsol,"Red to yellow soil rich in iron and aluminium, common in temperate to tropical humid areas.",Soils set by Fe/Al chemistry,252,137,77
+13,FL,Fluvisol,"Soil developed above flood plain sediments, A horizon is commonly directly above C horizon.",Soils influenced by water,16,169,233
+14,GL,Gleysol,Groundwater affected soils.,Soils influenced by water,171,154,191
+15,GY,Gypsisol,Accumulation of gypsum.,Accumulation of less soluble salts or non-saline substances,255,249,173
+16,HS,Histosol,"Soil consisting primarily of organic materials, common in wetlands.",Soils with thick organic layers,127,128,122
+17,KS,Kastanozem,Transition to drier climate.,"Accumulation of organic matter, high base status",210,161,141
+18,LP,Leptosol,"Shallow soil over bedrock, calcareous material or a deeper soil that is gravelly or stony, common in mountains.",Soils with limited rooting due to shallow permafrost or stoniness,201,201,201
+19,LX,Lixisol,"High base status, low-activity clay.",Soils with a clay-enriched subsoil,247,199,202
+20,LV,Luvisol,"High base status, high-activity clay.",Soils with a clay-enriched subsoil,249,168,144
+21,NT,Nitisol,"Low-activity clay, P fixation, strongly structured.",Soils set by Fe/Al chemistry,204,123,104
+22,PH,Phaeozem,Sod organic-accumulative.,"Accumulation of organic matter, high base status",213,234,219
+23,PL,Planosol,Abrupt textural discontinuity.,Soils with stagnating water,246,156,105
+24,PT,Plinthosol,Accumulation of Fe under hydromorphic conditions.,Soils set by Fe/Al chemistry,132,88,81
+25,PZ,Podzol,"Soil that presents significant podzolization, common in coniferous forests.",Soils set by Fe/Al chemistry,110,170,124
+26,RG,Regosol,Soils with no significant profile development.,Relatively young soils or soils with little or no profile development,253,228,183
+27,SC,Solonchak,Salt enrichment upon evaporation.,Soils influenced by water,224,91,154
+28,SN,Solonetz,Alkaline soils.,Soils influenced by water,248,216,237
+29,ST,Stagnosols,Structural or moderate textural discontinuity.,Soils with stagnating water,115,195,244
+30,TC,Technosols,Soils containing many artefacts.,Soils with strong human influence,154,89,150
+31,UM,Umbrisol,Soil with a dark topsoil and in which organic matter has accumulated significantly within the mineral surface soil.,Relatively young soils or soils with little or no profile development,121,140,131
+32,VR,Vertisol,"Shows significant and recurrent swelling with water, high content of expansive clay.",Soils influenced by water,168,113,136
