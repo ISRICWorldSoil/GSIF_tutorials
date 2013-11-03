@@ -4,32 +4,23 @@
 # Dev Status     : Pre-Alpha
 # Note           : it works together with FWTools and SAGA GIS if requested;
 
-## create a tiling system (Polygon map):
-setMethod("getSpatialTiles", signature(obj = "Spatial"), function(obj, block.x, block.y = block.x, overlap.percent = 0, limit.bbox = TRUE, return.SpatialPolygons = TRUE){
-
-  if(overlap.percent<0){
-    stop("'overlap.percent' argument must be a positive number")
-  }
-
-  ## check the input bbox:
-  if(!(ncol(obj@bbox)==2&nrow(obj@bbox)==2&obj@bbox[1,1]<obj@bbox[1,2]&obj@bbox[2,1]<obj@bbox[2,2])){
-    stop("Bounding box with two-column matrix required; the first column has the minimum, the second the maximum values;\n rows represent the spatial dimensions required")
-  }
+## create table with tile dimensions...
+makeTiles <- function(bb, block.x, block.y, overlap.percent, limit.bbox, columns = NULL, rows = NULL){
   
   ## number of tiles:
-  xn = ceiling(diff(obj@bbox[1,])/block.x)
-  yn = ceiling(diff(obj@bbox[2,])/block.y)
+  xn = ceiling(diff(bb[1,])/block.x)
+  yn = ceiling(diff(bb[2,])/block.y)
 
   # number of tiles:
   message(paste("Generating", xn*yn, "tiles..."))  
-  xminl = obj@bbox[1,1]
-  yminl = obj@bbox[2,1]
-  xmaxl = obj@bbox[1,1] + (xn-1) * block.x
-  ymaxl = obj@bbox[2,1] + (yn-1) * block.y
-  xminu = obj@bbox[1,1] + block.x
-  yminu = obj@bbox[2,1] + block.y
-  xmaxu = obj@bbox[1,1] + xn * block.x
-  ymaxu = obj@bbox[2,1] + yn * block.y
+  xminl = bb[1,1]
+  yminl = bb[2,1]
+  xmaxl = bb[1,1] + (xn-1) * block.x
+  ymaxl = bb[2,1] + (yn-1) * block.y
+  xminu = bb[1,1] + block.x
+  yminu = bb[2,1] + block.y
+  xmaxu = bb[1,1] + xn * block.x
+  ymaxu = bb[2,1] + yn * block.y
   
   b.l <- expand.grid(KEEP.OUT.ATTRS=FALSE, xl=seq(xminl, xmaxl, by=block.x), yl=seq(yminl, ymaxl, by=block.y))
   b.u <- expand.grid(KEEP.OUT.ATTRS=FALSE, xu=seq(xminu, xmaxu, by=block.x), yu=seq(yminu, ymaxu, by=block.y))
@@ -39,29 +30,90 @@ setMethod("getSpatialTiles", signature(obj = "Spatial"), function(obj, block.x, 
   btiles$yl <- btiles$yl - block.y * overlap.percent/100
   btiles$xu <- btiles$xu + block.x * overlap.percent/100
   btiles$yu <- btiles$yu + block.y * overlap.percent/100
-  
+ 
   if(limit.bbox == TRUE){
     ## fix min max coordinates:
-    btiles$xl <- ifelse(btiles$xl < obj@bbox[1,1], obj@bbox[1,1], btiles$xl)
-    btiles$yl <- ifelse(btiles$yl < obj@bbox[2,1], obj@bbox[2,1], btiles$yl)  
-    btiles$xu <- ifelse(btiles$xu > obj@bbox[1,2], obj@bbox[1,2], btiles$xu)
-    btiles$yu <- ifelse(btiles$yu > obj@bbox[2,2], obj@bbox[2,2], btiles$yu)
+    btiles$xl <- ifelse(btiles$xl < bb[1,1], bb[1,1], btiles$xl)
+    btiles$yl <- ifelse(btiles$yl < bb[2,1], bb[2,1], btiles$yl)  
+    btiles$xu <- ifelse(btiles$xu > bb[1,2], bb[1,2], btiles$xu)
+    btiles$yu <- ifelse(btiles$yu > bb[2,2], bb[2,2], btiles$yu)
   }
 
-  if(return.SpatialPolygons == TRUE){
-    ## get coordinates for each tile:
-    coords.lst <- lapply(as.list(as.data.frame(t(as.matrix(btiles)))), function(x){matrix(c(x[1], x[1], x[3], x[3], x[1], x[2], x[4], x[4], x[2], x[2]), ncol=2, dimnames=list(paste("p", 1:5, sep=""), attr(obj@bbox, "dimnames")[[1]]))})
+  # add offset for rgdal (optional):
+  if(!is.null(columns)&!is.null(rows)){
+    btiles$offset.y <- round(rows*(bb[2,2]-btiles$yu)/(bb[2,2]-bb[2,1]))
+    btiles$offset.x <- columns + round(columns*(btiles$xl-bb[1,2])/(bb[1,2]-bb[1,1]))
+    btiles$region.dim.y <- round(rows*(btiles$yu-btiles$yl)/(bb[2,2]-bb[2,1]))
+    btiles$region.dim.x <- round(columns*(btiles$xu-btiles$xl)/(bb[1,2]-bb[1,1]))
+  }
+  
+  return(btiles)
 
-    ## create an object of class "SpatialPolygons"
-    srl = lapply(coords.lst, Polygon)
-    Srl = list()
+}
+
+.tiles2pol <- function(bb, btiles, proj4string){
+  ## get coordinates for each tile:
+  coords.lst <- lapply(as.list(as.data.frame(t(as.matrix(btiles)))), function(x){matrix(c(x[1], x[1], x[3], x[3], x[1], x[2], x[4], x[4], x[2], x[2]), ncol=2, dimnames=list(paste("p", 1:5, sep=""), attr(bb, "dimnames")[[1]]))})
+
+  ## create an object of class "SpatialPolygons"
+  srl = lapply(coords.lst, Polygon)
+  Srl = list()
   for(i in 1:length(srl)){ Srl[[i]] <- Polygons(list(srl[[i]]), ID=row.names(btiles)[i]) }
-    pol = SpatialPolygons(Srl, proj4string=obj@proj4string)
+  pol = SpatialPolygons(Srl, proj4string=proj4string)
+
+  return(pol)
+}
+
+## create a tiling system (Polygon map):
+setMethod("getSpatialTiles", signature(obj = "Spatial"), function(obj, block.x, block.y = block.x, overlap.percent = 0, limit.bbox = TRUE, return.SpatialPolygons = TRUE){
+
+  if(overlap.percent<0){
+    stop("'overlap.percent' argument must be a positive number")
+  }
+
+  ## check the input bbox:
+  if(!(ncol(obj@bbox)==2&nrow(obj@bbox)==2&obj@bbox[1,1]<obj@bbox[1,2]&obj@bbox[2,1]<obj@bbox[2,2])){
+    stop("Bounding box with two-column matrix required; the first column should contain the minimum, the second the maximum values;\n rows represent the spatial dimensions required")
+  }
+  
+  bb <- obj@bbox
+  btiles <- makeTiles(bb, block.x, block.y, overlap.percent, limit.bbox)
+
+  if(return.SpatialPolygons == TRUE){
+    pol <- .tiles2pol(bb=bb, btiles=btiles, proj4string=obj@proj4string)
   } else {
     pol = btiles
   }
 
-  message(paste("Returning a list of tiles with", signif(overlap.percent, 3), "percent overlap"))
+  message(paste("Returning a list of tiles for an object of class", class(obj), "with", signif(overlap.percent, 3), "percent overlap"))
+  return(pol)
+
+})
+
+## create a tiling system (Polygon map):
+setMethod("getSpatialTiles", signature(obj = "vector"), function(obj, block.x, block.y = block.x, overlap.percent = 0, limit.bbox = TRUE, return.SpatialPolygons = FALSE){
+
+  if(!class(obj)=="GDALobj"){
+    stop("Object of class \"GDALobj\" required.")
+  }
+  
+  if(overlap.percent<0){
+    stop("'overlap.percent' argument must be a positive number")
+  }
+
+  ## create bbox:
+  bb <- matrix(c(obj[["ll.x"]], obj[["ll.y"]], obj[["ll.x"]]+(obj[["columns"]]+1)*obj[["res.x"]], obj[["ll.y"]]+(obj[["rows"]]+1)*obj[["res.y"]]), nrow=2)
+  attr(bb, "dimnames") <- list(c("x","y"), c("min","max"))
+  ## tile using rows and columns:
+  btiles <- makeTiles(bb, block.x, block.y, overlap.percent, limit.bbox, rows = obj[["rows"]], columns = obj[["columns"]])
+
+  if(return.SpatialPolygons == TRUE){
+    pol <- .tiles2pol(bb=bb, btiles=btiles, proj4string=attr(obj, "projection"))
+  } else {
+    pol = btiles
+  }
+
+  message(paste("Returning a list of tiles for an object of class", class(obj), "with", signif(overlap.percent, 3), "percent overlap"))
   return(pol)
 
 })

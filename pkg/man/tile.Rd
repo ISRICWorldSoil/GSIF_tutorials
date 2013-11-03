@@ -39,7 +39,7 @@ gridded(meuse.grid) <- ~x+y
 tl <- getSpatialTiles(meuse.grid, block.x=1000)
 image(meuse.grid)
 lines(as(tl, "SpatialLines"))
-# all at once:
+## all at once:
 pix.lst <- tile(meuse.grid, block.x=1000)
 \dontrun{## lines:
 library(plotKML)
@@ -51,6 +51,18 @@ data(eberg_zones)
 ## this one requires ogr2ogr function:
 pol.lst <- tile(eberg_zones, block.x=5000)
 spplot(pol.lst[[1]][2])
+## raster files via rgdal:
+library(rgdal)
+fn = system.file("pictures/SP27GTIF.TIF", 
+ package = "rgdal")
+obj <- GDALinfo(fn)
+ras.lst <- getSpatialTiles(obj, block.x=1000)
+offset <- c(ras.lst$offset.y[i], ras.lst$offset.x[i])
+region.dim <- c(ras.lst$region.dim.y[i], 
+  ras.lst$region.dim.x[i])
+## read the first tile:
+SP27GTIF_T1 <- readGDAL(fn, offset=offset, 
+  region.dim=region.dim)
 }
 }
 \keyword{methods}
