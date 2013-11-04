@@ -1,12 +1,12 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><head><title>R: 1-degree cell resolution global land mask</title>
+<html><head><title>R: Global coarse resolution land / soil mask maps</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <link rel="stylesheet" type="text/css" href="R.css">
 </head><body>
 
 <table width="100%" summary="page for landmask {GSIF}"><tr><td>landmask {GSIF}</td><td align="right">R Documentation</td></tr></table>
 
-<h2>1-degree cell resolution global land mask</h2>
+<h2>Global coarse resolution land / soil mask maps</h2>
 
 <h3>Description</h3>
 
@@ -49,6 +49,8 @@
 <dt><code>mask</code></dt><dd><p>percent; land mask value</p>
 </dd>
 <dt><code>suborder</code></dt><dd><p>factor; Keys to Soil Taxonomy suborder class e.g. Histels, Udolls, Calcids, ...</p>
+</dd>
+<dt><code>soilmask</code></dt><dd><p>factor; global soil mask map based on the land cover classes (see: <a href="http://worldgrids.org/doku.php?id=wiki:smkisr">SMKISR3</a>)</p>
 </dd>
 </dl>
 
@@ -104,13 +106,14 @@ require(maptools)
 country &lt;- as(map2SpatialPolygons(country.m, IDs=IDs), "SpatialLines")
 spplot(landmask["mask"], col.regions="grey", sp.layout=list("sp.lines", country))
 spplot(landmask["soilmask"], col.regions="grey", sp.layout=list("sp.lines", country))
+
+## End(Not run)
 ## also available in the Robinson projection at 20 km grid:
 data(landmask20km)
 image(landmask20km[1])
 summary(landmask20km$suborder)
-
-## End(Not run)
+summary(landmask20km$soilmask)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.3-4 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.3-5 <a href="00Index.html">Index</a>]</div>
 </body></html>

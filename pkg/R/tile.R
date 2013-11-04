@@ -91,7 +91,7 @@ setMethod("getSpatialTiles", signature(obj = "Spatial"), function(obj, block.x, 
 })
 
 ## create a tiling system (Polygon map):
-setMethod("getSpatialTiles", signature(obj = "vector"), function(obj, block.x, block.y = block.x, overlap.percent = 0, limit.bbox = TRUE, return.SpatialPolygons = FALSE){
+setMethod("getSpatialTiles", signature(obj = "ANY"), function(obj, block.x, block.y = block.x, overlap.percent = 0, limit.bbox = TRUE, return.SpatialPolygons = FALSE){
 
   if(!class(obj)=="GDALobj"){
     stop("Object of class \"GDALobj\" required.")
@@ -102,7 +102,7 @@ setMethod("getSpatialTiles", signature(obj = "vector"), function(obj, block.x, b
   }
 
   ## create bbox:
-  bb <- matrix(c(obj[["ll.x"]], obj[["ll.y"]], obj[["ll.x"]]+(obj[["columns"]]+1)*obj[["res.x"]], obj[["ll.y"]]+(obj[["rows"]]+1)*obj[["res.y"]]), nrow=2)
+  bb <- matrix(c(obj[["ll.x"]], obj[["ll.y"]], obj[["ll.x"]]+obj[["columns"]]*obj[["res.x"]], obj[["ll.y"]]+obj[["rows"]]*obj[["res.y"]]), nrow=2)
   attr(bb, "dimnames") <- list(c("x","y"), c("min","max"))
   ## tile using rows and columns:
   btiles <- makeTiles(bb, block.x, block.y, overlap.percent, limit.bbox, rows = obj[["rows"]], columns = obj[["columns"]])

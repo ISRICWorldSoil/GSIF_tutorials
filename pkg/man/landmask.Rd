@@ -2,7 +2,7 @@
 \docType{data}
 \alias{landmask}
 \alias{landmask20km}
-\title{1-degree cell resolution global land mask}
+\title{Global coarse resolution land / soil mask maps}
 \description{Land mask showing the 1-degree cells (about 19 thousand in total) in the geographical coordinates, and the productive soils mask (areas with a positive Leaf Area Index at least once in the period 2002--2011). The land mask is based on the \href{http://www.ngdc.noaa.gov/mgg/shorelines/gshhs.html}{Global Self-consistent, Hierarchical, High-resolution Shoreline Database} data (GSHHS 2.1), the productive soils mask on the MODIS Leaf Area Index monthtly product (\href{https://lpdaac.usgs.gov/lpdaac/products/modis_products_table/leaf_area_index_fraction_of_photosynthetically_active_radiation/8_day_l4_global_1km/mcd15a2}{MOD15A2}), and the water mask is based on the \href{http://glcf.umd.edu/data/watermask/}{MOD44W} product. The map of the Keys to Soil Taxonomy soil suborders of the world at 20 km is based on the \href{http://soils.usda.gov/use/worldsoils/mapindex/order.html}{USDA-NRCS map of the global soil regions}.}
 \usage{data(landmask)}
 \format{
@@ -21,6 +21,7 @@
   \describe{
   \item{\code{mask}}{percent; land mask value}
   \item{\code{suborder}}{factor; Keys to Soil Taxonomy suborder class e.g. Histels, Udolls, Calcids, \dots}
+  \item{\code{soilmask}}{factor; global soil mask map based on the land cover classes (see: \href{http://worldgrids.org/doku.php?id=wiki:smkisr}{SMKISR3})}
 }
 }
 \references{
@@ -50,10 +51,11 @@ require(maptools)
 country <- as(map2SpatialPolygons(country.m, IDs=IDs), "SpatialLines")
 spplot(landmask["mask"], col.regions="grey", sp.layout=list("sp.lines", country))
 spplot(landmask["soilmask"], col.regions="grey", sp.layout=list("sp.lines", country))
+}
 ## also available in the Robinson projection at 20 km grid:
 data(landmask20km)
 image(landmask20km[1])
 summary(landmask20km$suborder)
-}
+summary(landmask20km$soilmask)
 }
 \keyword{datasets}

@@ -20,7 +20,7 @@
 predict(object, 
      predictionLocations, nmin = 10, nmax = 30, debug.level = -1, 
      predict.method = c("RK", "KED")[1], nfold = 5, verbose = FALSE, 
-     nsim = 0, mask.extra = TRUE, block = predictionLocations@grid@cellsize, 
+     nsim = 0, mask.extra = TRUE, block, 
      zmin = -Inf, zmax = Inf, subsample = length(object@sp), 
      coarsening.factor = 1, vgmmodel = object@vgmModel,
      subset.observations = !is.na(object@sp@coords[,1]), betas = c(0,1), ...)
@@ -28,7 +28,7 @@ predict(object,
 predict(object, 
      predictionLocations, nmin = 10, nmax = 30, debug.level = -1, 
      predict.method = c("RK", "KED")[1], nfold = 5, verbose = FALSE, 
-     nsim = 0, mask.extra = TRUE, block = predictionLocations@grid@cellsize, 
+     nsim = 0, mask.extra = TRUE, block, 
      zmin = -Inf, zmax = Inf, subsample = length(object@sp), ...)
 </pre>
 
@@ -78,7 +78,7 @@ predict(object,
 </td></tr>
 <tr valign="top"><td><code>block</code></td>
 <td>
-<p>numeric; support size (block predictions by default)</p>
+<p>numeric; support size (block support for objects of type <code>"SpatialPixelsDataFrame"</code> is chosen by default)</p>
 </td></tr>
 <tr valign="top"><td><code>zmin</code></td>
 <td>
@@ -148,5 +148,5 @@ Predictions can be speed up by using a larger <code>coarsening.factor</code> e.g
  <p><code><a href="gstatModel.html">gstatModel-class</a></code>, <code><a href="fit.gstatModel.html">fit.gstatModel</a></code>
 </p>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.3-4 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.3-5 <a href="00Index.html">Index</a>]</div>
 </body></html>

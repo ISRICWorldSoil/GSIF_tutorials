@@ -10,7 +10,7 @@
 
 <h3>Description</h3>
 
-<p>Creates a list of tiles (<code>"SpatialPolygons"</code>) for a given spatial domain i.e. extent.</p>
+<p>Creates a list of tiles (<code>"SpatialPolygons"</code>) for a given spatial domain i.e. extent. Input can be any object of class <code>"Spatial"</code> or <code>"GDALobj"</code>.</p>
 
 
 <h3>Usage</h3>
@@ -19,6 +19,9 @@
 ## S4 method for signature 'Spatial'
 getSpatialTiles(obj, block.x, block.y = block.x, 
     overlap.percent = 0, limit.bbox = TRUE, return.SpatialPolygons = TRUE)
+## S4 method for signature 'ANY'
+getSpatialTiles(obj, block.x, block.y = block.x, 
+    overlap.percent = 0, limit.bbox = TRUE, return.SpatialPolygons = FALSE)
 </pre>
 
 
@@ -71,5 +74,5 @@ getSpatialTiles(obj, block.x, block.y = block.x,
 
  <p><code><a href="tile.html">tile</a></code>, <code>sp::spsample</code> </p>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.3-4 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.3-5 <a href="00Index.html">Index</a>]</div>
 </body></html>
