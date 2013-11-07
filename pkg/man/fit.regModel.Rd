@@ -6,7 +6,7 @@
 \usage{
 \S4method{fit.regModel}{formula,data.frame,SpatialPixelsDataFrame,character}(formulaString, rmatrix, predictionDomain, 
       method = list("GLM", "rpart", "randomForest", "quantregForest", "lme")[[1]], 
-      dimensions = NULL, family = gaussian(), stepwise = TRUE, rvgm, 
+      dimensions = NULL, fit.family = gaussian(), stepwise = TRUE, rvgm, 
       GLS = FALSE, random, \dots)
 }
 \arguments{
@@ -15,7 +15,7 @@
   \item{predictionDomain}{object of class \code{"SpatialPixelsDataFrame"}; spatial domain of interest}
   \item{method}{character; family of methods considered e.g. \code{"GLM"}, \code{"rpart"} (regression trees), \code{"randomForest"} (random forest)}
   \item{dimensions}{character; \code{"3D"}, \code{"2D"}, \code{"2D+T"}, \code{"3D+T"} models}
-  \item{family}{family to be passed to the \code{glm} (see examples below)}
+  \item{fit.family}{family to be passed to the \code{glm} (see examples below)}
   \item{stepwise}{specifies whether to run step-wise regression on top of GLM to get an optimal subset of predictors}
   \item{rvgm}{residual variogram (to avoid fitting the variogram set as NULL)}
   \item{GLS}{fit trend model using Generalized Least Squares implemented in the nlme package}
@@ -39,12 +39,12 @@ ov <- over(meuse, meuse.grid)
 ov <- cbind(data.frame(meuse["om"]), ov)
 ## skip variogram fitting:
 m <- fit.regModel(om~dist+ffreq, rmatrix=ov, meuse.grid, 
-    family=gaussian(log), method="GLM", rvgm=NULL)
+    fit.family=gaussian(log), method="GLM", rvgm=NULL)
 m@regModel
 m@vgmModel
 ## fit a GLM with variogram:
 m1 <- fit.regModel(om~dist+ffreq, rmatrix=ov, meuse.grid, 
-    family=gaussian(log), method="GLM")
+    fit.family=gaussian(log), method="GLM")
 m1@vgmModel
 ## fit a regression tree with variogram:
 m2 <- fit.regModel(log1p(om)~dist+ffreq, rmatrix=ov, meuse.grid,

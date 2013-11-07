@@ -279,13 +279,13 @@ setMethod("show", signature(object = "geosamples"),
 
 ## Extract regression matrix:
 
-.over.geosamples <- function(x, y, methodid, var.type = "numeric"){
+.over.geosamplesSP <- function(x, y, methodid, var.type = "numeric"){
   
-  if(!any(y@data$altitudeMode == "relativeToGround")){
-    warning("AltitudeMode accepts only 'relativeToGround' values")
-  }
   if(length(attr(x@coords, "dimnames")[[2]])>2){
     warning("'SpatialPixelsDataFrame' object with two dimensions expected")
+  }
+  if(!any(y@data$altitudeMode == "relativeToGround")){
+    warning("AltitudeMode accepts only 'relativeToGround' values")
   }
   
   pnts = .subset.geosamples(y, method=methodid)
@@ -319,7 +319,45 @@ setMethod("show", signature(object = "geosamples"),
   
 }
 
-setMethod("over", signature(x = "SpatialPixelsDataFrame", y = "geosamples"), .over.geosamples)
+setMethod("over", signature(x = "SpatialPixelsDataFrame", y = "geosamples"), .over.geosamplesSP)
+
+
+.over.geosamplesRaster <- function(x, y, methodid, var.type = "numeric"){
+  
+  if(!any(y@data$altitudeMode == "relativeToGround")){
+    warning("AltitudeMode accepts only 'relativeToGround' values")
+  }
+  
+  pnts = .subset.geosamples(y, method=methodid)
+  ## check if it results in an empty set:
+  if(nrow(pnts)==0|is.null(pnts)){
+    stop(paste("Subsetting the geosamples based on method", methodid, "results in an empy set."))
+  }
+  
+  ## reformat observed values:
+  if(var.type=="numeric"){
+    pnts$observedValue = as.numeric(pnts$observedValue)
+  } else { 
+      if(var.type=="factor"){
+      pnts$observedValue = as.factor(pnts$observedValue)
+      }
+  }
+  
+  coordinates(pnts) <- ~longitude+latitude
+  proj4string(pnts) <- get("ref_CRS", envir = GSIF.opts) 
+  pnts.t <- spTransform(pnts, CRS(proj4string(x)))
+ 
+  ov <- as.data.frame(raster::extract(x, pnts.t))                    
+  out <- cbind(data.frame(pnts), ov, data.frame(pnts.t@coords))
+  if(nrow(out)==0){ 
+    warning("Overlay resulted in an empty table") 
+  }
+  
+  return(out)
+  
+}
+
+setMethod("over", signature(x = "RasterStack", y = "geosamples"), .over.geosamplesRaster)
 
 
 # end of script;

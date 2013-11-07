@@ -33,7 +33,8 @@ library(sp)
 ## load the Meuse data set:
 demo(meuse, echo=FALSE)
 ## model diagnostics:
-t1 <- test.gstatModel(meuse, om~dist+ffreq, meuse.grid, family = gaussian(log), Ns=c(80, 155))
+t1 <- test.gstatModel(meuse, om~dist+ffreq, meuse.grid, 
+   fit.family = gaussian(log), Ns=c(80, 155))
 t1[[1]]
 }
 \keyword{methods}

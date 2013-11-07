@@ -45,7 +45,8 @@ library(rgdal)
 library(gstat)
 demo(meuse, echo=FALSE)
 ## fit a model:
-omm <- fit.gstatModel(meuse, om~dist, family=gaussian(link="log"), meuse.grid)
+omm <- fit.gstatModel(meuse, om~dist, 
+  fit.family=gaussian(link="log"), meuse.grid)
 show(omm@regModel)
 ## produce SpatialPredictions:
 om.rk <- predict(omm, predictionLocations = meuse.grid)

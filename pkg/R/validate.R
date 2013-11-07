@@ -58,7 +58,7 @@ setMethod("validate", signature(obj = "gstatModel"), function(obj, nfold = 5, pr
       } else {
          dimensions = "3D"      
       }
-      m.l[[j]] <- fit.regModel(formulaString=formulaString, rmatrix=rmatrix, predictionDomain=predictionDomain, method="GLM", family=mfamily, dimensions=dimensions, stepwise=TRUE, vgmFun=vgmmodel$model[2])
+      m.l[[j]] <- fit.regModel(formulaString=formulaString, rmatrix=rmatrix, predictionDomain=predictionDomain, method="GLM", fit.family=mfamily, dimensions=dimensions, stepwise=TRUE, vgmFun=vgmmodel$model[2])
       cv.l[[j]] <- predict.gstatModel(object=m.l[[j]], predictionLocations=nlocs, nfold=0, block=rep(0, ncol(obj@sp@coords)), mask.extra = FALSE, ...)$predicted
       cv.l[[j]]$observed <- eval(tm, nlocs@data)
       cv.l[[j]]$residual <- cv.l[[j]]$observed - cv.l[[j]]$var1.pred

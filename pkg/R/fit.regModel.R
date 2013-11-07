@@ -6,7 +6,7 @@
 
 
 ## Fit a GLM to spatial data:
-setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.frame", predictionDomain = "SpatialPixelsDataFrame", method = "character"), function(formulaString, rmatrix, predictionDomain, method = list("GLM", "rpart", "randomForest", "quantregForest", "lme")[[1]], dimensions = NULL, family = gaussian(), stepwise = TRUE, rvgm, GLS = FALSE, random, ...){
+setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.frame", predictionDomain = "SpatialPixelsDataFrame", method = "character"), function(formulaString, rmatrix, predictionDomain, method = list("GLM", "rpart", "randomForest", "quantregForest", "lme")[[1]], dimensions = NULL, fit.family = gaussian(), stepwise = TRUE, rvgm, GLS = FALSE, random, ...){
 
   ## target variable name:
   tv = all.vars(formulaString)[1]  
@@ -44,7 +44,7 @@ setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.f
   
   if(method == "GLM"){  
     ## fit/filter the regression model:
-    if(GLS == TRUE & family$family == "gaussian" & family$link == "identity"){
+    if(GLS == TRUE & fit.family$family == "gaussian" & fit.family$link == "identity"){
       if(!dimensions == "2D"){ stop("Fitting of the models using the GLS option possible with '2D' data only") }
       message("Fitting a LM using Generalized Least Squares...")
       rgm <- gls(formulaString, rmatrix, correlation=corExp(nugget=TRUE), na.action=na.omit)
@@ -53,7 +53,7 @@ setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.f
       rmatrix$residual <- resid(rgm)
     } else {
       message("Fitting a GLM...")
-      rgm <- glm(formulaString, data=rmatrix, family=family)
+      rgm <- glm(formulaString, data=rmatrix, family=fit.family)
       if(stepwise == TRUE){
         rgm <- step(rgm, trace = 0)
       }

@@ -13,22 +13,22 @@
 \S4method{fit.gstatModel}{SpatialPointsDataFrame,formula,SpatialPixelsDataFrame}(observations, formulaString, covariates, 
      method = list("GLM", "rpart", "randomForest", "quantregForest")[[1]], 
      dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]],
-     family = gaussian(), stepwise = TRUE, vgmFun = "Exp", 
+     fit.family = gaussian(), stepwise = TRUE, vgmFun = "Exp", 
      subsample = 5000, \dots)
 \S4method{fit.gstatModel}{geosamples,formula,SpatialPixelsDataFrame}(observations, formulaString, covariates, 
      method = list("GLM", "rpart", "randomForest", "quantregForest")[[1]], 
      dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]],
-     family = gaussian(), stepwise = TRUE, 
+     fit.family = gaussian(), stepwise = TRUE, 
      vgmFun = "Exp", subsample = 5000, \dots)
 \S4method{fit.gstatModel}{geosamples,formula,list}(observations, formulaString, covariates, 
      method = list("GLM", "rpart", "randomForest", "quantregForest")[[1]], 
      dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]],
-     family = gaussian(), stepwise = TRUE, 
+     fit.family = gaussian(), stepwise = TRUE, 
      vgmFun = "Exp", subsample = 5000, \dots)
 \S4method{fit.gstatModel}{geosamples,list,list}(observations, formulaString, covariates, 
      method = list("GLM", "rpart", "randomForest", "quantregForest")[[1]], 
      dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]],
-     family = gaussian(), stepwise = TRUE, 
+     fit.family = gaussian(), stepwise = TRUE, 
      vgmFun = "Exp", subsample = 5000, \dots)
 }
 \arguments{
@@ -37,18 +37,18 @@
   \item{covariates}{object of type \code{"SpatialPixelsDataFrame"}, or list of grids}
   \item{method}{character; family of methods considered e.g. \code{"GLM"}}  
   \item{dimensions}{character; \code{"3D"}, \code{"2D"}, \code{"2D+T"}, \code{"3D+T"} models}  
-  \item{family}{character string defyning the GLM family (for more info see \code{stats::glm})}
+  \item{fit.family}{character string defyning the GLM family (for more info see \code{stats::glm})}
   \item{stepwise}{specifies whether to run step-wise regression on top of GLM to get an optimal subset of predictors}
   \item{vgmFun}{variogram function (\code{"Exp"} by default)}
   \item{subsample}{integer; maximum number of observations to be taken for model fitting (to speed up variogram fitting)}
   \item{\dots}{other optional arguments that can be passed to \code{glm} and/or \code{fit.variogram}}  
 }
-\details{The GLM method by default assumes that the target variable follows a normal distribution \code{family = gaussian}. Other possible families are:
+\details{The GLM method by default assumes that the target variable follows a normal distribution \code{fit.family = gaussian()}. Other possible families are:
 \describe{
- \item{normal distribution}{\code{family = gaussian} (default setting)}
- \item{log-normal distribution}{\code{family = gaussian(log)}}
- \item{binomial variable}{\code{family = binomial(logit)}}
- \item{variable following a poisson distribution}{\code{family = poisson(log)}}
+ \item{normal distribution}{\code{fit.family = gaussian()} (default setting)}
+ \item{log-normal distribution}{\code{fit.family = gaussian(log)}}
+ \item{binomial variable}{\code{fit.family = binomial(logit)}}
+ \item{variable following a poisson distribution}{\code{fit.family = poisson(log)}}
 }
 }
 \note{Residuals (response residuals from the model) will be checked for normality and problems reported by default. The warning messages should be taken with care, as when the sample size is small, even big departures from normality will not be reported; when the sample size is large, even the smallest deviation from normality might lead to a warning. Likewise, if the variogram fitting fails, consider fitting a variogram manually or using the \code{\link{fit.vgmModel}} method.
@@ -88,7 +88,7 @@ summary(omm@regModel)
 plot(omm@regModel)
 omm@vgmModel
 ## fit a GLM with a gaussian log-link:
-omm <- fit.gstatModel(meuse, om~dist+ffreq, meuse.grid, family = gaussian(log))
+omm <- fit.gstatModel(meuse, om~dist+ffreq, meuse.grid, fit.family = gaussian(log))
 ## it was succesful!
 summary(omm@regModel)
 v = omm@vgmModel; class(v) = c("variogramModel", "data.frame")
@@ -108,7 +108,7 @@ plotKML(om.rk)
 }
 
 ## binary variable (0/1):
-som <- fit.gstatModel(meuse, I(soil==1)~dist+ffreq, meuse.grid, family = binomial(logit))
+som <- fit.gstatModel(meuse, I(soil==1)~dist+ffreq, meuse.grid, fit.family = binomial(logit))
 summary(som@regModel)
 som.sp <- SpatialPointsDataFrame(som@sp, data = som@regModel$model)
 som.sp$I.soil = as.numeric(som.sp@data[,1])
