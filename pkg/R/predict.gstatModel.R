@@ -374,6 +374,7 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
     if(class(predictionLocations)=="SpatialPointsDataFrame"){
     rkp <- list(variable = variable, observed = observed, regModel.summary = sum.glm, vgmModel = object@vgmModel, predicted = rk, validation = cv)
     } else {
+      message('Creating an object of class \"SpatialPredictions\"')
       rkp <- new("SpatialPredictions", variable = variable, observed = observed, regModel.summary = sum.glm, vgmModel = object@vgmModel, predicted = rk, validation = cv)
     }
   } 
@@ -383,6 +384,7 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
     } else {
       t1 <- Line(matrix(c(rk@bbox[1,1],rk@bbox[1,2],mean(rk@bbox[2,]),mean(rk@bbox[2,])), ncol=2))
       transect <- SpatialLines(list(Lines(list(t1), ID="t")), observed@proj4string)
+      message('Creating an object of class \"RasterBrickSimulations\"')
       rkp <- new("RasterBrickSimulations", variable = variable, sampled = transect, realizations = brick(rk))
     }
   }
