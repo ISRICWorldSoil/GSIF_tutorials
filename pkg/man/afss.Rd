@@ -22,8 +22,8 @@ Horizons table contains the following columns:
   \item{\code{UHDICM}}{numeric; upper sampling depth from the surface in cm}
   \item{\code{LHDICM}}{numeric; lower sampling depth from the surface in cm}
   \item{\code{CLYPPT}}{numeric; weight percentage of the clay particles (<0.0002 mm; \code{Clay} in the LDSF Field Database)}
-  \item{\code{SNDPPT}}{numeric; weight percentage of the silt particles (0.0002--0.05 mm; \code{Sand} in the LDSF Field Database)}
-  \item{\code{PHIHO5}}{numeric; pH index measured in water solution(\code{pH} in the LDSF Field Database)}
+  \item{\code{SNDPPT}}{numeric; weight percentage of the sand particles (0.0002--0.05 mm; \code{Sand} in the LDSF Field Database)}
+  \item{\code{PHIHO5}}{numeric; pH index measured in water solution (\code{pH} in the LDSF Field Database)}
   \item{\code{BST}}{numeric; the exchangeable bases sum of exchangeable Ca, Mg, K \& Na of the sample in cmol/kg (\code{ExBas} in the LDSF Field Database)}
   \item{\code{ORCDRC}}{numeric; soil organic carbon content in permille (\code{SOC} in the LDSF Field Database)}
 }
