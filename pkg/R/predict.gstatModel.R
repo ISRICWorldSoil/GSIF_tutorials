@@ -141,12 +141,12 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
   if(any(class(object@regModel)=="glm")){
     if(missing(zmin) & missing(zmax)){
       if(object@regModel$family$family == "gaussian" & object@regModel$family$link == "log"){ zmin = 0; zmax = Inf }
+    }
       if(object@regModel$family$link == "log"){ zmin = 0; zmax = Inf }    
       if(object@regModel$family$family == "binomial"){ zmin = 0; zmax = 1 }
       if(object@regModel$family$family == "quasibinomial"){ zmin = 0; zmax = 1 }
       if(object@regModel$family$family == "poisson"){ zmin = 0; zmax = Inf }  
       if(object@regModel$family$family == "Gamma"){ zmin = 0; zmax = Inf }
-    }
   }
   if(any(class(object@regModel) %in% c("glm", "lme", "gls"))){
   ## get fitted valus and residuals:

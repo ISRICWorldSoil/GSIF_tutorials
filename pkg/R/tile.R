@@ -108,7 +108,7 @@ setMethod("getSpatialTiles", signature(obj = "ANY"), function(obj, block.x, bloc
   btiles <- makeTiles(bb, block.x, block.y, overlap.percent, limit.bbox, rows = obj[["rows"]], columns = obj[["columns"]])
 
   if(return.SpatialPolygons == TRUE){
-    pol <- .tiles2pol(bb=bb, btiles=btiles, proj4string=attr(obj, "projection"))
+    pol <- .tiles2pol(bb=bb, btiles=btiles, proj4string=CRS(attr(obj, "projection")))
   } else {
     pol = btiles
   }
