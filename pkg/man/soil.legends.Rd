@@ -24,7 +24,6 @@ Contains a list of color palettes (data frames with class names / break points, 
 \note{Breaks for continuous soil properties were determined using the \code{quantiles} function and by visually inspecting the histograms to maximize the contrast in output maps. Based on a compilation of global soil profile data (\url{http://soilprofiles.org}).}
 \author{Global Soil Information Facilities (\url{http://gsif.isric.org})}
 \examples{
-\dontrun{
 data(soil.legends)
 pal <- soil.legends$ORCDRC$COLOR
 names(pal) <- (soil.legends$ORCDRC$MAX + soil.legends$ORCDRC$MIN)/2
