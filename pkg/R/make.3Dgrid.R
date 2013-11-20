@@ -48,29 +48,34 @@ setMethod("make.3Dgrid", signature(obj = "RasterBrick"),  function(obj, proj4s =
 ## convert to 3D spatial pixels;
 setMethod("sp3D", signature(obj = "SpatialPixelsDataFrame"), function(obj, proj4s = proj4string(obj), stdepths = get("stdepths", envir = GSIF.opts), stsize = get("stsize", envir = GSIF.opts)){
     
-  # convert to a data frame:
+  ## convert to a data frame:
   x <- data.frame(obj)
-  # rename the column names so they correspond to the geosamples class:
+  ## rename the column names so they correspond to the geosamples class:
   sel <- names(x) %in% attr(obj@coords, "dimnames")[[2]]
-  # check if these are 2D or 3D grids:
+  ## check if these are 2D or 3D grids:
   if(sum(sel)==3){ 
       names(x)[sel] <- c("longitude", "latitude", "altitude")
   } else {
-    if(sum(sel)==2) { names(x)[sel] <- c("longitude", "latitude") }
+    if(sum(sel)==2) { 
+      names(x)[sel] <- c("longitude", "latitude") 
+    }
   }
 
   out <- list(NULL)
   for(j in 1:length(stdepths)){
     XYD <- x
     XYD$altitude <- rep(stdepths[j], nrow(XYD))
-    # sp complains by default, so better mask out the warnings:
-    suppressWarnings(gridded(XYD) <- ~ longitude + latitude + altitude)
-    # fix the cell size and cellcentre.offset:
-    XYD@grid@cellsize[3] <- stsize[j]
-    XYD@bbox[3,1] <- stdepths[j]-stsize[j]/2
-    XYD@bbox[3,2] <- stdepths[j]+stsize[j]/2    
-    proj4string(XYD) <- proj4s
-    out[[j]] <- XYD
+    coordinates(XYD) <- ~ longitude + latitude + altitude
+    ## sp complains by default, so better mask out the warnings:
+    try( suppressWarnings( XYD <- points2grid(XYD) ) )
+    if(!class(.Last.value)[1]=="try-error"){
+      ## fix the cell size and cellcentre.offset:
+      XYD@grid@cellsize[3] <- stsize[j]
+      XYD@bbox[3,1] <- stdepths[j]-stsize[j]/2
+      XYD@bbox[3,2] <- stdepths[j]+stsize[j]/2    
+      proj4string(XYD) <- proj4s
+      out[[j]] <- XYD
+    }
   }
   
   return(out)

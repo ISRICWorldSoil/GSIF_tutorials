@@ -43,7 +43,7 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
     variable = all.vars(formula(object@regModel))[1]
   }
   
-  ## predict regression model (output is a list):
+  ## predict LM/GLM model (output is a list):
   if(any(class(object@regModel)=="glm")){
 
     ## filter the missing classes
@@ -112,28 +112,34 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
       subset.observations = object@sp@coords[,1] > predictionLocations@bbox[1,1]-.1*R & object@sp@coords[,1] < predictionLocations@bbox[1,2]+.1*R & object@sp@coords[,2] > predictionLocations@bbox[2,1]-.1*R & object@sp@coords[,2] < predictionLocations@bbox[2,2]+.1*R & object@sp@coords[,3] > predictionLocations@bbox[3,1]-1.5*Rv & object@sp@coords[,3] < predictionLocations@bbox[3,2]+1.5*Rv
     }
   }
-
-  ## observed values:
-  if(any(class(object@regModel)=="glm")){
-    observed <- SpatialPointsDataFrame(object@sp[subset.observations,], data=object@regModel$model[subset.observations,]) 
-  }
-  if(any(class(object@regModel) %in% c("randomForest", "rpart"))){
-    observed <- SpatialPointsDataFrame(object@sp[subset.observations,], data=data.frame(object@regModel$y[subset.observations])) 
-  }
-  if(any(class(object@regModel) %in% c("gls", "lme"))){
-    observed <- SpatialPointsDataFrame(object@sp[subset.observations,], data=data.frame(fitted.values(object@regModel)[subset.observations] + resid(object@regModel)[subset.observations]))
+  if(!sum(subset.observations)>2){
+    warning("Not more than 2 observations found inside the spatial domain of interest. Switching to NULL variogram model...", call.=FALSE, immediate.=TRUE)
+    vgmmodel = NULL
   }
   
-  ## TH: Rename the column? is this necessary?
-  ## (this assumes that the first variable on the list is always the target var)
-  names(observed@data)[1] = variable
+  ## generate "observed" values:
+  if(!is.null(vgmmodel)){
+    if(any(class(object@regModel)=="glm")){
+      observed <- SpatialPointsDataFrame(object@sp[subset.observations,], data=object@regModel$model[subset.observations,]) 
+    }
+    if(any(class(object@regModel) %in% c("randomForest", "rpart"))){
+      observed <- SpatialPointsDataFrame(object@sp[subset.observations,], data=data.frame(object@regModel$y[subset.observations])) 
+    }
+    if(any(class(object@regModel) %in% c("gls", "lme"))){
+      observed <- SpatialPointsDataFrame(object@sp[subset.observations,], data=data.frame(fitted.values(object@regModel)[subset.observations] + resid(object@regModel)[subset.observations]))
+    }
+  
+    ## TH: Rename the column? is this necessary?
+    ## (this assumes that the first variable on the list is always the target var)
+    names(observed@data)[1] = variable
 
-  ## check that the proj4 strings match:
-  if(!proj4string(observed)==proj4string(predictionLocations)){
-    if(!check_projection(observed, ref_CRS=proj4string(predictionLocations))){
-      stop("proj4string at observed and predictionLocations don't match")
-    } else { ## force the two proj strings to be exactly the same otherwise gstat has problems!
-    suppressWarnings(proj4string(observed) <- proj4string(predictionLocations))
+    ## check that the proj4 strings match:
+    if(!proj4string(observed)==proj4string(predictionLocations)){
+      if(!check_projection(observed, ref_CRS=proj4string(predictionLocations))){
+        stop("proj4string at observed and predictionLocations don't match")
+      } else { ## force the two proj strings to be exactly the same otherwise gstat has problems!
+         suppressWarnings(proj4string(observed) <- proj4string(predictionLocations))
+      }
     }
   }
   
@@ -148,32 +154,36 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
       if(object@regModel$family$family == "poisson"){ zmin = 0; zmax = Inf }  
       if(object@regModel$family$family == "Gamma"){ zmin = 0; zmax = Inf }
   }
-  if(any(class(object@regModel) %in% c("glm", "lme", "gls"))){
-  ## get fitted valus and residuals:
-    observed@data[,paste(variable, "modelFit", sep=".")] <- fitted.values(object@regModel)[subset.observations]
-    observed@data[,paste(variable, "residual", sep=".")] <- resid(object@regModel)[subset.observations]
-  }
   
-  if(any(class(object@regModel)=="rpart")){
-    observed@data[,paste(variable, "modelFit", sep=".")] <- predict(object@regModel)[subset.observations]
+  if(!is.null(vgmmodel)){
+    if(any(class(object@regModel) %in% c("glm", "lme", "gls"))){
+    ## get fitted valus and residuals:
+      observed@data[,paste(variable, "modelFit", sep=".")] <- fitted.values(object@regModel)[subset.observations]
+      observed@data[,paste(variable, "residual", sep=".")] <- resid(object@regModel)[subset.observations]
+    }
+ 
+    if(any(class(object@regModel)=="rpart")){
+      observed@data[,paste(variable, "modelFit", sep=".")] <- predict(object@regModel)[subset.observations]
+    }
+    if(any(class(object@regModel)=="randomForest")){
+      observed@data[,paste(variable, "modelFit", sep=".")] <- object@regModel$predicted[subset.observations]
+    }
+    if(any(class(object@regModel) %in% c("rpart", "randomForest"))&!is.null(object@regModel$y)){
+      observed@data[,paste(variable, "residual", sep=".")] <- (object@regModel$y[subset.observations] - observed@data[,paste(variable, "modelFit", sep=".")])
+      rp[["residual.scale"]] <- sqrt(mean((observed@data[,paste(variable, "residual", sep=".")])^2, na.rm=TRUE))
+      if(is.null(rp[["residual.scale"]])){ rp[["residual.scale"]] = NA }    
+    }
+    
+    ## remove duplicates as they can lead to singular matrix problems:
+    if(is.projected(observed)){
+      if(length(zerodist(observed))>0){
+        observed <- remove.duplicates(observed)
+      }
+    }
   }
-  if(any(class(object@regModel)=="randomForest")){
-    observed@data[,paste(variable, "modelFit", sep=".")] <- object@regModel$predicted[subset.observations]
-  }
-  if(any(class(object@regModel) %in% c("rpart", "randomForest"))&!is.null(object@regModel$y)){
-    observed@data[,paste(variable, "residual", sep=".")] <- (object@regModel$y[subset.observations] - observed@data[,paste(variable, "modelFit", sep=".")])
-    rp[["residual.scale"]] <- sqrt(mean((observed@data[,paste(variable, "residual", sep=".")])^2, na.rm=TRUE))
-    if(is.null(rp[["residual.scale"]])){ rp[["residual.scale"]] = NA }    
-  }
-  
-  ## remove duplicates as they can lead to singular matrix problems:
-  if(is.projected(observed)){
-    if(length(zerodist(observed))>0){
-      observed <- remove.duplicates(observed)
-  }}
   
   ## skip cross-validation if nfold = 0
-  if(nfold==0 | !any(class(object@regModel)=="glm")){ 
+  if((nfold==0 | !any(class(object@regModel)=="glm"))&sum(subset.observations)>2){ 
     cv <- observed[1]
     names(cv) <- "observed"
     cv$var1.pred <- rep(NA, length(cv$observed))
@@ -193,9 +203,12 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
   ## Kriging with External Drift or Universal kriging:
   ## TH: a simplified implementation
   if(predict.method == "KED"){
+    if(!sum(subset.observations)>2){
+      stop("Predict method = \"KED\" not applicable. Consider setting 'predict.method' to \"RK\".")
+    } else {  
       ## Calibration of the trend (single predictor)...
       formString <- as.formula(paste(variable, "~", paste(variable, "modelFit", sep="."), sep=""))
-      
+    
       if(nsim==0){
         message("Generating predictions using the trend model (KED method)...")
         rk <- gstat::krige(formula=formString, locations=observed, newdata=predictionLocations, model = vgmmodel, beta = betas, nmin = nmin, nmax = nmax, debug.level = debug.level, block = block, ...)
@@ -226,7 +239,7 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
                 cv <- gstat::krige.cv(formString, locations=observed, model=vgmmodel, nfold=nfold, verbose=verbose)            
             }
           proj4string(cv) = observed@proj4string
-        }
+        } 
       }
       else {
         message(paste("Generating", nsim, "conditional simulations using the trend model (KED method)..."))
@@ -241,7 +254,7 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
           }
         }    
       }
-  
+    }
   ## Regression-kriging (the default approach):
   } else {  
    if(predict.method == "RK"){
@@ -265,7 +278,7 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
       formString <- as.formula(paste(paste(variable, "residual", sep="."), "~", 1, sep=""))
       if(nsim==0){
         message("Generating predictions using the trend model (RK method)...")        
-        ## TH: if the vgmmodel is null, should we use inverse distance interpolation?
+        ## TH: if the vgmmodel is null predict only using regression
         if(is.null(vgmmodel)){
           ## generate empty grid:
           rk <- predictionLocations["fit.var"]
@@ -274,26 +287,32 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
           }
           names(rk) = "var1.var"
           rk@data[,paste(variable)] <- predictionLocations@data[,paste(variable, "modelFit", sep=".")] 
-          rk@data[,paste(variable, "svar", sep=".")] <- predictionLocations$var1.var / var(observed@data[,variable], na.rm=TRUE)
+          if(sum(subset.observations)>2){
+            rk@data[,paste(variable, "svar", sep=".")] <- predictionLocations$var1.var / var(observed@data[,variable], na.rm=TRUE)
+          }
           
           ## cross-validation using GLM:
           if(nfold>0 & any(class(object@regModel)=="glm")){
-            cv <- observed[variable]
-            names(cv) <- "observed"
-            cv$var1.pred <- fitted.values(object@regModel)[subset.observations]
-            rp.cv <- stats::predict.glm(object@regModel, newdata=object@regModel$data, type="response", se.fit = TRUE)
-            cv$var1.var <- (rp.cv[["se.fit"]][-object@regModel$na.action][subset.observations])^2 + (rp.cv[["residual.scale"]])^2
-            message("Running GLM cross-validation without any extra model-fitting...")
-            try( cv.err <- glm.diag(object@regModel), silent=TRUE)
-            if(class(.Last.value)[1]=="try-error") { 
-              cv.err <- data.frame(res = rep(NA, length(cv$observed)), rd = rep(NA, length(cv$observed))) 
+            if(sum(subset.observations)>2){
+              cv <- observed[variable]
+              names(cv) <- "observed"
+              cv$var1.pred <- fitted.values(object@regModel)[subset.observations]
+              rp.cv <- stats::predict.glm(object@regModel, newdata=object@regModel$data, type="response", se.fit = TRUE)
+              cv$var1.var <- (rp.cv[["se.fit"]][-object@regModel$na.action][subset.observations])^2 + (rp.cv[["residual.scale"]])^2
+              message("Running GLM cross-validation without any extra model-fitting...")
+              try( cv.err <- glm.diag(object@regModel), silent=TRUE)
+              if(class(.Last.value)[1]=="try-error") { 
+                cv.err <- data.frame(res = rep(NA, length(cv$observed)), rd = rep(NA, length(cv$observed))) 
+              }
+                cv$residual <- cv.err$res[subset.observations]
+                cv$zscore <- cv.err$rd[subset.observations]
+                cv$fold <- rep(1, length(cv$observed))
+                # print warning:
+                message("Reporting cross-validation results using 'boot::glm.diag'")
+              cv <- cv[,c("var1.pred","var1.var","observed","residual","zscore","fold")]
+            } else {
+               message("Skiping cross validation because 'subset.observations' resulted in an empty set...")
             }
-            cv$residual <- cv.err$res[subset.observations]
-            cv$zscore <- cv.err$rd[subset.observations]
-            cv$fold <- rep(1, length(cv$observed))
-            # print warning:
-            message("Reporting cross-validation results using 'boot::glm.diag'")
-            cv <- cv[,c("var1.pred","var1.var","observed","residual","zscore","fold")]
           }
         
         } else {
@@ -372,10 +391,18 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
   # save the output file:
   if(nsim == 0){
     if(class(predictionLocations)=="SpatialPointsDataFrame"){
-    rkp <- list(variable = variable, observed = observed, regModel.summary = sum.glm, vgmModel = object@vgmModel, predicted = rk, validation = cv)
+      if(sum(subset.observations)>2){
+        rkp <- list(variable = variable, observed = observed, regModel.summary = sum.glm, vgmModel = object@vgmModel, predicted = rk, validation = cv)
+      } else {
+        rkp <- list(variable = variable, regModel.summary = sum.glm, vgmModel = object@vgmModel, predicted = rk)
+      }
     } else {
-      message('Creating an object of class \"SpatialPredictions\"')
-      rkp <- new("SpatialPredictions", variable = variable, observed = observed, regModel.summary = sum.glm, vgmModel = object@vgmModel, predicted = rk, validation = cv)
+      if(sum(subset.observations)>2){
+        message('Creating an object of class \"SpatialPredictions\"')
+        rkp <- new("SpatialPredictions", variable = variable, observed = observed, regModel.summary = sum.glm, vgmModel = object@vgmModel, predicted = rk, validation = cv)
+      } else {
+        rkp <- list(variable = variable, regModel.summary = sum.glm, vgmModel = object@vgmModel, predicted = rk)    
+      }
     }
   } 
   else {

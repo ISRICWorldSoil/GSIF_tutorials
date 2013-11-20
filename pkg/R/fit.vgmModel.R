@@ -6,7 +6,7 @@
 
 
 ## fit variogram to a 2D or 3D point object:
-setMethod("fit.vgmModel", signature(formulaString = "formula", rmatrix = "data.frame", predictionDomain = "SpatialPixelsDataFrame"), function(formulaString, rmatrix, predictionDomain, vgmFun = "Exp", dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]], anis = NULL, subsample = nrow(rmatrix), ivgm, ...){
+setMethod("fit.vgmModel", signature(formulaString = "formula", rmatrix = "data.frame", predictionDomain = "SpatialPixelsDataFrame"), function(formulaString, rmatrix, predictionDomain, vgmFun = "Exp", dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]], anis = NULL, subsample = nrow(rmatrix), ivgm, cutoff, ...){
 
   ## check input object:
   if(is.na(proj4string(predictionDomain))){ stop("proj4 string required for argument 'predictionDomain'") }
@@ -68,6 +68,7 @@ setMethod("fit.vgmModel", signature(formulaString = "formula", rmatrix = "data.f
       ## estimate anisotropy parameters:
       anis = c(0, 0, 0, 1, a2)
     }
+    if(missing(cutoff)) { cutoff = Range }
   }
   
   if(dimensions == "2D"){
@@ -86,6 +87,7 @@ setMethod("fit.vgmModel", signature(formulaString = "formula", rmatrix = "data.f
     }
     ## estimate anisotropy parameters:
     anis = c(0, 1)
+    if(missing(cutoff)) { cutoff = Range }
   }
   
   ## initial variogram:    
@@ -97,9 +99,9 @@ setMethod("fit.vgmModel", signature(formulaString = "formula", rmatrix = "data.f
   ## TH: 2D+T and 3D+T variogram fitting will be added;
 
   ## try to fit a variogram:
-  try(rvgm <- gstat::fit.variogram(variogram(formulaString, rmatrix), model=ivgm, ...))   
+  try(rvgm <- gstat::fit.variogram(variogram(formulaString, rmatrix, cutoff=cutoff), model=ivgm, ...))   
   if(class(.Last.value)[1]=="try-error"){
-    try(rvgm <- gstat::fit.variogram(variogram(formulaString, rmatrix), model=ivgm, fit.ranges = FALSE, ...))
+    try(rvgm <- gstat::fit.variogram(variogram(formulaString, rmatrix, cutoff=cutoff), model=ivgm, fit.ranges = FALSE, ...))
     if(class(.Last.value)[1]=="try-error"){    
       stop("Variogram model could not be fitted.") 
     }

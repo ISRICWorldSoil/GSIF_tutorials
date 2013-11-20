@@ -7,7 +7,7 @@
 \S4method{fit.vgmModel}{formula,data.frame,SpatialPixelsDataFrame}(formulaString,
       rmatrix, predictionDomain, vgmFun = "Exp", 
       dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]],
-      anis = NULL, subsample = nrow(rmatrix), ivgm, \dots)
+      anis = NULL, subsample = nrow(rmatrix), ivgm, cutoff, \dots)
 }
 \arguments{
   \item{formulaString}{object of class \code{"formula"} --- regression model} 
@@ -18,9 +18,10 @@
   \item{anis}{vector containing 2, 5 or more anisotropy parameters; see \code{gstat::vgm} for more info}
   \item{subsample}{integer; size of the subset}
   \item{ivgm}{vgm; initial variogram model}
+  \item{cutoff}{cutoff; distance up to which point pairs are included in semivariance estimates}
   \item{\dots}{other optional arguments that can be passed to \code{gstat::fit.variogram}}
 }
-\details{It will try to fit a variogram to multidimensional data. If the data set is large, this process can be time-consuming, hence one way to speed up fitting is to subset the regression matrix using the \code{subsample} argument (random subsetting).}
+\details{It will try to fit a variogram to multidimensional data. If the data set is large, this process can be time-consuming, hence one way to speed up fitting is to subset the regression matrix using the \code{subsample} argument (i.e. randomly subset observations).}
 \author{ Tomislav Hengl }
 \seealso{ \code{\link{fit.regModel}}, \code{\link{fit.gstatModel}}, \code{gstat::fit.variogram} }
 \examples{
