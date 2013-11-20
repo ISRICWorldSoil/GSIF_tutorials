@@ -2,6 +2,7 @@
 \docType{data}
 \encoding{latin1}
 \alias{soil.legends}
+\alias{makeSAGAlegend}
 \title{Standard color palettes for soil properties and classes}
 \description{Standard color palettes for soil properties and classes that can be used to display global soil data.}
 \usage{data(soil.legends)}
@@ -22,17 +23,20 @@ Contains a list of color palettes (data frames with class names / break points, 
 }
 }
 \note{Breaks for continuous soil properties were determined using the \code{quantiles} function and by visually inspecting the histograms to maximize the contrast in output maps. Based on a compilation of global soil profile data (\url{http://soilprofiles.org}).}
-\author{Global Soil Information Facilities (\url{http://gsif.isric.org})}
+\author{Tomislav Hengl}
+\references{
+\itemize{
+\item Global Soil Information Facilities (\url{http://gsif.isric.org})
+}
+}
 \examples{
 data(soil.legends)
 pal <- soil.legends$ORCDRC$COLOR
-names(pal) <- (soil.legends$ORCDRC$MAX + soil.legends$ORCDRC$MIN)/2
-leg.width <- (max(nchar(names(pal)))*20+150)/100
-par(mar=c(.0,.0,.0,.5))
-plot(x=rep(1, length(pal)), y=1:length(pal), axes=FALSE, 
-  xlab='', ylab='', pch=15, cex=1.5, col=pal, 
-  xlim=c(0,.6*leg.width), asp=.6)
-text(x=rep(1, length(pal)), y=1:length(pal), 
-  labels=names(pal), cex=.5, pos=4, offset=1)
+names(pal) <- signif((soil.legends$ORCDRC$MAX + 
+    soil.legends$ORCDRC$MIN)/2, 3)
+pal
+## make SAGA GIS palette:
+makeSAGAlegend(x=as.factor(names(pal)), col_pal=pal, 
+    filename="ORCDRC.txt")
 }
 \keyword{datasets}
