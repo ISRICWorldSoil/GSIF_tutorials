@@ -54,9 +54,8 @@ depths(prof1) <- id ~ top + bottom
 site(prof1) <- ~ lon + lat + FAO1988 
 coordinates(prof1) <- ~ lon + lat
 proj4string(prof1) <- CRS("+proj=longlat +datum=WGS84")
-\dontrun{# fit a spline:
+## fit a spline:
 ORCDRC.s <- mpspline(prof1, var.name="ORCDRC")
 str(ORCDRC.s)
-}
 }
 \keyword{methods}
