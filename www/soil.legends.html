@@ -57,27 +57,31 @@
 
 <h3>Author(s)</h3>
 
-<p>Global Soil Information Facilities (<a href="http://gsif.isric.org">http://gsif.isric.org</a>)</p>
+<p>Tomislav Hengl</p>
+
+
+<h3>References</h3>
+
+
+<ul>
+<li><p> Global Soil Information Facilities (<a href="http://gsif.isric.org">http://gsif.isric.org</a>)
+</p>
+</li></ul>
+
 
 
 <h3>Examples</h3>
 
 <pre>
-## Not run: 
 data(soil.legends)
 pal &lt;- soil.legends$ORCDRC$COLOR
-names(pal) &lt;- (soil.legends$ORCDRC$MAX + soil.legends$ORCDRC$MIN)/2
-leg.width &lt;- (max(nchar(names(pal)))*20+150)/100
-par(mar=c(.0,.0,.0,.5))
-plot(x=rep(1, length(pal)), y=1:length(pal), axes=FALSE, 
-  xlab='', ylab='', pch=15, cex=1.5, col=pal, 
-  xlim=c(0,.6*leg.width), asp=.6)
-text(x=rep(1, length(pal)), y=1:length(pal), 
-  labels=names(pal), cex=.5, pos=4, offset=1)
-
-## End(Not run)
-{datasets}
+names(pal) &lt;- signif((soil.legends$ORCDRC$MAX + 
+    soil.legends$ORCDRC$MIN)/2, 3)
+pal
+## make SAGA GIS palette:
+makeSAGAlegend(x=as.factor(names(pal)), col_pal=pal, 
+    filename="ORCDRC.txt")
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.3-5 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.3-6 <a href="00Index.html">Index</a>]</div>
 </body></html>

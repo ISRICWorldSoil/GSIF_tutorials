@@ -20,7 +20,7 @@
 fit.vgmModel(formulaString,
       rmatrix, predictionDomain, vgmFun = "Exp", 
       dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]],
-      anis = NULL, subsample = nrow(rmatrix), ivgm, ...)
+      anis = NULL, subsample = nrow(rmatrix), ivgm, cutoff, ...)
 </pre>
 
 
@@ -59,6 +59,10 @@ fit.vgmModel(formulaString,
 <td>
 <p>vgm; initial variogram model</p>
 </td></tr>
+<tr valign="top"><td><code>cutoff</code></td>
+<td>
+<p>cutoff; distance up to which point pairs are included in semivariance estimates</p>
+</td></tr>
 <tr valign="top"><td><code>...</code></td>
 <td>
 <p>other optional arguments that can be passed to <code>gstat::fit.variogram</code></p>
@@ -68,7 +72,7 @@ fit.vgmModel(formulaString,
 
 <h3>Details</h3>
 
-<p>It will try to fit a variogram to multidimensional data. If the data set is large, this process can be time-consuming, hence one way to speed up fitting is to subset the regression matrix using the <code>subsample</code> argument (random subsetting).</p>
+<p>It will try to fit a variogram to multidimensional data. If the data set is large, this process can be time-consuming, hence one way to speed up fitting is to subset the regression matrix using the <code>subsample</code> argument (i.e. randomly subset observations).</p>
 
 
 <h3>Author(s)</h3>
@@ -97,5 +101,5 @@ v &lt;- fit.vgmModel(om~1, rmatrix=ov, meuse.grid, dimensions="2D")
 plot(variogram(om ~ 1, meuse[!is.na(meuse$om),]), v$vgm)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.3-5 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.3-6 <a href="00Index.html">Index</a>]</div>
 </body></html>

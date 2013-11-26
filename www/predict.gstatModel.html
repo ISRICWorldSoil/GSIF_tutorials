@@ -10,7 +10,7 @@
 
 <h3>Description</h3>
 
-<p>Predicts from an object of class <code><a href="gstatModel.html">gstatModel-class</a></code> using new prediction locations. It combines predictions by regression (e.g. GLM) and interpolation of residuals (kriging).</p>
+<p>Predicts from an object of class <code><a href="gstatModel.html">gstatModel-class</a></code> using new prediction locations. The function combines predictions by regression (e.g. GLM) and interpolation of residuals (kriging) via the Regression-Kriging (RK) or Kriging with External Drift (KED, also known as Universal Kriging) framework.</p>
 
 
 <h3>Usage</h3>
@@ -23,7 +23,7 @@ predict(object,
      nsim = 0, mask.extra = TRUE, block, 
      zmin = -Inf, zmax = Inf, subsample = length(object@sp), 
      coarsening.factor = 1, vgmmodel = object@vgmModel,
-     subset.observations = !is.na(object@sp@coords[,1]), betas = c(0,1), ...)
+     subset.observations = !is.na(object@sp@coords[,1]), betas = c(0,1), extend = .5, ...)
 ## S4 method for signature 'list'
 predict(object, 
      predictionLocations, nmin = 10, nmax = 30, debug.level = -1, 
@@ -104,6 +104,10 @@ predict(object,
 <td>
 <p>logical; vector specifying the subset of observations used for interpolation</p>
 </td></tr>
+<tr valign="top"><td><code>extend</code></td>
+<td>
+<p>numeric; fraction of the range for which the spatial domain should be extended when searching for observations for kriging</p>
+</td></tr>
 <tr valign="top"><td><code>betas</code></td>
 <td>
 <p>numeric; vector of the beta coefficients to be passed to the <code>gstat::krige</code></p>
@@ -117,15 +121,15 @@ predict(object,
 
 <h3>Details</h3>
 
-<p>Selecting <code>predict.method = "KED"</code> invokes simple kriging with external drift with betas set at 0 (intercept) and 1 (regression predictions i.e. single covariate). This assumes that the regression model already results in an unbiased estimator of the trend model.<br> 
-If not speficied otherwise, <code>subset.observations</code> by default selects only obserations within the spatial domain (bounding box) of the <code>predictionLocations</code> plus 50% of the one third of the extent of the area.<br> 
+<p>Selecting <code>predict.method = "KED"</code> invokes simple kriging with external drift with betas set at 0 (intercept) and 1 (regression predictions used as the only covariate). This assumes that the regression model already results in an unbiased estimator of the trend model.<br> 
+If not speficied otherwise, <code>subset.observations</code> by default selects only obserations within the spatial domain (bounding box) of the <code>predictionLocations</code> plus 50% of the one third of the extent of the area (<code>extend</code>). In the case of spatial duplicates in 2D or 3D, <code>subset.observations</code> will automatically remove all duplicates before running kriging. All points in 3D that stand exactly above each other will be removed by default.<br> 
 Predictions can be speed up by using a larger <code>coarsening.factor</code> e.g. 2 to 5, in which case the ordinary kriging on residuals will run at a coarser resolution, and the output would be then downscaled to the original resolution using splines (via the <code><a href="gdalwarp.html">gdalwarp</a></code> method). In the case of <code>predict.method = RK</code>, the kriging variance is derived as a sum of the GLM variance and the OK variance, which is statistically sub-optimal.
 </p>
 
 
 <h3>Note</h3>
 
-<p>Predictions using <code>predict.method = "KED"</code> (the default gstat setting) can be time consuming for large data set and can result in instabilities (singular matrix problems) if the search radius is small and/or if all covariates contain exactly the same values. Predictions using <code>predict.method = "RK"</code> will typically underestimate the prediction variance (taken as a simple sum of the regression and ordinary kriging variances) as compared to the &quot;KED&quot; variance that includes also a cross-term (see <a href="http://dx.doi.org/10.1016/j.cageo.2007.05.001">Hengl et al. 2007</a> for more details).</p>
+<p>Predictions using <code>predict.method = "KED"</code> (the default gstat setting) can be time consuming for large data set and can result in instabilities (singular matrix problems) if the search radius is small and/or if all covariates contain exactly the same values. Predictions using <code>predict.method = "RK"</code> on the other hand can be speed up, but will typically underestimate the prediction variance (taken as a simple sum of the regression and ordinary kriging variances). Compare to the &quot;KED&quot; variance that includes also a cross-term (see <a href="http://dx.doi.org/10.1016/j.cageo.2007.05.001">Hengl et al. 2007</a> for more details).</p>
 
 
 <h3>Author(s)</h3>
@@ -148,5 +152,5 @@ Predictions can be speed up by using a larger <code>coarsening.factor</code> e.g
  <p><code><a href="gstatModel.html">gstatModel-class</a></code>, <code><a href="fit.gstatModel.html">fit.gstatModel</a></code>
 </p>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.3-5 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.3-6 <a href="00Index.html">Index</a>]</div>
 </body></html>

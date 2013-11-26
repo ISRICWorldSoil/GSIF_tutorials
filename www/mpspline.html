@@ -126,12 +126,10 @@ depths(prof1) &lt;- id ~ top + bottom
 site(prof1) &lt;- ~ lon + lat + FAO1988 
 coordinates(prof1) &lt;- ~ lon + lat
 proj4string(prof1) &lt;- CRS("+proj=longlat +datum=WGS84")
-## Not run: # fit a spline:
+## fit a spline:
 ORCDRC.s &lt;- mpspline(prof1, var.name="ORCDRC")
 str(ORCDRC.s)
-
-## End(Not run)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.3-5 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.3-6 <a href="00Index.html">Index</a>]</div>
 </body></html>

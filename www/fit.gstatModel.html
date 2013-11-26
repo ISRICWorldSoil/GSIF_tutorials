@@ -16,29 +16,30 @@
 <h3>Usage</h3>
 
 <pre> 
-## S4 method for signature 'SpatialPointsDataFrame,formula,SpatialPixelsDataFrame'
+## S4 method for signature 
+## 'SpatialPointsDataFrame,formula,SpatialPixelsDataFrame'
 fit.gstatModel(observations, formulaString, covariates, 
      method = list("GLM", "rpart", "randomForest", "quantregForest")[[1]], 
      dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]],
-     family = gaussian(), stepwise = TRUE, vgmFun = "Exp", 
+     fit.family = gaussian(), stepwise = TRUE, vgmFun = "Exp", 
      subsample = 5000, ...)
 ## S4 method for signature 'geosamples,formula,SpatialPixelsDataFrame'
 fit.gstatModel(observations, formulaString, covariates, 
      method = list("GLM", "rpart", "randomForest", "quantregForest")[[1]], 
      dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]],
-     family = gaussian(), stepwise = TRUE, 
+     fit.family = gaussian(), stepwise = TRUE, 
      vgmFun = "Exp", subsample = 5000, ...)
 ## S4 method for signature 'geosamples,formula,list'
 fit.gstatModel(observations, formulaString, covariates, 
      method = list("GLM", "rpart", "randomForest", "quantregForest")[[1]], 
      dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]],
-     family = gaussian(), stepwise = TRUE, 
+     fit.family = gaussian(), stepwise = TRUE, 
      vgmFun = "Exp", subsample = 5000, ...)
 ## S4 method for signature 'geosamples,list,list'
 fit.gstatModel(observations, formulaString, covariates, 
      method = list("GLM", "rpart", "randomForest", "quantregForest")[[1]], 
      dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]],
-     family = gaussian(), stepwise = TRUE, 
+     fit.family = gaussian(), stepwise = TRUE, 
      vgmFun = "Exp", subsample = 5000, ...)
 </pre>
 
@@ -66,7 +67,7 @@ fit.gstatModel(observations, formulaString, covariates,
 <td>
 <p>character; <code>"3D"</code>, <code>"2D"</code>, <code>"2D+T"</code>, <code>"3D+T"</code> models</p>
 </td></tr>  
-<tr valign="top"><td><code>family</code></td>
+<tr valign="top"><td><code>fit.family</code></td>
 <td>
 <p>character string defyning the GLM family (for more info see <code>stats::glm</code>)</p>
 </td></tr>
@@ -91,17 +92,17 @@ fit.gstatModel(observations, formulaString, covariates,
 
 <h3>Details</h3>
 
-<p>The GLM method by default assumes that the target variable follows a normal distribution <code>family = gaussian</code>. Other possible families are:
+<p>The GLM method by default assumes that the target variable follows a normal distribution <code>fit.family = gaussian()</code>. Other possible families are:
 </p>
 
 <dl>
-<dt>normal distribution</dt><dd><p><code>family = gaussian</code> (default setting)</p>
+<dt>normal distribution</dt><dd><p><code>fit.family = gaussian()</code> (default setting)</p>
 </dd>
-<dt>log-normal distribution</dt><dd><p><code>family = gaussian(log)</code></p>
+<dt>log-normal distribution</dt><dd><p><code>fit.family = gaussian(log)</code></p>
 </dd>
-<dt>binomial variable</dt><dd><p><code>family = binomial(logit)</code></p>
+<dt>binomial variable</dt><dd><p><code>fit.family = binomial(logit)</code></p>
 </dd>
-<dt>variable following a poisson distribution</dt><dd><p><code>family = poisson(log)</code></p>
+<dt>variable following a poisson distribution</dt><dd><p><code>fit.family = poisson(log)</code></p>
 </dd>
 </dl>
 
@@ -165,7 +166,7 @@ summary(omm@regModel)
 plot(omm@regModel)
 omm@vgmModel
 ## fit a GLM with a gaussian log-link:
-omm &lt;- fit.gstatModel(meuse, om~dist+ffreq, meuse.grid, family = gaussian(log))
+omm &lt;- fit.gstatModel(meuse, om~dist+ffreq, meuse.grid, fit.family = gaussian(log))
 ## it was succesful!
 summary(omm@regModel)
 v = omm@vgmModel; class(v) = c("variogramModel", "data.frame")
@@ -187,7 +188,7 @@ plotKML(om.rk)
 ## End(Not run)
 
 ## binary variable (0/1):
-som &lt;- fit.gstatModel(meuse, I(soil==1)~dist+ffreq, meuse.grid, family = binomial(logit))
+som &lt;- fit.gstatModel(meuse, I(soil==1)~dist+ffreq, meuse.grid, fit.family = binomial(logit))
 summary(som@regModel)
 som.sp &lt;- SpatialPointsDataFrame(som@sp, data = som@regModel$model)
 som.sp$I.soil = as.numeric(som.sp@data[,1])
@@ -249,5 +250,5 @@ plotKML(SNDMHT.rk.sd1, z.lim=c(5,85))
 ## End(Not run)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.3-5 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.3-6 <a href="00Index.html">Index</a>]</div>
 </body></html>
