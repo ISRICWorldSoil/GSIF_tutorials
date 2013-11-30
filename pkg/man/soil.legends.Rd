@@ -10,8 +10,8 @@
 Contains a list of color palettes (data frames with class names / break points, and cumulative probabilities) for:
 \describe{
   \item{\code{ORCDRC}}{numeric; soil organic carbon content in permille}
-  \item{\code{PHIHO5}}{numeric; pH index measured in water solution}
-  \item{\code{PHIHO5}}{numeric; pH index measured in KCl solution}
+  \item{\code{PHIHOX}}{numeric; pH index measured in water solution}
+  \item{\code{PHIKCL}}{numeric; pH index measured in KCl solution}
   \item{\code{BLD}}{numeric; bulk density in kg per cubic meter}
   \item{\code{CEC}}{numeric; Cation Exchange Capacity}
   \item{\code{SNDPPT}}{numeric; weight percentage of the sand particles (0.05--2 mm)}
