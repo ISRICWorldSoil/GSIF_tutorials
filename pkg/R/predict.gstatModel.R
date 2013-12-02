@@ -64,6 +64,7 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
     }
     rp <- stats::predict.glm(object@regModel, newdata=predictionLocations, type="response", se.fit = TRUE, na.action = na.pass)
   }
+  
   ## predict outputs from the nlme package:
   if(any(class(object@regModel)=="lme")){
     require(AICcmodavg)

@@ -46,7 +46,7 @@ setMethod("make.3Dgrid", signature(obj = "RasterBrick"),  function(obj, proj4s =
 
 
 ## convert to 3D spatial pixels;
-setMethod("sp3D", signature(obj = "SpatialPixelsDataFrame"), function(obj, proj4s = proj4string(obj), stdepths = get("stdepths", envir = GSIF.opts), stsize = get("stsize", envir = GSIF.opts)){
+setMethod("sp3D", signature(obj = "SpatialPixelsDataFrame"), function(obj, proj4s = proj4string(obj), stdepths = get("stdepths", envir = GSIF.opts), stsize = get("stsize", envir = GSIF.opts), make.grid = TRUE){
     
   ## convert to a data frame:
   x <- data.frame(obj)
@@ -66,11 +66,13 @@ setMethod("sp3D", signature(obj = "SpatialPixelsDataFrame"), function(obj, proj4
     XYD <- x
     XYD$altitude <- rep(stdepths[j], nrow(XYD))
     coordinates(XYD) <- ~ longitude + latitude + altitude
-    ## sp complains by default, so better mask out the warnings:
-    try( suppressWarnings( gridded(XYD) <- TRUE ) )
-    if(!class(.Last.value)[1]=="try-error"){
-      ## fix the cell size and cellcentre.offset:
-      XYD@grid@cellsize[3] <- stsize[j]
+    if(make.grid == TRUE){
+      ## sp complains by default, so better mask out the warnings:
+      try( suppressWarnings( gridded(XYD) <- TRUE ) )
+      if(!class(.Last.value)[1]=="try-error"){
+        ## fix the cell size and cellcentre.offset:
+        XYD@grid@cellsize[3] <- stsize[j]
+      }
     }
     XYD@bbox[3,1] <- stdepths[j]-stsize[j]/2
     XYD@bbox[3,2] <- stdepths[j]+stsize[j]/2    

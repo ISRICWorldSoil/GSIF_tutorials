@@ -58,12 +58,12 @@ library(raster)
 data(eberg_grid)
 gridded(eberg_grid) <- ~x+y
 proj4string(eberg_grid) <- CRS("+init=epsg:31467")
-\dontrun{##  convert to spatial components:
+##  convert to spatial components:
 formulaString <- ~ PRMGEO6+DEMSRT6+TWISRT6+TIRAST6
 eberg_spc <- spc(eberg_grid, formulaString)
 ## create 3D locations in the original coordinate system:
 eberg_3Dxy <- sp3D(eberg_spc@predicted)
-## wrapper function to create 3D locations in the default WGS84 system:
+\dontrun{## wrapper function to create 3D locations in the default WGS84 system:
 eberg_3D <- make.3Dgrid(eberg_spc@predicted)
 image(eberg_3D[[1]]["PC1"])
 ## downscale 100 m resolution imagery to 25 m:
