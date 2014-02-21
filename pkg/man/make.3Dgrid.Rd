@@ -72,7 +72,7 @@ data(eberg_grid25)
 gridded(eberg_grid25) <- ~x+y
 proj4string(eberg_grid25) <- CRS("+init=epsg:31467")
 eberg_grid25@data <- cbind(eberg_grid25@data, 
-    gdalwarp(eberg_grid, pixsize=eberg_grid25@grid@cellsize[1], 
+    warp(eberg_grid, pixsize=eberg_grid25@grid@cellsize[1], 
     GridTopology=eberg_grid25@grid, resampling_method="cubicspline")@data)
 ## this function requires FWTools!
 }
