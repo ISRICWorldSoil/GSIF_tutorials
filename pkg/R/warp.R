@@ -4,15 +4,31 @@
 # Dev Status     : Pre-Alpha
 # Note           : FWTools is NOT an R package!;
 
+.programPath <- function(path, utility){
+  if(missing(path)){
+  require(gdalUtils)
+    path <- getOption("gdalUtils_gdalPath")[[1]]$path
+    if(is.null(path)){
+      ## force gdal installation:
+      gdal_setInstallation()
+      message("Forcing installation of GDAL utilities...")                        
+      path <- getOption("gdalUtils_gdalPath")[[1]]$path
+    }
+  }
+  
+  if(.Platform$OS.type == "windows") {     
+    program = shQuote(shortPathName(normalizePath(file.path(path, paste(utility, ".exe", sep="")))))
+  } else {
+    program = utility
+  }
+  return(program)
+}
+
 .gdalwarp.SpatialPixels <- function(obj, proj4s = proj4string(obj), GridTopology = NULL, pixsize, resampling_method = "bilinear", NAflag = get("NAflag", envir = GSIF.opts), tmp.file = FALSE, show.output.on.console = FALSE, program){
   
   if(missing(program)){
-    if(.Platform$OS.type == "windows") {
-      fw.dir = .FWTools.path()        
-      program = shQuote(shortPathName(normalizePath(file.path(fw.dir, "bin/gdalwarp.exe"))))
-    } else {
-      program = "gdalwarp"
-  }}
+      program <- .programPath(utility="gdalwarp")
+  }
   
   if(!nchar(program)==0){
     require(stringr)
@@ -160,14 +176,14 @@
   flush.console()
   
   } else { 
-    stop("Could not locate FWTools. First install and test FWTools. See 'plotKML.env()' for more info.") 
+    stop("Could not locate FWTools. First install and test FWTools (see package 'gdalUtils').") 
   }
   
   return(res)
 
 }
 
-setMethod("gdalwarp", signature(obj = "SpatialPixelsDataFrame"), .gdalwarp.SpatialPixels)
-setMethod("gdalwarp", signature(obj = "RasterLayer"), .gdalwarp.SpatialPixels)
+setMethod("warp", signature(obj = "SpatialPixelsDataFrame"), .gdalwarp.SpatialPixels)
+setMethod("warp", signature(obj = "RasterLayer"), .gdalwarp.SpatialPixels)
 
 ## end of script;

@@ -222,8 +222,8 @@ if (!isGeneric("write.data")){
   setGeneric("write.data", function(obj, ...){standardGeneric("write.data")})
 }
 
-if (!isGeneric("gdalwarp")){
-  setGeneric("gdalwarp", function(obj, ...){standardGeneric("gdalwarp")})
+if (!isGeneric("warp")){
+  setGeneric("warp", function(obj, ...){standardGeneric("warp")})
 }
 
 if (!isGeneric("MaxEnt")){

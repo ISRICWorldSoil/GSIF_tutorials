@@ -8,7 +8,7 @@
 ## make prediction locations in WGS84 (from point to grid):
 setMethod("make.3Dgrid", signature(obj = "SpatialPixelsDataFrame"), function(obj, proj4s = get("ref_CRS", envir = GSIF.opts), pixsize = get("cellsize", envir = GSIF.opts)[2], resampling_method = "bilinear", NAflag = get("NAflag", envir = GSIF.opts), stdepths = get("stdepths", envir = GSIF.opts), tmp.file = TRUE, show.output.on.console = TRUE, ...){   
   
-  res <- gdalwarp(obj, proj4s = proj4s, pixsize = pixsize, resampling_method = resampling_method, NAflag = NAflag, tmp.file = tmp.file, show.output.on.console = show.output.on.console)    
+  res <- warp(obj, proj4s = proj4s, pixsize = pixsize, resampling_method = resampling_method, NAflag = NAflag, tmp.file = tmp.file, show.output.on.console = show.output.on.console)    
   # make a list of grids with standard depths:
   res <- as(res, "SpatialPixelsDataFrame") 
   out <- sp3D(obj=res, proj4s = proj4s, stdepths = stdepths)
@@ -110,7 +110,7 @@ setMethod("sp3D", signature(obj = "list"), function(obj, proj4s = proj4string(ob
   for(j in 1:length(obj)){
     # check if it is available in the finest resolution or if it does not overlap:
     if(cellsize.l[j] > min(cellsize.l)|!identical(x@bbox, obj[[j]]@bbox)){
-      ret[[j]] <- gdalwarp(obj[[j]], proj4s = proj4string(x), pixsize = min(cellsize.l), GridTopology = x@grid, resampling_method = "cubicspline", tmp.file = tmp.file)
+      ret[[j]] <- warp(obj[[j]], proj4s = proj4string(x), pixsize = min(cellsize.l), GridTopology = x@grid, resampling_method = "cubicspline", tmp.file = tmp.file)
     }
     else {
     ret[[j]] <- obj[[j]]

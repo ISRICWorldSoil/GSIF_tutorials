@@ -60,7 +60,7 @@ setMethod("merge", signature(x = "SpatialPredictions", y = "SpatialPredictions")
     for(j in 1:length(r)){
       # resample all the grids to the finest resolution:
       if(cellsize.l[j] > min(cellsize.l)|!identical(out@bbox, obj[[j]]@bbox)){
-         ret[[j]] <- gdalwarp(r[[j]], proj4s = proj4string(out), pixsize = min(cellsize.l), GridTopology = out@grid, resampling_method = "cubicspline")
+         ret[[j]] <- warp(r[[j]], proj4s = proj4string(out), pixsize = min(cellsize.l), GridTopology = out@grid, resampling_method = "cubicspline")
       }
       else {
         ret[[j]] <- r[[j]]

@@ -28,7 +28,7 @@
   \item{\dots}{optional arguments that can be passed to the \code{\link{getSpatialTiles}}}
 }
 \value{Returns a list of objects of the same class as the input object.}
-\details{When working with objects of type \code{"SpatialLinesDataFrame"}, \code{"SpatialPolygonsDataFrame"} and or \code{"RasterLayer"}, the function looks for FWTools binary files \code{ogr2ogr} and \code{gdalwarp}. \href{http://fwtools.maptools.org/}{FWTools} is a separate program and must be installed separately.}
+\details{When working with objects of type \code{"SpatialLinesDataFrame"}, \code{"SpatialPolygonsDataFrame"} and or \code{"RasterLayer"}, the function looks for FWTools binary files \code{ogr2ogr} and \code{warp}. \href{http://fwtools.maptools.org/}{FWTools} is a separate program and must be installed separately.}
 \author{ Tomislav Hengl}
 \seealso{ \code{\link{getSpatialTiles}} }
 \examples{

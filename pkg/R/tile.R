@@ -145,11 +145,11 @@ setMethod("getSpatialTiles", signature(obj = "ANY"), function(obj, block.x, bloc
 setMethod("tile", signature(x = "SpatialPointsDataFrame"), .subsetTiles)
 setMethod("tile", signature(x = "SpatialPixelsDataFrame"), .subsetTiles)
 
-## tile using OGR2OGR function:
+## tile using the OGR2OGR function:
 .clipTiles <- function(x, y, block.x, tmp.file = FALSE, program, show.output.on.console = FALSE, ...){
     
     if(missing(program)){
-      program = .ogr2ogr()
+      program <- .programPath(utility="ogr2ogr")
     }   
     
     if(missing(y)){
@@ -199,12 +199,7 @@ setMethod("tile", signature(x = "RasterLayer"), function(x, y, block.x, tmp.file
   }
 
   if(missing(program)){
-    if(.Platform$OS.type == "windows") {
-      fw.dir = .FWTools.path()        
-      program = shQuote(shortPathName(normalizePath(file.path(fw.dir, "bin/gdalwarp.exe"))))
-    } else {
-      program = "gdalwarp"
-    }
+      program <- .programPath(utility="gdalwarp")
   }
   
   if(missing(y)){

@@ -349,7 +349,7 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
             predictionLocations.S = spsample(SpatialPixels(SpatialPoints(predictionLocations["fit.var"]@coords[,1:2], predictionLocations@proj4string)), type="regular", cellsize=coarsening.factor*predictionLocations@grid@cellsize[1])
             gridded(predictionLocations.S) <- TRUE
             rk.S <- gstat::krige(formString, locations=observed, newdata=predictionLocations.S, model = vgmmodel, nmin = nmin, nmax = nmax, debug.level = debug.level, ...)
-            rk <- gdalwarp(rk.S, GridTopology = predictionLocations@grid, pixsize=predictionLocations@grid@cellsize[1], resampling_method="cubicspline", tmp.file=TRUE)
+            rk <- warp(rk.S, GridTopology = predictionLocations@grid, pixsize=predictionLocations@grid@cellsize[1], resampling_method="cubicspline", tmp.file=TRUE)
             ## convert to SpatialPixels (necessary!):
             rk <- SpatialPixelsDataFrame(predictionLocations@coords[,1:3], data=rk@data[predictionLocations@grid.index,], proj4string=predictionLocations@proj4string, grid=predictionLocations@grid)
           } else {
