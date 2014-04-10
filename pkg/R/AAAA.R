@@ -1,15 +1,89 @@
 # Purpose        : Initial settings;
 # Maintainer     : Tomislav Hengl (tom.hengl@wur.nl)
-# Contributions  : ; 
+# Contributions  : Dylan Beaudette (dylan.beaudette@gmail.com); 
 # Dev Status     : Pre-Alpha
-# Note           : for more info see [http://cran.r-project.org/doc/manuals/R-exts.html];
+# Note           : Aqp classes described here -> [http://r-forge.r-project.org/projects/aqp/]; for more info see [http://cran.r-project.org/doc/manuals/R-exts.html];
 
+
+################## STANDARD ENVIRONMENTS ##############
+
+## setup the plotKML environment:
+GSIF.opts <- new.env(hash=TRUE)
+
+## Standard settings:
+GSIF.env <- function(
+    wps.server = "http://wps.worldgrids.org",
+    ref_CRS = "+proj=longlat +datum=WGS84",
+    NAflag = -99999,
+    license_url = "http://creativecommons.org/licenses/by/3.0/",
+    project_url = "http://gsif.r-forge.r-project.org/",
+    stdepths = c(-2.5, -10, -22.5, -45, -80, -150)/100,
+    stsize = c(5, 10, 15, 30, 40, 100)/100,
+    cellsize = rev(c(6/120, 3/120, 1/120, 1/240, 1/600, 1/1200, 1/3600)),
+    REST.server = 'http://rest.soilgrids.org/',
+    attributes = c("ORCDRC","PHIHOX","SNDPPT","SLTPPT","CLYPPT","CFRVOL","CEC","BLD","TAXGWRB","TAXOUSDA"),
+    TimeSpan = list(begin=as.POSIXct("1950-01-01"), end=as.POSIXct("2005-12-30")),
+    show.env = TRUE
+    ){
+    
+    md.lst <- list(wps.server=wps.server, ref_CRS=ref_CRS, NAflag=NAflag, license_url=license_url, project_url=project_url, stdepths=stdepths, stsize=stsize, cellsize=cellsize, REST.server=REST.server, attributes=attributes, TimeSpan=TimeSpan)
+    
+    x <- lapply(names(md.lst), function(x){ assign(x, md.lst[[x]], envir=GSIF.opts) })  
+    if(show.env){  
+      return(md.lst)  
+    } 
+}
+
+# load GSIF.opts with some basic information
+GSIF.env(show.env = FALSE)
 
 ################## NEW GSIF CLASSES ##############
 
+## Copy of the 'SoilProfileCollection' class basically (see [http://aqp.r-forge.r-project.org/aqp-html-manual/]):	
+setClass(Class="FAO.SoilProfileCollection", 
+  representation=representation(
+    idcol='character', # column name containing IDs
+    depthcols='character', # 2 element vector with column names for hz top, bottom
+    metadata='data.frame', # single-row dataframe with key-value mapping
+    horizons='data.frame', # all horizons sorted by ID, top
+    site='data.frame', # data about the sampling sites
+    sp='SpatialPoints', # (optional) spatial data stored here
+    diagnostic='data.frame' # (optional) diagnostic horizons are stored here
+  ),
+  prototype=prototype(
+    idcol='SOURCEID',
+    depthcols=c('top','bottom'),
+    metadata=data.frame(stringsAsFactors=FALSE), # default units are unkown
+    horizons=data.frame(stringsAsFactors=FALSE),
+    site=data.frame(stringsAsFactors=FALSE),
+    sp=new('SpatialPoints'),
+    diagnostic=data.frame(stringsAsFactors=FALSE)
+  ),
+  validity=function(object) {
+
+	  ## check horizon logic:
+  	dc <- horizonDepths(object)
+  	h <- horizons(object)
+  	top <- dc[1]
+    bottom <- dc[2]	
+    if(any(c(is.na(h[[top]]), is.na(h[[bottom]])))) {
+  		return("Horizon top and bottom values cannot contain NA values")
+ 	  }
+    test.h <- !h[[top]] < h[[bottom]] 
+    if(any(test.h)){
+      return("Invalid horizon bottom values found at row:", paste(which(test.h), collapse=", "))
+    }
+    ## check column names:
+    
+    ## check domains:
+    
+    ## check metadata slot:
+        
+})
+
 ## A new class for models fitted in gstat:
 setClass("gstatModel", representation(regModel = "ANY", vgmModel = "data.frame", sp = "SpatialPoints"), validity = function(object) {
-    ml = c("lm", "glm", "rpart", "randomForest", "lme", "gls")
+    ml = c("lm", "glm", "rpart", "randomForest", "lme", "gls", "zeroinfl")
     if(!any(class(object@regModel) %in% ml))
       return(paste("Only models of type", paste(ml, collapse=", "), "are accepted"))
     cn = c("model", "psill", "range", "kappa", "ang1", "ang2", "ang3", "anis1", "anis2")
@@ -22,26 +96,51 @@ setClass("gstatModel", representation(regModel = "ANY", vgmModel = "data.frame",
 })
 
 ### GSIF soil property maps class:
-setClass("GlobalSoilMap", representation (varname = 'character', TimeSpan.begin = 'POSIXct', TimeSpan.end = 'POSIXct', sd1 = 'SpatialPixelsDataFrame', sd2 = 'SpatialPixelsDataFrame', sd3 = 'SpatialPixelsDataFrame', sd4 = 'SpatialPixelsDataFrame', sd5 = 'SpatialPixelsDataFrame', sd6 = 'SpatialPixelsDataFrame'), validity = function(object){
+setClass("SoilGrids", representation (varname = 'character', TimeSpan = 'list', sd1 = 'SpatialPixelsDataFrame', sd2 = 'SpatialPixelsDataFrame', sd3 = 'SpatialPixelsDataFrame', sd4 = 'SpatialPixelsDataFrame', sd5 = 'SpatialPixelsDataFrame', sd6 = 'SpatialPixelsDataFrame'), 
+   prototype = list(varname = "NA", TimeSpan = list(begin=Sys.time(), end=Sys.time()), sd1 = NULL, sd2 = NULL, sd3 = NULL, sd4 = NULL, sd5 = NULL, sd6 = NULL), ## will not pass the validity check!
+   validity = function(object){
    soilvars = read.csv(system.file("soilvars.csv", package="GSIF"))
-   if(object@varname %in% soilvars$varname)
-      return(paste("'property'", object@property, "not specified in the Soil Reference Library.", "See", system.file("soilvars.csv", package="GSIF"), "for more details."))
-   if(object@TimeSpan.begin > object@TimeSpan.end)
-      return("'TimeSpan.begin' must indicate time before or equal to 'TimeSpan.end'") 
-   if(ncol(object@sd1)<2|ncol(object@sd2)<2|ncol(object@sd3)<2|ncol(object@sd4)<2|ncol(object@sd5)<2|ncol(object@sd6)<2)
+   if(object@varname %in% soilvars$varname){
+      return(paste("Property", object@varname, "not specified in the Soil Reference Library.", "See", system.file('soilvars.csv', package='GSIF'), "for more details."))
+   }
+   if(!all(sapply(object@TimeSpan, function(x){class(x)[1]})=="POSIXct") & object@TimeSpan[["begin"]] > object@TimeSpan[["end"]]){
+      return("'TimeSpan' must indicate 'begin' and 'end' times to which the predictions refer to.") 
+   }
+   if(ncol(object@sd1)<2|ncol(object@sd2)<2|ncol(object@sd3)<2|ncol(object@sd4)<2|ncol(object@sd5)<2|ncol(object@sd6)<2){
       return("Object in slot 'sd' with at least two realizations (or predictions and variances) required")
-   # check the projection system:
+   }
+   ## check the projection system:
    if(!all(check_projection(object@sd1)|check_projection(object@sd2)|check_projection(object@sd3)|check_projection(object@sd4)|check_projection(object@sd5)|check_projection(object@sd6))){
       ref_CRS = get("ref_CRS", envir = GSIF.opts)
-      return(paste("The GlobalSoilMap object requires grids to be projected in the", ref_CRS, "projection"))
+      return(paste("Grids projected in the \"", ref_CRS, "\" projection required.", sep=""))
    }
-   # check the target resolution:
+   ## check the target resolution:
    grd.lst <- get("cellsize", envir = GSIF.opts)
-   if(!any(object@sd1@grid@cellsize %in% grd.lst)|!any(object@sd2@grid@cellsize %in% grd.lst)|!any(object@sd3@grid@cellsize %in% grd.lst)|!any(object@sd4@grid@cellsize %in% grd.lst)|!any(object@sd5@grid@cellsize %in% grd.lst)|!any(object@sd6@grid@cellsize %in% grd.lst))
-      return(paste("Recommended grid cell size does not correspond to one of the following:", paste(signif(grd.lst, 4), collapse=", "))) 
-   # check the bounding boxes:
-   if(!(any(object@sd1@bbox %in% as.list(object@sd2@bbox, object@sd3@bbox, object@sd4@bbox, object@sd5@bbox, object@sd6@bbox))))
+   if(!any(object@sd1@grid@cellsize %in% grd.lst)|!any(object@sd2@grid@cellsize %in% grd.lst)|!any(object@sd3@grid@cellsize %in% grd.lst)|!any(object@sd4@grid@cellsize %in% grd.lst)|!any(object@sd5@grid@cellsize %in% grd.lst)|!any(object@sd6@grid@cellsize %in% grd.lst)){
+      return(paste("Grid cell size does not correspond to one of the following:", paste(signif(grd.lst, 4), collapse=", "))) 
+   }
+   ## check the bounding boxes:
+   if(!(any(object@sd1@bbox %in% as.list(object@sd2@bbox, object@sd3@bbox, object@sd4@bbox, object@sd5@bbox, object@sd6@bbox)))){
       return("The bounding box of all 'sd' slots is not standard") 
+   }
+})
+
+
+### GlobalSoilMap class (must be 100 m):
+setClass("GlobalSoilMap", representation (varname = 'character', TimeSpan = 'list', sd1 = 'SpatialPixelsDataFrame', sd2 = 'SpatialPixelsDataFrame', sd3 = 'SpatialPixelsDataFrame', sd4 = 'SpatialPixelsDataFrame', sd5 = 'SpatialPixelsDataFrame', sd6 = 'SpatialPixelsDataFrame'), 
+   prototype = list(varname = "NA", TimeSpan = list(begin=Sys.time(), end=Sys.time()), sd1 = NULL, sd2 = NULL, sd3 = NULL, sd4 = NULL, sd5 = NULL, sd6 = NULL), validity = function(object){
+   if(object@TimeSpan.begin > object@TimeSpan.end){
+      return("'TimeSpan.begin' must indicate time before or equal to 'TimeSpan.end'") 
+   }
+   ## check the target resolution:
+   grd.lst <- get("cellsize", envir = GSIF.opts)
+   if(!all(object@sd1@grid@cellsize == grd.lst[2])|!all(object@sd2@grid@cellsize == grd.lst[2])|!all(object@sd3@grid@cellsize == grd.lst[2])|!all(object@sd4@grid@cellsize == grd.lst[2])|!all(object@sd5@grid@cellsize == grd.lst[2])|!all(object@sd6@grid@cellsize == grd.lst[2])){
+      return(paste("Grid cell size does not correspond the prescribed resolution:", paste(signif(grd.lst[2], 4), collapse=", "))) 
+   }
+   ## check the bounding boxes:
+   if(!(any(object@sd1@bbox %in% as.list(object@sd2@bbox, object@sd3@bbox, object@sd4@bbox, object@sd5@bbox, object@sd6@bbox)))){
+      return("The bounding box of all 'sd' slots is not standard") 
+   }
 })
 
 
@@ -79,12 +178,24 @@ setClass("WPS", representation (server = 'list', inRastername = 'character'), va
    cnames <- c("URI", "service.name", "version", "request", "identifier")
    if(any(!(names(object@server) %in% cnames)))
       return(paste("Expecting only column names:", paste(cnames, collapse=", ")))
-   # check if URI exists:
+   ## check if URI exists:
    uri = paste(paste(object@server$URI, "?", sep=""), object@server$version, object@server$service, "request=GetCapabilities", sep="&") 
    require(RCurl)
    try(z <- getURI(uri, .opts=curlOptions(header=TRUE, nobody=TRUE, transfertext=TRUE, failonerror=FALSE)))
    if(!length(x <- grep(z, pattern="404 Not Found"))==0)
       return("Server error: 404 Not Found")
+})
+
+## REST class
+setClass("REST.SoilGrids", representation (server = 'character', query = 'list', stream = 'list'),
+   prototype = list(server=get("REST.server", envir = GSIF.opts), query=list(attributes=get("attributes", envir = GSIF.opts), confidence=c("U","M","L"), depths=c("sd1","sd2","sd3","sd4","sd5","sd6")), stream=list(clipList=NA, param=NA)), ## TH: Might change in future!
+   validity = function(object) {
+   ## check if URI exists:
+   require(RCurl)
+   try(z <- getURI(object@server, .opts=curlOptions(header=TRUE, nobody=TRUE, transfertext=TRUE, failonerror=FALSE)))
+   if(!length(x <- grep(z, pattern="404 Not Found"))==0){
+      return("Server error: 404 Not Found")
+   } 
 })
 
 ## SpatialComponents class
@@ -229,42 +340,5 @@ if (!isGeneric("warp")){
 if (!isGeneric("MaxEnt")){
   setGeneric("MaxEnt", function(occurrences, covariates, ...){standardGeneric("MaxEnt")})
 }
-
-################## STANDARD ENVIRONMENTS ##############
-
-## setup the plotKML environment:
-GSIF.opts <- new.env(hash=TRUE)
-
-## Standard settings:
-GSIF.env <- function(
-    wps.server = "http://wps.worldgrids.org",
-    ref_CRS = "+proj=longlat +datum=WGS84",
-    NAflag = -99999,
-    license_url = "http://creativecommons.org/licenses/by/3.0/",
-    project_url = "http://gsif.r-forge.r-project.org/",
-    stdepths = c(-2.5, -10, -22.5, -45, -80, -150)/100,
-    stsize = c(5, 10, 15, 30, 40, 100)/100,
-    cellsize = rev(c(6/120, 3/120, 1/120, 1/240, 1/600, 1/1200, 1/3600)),
-    show.env = TRUE
-    ){
-    
-    assign("wps.server", wps.server, envir=GSIF.opts)
-    assign("ref_CRS", ref_CRS, envir=GSIF.opts)
-    assign("NAflag", NAflag, envir=GSIF.opts)
-    assign("license_url", license_url, envir=GSIF.opts)
-    assign("project_url", project_url, envir=GSIF.opts)
-    assign("stdepths", stdepths, envir=GSIF.opts)
-    assign("stsize", stsize, envir=GSIF.opts)
-    assign("cellsize", cellsize, envir=GSIF.opts)
-    
-    GSIF.opts <- list(wps.server, ref_CRS, NAflag, license_url, project_url, stdepths, stsize, cellsize)
-    names(GSIF.opts) <- c("location of the WPS", "referent CRS", "NA flag value", "license URL", "project home", "standard depths", "standard thicknesses", "grid cell size")
-    
-    if(show.env){  return(GSIF.opts)  }
- 
-}
-
-# load GSIF.opts with some basic information
-GSIF.env(show.env = FALSE)
 
 # end of script;

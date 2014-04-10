@@ -6,7 +6,7 @@
 
 
 ## Fit a GLM to spatial data:
-setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.frame", predictionDomain = "SpatialPixelsDataFrame", method = "character"), function(formulaString, rmatrix, predictionDomain, method = list("GLM", "rpart", "randomForest", "quantregForest", "lme")[[1]], dimensions = NULL, fit.family = gaussian(), stepwise = TRUE, rvgm, GLS = FALSE, random, ...){
+setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.frame", predictionDomain = "SpatialPixelsDataFrame", method = "character"), function(formulaString, rmatrix, predictionDomain, method = list("GLM", "rpart", "randomForest", "quantregForest", "lme")[[1]], dimensions = NULL, fit.family = gaussian(), stepwise = TRUE, rvgm, GLS = FALSE, random, steps=100, ...){
 
   ## target variable name:
   tv = all.vars(formulaString)[1]  
@@ -55,7 +55,7 @@ setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.f
       message("Fitting a GLM...")
       rgm <- glm(formulaString, data=rmatrix, family=fit.family)
       if(stepwise == TRUE){
-        rgm <- step(rgm, trace = 0)
+        rgm <- step(rgm, trace = 0, steps=steps)
       }
    
       ## mask out the missing values:
@@ -143,7 +143,7 @@ setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.f
     }
     } else {
       ## TH: The nlme package fits a variogram, but this is difficult to translate to gstat format:
-      if(missing(rvgm)&class(rgm)=="gls"){
+      if(missing(rvgm)&any(class(rgm)=="gls")){
            rvgm <- fit.vgmModel(residual ~ 1, rmatrix = rmatrix, predictionDomain = predictionDomain, dimensions = "2D")
       } else { 
         ## Use a pure nugget effect if variogram is set to NULL

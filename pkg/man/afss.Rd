@@ -3,7 +3,7 @@
 \encoding{latin1}
 \alias{afss}
 \alias{afss.spec}
-\title{Africa Sentinel Site data}
+\title{Africa Sentinel Site data (wet chemistry)}
 \description{Africa soil sampled collected at AfSIS sentinel sites. Part of the \href{http://www.africasoils.net/data/ldsf-description}{African Land Degradation Surveillance Framework} (LDSF) Field Database.}
 \usage{data(afss)}
 \format{
@@ -21,11 +21,16 @@ Horizons table contains the following columns:
   \item{\code{SAMPLEID}}{factor; soil sample ID (\code{SSID} in the LDSF Field Database)}
   \item{\code{UHDICM}}{numeric; upper sampling depth from the surface in cm}
   \item{\code{LHDICM}}{numeric; lower sampling depth from the surface in cm}
-  \item{\code{CLYPPT}}{numeric; weight percentage of the clay particles (<0.0002 mm; \code{Clay} in the LDSF Field Database)}
-  \item{\code{SNDPPT}}{numeric; weight percentage of the sand particles (0.0002--0.05 mm; \code{Sand} in the LDSF Field Database)}
-  \item{\code{PHIHO5}}{numeric; pH index measured in water solution (\code{pH} in the LDSF Field Database)}
-  \item{\code{BST}}{numeric; the exchangeable bases sum of exchangeable Ca, Mg, K \& Na of the sample in cmol/kg (\code{ExBas} in the LDSF Field Database)}
-  \item{\code{ORCDRC}}{numeric; soil organic carbon content in permille (\code{SOC} in the LDSF Field Database)}
+  \item{\code{ORCCNS}}{numeric; soil organic carbon content in permille (\code{SOC} in the LDSF Field Database)}
+  \item{\code{PHIHOX}}{numeric; pH index measured in water solution (\code{pH} in the LDSF Field Database)}
+  \item{\code{EXB}}{numeric; Exchangeable bases (\code{ExBas} in the LDSF Field Database)}
+  \item{\code{ALUM3S}}{numeric; Aluminium concentration (\code{m3.Al} in the LDSF Field Database)}
+  \item{\code{ECAM3S}}{numeric; Exchangeable Ca (\code{ExCa} in the LDSF Field Database)}
+  \item{\code{EXKM3S}}{numeric; Exchangeable K (\code{ExK} in the LDSF Field Database)}
+  \item{\code{EMGM3S}}{numeric; Exchangeable Mg (\code{ExMg} in the LDSF Field Database)}
+  \item{\code{ENAM3S}}{numeric; Exchangeable Mg (\code{ExNa} in the LDSF Field Database)}
+  \item{\code{NITCNS}}{numeric; Exchangeable Mg (\code{Total.Nitrogen} in the LDSF Field Database)}
+  \item{\code{SNDLDF}}{numeric; weight percentage of the sand particles (0.0002--0.05 mm; \code{Sand} in the LDSF Field Database)}
 }
 \code{afss.spec} table contains the following columns:
   \describe{
@@ -50,27 +55,26 @@ data(afss)
 xy <- afss$sites
 coordinates(xy) <- ~ LONWGS84 + LATWGS84
 proj4string(xy) <- "+proj=longlat +datum=WGS84"
-xy$PHIHO5_d1 <- merge(xy@data, afss$horizons[afss$horizons$UHDICM==0,], all.x=TRUE)$PHIHO5
+xy$PHIHOX_d1 <- merge(xy@data, afss$horizons[afss$horizons$UHDICM==0,], all.x=TRUE)$PHIHOX
+
+## plot points in Google Earth:
 library(plotKML)
 data(R_pal)
-plotKML(xy["PHIHO5_d1"], colour_scale=R_pal[["pH_pal"]])
+plotKML(xy["PHIHOX_d1"], colour_scale=R_pal[["pH_pal"]])
+
 ## obtain country borders:
-if(is.na(file.info("admin.af.rda")$size)){
-download.file("http://gsif.isric.org/lib/exe/fetch.php?media=admin.af.rda", 
-   "admin.af.rda")
-}
-try(load("admin.af.rda"))
+con.admin <- url("http://gsif.isric.org/lib/exe/fetch.php?media=admin.af.rda")
+load(con.admin)
 proj4string(admin.af) <- get("ref_CRS", envir = plotKML.opts)
 admin.af <- as(admin.af, "SpatialLines") 
 ## overlay and plot points and maps:
 plot(admin.af, col="darkgrey", xlim=xy@bbox[1,], ylim=xy@bbox[2,])
 points(xy, pch=21, bg="white", cex=.6, col="black")
+
 ## obtain MIR measurements:
-if(is.na(file.info("afss.spec.rda")$size)){
-download.file("http://gsif.isric.org/lib/exe/fetch.php?media=afss.spec.rda", 
-  "afss.spec.rda")
-}
-try(load("afss.spec.rda"))
+con <- url("http://gsif.isric.org/lib/exe/fetch.php?media=afss.spec.rda")
+load(con)
+## See "soil.spec" package for further processing...
 }
 }
 \keyword{datasets}

@@ -7,7 +7,7 @@
 
 setMethod("spc", signature(obj = "SpatialPixelsDataFrame", formulaString = "formula"), function(obj, formulaString, scale. = TRUE, silent = FALSE, ...){
 
-  # formula string:
+  ## formula string:
   if(missing(formulaString)) {
      formulaString <- as.formula(paste("~", paste(out@layernames, collapse="+")))
   }
@@ -17,13 +17,13 @@ setMethod("spc", signature(obj = "SpatialPixelsDataFrame", formulaString = "form
   }
   obj@data <- obj@data[,vars]
 
-  # print warning:
+  ## print warning:
   if(silent==FALSE){
   if(nrow(obj)>10e6){
     warning('Operation not recommended for large grids', immediate. = TRUE)
   }}
   
-  # convert every factor to indicators:
+  ## convert every factor to indicators:
   for(j in 1:length(vars)){
     if(is.factor(obj@data[,vars[j]])){
       # remove classes without pixels:
@@ -52,9 +52,11 @@ setMethod("spc", signature(obj = "SpatialPixelsDataFrame", formulaString = "form
       ## principal component analysis:
       pcs <- prcomp(formula=formulaString.f, x)
     } else {
+      formulaString = as.formula(paste("~", paste(varsn, collapse="+")))
       pcs <- prcomp(formula=formulaString, x)
     }
   } else {
+    formulaString = as.formula(paste("~", paste(varsn, collapse="+")))
     pcs <- prcomp(formula=formulaString, obj@data) 
   }
 

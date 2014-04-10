@@ -128,13 +128,24 @@ setMethod("sp3D", signature(obj = "list"), function(obj, proj4s = proj4string(ob
 
 
 
-## make GlobalSoilMap class:
-GlobalSoilMap <- function(obj, varname, period = c(Sys.Date()-1, Sys.Date())){
+## make GlobalSoilMap object:
+GlobalSoilMap <- function(obj, varname, TimeSpan = list(begin=Sys.Date()-1, end=Sys.Date())){
   if(!class(obj)=="list"){
     stop("Object of class 'list' required")
   }
   
-  out = new("GlobalSoilMap", varname = varname, TimeSpan.begin = as.POSIXct(period[1]), TimeSpan.end = as.POSIXct(period[2]), sd1=as(obj[[1]], "SpatialPixelsDataFrame"), sd2=as(obj[[2]], "SpatialPixelsDataFrame"), sd3=as(obj[[3]], "SpatialPixelsDataFrame"), sd4=as(obj[[4]], "SpatialPixelsDataFrame"), sd5=as(obj[[5]], "SpatialPixelsDataFrame"), sd6=as(obj[[6]], "SpatialPixelsDataFrame"))
+  out = new("GlobalSoilMap", varname = varname, TimeSpan.begin = TimeSpan, sd1=as(obj[[1]], "SpatialPixelsDataFrame"), sd2=as(obj[[2]], "SpatialPixelsDataFrame"), sd3=as(obj[[3]], "SpatialPixelsDataFrame"), sd4=as(obj[[4]], "SpatialPixelsDataFrame"), sd5=as(obj[[5]], "SpatialPixelsDataFrame"), sd6=as(obj[[6]], "SpatialPixelsDataFrame"))
+  
+  return(out)
+}
+
+## make SoilGrids object:
+SoilGrids <- function(obj, varname, TimeSpan = get("TimeSpan", envir = GSIF.opts)){
+  if(!class(obj)=="list"){
+    stop("Object of class 'list' required")
+  }
+  
+  out = new("GlobalSoilMap", varname = varname, TimeSpan = TimeSpan, sd1=as(obj[[1]], "SpatialPixelsDataFrame"), sd2=as(obj[[2]], "SpatialPixelsDataFrame"), sd3=as(obj[[3]], "SpatialPixelsDataFrame"), sd4=as(obj[[4]], "SpatialPixelsDataFrame"), sd5=as(obj[[5]], "SpatialPixelsDataFrame"), sd6=as(obj[[6]], "SpatialPixelsDataFrame"))
   
   return(out)
 }

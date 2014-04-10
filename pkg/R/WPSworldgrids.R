@@ -51,7 +51,7 @@ setMethod("over", signature(x = "WPS", y = "SpatialPoints"),
   require(XML)
   # point by point
   out <- NULL
-  for(i in 1:length(nrow(y@coords))){
+  for(i in 1:nrow(y@coords)){
     ret <- paste("[x=", y@coords[i,1], ";y=", y@coords[i,2], ";inRastername=", x@inRastername,"]", sep="")
     uri = paste(paste(x@server$URI, "?", sep=""), paste(x@server$service, x@server$version, "request=execute", "identifier=sampler_local1pt_nogml", paste("datainputs=", ret, sep=""), sep="&"), sep="")
     ret <- XML::xmlTreeParse(getURL(uri), useInternalNodes = TRUE)
@@ -67,8 +67,7 @@ setMethod("over", signature(x = "WPS", y = "SpatialPoints"),
   return(out)
 })
 
-## subset grid
- 
+## subset grid:
 setMethod("subset", signature(x = "WPS"), function(x, bbox, import = TRUE){
 
   require(RCurl)

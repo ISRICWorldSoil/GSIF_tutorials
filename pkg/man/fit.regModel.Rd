@@ -7,7 +7,7 @@
 \S4method{fit.regModel}{formula,data.frame,SpatialPixelsDataFrame,character}(formulaString, rmatrix, predictionDomain, 
       method = list("GLM", "rpart", "randomForest", "quantregForest", "lme")[[1]], 
       dimensions = NULL, fit.family = gaussian(), stepwise = TRUE, rvgm, 
-      GLS = FALSE, random, \dots)
+      GLS = FALSE, random, steps, \dots)
 }
 \arguments{
   \item{formulaString}{object of class \code{"formula"} --- regression model} 
@@ -20,6 +20,7 @@
   \item{rvgm}{residual variogram (to avoid fitting the variogram set as NULL)}
   \item{GLS}{fit trend model using Generalized Least Squares implemented in the nlme package}
   \item{random}{specify the random function model; see \code{nlme::lme} for more details}
+  \item{steps}{integer; the maximum number of steps to be considered for step-wise regression; see \code{stats::step} for more details}
   \item{\dots}{other optional arguments that can be passed to \code{gstat::fit.variogram}}
 }
 \details{Produces an object of class \code{"gstatModel"} that contains: (1) fitted regression model (e.g. a GLM, cubist model, or randomForest model), (2) fitted variogram, and (c) object of class \code{"SpatialPoints"} with observation locations. To combine overlay and model fitting operations, consider using \code{\link{fit.gstatModel}}.}

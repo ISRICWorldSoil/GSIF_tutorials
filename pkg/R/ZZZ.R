@@ -8,7 +8,7 @@
   
   ## print on start-up:
 	# pkg.info <- utils::packageDescription('GSIF')
-	pkg.info <- drop(read.dcf(file=system.file("DESCRIPTION", package=pkgname,  lib.loc=libname), fields=c("Version","Date")))
+	pkg.info <- drop(read.dcf(file=system.file("DESCRIPTION", package=pkgname, lib.loc=libname), fields=c("Version","Date")))
 	packageStartupMessage(paste(pkgname, " version ", pkg.info["Version"], " (", pkg.info["Date"], ")", sep=""))
 
 	#tst <- try( removeTmpFiles(), silent=TRUE )

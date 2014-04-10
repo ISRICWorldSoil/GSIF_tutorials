@@ -1,4 +1,4 @@
-# Purpose        : Locate the one degree cells for a given bounding box;
+# Purpose        : Locate the cells for a given bounding box;
 # Maintainer     : Tomislav Hengl (tom.hengl@wur.nl); 
 # Contributions  : Pierre Roudier;
 # Status         : tested
