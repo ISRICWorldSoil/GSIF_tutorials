@@ -52,20 +52,19 @@ setClass(Class="FAO.SoilProfileCollection",
   ),
   prototype=prototype(
     idcol='SOURCEID',
-    depthcols=c('top','bottom'),
+    depthcols=c('UHDICM','LHDICM'),
     metadata=data.frame(stringsAsFactors=FALSE), # default units are unkown
-    horizons=data.frame(stringsAsFactors=FALSE),
-    site=data.frame(stringsAsFactors=FALSE),
+    horizons=data.frame(SOURCEID=NA, UDICM=0, LHDICM=200, stringsAsFactors=FALSE),
+    site=data.frame(SOURCEID=NA, SPDFAO=1, SOURCEDB=NA, stringsAsFactors=FALSE),
     sp=new('SpatialPoints'),
     diagnostic=data.frame(stringsAsFactors=FALSE)
   ),
   validity=function(object) {
 
 	  ## check horizon logic:
-  	dc <- horizonDepths(object)
-  	h <- horizons(object)
-  	top <- dc[1]
-    bottom <- dc[2]	
+  	h <- object@horizons
+  	top <- object@depthcols[1]
+    bottom <- object@depthcols[2]	
     if(any(c(is.na(h[[top]]), is.na(h[[bottom]])))) {
   		return("Horizon top and bottom values cannot contain NA values")
  	  }
@@ -74,11 +73,43 @@ setClass(Class="FAO.SoilProfileCollection",
       return("Invalid horizon bottom values found at row:", paste(which(test.h), collapse=", "))
     }
     ## check column names:
-    
+    #data(soil.vars)
+    if(any(!names(object@site) %in% soil.vars$varname)|any(!names(object@horizons) %in% soil.vars$varname)){
+      test.nm <- !(names(object@site) %in% soil.vars$varname)
+      return(paste("Invalid variable name used:", paste(names(object@site)[test.nm], collapse=", ", sep="")))
+      test.nm <- !(names(object@horizons) %in% soil.vars$varname)
+      return(paste("Invalid variable name used:", paste(names(object@horizons)[test.nm], collapse=", ", sep="")))
+    }
+    ## check that all required columns are available:
+    required <- paste(soil.vars[soil.vars$priority=="required" & (soil.vars$spcslot=="sites"|soil.vars$spcslot=="horizons"),"varname"])
+    present <- c(names(object@site), names(object@horizons))
+    missing <- !required %in% present
+    if(sum(missing)>0){
+      return(paste("Missing variable names:", paste(required[missing], collapse=", ", sep="")))
+    }
     ## check domains:
-    
-    ## check metadata slot:
-        
+    message("Checking domains...")
+    #data(soil.dom)
+    for(j in 1:ncol(object@site)){
+      vtype <- soil.vars[soil.vars$varname==names(object@site)[j],"type"]
+      if(vtype=="factor"){
+        DomainId <- soil.vars[soil.vars$varname==names(object@site)[j],"DomainId"]
+        if(!is.na(DomainId)){
+          levs <- paste(unlist(soil.dom[soil.dom$DomainId == DomainId,"Value"]))
+          if(any(!levels(object@site[,j]) %in% levs)){
+            return(paste("Invalid domain used for variable:", names(object@site)[j])) 
+          }
+        }
+      } else {
+        ## remove all values outside the natural range:
+        if(!(names(object@site)[j]=="TIMESTRT"|names(object@site)[j]=="TIMEENDR")){
+          minval <- soil.vars[soil.vars$varname==names(object@site)[j],"minval"]
+          maxval <- soil.vars[soil.vars$varname==names(object@site)[j],"maxval"]
+          object@site[,j] <- ifelse(object@site[,j] < minval, NA, ifelse(object@site[,j] > maxval, NA, object@site[,j]))
+        }
+      }
+    }
+    ## check metadata slot    
 })
 
 ## A new class for models fitted in gstat:
@@ -99,9 +130,9 @@ setClass("gstatModel", representation(regModel = "ANY", vgmModel = "data.frame",
 setClass("SoilGrids", representation (varname = 'character', TimeSpan = 'list', sd1 = 'SpatialPixelsDataFrame', sd2 = 'SpatialPixelsDataFrame', sd3 = 'SpatialPixelsDataFrame', sd4 = 'SpatialPixelsDataFrame', sd5 = 'SpatialPixelsDataFrame', sd6 = 'SpatialPixelsDataFrame'), 
    prototype = list(varname = "NA", TimeSpan = list(begin=Sys.time(), end=Sys.time()), sd1 = NULL, sd2 = NULL, sd3 = NULL, sd4 = NULL, sd5 = NULL, sd6 = NULL), ## will not pass the validity check!
    validity = function(object){
-   soilvars = read.csv(system.file("soilvars.csv", package="GSIF"))
-   if(object@varname %in% soilvars$varname){
-      return(paste("Property", object@varname, "not specified in the Soil Reference Library.", "See", system.file('soilvars.csv', package='GSIF'), "for more details."))
+   load(soil.vars)
+   if(object@varname %in% soil.vars$varname){
+      return(paste("Property", object@varname, "not specified in the Soil Reference Library. See data(soil.vars) for more details."))
    }
    if(!all(sapply(object@TimeSpan, function(x){class(x)[1]})=="POSIXct") & object@TimeSpan[["begin"]] > object@TimeSpan[["end"]]){
       return("'TimeSpan' must indicate 'begin' and 'end' times to which the predictions refer to.") 

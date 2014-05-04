@@ -10,7 +10,7 @@
 
 <h3>Description</h3>
 
-<p>A class containing predictions and prediction error (or multiple realizations) of some of the target global soil property at six standard depths following the <a href="http://globalsoilmap.net/specifications">GlobalSoilMap.net specifications</a>: <code>sd1</code> = 2.5 cm (0&ndash;5), <code>sd2</code> = 10 cm (5&ndash;15), <code>sd3</code> = 22.5 cm (15&ndash;30), <code>sd4</code> = 45 cm (30&ndash;60), <code>sd5</code> = 80 cm (60&ndash;100), <code>sd6</code> = 150 cm (100&ndash;200).</p>
+<p>A class containing predictions of target soil property at six standard depths following the <a href="http://globalsoilmap.net/specifications">GlobalSoilMap.net specifications</a>: <code>sd1</code> = 2.5 cm (0&ndash;5), <code>sd2</code> = 10 cm (5&ndash;15), <code>sd3</code> = 22.5 cm (15&ndash;30), <code>sd4</code> = 45 cm (30&ndash;60), <code>sd5</code> = 80 cm (60&ndash;100), <code>sd6</code> = 150 cm (100&ndash;200).</p>
 
 
 <h3>Slots</h3>
@@ -19,9 +19,7 @@
 <dl>
 <dt><code>varname</code>:</dt><dd><p>object of class <code>"character"</code>; abbreviated variable name registered in the Global Soil Data registry</p>
 </dd>
-<dt><code>TimeSpan.begin</code>:</dt><dd><p>object of class <code>"POSIXct"</code>; begin of the sampling period</p>
-</dd>
-<dt><code>TimeSpan.end</code>:</dt><dd><p>object of class <code>"POSIXct"</code>; end of the sampling period</p>
+<dt><code>TimeSpan</code>:</dt><dd><p>object of class <code>"list"</code>; contains begin and end of the sampling period of class <code>"POSIXct"</code></p>
 </dd>
 <dt><code>sd1</code>:</dt><dd><p>object of class <code>"SpatialPixelsDataFrame"</code>; predictions and variances, or number of realizations of the target variable at depth 2.5 cm (0&ndash;5)</p>
 </dd>
@@ -37,45 +35,16 @@
 </dd>
 </dl>
 
-<p>Gridded data submitted to <code>sd*</code> slots of the <code>"GlobalSoilMap"</code> class must satisfy all of the following requirements (class validity):
-</p>
-
-<ul>
-<li><p> All grids submitted must have the same grid topology (identical <code>grid</code> slot in the object of class <code>"SpatialPixelsDataFrame"</code>);
-</p>
-</li>
-<li><p> All grids must be projected in the referent coordinate system <a href="http://spatialreference.org/ref/epsg/4326/">WGS84</a> (geographical coordinates), with 3D dimension (altitude) expressed as distance from the land surface in meters (e.g. altitude of <code>-.025</code> corresponds to the 2.5 cm depth);
-</p>
-</li>
-<li><p> The grid cell size must correspond to some standard resolution e.g. 0.0008333333 (1/1200 or about 100 m), 0.0016666667 (1/600 or about 250 m) etc;
-</p>
-</li>
-<li><p> Only standard abbreviated names registered in the Global Soil Data registry can be used in the <code>varname</code> slot; 
-</p>
-</li></ul>
- 
-
-
-<h3>Methods</h3>
-
-
-<dl>
-<dt>summary</dt><dd><p><code>signature(x = "GlobalSoilMap")</code>: generates summary statistics for the object</p>
-</dd>
-</dl>
-
-
-
-<h3>Author(s)</h3>
-
-<p> Tomislav Hengl and Robert A. MacMillan </p>
 
 
 <h3>References</h3>
 
 
 <ul>
-<li><p> Sanchez, P. A., S. Ahamed, F. Carre, A. E. Hartemink, J. Hempel, J. Huising, P. Lagacherie, A. B. McBratney, N. J. McKenzie, M L. de Mendonça-Santos, et al., (2009) <a href="http://dx.doi.org/10.1126/science.1175084">Digital Soil Map of the World</a>. Science, 325(5941): 680-681.
+<li><p> Hartemink, A. E., Hempel, J., Lagacherie, P., McBratney, A., McKenzie, N., MacMillan, R. A., ... &amp; Zhang, G. L. (2010). <a href="http://dx.doi.org/10.1007/978-90-481-8863-5_33">GlobalSoilMap.net &mdash; A New Digital Soil Map of the World</a>. In Digital Soil Mapping (pp. 423&ndash;428). Springer Netherlands.
+</p>
+</li>
+<li><p> Sanchez, P. A., S. Ahamed, F. Carre, A. E. Hartemink, J. Hempel, J. Huising, P. Lagacherie, A. B. McBratney, N. J. McKenzie, M L. de Mendonça-Santos, et al., (2009) <a href="http://dx.doi.org/10.1126/science.1175084">Digital Soil Map of the World</a>. Science, 325(5941): 680&ndash;681.
 </p>
 </li></ul>
 
@@ -83,85 +52,8 @@
 
 <h3>See Also</h3>
 
- <p><code><a href="SpatialComponents.html">SpatialComponents-class</a></code>, <code><a href="geosamples.html">geosamples-class</a></code> 
+ <p><code><a href="SoilGrids.html">SoilGrids-class</a></code>, <code><a href="SpatialComponents.html">SpatialComponents-class</a></code>, <code><a href="geosamples.html">geosamples-class</a></code> 
 </p>
 
-
-<h3>Examples</h3>
-
-<pre>
-# load soil samples from the plotKML package: 
-library(plotKML)
-library(aqp)
-library(plyr)
-library(splines)
-library(rgdal)
-library(raster)
-
-data(eberg)
-# subset data to 10%:
-eberg &lt;- eberg[runif(nrow(eberg)) &lt; .1,]
-# sites table:
-s.lst &lt;- c("ID", "soiltype", "TAXGRSC", "X", "Y")
-h.lst &lt;- c("UHDICM","LHDICM","SNDMHT","SLTMHT","CLYMHT")
-sites &lt;- eberg[,s.lst]
-# get horizons table:
-horizons &lt;- getHorizons(eberg, idcol="ID", sel=h.lst)
-# create object of type "SoilProfileCollection"
-eberg.spc &lt;- join(horizons, sites, type='inner')
-depths(eberg.spc) &lt;- ID ~ UHDICM + LHDICM
-site(eberg.spc) &lt;- as.formula(paste("~", paste(s.lst[-1], collapse="+"), sep=""))
-coordinates(eberg.spc) &lt;- ~X+Y
-proj4string(eberg.spc) &lt;- CRS("+init=epsg:31467")
-# convert to logits:
-eberg.spc@horizons$SNDMHT.t &lt;- log((eberg.spc@horizons$SNDMHT/100)/
-    (1-eberg.spc@horizons$SNDMHT/100))
-# convert to geosamples:
-eberg.geo &lt;- as.geosamples(eberg.spc)
-# load gridded data:
-data(eberg_grid)
-gridded(eberg_grid) &lt;- ~x+y
-proj4string(eberg_grid) &lt;- CRS("+init=epsg:31467")
-# derive spc's:
-formulaString &lt;- ~ PRMGEO6+DEMSRT6+TWISRT6+TIRAST6
-eberg_spc &lt;- spc(eberg_grid, formulaString)
-# build a 3D "gstatModel": 
-glm.formulaString = as.formula(paste("observedValue ~ ", 
-     paste(names(eberg_spc@predicted), collapse="+"), "+ ns(altitude, df=4)"))
-## Not run: 
-SNDMHT.m &lt;- fit.gstatModel(observations=eberg.geo, glm.formulaString, 
-     covariates=eberg_spc@predicted, methodid="SNDMHT.t")
-summary(SNDMHT.m@regModel)
-SNDMHT.m@vgmModel
-# prepare new locations (6 standard depths): 
-new3D &lt;- sp3D(eberg_spc@predicted)
-# Make predictions at six depths:
-sd.l &lt;- lapply(new3D, FUN=function(x){predict(SNDMHT.m, predictionLocations=x, nfold=0)})
-# back-transform values from logits:
-for(j in 1:length(sd.l)){ 
-    sd.l[[j]]@predicted$observedValue &lt;- exp(sd.l[[j]]@predicted$observedValue)/
-      (1+exp(sd.l[[j]]@predicted$observedValue))*100 
-}
-# reproject to WGS84 system (100 m resolution):
-p = get("cellsize", envir = GSIF.opts)[1]
-s = get("stdepths", envir = GSIF.opts)
-sd.ll &lt;- sapply(1:length(sd.l), FUN=function(x){make.3Dgrid(sd.l[[x]]@predicted[3:4],
-     pixsize=p, stdepths=s[x])})
-# save to a "GlobalSoilMap" object:
-SNDMHT.gsm &lt;- GlobalSoilMap(varname="SNDMHT", sd.ll, period=c("1999-02-01", "2001-07-01"))
-str(SNDMHT.gsm, max.level=2)
-# visualize all maps in Google Earth:
-data(R_pal)
-z0 = mean(eberg_grid$DEMSRT6, na.rm=TRUE)
-# export grids:
-for(j in 1:length(sd.ll)){
-  kml(slot(SNDMHT.gsm, paste("sd", j, sep="")), folder.name = paste("eberg_sd", j, sep=""),
-     file = paste("SNDMHT_sd", j, ".kml", sep=""), colour = observedValue, z.lim=c(10,85),
-     raster_name = paste("SNDMHT_sd", j, ".png", sep=""), altitude = z0+5000+(s[j]*2500))
-}
-
-## End(Not run)
-</pre>
-
-<hr><div align="center">[Package <em>GSIF</em> version 0.3-6 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.4-0 <a href="00Index.html">Index</a>]</div>
 </body></html>

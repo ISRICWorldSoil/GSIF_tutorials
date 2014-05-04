@@ -69,10 +69,6 @@ echo $contents; } ?>
 <p>To install this package from R-forge use (works only on<strong> &gt;= R 2.15!</strong>):</p>
 <p class="R_code">&gt; install.packages(c(&quot;RCurl&quot;, &quot;XML&quot;, &quot;rgdal&quot;, &quot;raster&quot;, &quot;sp&quot;, &quot;aqp&quot;,  &quot;mda&quot;, &quot;gstat&quot;, &quot;plotKML&quot;, &quot;dismo&quot;, &quot;rJava&quot;))<br />
 &gt; install.packages(&quot;GSIF&quot;, repos=c(&quot;http://R-Forge.R-project.org&quot;))</p>
-<p>Alternatively, you can install the most recent snapshot of the package directly from the source by using e.g.:</p>
-<pre class="R_code">&gt; install.packages(c(&quot;RCurl&quot;, &quot;XML&quot;, &quot;rgdal&quot;, &quot;raster&quot;, &quot;sp&quot;, &quot;aqp&quot;, &quot;mda&quot;, &quot;gstat&quot;, &quot;plotKML&quot;, &quot;dismo&quot;, &quot;rJava&quot;, &quot;rpart&quot;, &quot;maptools&quot;, &quot;nortest&quot;, &quot;randomForest&quot;))
-&gt; download.file(&quot;http://gsif.r-forge.r-project.org/GSIF_0.3-5.tar.gz&quot;, &quot;GSIF_0.3-5.tar.gz&quot;)
-&gt; system(&quot;R CMD INSTALL GSIF_0.3-5.tar.gz&quot;) </pre>
 <p>GSIF package extensively uses a number of external software, hence it is highly recommended that, prior to starting GSIF, you first download and install:</p>
 <ol>
   <li><a href="http://fwtools.maptools.org" target="_blank">FWTools</a> (<em>required</em>) &#8212; this software is called by several functions (e.g. <a href="make.3Dgrid.html">make.3Dgrid</a>);</li>
@@ -82,6 +78,7 @@ echo $contents; } ?>
 <p>Read more:  installation and first steps with <strong><a href="http://plotkml.r-forge.r-project.org/">plotKML</a></strong>.</p>
 <p><strong>News:</strong></p>
 <ul>
+  <li>Apr 2014: new version of <a href="http://www.soilgrids.org/">SoilGrids1km</a> released (largely based on the GSIF package); </li>
   <li>Jun 2013: added a function to map uncertainty using the <a href="http://cran.r-project.org/web/packages/quantregForest/">quantregForest</a> package; </li>
   <li>Apr 2013: added functionality for map tiling (updated to sp package 1.0-8); </li>
   <li>Mar 2013: finished producing soil property maps of Africa at 1 km resolution; </li>

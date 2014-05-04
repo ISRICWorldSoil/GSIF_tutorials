@@ -12,7 +12,8 @@
     stsize = c(5, 10, 15, 30, 40, 100)/100, 
     cellsize = rev(c(6/120, 3/120, 1/120, 1/240, 1/600, 1/1200, 1/3600)),
     REST.server = 'http://rest.soilgrids.org/',
-    attributes = c("ORCDRC","PHIHOX","SNDPPT","SLTPPT","CLYPPT","CFRVOL","CEC","BLD","TAXGWRB","TAXOUSDA"),
+    attributes = c("ORCDRC","PHIHOX","SNDPPT","SLTPPT","CLYPPT",
+                   "CFRVOL","CEC","BLD","TAXGWRB","TAXOUSDA"),
     TimeSpan = list(begin=as.POSIXct("1950-01-01"), end=as.POSIXct("2005-12-30")),
     show.env = TRUE)
 }

@@ -1,12 +1,12 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><head><title>R: Africa Sentinel Site data</title>
+<html><head><title>R: Africa Sentinel Site data (wet chemistry)</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <link rel="stylesheet" type="text/css" href="R.css">
 </head><body>
 
 <table width="100%" summary="page for afss {GSIF}"><tr><td>afss {GSIF}</td><td align="right">R Documentation</td></tr></table>
 
-<h2>Africa Sentinel Site data</h2>
+<h2>Africa Sentinel Site data (wet chemistry)</h2>
 
 <h3>Description</h3>
 
@@ -48,15 +48,25 @@
 </dd>
 <dt><code>LHDICM</code></dt><dd><p>numeric; lower sampling depth from the surface in cm</p>
 </dd>
-<dt><code>CLYPPT</code></dt><dd><p>numeric; weight percentage of the clay particles (&lt;0.0002 mm; <code>Clay</code> in the LDSF Field Database)</p>
+<dt><code>ORCCNS</code></dt><dd><p>numeric; soil organic carbon content in permille (<code>SOC</code> in the LDSF Field Database)</p>
 </dd>
-<dt><code>SNDPPT</code></dt><dd><p>numeric; weight percentage of the sand particles (0.0002&ndash;0.05 mm; <code>Sand</code> in the LDSF Field Database)</p>
+<dt><code>PHIHOX</code></dt><dd><p>numeric; pH index measured in water solution (<code>pH</code> in the LDSF Field Database)</p>
 </dd>
-<dt><code>PHIHO5</code></dt><dd><p>numeric; pH index measured in water solution (<code>pH</code> in the LDSF Field Database)</p>
+<dt><code>EXB</code></dt><dd><p>numeric; Exchangeable bases (<code>ExBas</code> in the LDSF Field Database)</p>
 </dd>
-<dt><code>BST</code></dt><dd><p>numeric; the exchangeable bases sum of exchangeable Ca, Mg, K \&amp; Na of the sample in cmol/kg (<code>ExBas</code> in the LDSF Field Database)</p>
+<dt><code>ALUM3S</code></dt><dd><p>numeric; Aluminium concentration (<code>m3.Al</code> in the LDSF Field Database)</p>
 </dd>
-<dt><code>ORCDRC</code></dt><dd><p>numeric; soil organic carbon content in permille (<code>SOC</code> in the LDSF Field Database)</p>
+<dt><code>ECAM3S</code></dt><dd><p>numeric; Exchangeable Ca (<code>ExCa</code> in the LDSF Field Database)</p>
+</dd>
+<dt><code>EXKM3S</code></dt><dd><p>numeric; Exchangeable K (<code>ExK</code> in the LDSF Field Database)</p>
+</dd>
+<dt><code>EMGM3S</code></dt><dd><p>numeric; Exchangeable Mg (<code>ExMg</code> in the LDSF Field Database)</p>
+</dd>
+<dt><code>ENAM3S</code></dt><dd><p>numeric; Exchangeable Mg (<code>ExNa</code> in the LDSF Field Database)</p>
+</dd>
+<dt><code>NITCNS</code></dt><dd><p>numeric; Exchangeable Mg (<code>Total.Nitrogen</code> in the LDSF Field Database)</p>
+</dd>
+<dt><code>SNDLDF</code></dt><dd><p>numeric; weight percentage of the sand particles (0.0002&ndash;0.05 mm; <code>Sand</code> in the LDSF Field Database)</p>
 </dd>
 </dl>
 
@@ -105,30 +115,29 @@ data(afss)
 xy &lt;- afss$sites
 coordinates(xy) &lt;- ~ LONWGS84 + LATWGS84
 proj4string(xy) &lt;- "+proj=longlat +datum=WGS84"
-xy$PHIHO5_d1 &lt;- merge(xy@data, afss$horizons[afss$horizons$UHDICM==0,], all.x=TRUE)$PHIHO5
+xy$PHIHOX_d1 &lt;- merge(xy@data, afss$horizons[afss$horizons$UHDICM==0,], all.x=TRUE)$PHIHOX
+
+## plot points in Google Earth:
 library(plotKML)
 data(R_pal)
-plotKML(xy["PHIHO5_d1"], colour_scale=R_pal[["pH_pal"]])
+plotKML(xy["PHIHOX_d1"], colour_scale=R_pal[["pH_pal"]])
+
 ## obtain country borders:
-if(is.na(file.info("admin.af.rda")$size)){
-download.file("http://gsif.isric.org/lib/exe/fetch.php?media=admin.af.rda", 
-   "admin.af.rda")
-}
-try(load("admin.af.rda"))
+con.admin &lt;- url("http://gsif.isric.org/lib/exe/fetch.php?media=admin.af.rda")
+load(con.admin)
 proj4string(admin.af) &lt;- get("ref_CRS", envir = plotKML.opts)
 admin.af &lt;- as(admin.af, "SpatialLines") 
 ## overlay and plot points and maps:
 plot(admin.af, col="darkgrey", xlim=xy@bbox[1,], ylim=xy@bbox[2,])
 points(xy, pch=21, bg="white", cex=.6, col="black")
+
 ## obtain MIR measurements:
-if(is.na(file.info("afss.spec.rda")$size)){
-download.file("http://gsif.isric.org/lib/exe/fetch.php?media=afss.spec.rda", 
-  "afss.spec.rda")
-}
-try(load("afss.spec.rda"))
+con &lt;- url("http://gsif.isric.org/lib/exe/fetch.php?media=afss.spec.rda")
+load(con)
+## See "soil.spec" package for further processing...
 
 ## End(Not run)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.3-6 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.4-0 <a href="00Index.html">Index</a>]</div>
 </body></html>

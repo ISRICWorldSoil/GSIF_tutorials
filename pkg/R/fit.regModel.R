@@ -9,13 +9,13 @@
 setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.frame", predictionDomain = "SpatialPixelsDataFrame", method = "character"), function(formulaString, rmatrix, predictionDomain, method = list("GLM", "rpart", "randomForest", "quantregForest", "lme")[[1]], dimensions = NULL, fit.family = gaussian(), stepwise = TRUE, rvgm, GLS = FALSE, random, steps=100, ...){
 
   ## target variable name:
-  tv = all.vars(formulaString)[1]  
+  tv <- all.vars(formulaString)[1]  
   if(!any(names(rmatrix) %in% tv)){
     stop("Target variable not found in the 'rmatrix' object.")
   }
   
   ## spatial coordinates (column names):
-  xyn = attr(predictionDomain@bbox, "dimnames")[[1]]
+  xyn <- attr(predictionDomain@bbox, "dimnames")[[1]]
   ## try to guess the dimensions:
   if(is.null(dimensions)){
     if(length(xyn)==2){ dimensions = "2D" }
@@ -52,7 +52,14 @@ setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.f
       if(any(names(rgm) == "na.action")){  rmatrix <- rmatrix[-rgm$na.action,] }
       rmatrix$residual <- resid(rgm)
     } else {
-      message("Fitting a GLM...")
+      if(all(c("family","link") %in% names(fit.family))){
+        if(fit.family$family=="gaussian"&fit.family$link=="identity"){
+          message("Fitting a linear model...")
+        } 
+      }
+      else {  
+        message("Fitting a GLM...")
+      }
       rgm <- glm(formulaString, data=rmatrix, family=fit.family)
       if(stepwise == TRUE){
         rgm <- step(rgm, trace = 0, steps=steps)

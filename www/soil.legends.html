@@ -26,9 +26,9 @@
 <dl>
 <dt><code>ORCDRC</code></dt><dd><p>numeric; soil organic carbon content in permille</p>
 </dd>
-<dt><code>PHIHO5</code></dt><dd><p>numeric; pH index measured in water solution</p>
+<dt><code>PHIHOX</code></dt><dd><p>numeric; pH index measured in water solution</p>
 </dd>
-<dt><code>PHIHO5</code></dt><dd><p>numeric; pH index measured in KCl solution</p>
+<dt><code>PHIKCL</code></dt><dd><p>numeric; pH index measured in KCl solution</p>
 </dd>
 <dt><code>BLD</code></dt><dd><p>numeric; bulk density in kg per cubic meter</p>
 </dd>
@@ -78,10 +78,12 @@ pal &lt;- soil.legends$ORCDRC$COLOR
 names(pal) &lt;- signif((soil.legends$ORCDRC$MAX + 
     soil.legends$ORCDRC$MIN)/2, 3)
 pal
+data(soil.vars)
+soil.vars[soil.vars$varname=="ORCDRC",]
 ## make SAGA GIS palette:
 makeSAGAlegend(x=as.factor(names(pal)), col_pal=pal, 
     filename="ORCDRC.txt")
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.3-6 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.4-0 <a href="00Index.html">Index</a>]</div>
 </body></html>

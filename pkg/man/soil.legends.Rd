@@ -2,6 +2,8 @@
 \docType{data}
 \encoding{latin1}
 \alias{soil.legends}
+\alias{soil.dom}
+\alias{soil.vars}
 \alias{makeSAGAlegend}
 \title{Standard color palettes for soil properties and classes}
 \description{Standard color palettes for soil properties and classes that can be used to display global soil data.}
@@ -35,6 +37,8 @@ pal <- soil.legends$ORCDRC$COLOR
 names(pal) <- signif((soil.legends$ORCDRC$MAX + 
     soil.legends$ORCDRC$MIN)/2, 3)
 pal
+data(soil.vars)
+soil.vars[soil.vars$varname=="ORCDRC",]
 ## make SAGA GIS palette:
 makeSAGAlegend(x=as.factor(names(pal)), col_pal=pal, 
     filename="ORCDRC.txt")

@@ -85,7 +85,7 @@ make.3Dgrid(obj,
 
 <h3>Note</h3>
 
-<p>If the input object is of class <code>"SpatialPixelsDataFrame"</code>, the method by default uses <code>FWTools</code> (<code>gdalwarp</code> command) to resample grids, otherwise the <code>raster::projectRaster</code> command is passed. <a href="http://fwtools.maptools.org/">FWTools</a> must be installed separately. <br> 
+<p>If the input object is of class <code>"SpatialPixelsDataFrame"</code>, the method by default uses <code>FWTools</code> (<code>warp</code> command) to resample grids, otherwise the <code>raster::projectRaster</code> command is passed. <a href="http://fwtools.maptools.org/">FWTools</a> must be installed separately. <br> 
 Note: this operation can be time consuming for large areas (e.g. &gt;&gt; 1e6 pixels).</p>
 
 
@@ -102,6 +102,9 @@ Note: this operation can be time consuming for large areas (e.g. &gt;&gt; 1e6 pi
 </p>
 </li>
 <li><p> FWTools (<a href="http://fwtools.maptools.org">http://fwtools.maptools.org</a>)
+</p>
+</li>
+<li><p> gdalUtils package (<a href="http://CRAN.R-project.org/package=gdalUtils">http://CRAN.R-project.org/package=gdalUtils</a>)
 </p>
 </li>
 <li><p> Raster package (<a href="http://CRAN.R-project.org/package=raster">http://CRAN.R-project.org/package=raster</a>)
@@ -126,12 +129,12 @@ library(raster)
 data(eberg_grid)
 gridded(eberg_grid) &lt;- ~x+y
 proj4string(eberg_grid) &lt;- CRS("+init=epsg:31467")
-## Not run: ##  convert to spatial components:
+##  convert to spatial components:
 formulaString &lt;- ~ PRMGEO6+DEMSRT6+TWISRT6+TIRAST6
 eberg_spc &lt;- spc(eberg_grid, formulaString)
 ## create 3D locations in the original coordinate system:
 eberg_3Dxy &lt;- sp3D(eberg_spc@predicted)
-## wrapper function to create 3D locations in the default WGS84 system:
+## Not run: ## wrapper function to create 3D locations in the default WGS84 system:
 eberg_3D &lt;- make.3Dgrid(eberg_spc@predicted)
 image(eberg_3D[[1]]["PC1"])
 ## downscale 100 m resolution imagery to 25 m:
@@ -139,12 +142,12 @@ data(eberg_grid25)
 gridded(eberg_grid25) &lt;- ~x+y
 proj4string(eberg_grid25) &lt;- CRS("+init=epsg:31467")
 eberg_grid25@data &lt;- cbind(eberg_grid25@data, 
-    gdalwarp(eberg_grid, pixsize=eberg_grid25@grid@cellsize[1], 
+    warp(eberg_grid, pixsize=eberg_grid25@grid@cellsize[1], 
     GridTopology=eberg_grid25@grid, resampling_method="cubicspline")@data)
 ## this function requires FWTools!
 
 ## End(Not run)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.3-6 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.4-0 <a href="00Index.html">Index</a>]</div>
 </body></html>

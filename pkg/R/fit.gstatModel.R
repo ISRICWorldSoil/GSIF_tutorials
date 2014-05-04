@@ -12,16 +12,20 @@ setMethod("fit.gstatModel", signature(observations = "SpatialPointsDataFrame", f
   if(length(attr(coordinates(observations), "dimnames")[[2]])>2){
     warning("This method uses only 2D coordinates of the points. For 3D data consider using the 'geosamples-class'.")
   }
+  ## TH: the model has to include at least one covariate:
+  if(length(all.vars(formulaString)[-1])==0){
+    stop("No covariates have been specified in the 'formulaString'")
+  }
 
-  if(!missing(fit.family) & !method=="GLM"){ warning("'fit.family' argument will be ignored. Use 'method=\"GLM\"' instead.")  }
+  if(!missing(fit.family) & !method=="GLM"){ warning("'fit.family' argument will be ignored. Using 'method=\"GLM\"' instead.")  }
 
   ## overlay:
   ov <- over(observations, covariates)
   ## all variables of interest:
-  tv = all.vars(formulaString)[1]
-  seln = names(covariates) %in% all.vars(formulaString)[-1]
+  tv <- all.vars(formulaString)[1]
+  seln <- names(covariates) %in% all.vars(formulaString)[-1]
   ## check if all covariates are available: 
-  if(length(seln)==0){
+  if(sum(!is.na(seln))==0){
       stop("None of the covariates in the 'formulaString' matches the names in the 'covariates' object")
   }
   ov <- cbind(data.frame(observations[,tv]), ov)  
@@ -34,14 +38,13 @@ setMethod("fit.gstatModel", signature(observations = "SpatialPointsDataFrame", f
     names(ov)[xyn] <- attr(covariates@bbox, "dimnames")[[1]]     
   }
 
-  # check the size of the output:
+  ## check the size of output:
   if(nrow(ov)==0|is.null(ov[,tv])) {
     stop("The 'over' operations resulted in an empty set.")
   }
   
-  # fit/filter the regression model:
-  m <- fit.regModel(formulaString = formulaString, rmatrix = ov, predictionDomain = covariates[seln], method = method, dimensions = "2D", fit.family = fit.family, stepwise = stepwise, vgmFun = vgmFun, subsample = subsample, ...)  
-    
+  ## fit/filter the regression model:
+  m <- fit.regModel(formulaString = formulaString, rmatrix = ov, predictionDomain = covariates[seln], method = method, dimensions = "2D", fit.family = fit.family, stepwise = stepwise, vgmFun = vgmFun, subsample = subsample, ...)   
   return(m)
   
 })
@@ -50,10 +53,19 @@ setMethod("fit.gstatModel", signature(observations = "SpatialPointsDataFrame", f
 ## Fit a RK model using geosamples class:
 setMethod("fit.gstatModel", signature(observations = "geosamples", formulaString = "formula", covariates = "SpatialPixelsDataFrame"), function(observations, formulaString, covariates, method = list("GLM", "rpart", "randomForest", "quantregForest")[[1]], dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]], fit.family = gaussian(), stepwise = TRUE, vgmFun = "Exp", subsample = 5000, ...){
   
+  ## TH: the model has to include at least one covariate:
+  if(length(all.vars(formulaString)[-1])==0){
+    stop("No covariates have been specified in the 'formulaString'")
+  } 
+  
   ## all columns of interest:
-  methodid = all.vars(formulaString)[1]
-  seln = names(covariates) %in% all.vars(formulaString)[-1]
-  xyn = attr(covariates@bbox, "dimnames")[[1]]
+  methodid <- all.vars(formulaString)[1]
+  seln <- names(covariates) %in% all.vars(formulaString)[-1]
+  xyn <- attr(covariates@bbox, "dimnames")[[1]]
+  ## check if all covariates are available: 
+  if(sum(!is.na(seln))==0){
+      stop("None of the covariates in the 'formulaString' matches the names in the 'covariates' object")
+  }
   
   ## prepare regression matrix:
   ov <- over(x=covariates, y=observations, method=methodid, var.type = "numeric")
@@ -70,7 +82,6 @@ setMethod("fit.gstatModel", signature(observations = "geosamples", formulaString
   
   ## fit/filter the regression model:
   m <- fit.regModel(formulaString = formulaString, rmatrix = ov, predictionDomain = covariates[seln], method = method, dimensions = dimensions, fit.family = fit.family, stepwise = stepwise, vgmFun = vgmFun, subsample = subsample, ...)
-  
   return(m)  
 
 })
@@ -102,14 +113,14 @@ setMethod("fit.gstatModel", signature(observations = "geosamples", formulaString
     warning("'fit.family' argument will be ignored. Use 'method=\"GLM\"' instead.")  
   }
 
-  # covariate names:
-  covs = unlist(sapply(covariates, FUN=function(x){names(x)}))
+  ## covariate names:
+  covs <- unlist(sapply(covariates, FUN=function(x){names(x)}))
   if(!length(unique(covs))==length(covs)){ stop("'Covariates' column names must be unique") }
   
-  # target variable:
-  methodid = all.vars(formulaString)[1]
+  ## target variable:
+  methodid <- all.vars(formulaString)[1]
      
-  # prepare regression matrix:
+  ## prepare regression matrix:
   ov <- list(NULL)
   for(j in 1:length(covariates)){
     ov[[j]] <- over(x=covariates[[j]], y=observations, method=methodid, var.type="numeric")
@@ -122,24 +133,22 @@ setMethod("fit.gstatModel", signature(observations = "geosamples", formulaString
   xy <- ov[[1]][,xyn]
   
   gn <- names(observations@data)[!(names(observations@data) %in% c("observationid", xyn))]
-  # merge all regression matrices:
+  ## merge all regression matrices:
   ov <- Reduce(function(x,y) {merge(x[!(names(x) %in% gn)],y[!(names(y) %in% gn)], by="observationid")}, ov)
   ov <- merge(observations@data, ov[,c("observationid", covs)], by="observationid")
   ov <- cbind(ov, xy) 
 
-  # geostats only possible with numeric variables:  
+  ## geostats only possible with numeric variables:  
   ov[,methodid] <- as.numeric(ov$observedValue)
   ov$observedValue <- NULL
   
-  # check the size of the output object:
+  ## check the size of the output object:
   if(nrow(ov)==0|is.null(ov[,methodid])) {
     warning("The 'over' operations resulted in an empty set. Check 'methodid' column.")
   }
   
-  # fit/filter the regression model:
-  m <- fit.regModel(formulaString = formulaString, rmatrix = ov, predictionDomain = covariates[[1]], method = method, dimensions = "3D", fit.family = fit.family, stepwise = stepwise, vgmFun = vgmFun, subsample = subsample, ...)
-  
-  # save the fitted model:
+  ## fit/filter the regression model:
+  m <- fit.regModel(formulaString = formulaString, rmatrix = ov, predictionDomain = covariates[[1]], method = method, dimensions = "3D", fit.family = fit.family, stepwise = stepwise, vgmFun = vgmFun, subsample = subsample, ...) 
   return(m) 
 
 })

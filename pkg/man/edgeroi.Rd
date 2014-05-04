@@ -75,17 +75,22 @@ edgeroi$horizons[edgeroi$horizons$SOURCEID=="399_EDGEROI_ed095_1",]
 sites <- edgeroi$sites
 coordinates(sites) <- ~ LONGDA94 + LATGDA94
 proj4string(sites) <- CRS("+proj=longlat +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +no_defs")
-\dontrun{## plot points and grids:
-pnts <- list("sp.points", spTransform(sites, CRS("+init=epsg:28355")), pch="+", col="black")
+sites <- spTransform(sites, CRS("+init=epsg:28355"))
+
+\dontrun{
+## plot points and grids:
+pnts <- list("sp.points", sites, pch="+", col="black")
 ## load the 250 m grids:
-download.file("http://worldgrids.org/rda/edgeroi.grids.rda", "edgeroi.grids.rda")
-load("edgeroi.grids.rda")
+con <- url("http://gsif.isric.org/lib/exe/fetch.php?media=edgeroi.grids.rda")
+load(con)
+str(edgeroi.grids)
 gridded(edgeroi.grids) <- ~x+y
 proj4string(edgeroi.grids) <- CRS("+init=epsg:28355")
 spplot(edgeroi.grids[1], sp.layout=pnts)
 ## load the 100 m grids:
-download.file("http://worldgrids.org/rda/edgeroi.grids100.rda", "edgeroi.grids100.rda")
-load("edgeroi.grids100.rda")
+con2 <- url("http://gsif.isric.org/lib/exe/fetch.php?media=edgeroi.grids100.rda")
+load(con2) 
+str(edgeroi.grids100)
 gridded(edgeroi.grids100) <- ~x+y
 proj4string(edgeroi.grids100) <- CRS("+init=epsg:28355")
 spplot(edgeroi.grids100["TI1LAN6"], sp.layout=pnts)

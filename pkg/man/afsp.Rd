@@ -30,7 +30,7 @@ Horizons table contains the following columns:
   \item{\code{SNDPPT}}{numeric; weight percentage of the sand particles (0.0002--0.05 mm; \code{Sand} in the AFSP)}
   \item{\code{SLTPPT}}{numeric; weight percentage of the silt particles (0.05--2 mm; \code{Silt} in the AFSP)}
   \item{\code{CLYPPT}}{numeric; weight percentage of the clay particles (<0.0002 mm; \code{Clay} in the AFSP)}
-  \item{\code{BLD}}{bulk density in tones per cubic-meter (\code{BlkDens} in the AFSP)}
+  \item{\code{BLD}}{bulk density in tonnes per cubic-meter (\code{BlkDens} in the AFSP)}
   \item{\code{PHIHO5}}{numeric; pH index measured in water solution (\code{PHH2O} in the AFSP)}
   \item{\code{PHIKCL}}{numeric; pH index measured in KCl solution (\code{PHKCl} in the AFSP)}
   \item{\code{ORCDRC}}{numeric; soil organic carbon content in permilles (\code{OrgC} in the AFSP)}
@@ -86,9 +86,9 @@ proj4string(country) = "+proj=longlat +datum=WGS84"
 ## overlay and plot points and maps:
 plot(country, col="darkgrey", xlim=c(-25.3,57.8), ylim=c(-34.8, 37.4))
 points(sites, pch=21, bg="white", cex=.6, col="black")
-## load gridded data for whole of Africa:
-download.file("http://worldgrids.org/rda/afgrid20.rda", "afgrid20.rda")
-load("afgrid20.rda")
+## load gridded data for Africa:
+con <- url("http://gsif.isric.org/lib/exe/fetch.php?media=afgrid20.rda")
+load(con)
 ## plot maps:
 col = grey(rev(seq(0.1,0.975,0.025)))
 names(afgrid20)

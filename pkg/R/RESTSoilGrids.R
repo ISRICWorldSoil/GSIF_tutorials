@@ -9,7 +9,7 @@ REST.SoilGrids <- function(attributes, depths=paste("sd",1:6,sep=""), confidence
   if(validate==TRUE){
   ## get the most recent description:
     require(rjson)
-    try( ret <- fromJSON(file=paste(get("REST.server", envir = GSIF.opts), "query/describe", sep="")), silent = TRUE )
+    try( ret <- rjson::fromJSON(file=paste(get("REST.server", envir = GSIF.opts), "query/describe", sep="")), silent = TRUE )
     if(!class(.Last.value)[1]=="try-error" & !length(ret$query)==0){
       if(any(!attributes %in% ret$query$attributes)){
         stop(paste("Requested 'attributes' not present. See '", get("REST.server", envir = GSIF.opts),"' for more info.", sep=""))

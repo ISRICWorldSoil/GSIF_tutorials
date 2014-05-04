@@ -1,5 +1,6 @@
 \name{REST.SoilGrids-class}
 \docType{class}
+\alias{REST.SoilGrids-class}
 \alias{REST.SoilGrids}
 \alias{over,REST.SoilGrids,SpatialPoints-method}
 \title{A class for SoilGrids REST API}

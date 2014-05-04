@@ -9,7 +9,7 @@
 <hr>
 <div align="center">
 </div>
-<h2>Documentation for package &lsquo;GSIF&rsquo; version 0.3-3</h2>
+<h2>Documentation for package &lsquo;GSIF&rsquo; version 0.4-0</h2>
 <ul><li><a href="http://gsif.r-forge.r-project.org/">R-Forge project</a>.</li>
 <li><a href="http://cran.r-project.org/web/packages/">Overview of contributed packages</a>.</li>
 </ul>
@@ -21,9 +21,9 @@
 <tr><td width="25%"><a href="afsp.html">afsp</a></td>
 <td>Africa Soil Profiles Database</td></tr>
 <tr><td width="25%"><a href="afss.html">afss</a></td>
-<td>Africa Sentinel Site data</td></tr>
+<td>Africa Sentinel Site data (wet chemistry)</td></tr>
 <tr><td width="25%"><a href="afss.html">afss.spec</a></td>
-<td>Africa Sentinel Site data</td></tr>
+<td>Africa Sentinel Site data (wet chemistry)</td></tr>
 <tr><td width="25%"><a href="as.data.frame.html">as.data.frame</a></td>
 <td>Converts an object of class '"SoilProfileCollection"' to a data frame</td></tr>
 <tr><td width="25%"><a href="as.data.frame.html">as.data.frame-method</a></td>
@@ -42,6 +42,10 @@
 <td>The Edgeroi Data Set</td></tr>
 <tr><td width="25%"><a href="edgeroi.html">edgeroi.grids100</a></td>
 <td>The Edgeroi Data Set</td></tr>
+<tr><td width="25%"><a href="FAO.SoilProfileCollection.html">FAO.SoilProfileCollection</a></td>
+<td>A class for FAO SoilProfileCollection</td></tr>
+<tr><td width="25%"><a href="FAO.SoilProfileCollection.html">FAO.SoilProfileCollection-class</a></td>
+<td>A class for FAO SoilProfileCollection</td></tr>
 <tr><td width="25%"><a href="fit.gstatModel.html">fit.gstatModel</a></td>
 <td>Methods to fit a regression-kriging model</td></tr>
 <tr><td width="25%"><a href="fit.gstatModel.html">fit.gstatModel-method</a></td>
@@ -54,10 +58,6 @@
 <td>Fits a 2D or 3D variogram model to spatial data</td></tr>
 <tr><td width="25%"><a href="fit.vgmModel.html">fit.vgmModel-method</a></td>
 <td>Fits a 2D or 3D variogram model to spatial data</td></tr>
-<tr><td width="25%"><a href="gdalwarp.html">gdalwarp</a></td>
-<td>GDAL warp function from FWTools</td></tr>
-<tr><td width="25%"><a href="gdalwarp.html">gdalwarp-method</a></td>
-<td>GDAL warp function from FWTools</td></tr>
 <tr><td width="25%"><a href="geochm.html">geochm</a></td>
 <td>NGS database samples for Indiana State</td></tr>
 <tr><td width="25%"><a href="geosamples.html">geosamples-class</a></td>
@@ -87,15 +87,19 @@
 <tr><td width="25%"><a href="gstatModel.html">gstatModel-class</a></td>
 <td>A class for a geostatistical model</td></tr>
 <tr><td width="25%"><a href="landmask.html">landmask</a></td>
-<td>1-degree cell land mask for Global soil mapping purposes</td></tr>
+<td>Global coarse resolution land / soil mask maps</td></tr>
 <tr><td width="25%"><a href="landmask.html">landmask20km</a></td>
-<td>1-degree cell land mask for Global soil mapping purposes</td></tr>
+<td>Global coarse resolution land / soil mask maps</td></tr>
 <tr><td width="25%"><a href="make.3Dgrid.html">make.3Dgrid</a></td>
 <td>Methods to prepare 3D prediction locations</td></tr>
 <tr><td width="25%"><a href="make.3Dgrid.html">make.3Dgrid-method</a></td>
 <td>Methods to prepare 3D prediction locations</td></tr>
 <tr><td width="25%"><a href="makeGstatCmd.html">makeGstatCmd</a></td>
 <td>Make a gstat command script</td></tr>
+<tr><td width="25%"><a href="soil.legends.html">makeSAGAlegend</a></td>
+<td>Standard color palettes for soil properties and classes</td></tr>
+<tr><td width="25%"><a href="getSpatialTiles.html">makeTiles</a></td>
+<td>Get a list of tiles (regular blocks)</td></tr>
 <tr><td width="25%"><a href="MaxEnt.html">MaxEnt</a></td>
 <td>Prediction and cross-validation using the Maximum Entropy</td></tr>
 <tr><td width="25%"><a href="MaxEnt.html">MaxEnt-method</a></td>
@@ -108,6 +112,10 @@
 <td>Fits a mass preserving spline</td></tr>
 <tr><td width="25%"><a href="mpspline.html">mpspline-method</a></td>
 <td>Fits a mass preserving spline</td></tr>
+<tr><td width="25%"><a href="OCSKGM.html">OCSKGM</a></td>
+<td>Soil organic carbon stock</td></tr>
+<tr><td width="25%"><a href="REST.SoilGrids.html">over-method</a></td>
+<td>A class for SoilGrids REST API</td></tr>
 <tr><td width="25%"><a href="WPS.html">over-method</a></td>
 <td>A class for a Web Processing Service</td></tr>
 <tr><td width="25%"><a href="geosamples.html">over-method</a></td>
@@ -120,12 +128,28 @@
 <td>Predict from an object of class '"gstatModel"'</td></tr>
 <tr><td width="25%"><a href="predict.gstatModel.html">predict.gstatModelList</a></td>
 <td>Predict from an object of class '"gstatModel"'</td></tr>
+<tr><td width="25%"><a href="gstatModel.html">print.gstatModel</a></td>
+<td>A class for a geostatistical model</td></tr>
+<tr><td width="25%"><a href="REST.SoilGrids.html">REST.SoilGrids</a></td>
+<td>A class for SoilGrids REST API</td></tr>
+<tr><td width="25%"><a href="REST.SoilGrids.html">REST.SoilGrids-class</a></td>
+<td>A class for SoilGrids REST API</td></tr>
 <tr><td width="25%"><a href="WPS.html">show-method</a></td>
 <td>A class for a Web Processing Service</td></tr>
 <tr><td width="25%"><a href="geosamples.html">show-method</a></td>
 <td>A class for spatially and temporally referenced samples</td></tr>
 <tr><td width="25%"><a href="summary.html">show-method</a></td>
 <td>Summarize an object of class '"SpatialPredictions"'</td></tr>
+<tr><td width="25%"><a href="soil.legends.html">soil.dom</a></td>
+<td>Standard color palettes for soil properties and classes</td></tr>
+<tr><td width="25%"><a href="soil.legends.html">soil.legends</a></td>
+<td>Standard color palettes for soil properties and classes</td></tr>
+<tr><td width="25%"><a href="soil.legends.html">soil.vars</a></td>
+<td>Standard color palettes for soil properties and classes</td></tr>
+<tr><td width="25%"><a href="SoilGrids.html">SoilGrids</a></td>
+<td>A class for SoilGrids - soil property and/or class maps</td></tr>
+<tr><td width="25%"><a href="SoilGrids.html">SoilGrids-class</a></td>
+<td>A class for SoilGrids - soil property and/or class maps</td></tr>
 <tr><td width="25%"><a href="make.3Dgrid.html">sp3D</a></td>
 <td>Methods to prepare 3D prediction locations</td></tr>
 <tr><td width="25%"><a href="make.3Dgrid.html">sp3D-method</a></td>
@@ -166,6 +190,10 @@
 <td>A class for a geostatistical model</td></tr>
 <tr><td width="25%"><a href="gstatModel.html">validate-method</a></td>
 <td>A class for a geostatistical model</td></tr>
+<tr><td width="25%"><a href="warp.html">warp</a></td>
+<td>(GDAL) warp function from FWTools</td></tr>
+<tr><td width="25%"><a href="warp.html">warp-method</a></td>
+<td>(GDAL) warp function from FWTools</td></tr>
 <tr><td width="25%"><a href="WPS.html">WPS-class</a></td>
 <td>A class for a Web Processing Service</td></tr>
 <tr><td width="25%"><a href="geosamples.html">write.data</a></td>

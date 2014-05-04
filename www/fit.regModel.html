@@ -16,12 +16,11 @@
 <h3>Usage</h3>
 
 <pre>
-## S4 method for signature 
-## 'formula,data.frame,SpatialPixelsDataFrame,character'
+## S4 method for signature 'formula,data.frame,SpatialPixelsDataFrame,character'
 fit.regModel(formulaString, rmatrix, predictionDomain, 
       method = list("GLM", "rpart", "randomForest", "quantregForest", "lme")[[1]], 
       dimensions = NULL, fit.family = gaussian(), stepwise = TRUE, rvgm, 
-      GLS = FALSE, random, ...)
+      GLS = FALSE, random, steps, ...)
 </pre>
 
 
@@ -67,6 +66,10 @@ fit.regModel(formulaString, rmatrix, predictionDomain,
 <tr valign="top"><td><code>random</code></td>
 <td>
 <p>specify the random function model; see <code>nlme::lme</code> for more details</p>
+</td></tr>
+<tr valign="top"><td><code>steps</code></td>
+<td>
+<p>integer; the maximum number of steps to be considered for step-wise regression; see <code>stats::step</code> for more details</p>
 </td></tr>
 <tr valign="top"><td><code>...</code></td>
 <td>
@@ -121,5 +124,5 @@ m3 &lt;- fit.regModel(log1p(om)~dist, rmatrix=ov, meuse.grid,
      method="lme", random=~1|ffreq)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.3-6 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.4-0 <a href="00Index.html">Index</a>]</div>
 </body></html>

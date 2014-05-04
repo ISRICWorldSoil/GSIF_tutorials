@@ -68,7 +68,7 @@
 </dd>
 <dt><code>CLYPPT</code></dt><dd><p>numeric; weight percentage of the clay particles (&lt;0.0002 mm; <code>Clay</code> in the AFSP)</p>
 </dd>
-<dt><code>BLD</code></dt><dd><p>bulk density in tones per cubic-meter (<code>BlkDens</code> in the AFSP)</p>
+<dt><code>BLD</code></dt><dd><p>bulk density in tonnes per cubic-meter (<code>BlkDens</code> in the AFSP)</p>
 </dd>
 <dt><code>PHIHO5</code></dt><dd><p>numeric; pH index measured in water solution (<code>PHH2O</code> in the AFSP)</p>
 </dd>
@@ -169,9 +169,9 @@ proj4string(country) = "+proj=longlat +datum=WGS84"
 ## overlay and plot points and maps:
 plot(country, col="darkgrey", xlim=c(-25.3,57.8), ylim=c(-34.8, 37.4))
 points(sites, pch=21, bg="white", cex=.6, col="black")
-## load gridded data for whole of Africa:
-download.file("http://worldgrids.org/rda/afgrid20.rda", "afgrid20.rda")
-load("afgrid20.rda")
+## load gridded data for Africa:
+con &lt;- url("http://gsif.isric.org/lib/exe/fetch.php?media=afgrid20.rda")
+load(con)
 ## plot maps:
 col = grey(rev(seq(0.1,0.975,0.025)))
 names(afgrid20)
@@ -183,5 +183,5 @@ writeGDAL(afgrid20["TDMMOD0a"], "TDMMOD0a.tif", "GTiff", mvFlag=-99999)
 ## End(Not run)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.3-6 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.4-0 <a href="00Index.html">Index</a>]</div>
 </body></html>
