@@ -6,7 +6,7 @@
 
 ## cross-validate a "gstatModel" object:
 setMethod("validate", signature(obj = "gstatModel"), function(obj, nfold = 5, predictionDomain = NULL, save.gstatModels = FALSE, ...){
-
+   ## nfold has to be =>2
    if(nfold < 2){ stop("'nfold' argument > 2 expected") }
 
    ## full cross-validation only possible with 'glm' class objects
@@ -27,12 +27,12 @@ setMethod("validate", signature(obj = "gstatModel"), function(obj, nfold = 5, pr
       stop("'nfold' argument must not exceed total number of points") 
     }
     ## get the covariates:
-    seln = all.vars(formulaString)[-1]
-    tv = all.vars(formulaString)[1]
-    tm = obj@regModel$terms[[2]]
+    seln <- all.vars(formulaString)[-1]
+    tv <- all.vars(formulaString)[1]
+    tm <- obj@regModel$terms[[2]]
      
     ## get the variogram:
-    vgmmodel = obj@vgmModel
+    vgmmodel <- obj@vgmModel
     class(vgmmodel) <- c("variogramModel", "data.frame")
     ## predictionDomain:
     if(is.null(predictionDomain)){
@@ -58,14 +58,16 @@ setMethod("validate", signature(obj = "gstatModel"), function(obj, nfold = 5, pr
       } else {
          dimensions = "3D"      
       }
-      m.l[[j]] <- fit.regModel(formulaString=formulaString, rmatrix=rmatrix, predictionDomain=predictionDomain, method="GLM", fit.family=mfamily, dimensions=dimensions, stepwise=TRUE, vgmFun=vgmmodel$model[2])
-      cv.l[[j]] <- predict.gstatModel(object=m.l[[j]], predictionLocations=nlocs, nfold=0, block=rep(0, ncol(obj@sp@coords)), mask.extra = FALSE, ...)$predicted
-      cv.l[[j]]$observed <- eval(tm, nlocs@data)
-      cv.l[[j]]$residual <- cv.l[[j]]$observed - cv.l[[j]]$var1.pred
-      cv.l[[j]]$zscore <- cv.l[[j]]$residual/sqrt(cv.l[[j]]$var1.var)
-      cv.l[[j]]$fold <- rep(j, length(cv.l[[j]]$residual))
-      ## clean up:
-      cv.l[[j]]@data <- cv.l[[j]]@data[,c("var1.pred", "var1.var", "observed", "residual", "zscore", "fold")]
+      try( m.l[[j]] <- fit.regModel(formulaString=formulaString, rmatrix=rmatrix, predictionDomain=predictionDomain, method="GLM", fit.family=mfamily, dimensions=dimensions, stepwise=TRUE, vgmFun=vgmmodel$model[2]) )
+      if(!is.null(cv.l[[j]])){
+        cv.l[[j]] <- predict.gstatModel(object=m.l[[j]], predictionLocations=nlocs, nfold=0, block=rep(0, ncol(obj@sp@coords)), mask.extra = FALSE, ...)$predicted
+        cv.l[[j]]$observed <- eval(tm, nlocs@data)
+        cv.l[[j]]$residual <- cv.l[[j]]$observed - cv.l[[j]]$var1.pred
+        cv.l[[j]]$zscore <- cv.l[[j]]$residual/sqrt(cv.l[[j]]$var1.var)
+        cv.l[[j]]$fold <- rep(j, length(cv.l[[j]]$residual))
+        ## clean up:
+        cv.l[[j]]@data <- cv.l[[j]]@data[,c("var1.pred", "var1.var", "observed", "residual", "zscore", "fold")]
+      }
     }
    
     if(save.gstatModels==TRUE){ 

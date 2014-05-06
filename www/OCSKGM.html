@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: Soil organic carbon stock</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="R.css">
+</head><body>
+
+<table width="100%" summary="page for OCSKGM {GSIF}"><tr><td>OCSKGM {GSIF}</td><td align="right">R Documentation</td></tr></table>
+
+<h2>Soil organic carbon stock</h2>
+
+<h3>Description</h3>
+
+<p>Derive soil organic carbon stock / storage (in kilograms per square-meter) and propagated uncertainty for a given horizon/solum depth and based on soil organic carbon concentration, horizon/solum thickness, bulk density and percentage of coarse fragments.</p>
+
+
+<h3>Usage</h3>
+
+<pre>OCSKGM(ORCDRC, BLD=1682, CRFVOL=0, HSIZE, 
+     ORCDRC.sd=10, BLD.sd=100, CRFVOL.sd=5, se.prop=TRUE)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>ORCDRC</code></td>
+<td>
+<p>numeric; soil organic carbon concentration in permille or g / kg</p>
+</td></tr>
+<tr valign="top"><td><code>BLD</code></td>
+<td>
+<p>numeric; bulk density in kg / cubic-meter for the horizon/solum</p>
+</td></tr>
+<tr valign="top"><td><code>CRFVOL</code></td>
+<td>
+<p>numeric; percentage of coarse fragments (above 2 mm in diameter) in the sample</p>
+</td></tr>
+<tr valign="top"><td><code>HSIZE</code></td>
+<td>
+<p>numeric; thickness of the horizon/solum in cm</p>
+</td></tr>
+<tr valign="top"><td><code>ORCDRC.sd</code></td>
+<td>
+<p>numeric; standard error of estimating <code>ORCDRC</code> (must be positive number)</p>
+</td></tr>
+<tr valign="top"><td><code>BLD.sd</code></td>
+<td>
+<p>numeric; standard error of estimating <code>BLD</code> (must be positive number</p>
+</td></tr>
+<tr valign="top"><td><code>CRFVOL.sd</code></td>
+<td>
+<p>numeric; standard error of estimating <code>CRFVOL</code> (must be positive number)</p>
+</td></tr>
+<tr valign="top"><td><code>se.prop</code></td>
+<td>
+<p>logical; specifies whether to derive propagated error</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p><a href="http://www.eoearth.org/view/article/156087">Soil organic carbon stock</a> in kilograms per square-meter. To convert to tonnes per hectar multiply by 10.
+</p>
+
+
+<h3>Note</h3>
+
+<p>Propagated error (attached as an attribute) is estimated using the Taylor Series Method and shows only an approximate estimate. A more robust way to estimate the propagated uncertainty would be to use (geo)statistical simulations. See Heuvelink (1998) for more info.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p> Tomislav Hengl, Niels Batjes and Gerard Heuvelink </p>
+
+
+<h3>References</h3>
+
+
+<ul>
+<li><p> Heuvelink, G. B. (1998) Error propagation in environmental modelling with GIS. CRC Press, 150 p.
+</p>
+</li>
+<li><p> Nelson, D.W., and L.E. Sommers (1982) Total carbon, organic carbon, and organic matter. p. 539-580. In A.L. Page et al. (ed.) Methods of soil Analysis. Part 2. 2nd ed. Agron. Monogr. 9. ASA and SSSA, Madison, WI.
+</p>
+</li></ul>
+
+
+
+<h3>Examples</h3>
+
+<pre>
+Area &lt;- 1E4  ## 1 ha
+HSIZE &lt;- .3 ## 0--30 cm
+ORCDRC &lt;- 50  ## 5%
+ORCDRC.sd &lt;- 10  ## +/-1%
+BLD &lt;- 1500  ## 1.5 tonnes per cubic meter
+BLD.sd &lt;- 100  ## +/-0.1 tonnes per cubic meter
+CRFVOL &lt;- 10  ## 10%
+CRFVOL.sd &lt;- 5  ## +/-5%         
+x &lt;- OCSKGM(ORCDRC, BLD, CRFVOL, HSIZE, ORCDRC.sd, BLD.sd, CRFVOL.sd)
+x  ## 20.25 +/-4.41 kg/m^2
+## in tonnes per ha:
+x[[1]] * Area / 1000
+</pre>
+
+<hr><div align="center">[Package <em>GSIF</em> version 0.4-1 <a href="00Index.html">Index</a>]</div>
+</body></html>

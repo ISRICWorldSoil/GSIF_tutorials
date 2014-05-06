@@ -1,0 +1,134 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: A class for SoilGrids REST API</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="R.css">
+</head><body>
+
+<table width="100%" summary="page for REST.SoilGrids-class {GSIF}"><tr><td>REST.SoilGrids-class {GSIF}</td><td align="right">R Documentation</td></tr></table>
+
+<h2>A class for SoilGrids REST API</h2>
+
+<h3>Description</h3>
+
+<p>A class for <a href="http://rest.soilgrids.org/">SoilGrids REST API</a> Service. Can be used to overlay points or fetch grid values from SoilGrids Soil Information System.</p>
+
+
+<h3>Slots</h3>
+
+
+<dl>
+<dt><code>server</code>:</dt><dd><p>object of class <code>"character"</code>; contains the location of the server that executes REST.SoilGrids calls</p>
+</dd>
+<dt><code>query</code>:</dt><dd><p>object of class <code>"list"</code>; contains parameters or REST.SoilGrids query</p>
+</dd>
+<dt><code>stream</code>:</dt><dd><p>object of class <code>"character"</code>; contains parameters or REST.SoilGrids stream operation</p>
+</dd>
+</dl>
+
+
+
+<h3>Methods</h3>
+
+
+<dl>
+<dt>over</dt><dd><p><code>signature(x = "REST.SoilGrids", y = "SpatialPoints")</code>: overlays spatial points and the target grids defined via the REST.SoilGrids-class (point-by-point) and returns list of objects of <code>"SpatialPixelsDataFrame"</code>-class</p>
+</dd>
+</dl>
+
+
+
+<h3>Note</h3>
+
+<p>More examples of overlay and download functions are available via <a href="http://rest.soilgrids.org/">http://rest.soilgrids.org/</a>. <code>over</code> method is not recommended for large point data sets.</p>
+
+
+<h3>Author(s)</h3>
+
+<p> Tomislav Hengl &amp; Jorge S. Mendes de Jesus</p>
+
+
+<h3>References</h3>
+
+
+<ul>
+<li><p> SoilGrids &mdash; a system for automated soil mapping (<a href="http://www.soilgrids.org">http://www.soilgrids.org</a>)
+</p>
+</li></ul>
+
+
+
+<h3>See Also</h3>
+
+ <p><code><a href="SoilGrids.html">SoilGrids-class</a></code>, <code><a href="WPS.html">WPS-class</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+## Not run: 
+library(rjson)
+library(sp)
+## 2 points:
+pnts &lt;- data.frame(lon=c(10.65,5.36), lat=c(51.81,51.48), id=c("p1","p2"))
+coordinates(pnts) &lt;- ~lon+lat
+proj4string(pnts) &lt;- CRS("+proj=longlat +datum=WGS84")
+pnts
+## REST example:
+soilgrids.r &lt;- REST.SoilGrids(c("ORCDRC","PHIHOX"))
+ov &lt;- over(soilgrids.r, pnts)
+ORCDRC.pnt1 &lt;- data.frame(
+  top=unlist(ov[1,grep("depthCodesMeters", names(ov))])*-100, 
+  M=unlist(ov[1,grep("ORCDRC.M", names(ov))]), 
+  L=unlist(ov[1,grep("ORCDRC.L", names(ov))]), 
+  U=unlist(ov[1,grep("ORCDRC.U", names(ov))]))
+ORCDRC.pnt1$variable &lt;- "ORCDRC"
+## plot the result:
+library(lattice)
+library(aqp)
+data(soil.legends)
+## Soil organic carbon:
+ORCDRC.range = range(soil.legends[["ORCDRC"]]$MIN, soil.legends[["ORCDRC"]]$MAX)
+dev.new(width=5, height=6)
+xyplot(top ~ M | variable, data=ORCDRC.pnt1, ylab='Depth in cm',
+  xlab='5th and 95th percentiles', xlim=ORCDRC.range,
+  lower=ORCDRC.pnt1$L, upper=ORCDRC.pnt1$U, ylim=c(150,0),
+  panel=panel.depth_function,
+  alpha=0.25, sync.colors=TRUE,
+  par.settings=list(superpose.line=list(col='RoyalBlue', lwd=3)),
+  strip=strip.custom(bg=grey(0.8))
+)
+
+## Soil pH:
+PHIHOX.range = range(soil.legends[["PHIHOX"]]$MIN, soil.legends[["PHIHOX"]]$MAX)
+for(i in 1:nrow(ov)){
+  PHIHOX.pnt &lt;- data.frame(
+    top=unlist(ov[i,grep("depthCodesMeters", names(ov))])*-100, 
+    M=unlist(ov[i,grep("PHIHOX.M", names(ov))]), 
+    L=unlist(ov[i,grep("PHIHOX.L", names(ov))]), 
+    U=unlist(ov[i,grep("PHIHOX.U", names(ov))]))
+  PHIHOX.pnt$variable &lt;- "PHIHOX"
+  png(paste("PHIHOX_depth_", i, ".png", sep=""), width=300, height=6/5*300)
+  p &lt;- xyplot(top ~ M/10 | variable, data=PHIHOX.pnt, ylab='Depth in cm',
+    xlab='5th and 95th percentiles', xlim=PHIHOX.range/10,
+    lower=PHIHOX.pnt$L/10, upper=PHIHOX.pnt$U/10, ylim=c(150,0),
+    panel=panel.depth_function,
+    alpha=0.25, sync.colors=TRUE,
+    par.settings=list(superpose.line=list(col='Red', lwd=3)),
+    strip=strip.custom(bg=grey(0.8))
+  )
+  print(p)
+  graphics.off()
+}
+## plot in Google Earth:
+library(plotKML)
+kml(pnts, colour=id, file="PHIHOX_depth.kml", 
+  shape=paste("PHIHOX_depth_", 1:nrow(ov), ".png", sep=""), 
+  size=6, points_names=pnts$id, 
+  colour_scale=rep("#FFFFFF", 2))
+
+## End(Not run)
+</pre>
+
+<hr><div align="center">[Package <em>GSIF</em> version 0.4-1 <a href="00Index.html">Index</a>]</div>
+</body></html>
