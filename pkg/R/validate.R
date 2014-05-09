@@ -47,6 +47,7 @@ setMethod("validate", signature(obj = "gstatModel"), function(obj, nfold = 5, pr
     ## re-fit the data in loops:
     m.l <- list(NULL)
     cv.l <- list(NULL)
+    require(dismo)
     sel <- kfold(ov, k=nfold)
     message(paste("Running ", nfold, "-fold cross validation with model re-fitting...", sep=""))
     for(j in 1:nfold){
@@ -59,7 +60,7 @@ setMethod("validate", signature(obj = "gstatModel"), function(obj, nfold = 5, pr
          dimensions = "3D"      
       }
       try( m.l[[j]] <- fit.regModel(formulaString=formulaString, rmatrix=rmatrix, predictionDomain=predictionDomain, method="GLM", fit.family=mfamily, dimensions=dimensions, stepwise=TRUE, vgmFun=vgmmodel$model[2]) )
-      if(!is.null(cv.l[[j]])){
+      if(!is.null(m.l[[j]])){
         cv.l[[j]] <- predict.gstatModel(object=m.l[[j]], predictionLocations=nlocs, nfold=0, block=rep(0, ncol(obj@sp@coords)), mask.extra = FALSE, ...)$predicted
         cv.l[[j]]$observed <- eval(tm, nlocs@data)
         cv.l[[j]]$residual <- cv.l[[j]]$observed - cv.l[[j]]$var1.pred
