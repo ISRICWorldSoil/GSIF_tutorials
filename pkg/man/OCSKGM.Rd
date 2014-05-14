@@ -30,7 +30,7 @@ Propagated error (attached as an attribute) is estimated using the Taylor Series
 }
 \examples{
 Area <- 1E4  ## 1 ha
-HSIZE <- .3 ## 0--30 cm
+HSIZE <- 30 ## 0--30 cm
 ORCDRC <- 50  ## 5%
 ORCDRC.sd <- 10  ## +/-1%
 BLD <- 1500  ## 1.5 tonnes per cubic meter

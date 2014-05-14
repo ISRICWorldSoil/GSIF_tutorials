@@ -53,7 +53,7 @@ echo $contents; } ?>
 <!-- end of project description -->
 
 <div>
-  <p>This package contains tools and procedures to handle soil data and produce gridded soil property maps to support the global soil data initivatives such as the GlobalSoilMap.net project. This package was developed as a support to the <a href="http://africasoils.net" target="_blank">Africa Soil Information Service project</a>.</p>
+  <p>This package contains tools and procedures to handle soil data and produce gridded soil property maps to support the global soil data initivatives such as the GlobalSoilMap.net project. This package was developed as a support to the <a href="http://africasoils.net" target="_blank">Africa Soil Information Service project</a>. To access <strong>SoilGrids1km</strong> data sets and/or download the App for mobile phones, please refer to <a href="http://www.soilgrids.org"><strong>www.soilgrids.org</strong></a> </p>
 </div>
 <table border="0" cellspacing="0" cellpadding="10">
   <tr>
@@ -78,7 +78,8 @@ echo $contents; } ?>
 <p>Read more:  installation and first steps with <strong><a href="http://plotkml.r-forge.r-project.org/">plotKML</a></strong>.</p>
 <p><strong>News:</strong></p>
 <ul>
-  <li>Apr 2014: new version of <a href="http://www.soilgrids.org/">SoilGrids1km</a> released (largely based on the GSIF package); </li>
+  <li>May 2014: added procedure to derive <a href="OCSKGM.html">soil organic carbon stock</a>; </li>
+  <li>Apr 2014: new version of <a href="http://www.soilgrids.org/">SoilGrids1km</a> released (several new functions in the GSIF package included); </li>
   <li>Jun 2013: added a function to map uncertainty using the <a href="http://cran.r-project.org/web/packages/quantregForest/">quantregForest</a> package; </li>
   <li>Apr 2013: added functionality for map tiling (updated to sp package 1.0-8); </li>
   <li>Mar 2013: finished producing soil property maps of Africa at 1 km resolution; </li>
