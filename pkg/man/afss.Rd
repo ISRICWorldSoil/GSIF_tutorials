@@ -74,6 +74,7 @@ points(xy, pch=21, bg="white", cex=.6, col="black")
 ## obtain MIR measurements:
 con <- url("http://gsif.isric.org/lib/exe/fetch.php?media=afss.spec.rda")
 load(con)
+str(afss.spec)
 ## See "soil.spec" package for further processing...
 }
 }
