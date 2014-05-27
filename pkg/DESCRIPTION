@@ -2,7 +2,8 @@ Package: GSIF
 Type: Package
 Title: Global Soil Information Facilities
 Version: 0.4-1
-Date: 2014-05-22
+Date: 2014-05-27
+Author: Tom Hengl
 Authors@R: c(person("Tomislav", "Hengl", role = c("cre", "aut"), email = "tom.hengl@wur.nl"),
     person("Bas", "Kempen", role = "ctb", email = "bas.kempen@wur.nl"),
     person("Gerard", "Heuvelink", role = "ctb", email = "gerard.heuvelink@wur.nl"),

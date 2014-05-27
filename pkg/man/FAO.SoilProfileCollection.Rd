@@ -3,6 +3,7 @@
 \encoding{latin1}
 \alias{FAO.SoilProfileCollection-class}
 \alias{FAO.SoilProfileCollection}
+\alias{munsell}
 \title{A class for FAO SoilProfileCollection}
 \description{A class for harmonized (FAO) soil profile records. Extends the \code{"SoilProfileCollection"} class from the \href{http://cran.r-project.org/package=aqp?}{aqp} package.}
 \section{Slots}{
@@ -44,11 +45,12 @@ SOURCEID = "ISRIC:NG0017"
 SOURCEDB = "AfSP DB"
 SPDFAO = "3"
 TEXMHT = "SCL"
+DCOMNS = "7.5YR_3_2"
 
 sp1 <- new("FAO.SoilProfileCollection", 
   depthcols=c('UHDICM','LHDICM'),
   metadata=soil.vars, 
-  horizons=data.frame(SOURCEID, UHDICM, LHDICM, TEXMHT),
+  horizons=data.frame(SOURCEID, UHDICM, LHDICM, TEXMHT, DCOMNS),
   site=data.frame(SOURCEID, SPDFAO, SOURCEDB),
   sp=SpatialPoints(data.frame(LONWGS84, LATWGS84), 
      proj4string=CRS("+proj=longlat +datum=WGS84"))

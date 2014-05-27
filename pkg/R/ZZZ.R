@@ -5,7 +5,7 @@
 # Note           : for more info see [http://cran.r-project.org/doc/manuals/R-exts.html];
 
 .onLoad <- function(libname, pkgname) {
-  data("soil.vars", "soil.legends", "soil.dom", package=pkgname, envir=parent.env(environment()))
+  data("soil.vars", "soil.legends", "soil.dom", "munsell", "USDA.TT.im", package=pkgname, envir=parent.env(environment()))
 }
 
 .onAttach <- function(libname, pkgname)  {

@@ -73,7 +73,6 @@ setClass(Class="FAO.SoilProfileCollection",
       return("Invalid horizon bottom values found at row:", paste(which(test.h), collapse=", "))
     }
     ## check column names:
-    #data(soil.vars)
     if(any(!names(object@site) %in% soil.vars$varname)|any(!names(object@horizons) %in% soil.vars$varname)){
       test.nm <- !(names(object@site) %in% soil.vars$varname)
       return(paste("Invalid variable name used:", paste(names(object@site)[test.nm], collapse=", ", sep="")))
@@ -87,9 +86,23 @@ setClass(Class="FAO.SoilProfileCollection",
     if(sum(missing)>0){
       return(paste("Missing variable names:", paste(required[missing], collapse=", ", sep="")))
     }
-    ## check domains:
     message("Checking domains...")
-    #data(soil.dom)
+    ## munsell colour codes:
+    if(any(names(object@horizons) %in% "DCOMNS")){
+      if(any(!levels(as.factor(object@horizons$DCOMNS)) %in% levels(munsell$Munsell))){
+        message("Removing Munsell colour codes not available in the domain table")
+        x <- merge(object@horizons["DCOMNS"], munsell, by.x="DCOMNS", by.y="Munsell", all.x=TRUE, sort=FALSE)
+        object@horizons$DCOMNS <- ifelse(is.na(x$R), NA, x$DCOMNS)
+      }      
+    }
+    if(any(names(object@horizons) %in% "MCOMNS")){
+      if(any(!levels(as.factor(object@horizons$MCOMNS)) %in% levels(munsell$Munsell))){
+        message("Removing Munsell colour codes not available in the domain table")
+        x <- merge(object@horizons["MCOMNS"], munsell, by.x="MCOMNS", by.y="Munsell", all.x=TRUE, sort=FALSE)
+        object@horizons$MCOMNS <- ifelse(is.na(x$R), NA, x$MCOMNS)
+      }      
+    }
+    ## check domains in the site table:
     for(j in 1:ncol(object@site)){
       vtype <- soil.vars[soil.vars$varname==names(object@site)[j],"type"]
       if(vtype=="factor"){
@@ -97,7 +110,7 @@ setClass(Class="FAO.SoilProfileCollection",
         if(!is.na(DomainId)){
           levs <- paste(unlist(soil.dom[soil.dom$DomainId == DomainId,"Value"]))
           if(any(!levels(object@site[,j]) %in% levs)){
-            return(paste("Invalid domain used for variable:", names(object@site)[j])) 
+            return(paste("Invalid domain used for variable:", names(object@site)[j]))
           }
         }
       } else {
