@@ -88,11 +88,12 @@ SOURCEID = "ISRIC:NG0017"
 SOURCEDB = "AfSP DB"
 SPDFAO = "3"
 TEXMHT = "SCL"
+DCOMNS = "7.5YR_3_2"
 
 sp1 &lt;- new("FAO.SoilProfileCollection", 
   depthcols=c('UHDICM','LHDICM'),
   metadata=soil.vars, 
-  horizons=data.frame(SOURCEID, UHDICM, LHDICM, TEXMHT),
+  horizons=data.frame(SOURCEID, UHDICM, LHDICM, TEXMHT, DCOMNS),
   site=data.frame(SOURCEID, SPDFAO, SOURCEDB),
   sp=SpatialPoints(data.frame(LONWGS84, LATWGS84), 
      proj4string=CRS("+proj=longlat +datum=WGS84"))
@@ -100,5 +101,5 @@ sp1 &lt;- new("FAO.SoilProfileCollection",
 str(sp1)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.4-0 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.4-1 <a href="00Index.html">Index</a>]</div>
 </body></html>
