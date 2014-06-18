@@ -134,7 +134,7 @@ GlobalSoilMap <- function(obj, varname, TimeSpan = list(begin=Sys.Date()-1, end=
     stop("Object of class 'list' required")
   }
   
-  out = new("GlobalSoilMap", varname = varname, TimeSpan.begin = TimeSpan, sd1=as(obj[[1]], "SpatialPixelsDataFrame"), sd2=as(obj[[2]], "SpatialPixelsDataFrame"), sd3=as(obj[[3]], "SpatialPixelsDataFrame"), sd4=as(obj[[4]], "SpatialPixelsDataFrame"), sd5=as(obj[[5]], "SpatialPixelsDataFrame"), sd6=as(obj[[6]], "SpatialPixelsDataFrame"))
+  out = new("GlobalSoilMap", varname = varname, TimeSpan = TimeSpan, sd1=as(obj[[1]], "SpatialPixelsDataFrame"), sd2=as(obj[[2]], "SpatialPixelsDataFrame"), sd3=as(obj[[3]], "SpatialPixelsDataFrame"), sd4=as(obj[[4]], "SpatialPixelsDataFrame"), sd5=as(obj[[5]], "SpatialPixelsDataFrame"), sd6=as(obj[[6]], "SpatialPixelsDataFrame"))
   
   return(out)
 }
@@ -145,7 +145,7 @@ SoilGrids <- function(obj, varname, TimeSpan = get("TimeSpan", envir = GSIF.opts
     stop("Object of class 'list' required")
   }
   
-  out = new("GlobalSoilMap", varname = varname, TimeSpan = TimeSpan, sd1=as(obj[[1]], "SpatialPixelsDataFrame"), sd2=as(obj[[2]], "SpatialPixelsDataFrame"), sd3=as(obj[[3]], "SpatialPixelsDataFrame"), sd4=as(obj[[4]], "SpatialPixelsDataFrame"), sd5=as(obj[[5]], "SpatialPixelsDataFrame"), sd6=as(obj[[6]], "SpatialPixelsDataFrame"))
+  out = new("SoilGrids", varname = varname, TimeSpan = TimeSpan, sd1=as(obj[[1]], "SpatialPixelsDataFrame"), sd2=as(obj[[2]], "SpatialPixelsDataFrame"), sd3=as(obj[[3]], "SpatialPixelsDataFrame"), sd4=as(obj[[4]], "SpatialPixelsDataFrame"), sd5=as(obj[[5]], "SpatialPixelsDataFrame"), sd6=as(obj[[6]], "SpatialPixelsDataFrame"))
   
   return(out)
 }
