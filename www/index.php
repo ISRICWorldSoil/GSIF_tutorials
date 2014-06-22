@@ -53,7 +53,7 @@ echo $contents; } ?>
 <!-- end of project description -->
 
 <div>
-  <p>This package contains tools and procedures to handle soil data and produce gridded soil property maps to support the global soil data initivatives such as the GlobalSoilMap.net project. This package was developed as a support to the <a href="http://africasoils.net" target="_blank">Africa Soil Information Service project</a>. To access <strong>SoilGrids1km</strong> data sets and/or download the App for mobile phones, please refer to <a href="http://www.soilgrids.org"><strong>www.soilgrids.org</strong></a> </p>
+  <p>This package contains tools and procedures to handle soil data and produce gridded soil property maps to support the global soil data initivatives such as the GlobalSoilMap.net project. This package was developed as a support to the <a href="http://africasoils.net" target="_blank">Africa Soil Information Service project</a>. To access <strong><a href="http://soilgrids1km.isric.org">SoilGrids1km</a></strong> data sets and/or <a href="http://soilinfo.isric.org" target="_blank">download the App for mobile phones</a>, please refer to <a href="http://www.soilgrids.org"><strong>www.soilgrids.org</strong></a> </p>
 </div>
 <table border="0" cellspacing="0" cellpadding="10">
   <tr>
@@ -68,16 +68,16 @@ echo $contents; } ?>
 <p><strong>Installation:</strong></p>
 <p>To install this package from R-forge use (works only on<strong> &gt;= R 2.15!</strong>):</p>
 <p class="R_code">&gt; install.packages(c(&quot;RCurl&quot;, &quot;XML&quot;, &quot;rgdal&quot;, &quot;raster&quot;, &quot;sp&quot;, &quot;aqp&quot;,  &quot;mda&quot;, &quot;gstat&quot;, &quot;plotKML&quot;, &quot;dismo&quot;, &quot;rJava&quot;))<br />
-&gt; install.packages(&quot;GSIF&quot;, repos=c(&quot;http://R-Forge.R-project.org&quot;))</p>
+&gt; install.packages(&quot;GSIF&quot;, repos=c(&quot;http://R-Forge.R-project.org&quot;), type = &quot;source&quot;)</p>
 <p>GSIF package extensively uses a number of external software, hence it is highly recommended that, prior to starting GSIF, you first download and install:</p>
 <ol>
-  <li><a href="http://fwtools.maptools.org" target="_blank">FWTools</a> (<em>required</em>) &#8212; this software is called by several functions (e.g. <a href="make.3Dgrid.html">make.3Dgrid</a>);</li>
+  <li><a href="http://fwtools.maptools.org" target="_blank">FWTools</a> (<em>optional</em>) &#8212; this software is called by several functions (e.g. <a href="make.3Dgrid.html">make.3Dgrid</a>);</li>
   <li><a href="http://www.saga-gis.org" target="_blank">SAGA GIS</a> (<em>optional</em>) &#8212; this software is highly recommend but not required;</li>
-  <li><a href="http://www.python.org/getit/" target="_blank">Python</a> (<em>optional</em>) &#8212; this allows processing of large data;</li>
 </ol>
 <p>Read more:  installation and first steps with <strong><a href="http://plotkml.r-forge.r-project.org/">plotKML</a></strong>.</p>
 <p><strong>News:</strong></p>
 <ul>
+  <li>June 2014: added <a href="SoilGrids.html">SoilGrids class</a> (3D SpatialPixels with uncertainty); </li>
   <li>May 2014: added procedure to derive <a href="OCSKGM.html">soil organic carbon stock</a>; </li>
   <li>Apr 2014: new version of <a href="http://www.soilgrids.org/">SoilGrids1km</a> released (several new functions in the GSIF package included); </li>
   <li>Jun 2013: added a function to map uncertainty using the <a href="http://cran.r-project.org/web/packages/quantregForest/">quantregForest</a> package; </li>
