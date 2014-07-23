@@ -17,9 +17,9 @@
 
 <pre>
 ## S4 method for signature 'SpatialPoints,character'
-extract(x, y, path=".", ID="SOURCEID", method="simple", is.pattern=FALSE, force.projection = TRUE, NAflag = "", ...)
+extract(x, y, path=".", ID = "SOURCEID", method = "simple", is.pattern = FALSE, force.projection = TRUE, NAflag = "", ...)
 ## S4 method for signature 'SpatialPointsDataFrame,character'
-extract(x, y, path=".", ID="SOURCEID", method="simple", is.pattern=FALSE, force.projection = TRUE, NAflag = "", ...)
+extract(x, y, path = ".", ID="SOURCEID", method = "simple", is.pattern = FALSE, force.projection = TRUE, NAflag = "", ...)
 </pre>
 
 
@@ -67,7 +67,7 @@ extract(x, y, path=".", ID="SOURCEID", method="simple", is.pattern=FALSE, force.
 
 <h3>Note</h3>
 
-<p>The method will try to reproject the values to the native coordinate system (if ). Missing values are removed by default. If file list is indicated using a pattern, and if multiple rasters covering the same area are found, the method will aggregate the values and derive a mean value.
+<p>The method will try to reproject the values to the native coordinate system (if available). If both <code>x</code> and <code>y</code> are in the same coordinate system, then reprojection is turned of by setting <code>force.projection = TRUE</code>. In the case <code>is.pattern = TRUE</code> (search by pattern), missing values are removed by default and if multiple rasters covering the same area are found, values will be aggregated to the mean value.
 </p>
 
 
@@ -80,5 +80,5 @@ extract(x, y, path=".", ID="SOURCEID", method="simple", is.pattern=FALSE, force.
 
  <p><code>raster::extract</code>, <code><a href="warp.html">warp</a></code> </p>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.4-3 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.4-2 <a href="00Index.html">Index</a>]</div>
 </body></html>

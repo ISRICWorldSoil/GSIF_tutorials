@@ -16,6 +16,7 @@ extract.list <- function(x, y, path=".", ID="SOURCEID", method="simple", is.patt
   ov <- list(NULL)
   ## simple case -> file list
   if(is.pattern==FALSE){
+      message(paste("Extraction values from", length(x), "points for", length(y), "rasters..."))
       pb <- txtProgressBar(min=0, max=length(y), style=3)
       for(i in 1:length(y)){
         fname <- normalizePath(paste(path, y[i], sep="\\"), winslash="/")
@@ -37,11 +38,12 @@ extract.list <- function(x, y, path=".", ID="SOURCEID", method="simple", is.patt
 
   ## look for pattern in files (e.g. Landsat scenes):
   } else {
+      message(paste("Extraction values from", length(x), "points using pattern matching..."))
       pb <- txtProgressBar(min=0, max=length(y), style=3)
       for(i in 1:length(y)){
         ## normalize var name:
         vname <- gsub("[[:punct:]]", "", y[i])
-        ## list all files (each has different coordinate system!):
+        ## list all files (each can have a different coordinate system!):
         lst <- list.files(path=path, pattern=glob2rx(y[i]), recursive=TRUE)
         if(length(lst)>0){
           tmp <- list(NULL)
