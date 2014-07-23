@@ -28,10 +28,12 @@ library(sp)
 data(USDA.TT.im)
 gridded(USDA.TT.im) <- ~s1+s2
 spplot(USDA.TT.im["v"])
+
+\dontrun{library(soiltexture)
 ## convert textures by hand to sand, silt and clay:
-library(soiltexture)
 TEXMHT <- c("CL","C","SiL","SiL","missing")
 x <- TT2tri(TEXMHT)
 x
+}
 }
 \keyword{datasets}

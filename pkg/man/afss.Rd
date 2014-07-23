@@ -23,13 +23,13 @@ Horizons table contains the following columns:
   \item{\code{LHDICM}}{numeric; lower sampling depth from the surface in cm}
   \item{\code{ORCCNS}}{numeric; soil organic carbon content in permille (\code{SOC} in the LDSF Field Database)}
   \item{\code{PHIHOX}}{numeric; pH index measured in water solution (\code{pH} in the LDSF Field Database)}
-  \item{\code{EXB}}{numeric; Exchangeable bases (\code{ExBas} in the LDSF Field Database)}
-  \item{\code{ALUM3S}}{numeric; Aluminium concentration (\code{m3.Al} in the LDSF Field Database)}
-  \item{\code{ECAM3S}}{numeric; Exchangeable Ca (\code{ExCa} in the LDSF Field Database)}
-  \item{\code{EXKM3S}}{numeric; Exchangeable K (\code{ExK} in the LDSF Field Database)}
-  \item{\code{EMGM3S}}{numeric; Exchangeable Mg (\code{ExMg} in the LDSF Field Database)}
-  \item{\code{ENAM3S}}{numeric; Exchangeable Mg (\code{ExNa} in the LDSF Field Database)}
-  \item{\code{NITCNS}}{numeric; Exchangeable Mg (\code{Total.Nitrogen} in the LDSF Field Database)}
+  \item{\code{EXB}}{numeric; Exchangeable bases in ppm (\code{ExBas} in the LDSF Field Database)}
+  \item{\code{ALUM3S}}{numeric; Aluminium concentration in ppm (\code{m3.Al} in the LDSF Field Database)}
+  \item{\code{ECAM3S}}{numeric; Exchangeable Ca in ppm (\code{ExCa} in the LDSF Field Database)}
+  \item{\code{EXKM3S}}{numeric; Exchangeable K in  ppm (\code{ExK} in the LDSF Field Database)}
+  \item{\code{EMGM3S}}{numeric; Exchangeable Mg in ppm (\code{ExMg} in the LDSF Field Database)}
+  \item{\code{ENAM3S}}{numeric; Exchangeable Mg in ppm (\code{ExNa} in the LDSF Field Database)}
+  \item{\code{NITCNS}}{numeric; Exchangeable N as volumetric percentage (\code{Total.Nitrogen} in the LDSF Field Database)}
   \item{\code{SNDLDF}}{numeric; weight percentage of the sand particles (0.0002--0.05 mm; \code{Sand} in the LDSF Field Database)}
 }
 \code{afss.spec} table contains the following columns:

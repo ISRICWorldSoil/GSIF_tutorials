@@ -69,12 +69,15 @@ library(sp)
 data(USDA.TT.im)
 gridded(USDA.TT.im) &lt;- ~s1+s2
 spplot(USDA.TT.im["v"])
+
+## Not run: library(soiltexture)
 ## convert textures by hand to sand, silt and clay:
-library(soiltexture)
 TEXMHT &lt;- c("CL","C","SiL","SiL","missing")
 x &lt;- TT2tri(TEXMHT)
 x
+
+## End(Not run)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.4-1 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.4-3 <a href="00Index.html">Index</a>]</div>
 </body></html>

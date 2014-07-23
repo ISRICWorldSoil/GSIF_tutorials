@@ -22,7 +22,7 @@
   \item{proj4s}{character; proj4string describing the target coordinate system}
   \item{GridTopology}{optional grid topology from sp package}
   \item{pixsize}{grid cell size in decimal degrees} 
-  \item{resampling_method}{character; resampling method to be passed the reprojection algorithm}
+  \item{resampling_method}{character; resampling method (see \href{http://www.gdal.org/gdalwarp.html}{gdalwarp} options)}
   \item{NAflag}{character; missing value flag}
   \item{tmp.file}{logical; specifies whether a temporary file name should be generated}
   \item{show.output.on.console}{logical; specifies whether to print out the progress}
