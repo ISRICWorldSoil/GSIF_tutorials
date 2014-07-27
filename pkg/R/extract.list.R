@@ -12,11 +12,13 @@ extract.list <- function(x, y, path=".", ID="SOURCEID", method="simple", is.patt
   if(class(x)=="SpatialPoints"){
     x <- SpatialPointsDataFrame(x, data.frame(ID=as.factor(as.character(1:nrow(coordinates(x))))))
     names(x) <- paste(ID)
+  } else {
+    if(is.null(x@data[,ID])) { stop("'ID' column not found") }
   }
   ov <- list(NULL)
   ## simple case -> file list
   if(is.pattern==FALSE){
-      message(paste("Extraction values from", length(x), "points for", length(y), "rasters..."))
+      message(paste("Extracting values for", length(x), "points from", length(y), "rasters..."))
       pb <- txtProgressBar(min=0, max=length(y), style=3)
       for(i in 1:length(y)){
         fname <- normalizePath(paste(path, y[i], sep="\\"), winslash="/")
@@ -38,7 +40,7 @@ extract.list <- function(x, y, path=".", ID="SOURCEID", method="simple", is.patt
 
   ## look for pattern in files (e.g. Landsat scenes):
   } else {
-      message(paste("Extraction values from", length(x), "points using pattern matching..."))
+      message(paste("Extracting values for", length(x), "points using pattern matching..."))
       pb <- txtProgressBar(min=0, max=length(y), style=3)
       for(i in 1:length(y)){
         ## normalize var name:
@@ -60,9 +62,10 @@ extract.list <- function(x, y, path=".", ID="SOURCEID", method="simple", is.patt
               if(!NAflag==""){ tmp[[k]] <- tmp[[k]][!tmp[[k]][,2]==NAflag,] }
               }
           }
-          ## fill-in all missing pixels:
+          ## fill-in missing pixels:
           tmp <- do.call(rbind, tmp)
           frm <- as.formula(paste(vname, "~", ID))
+          message("Aggregating values using the ID column...")
           ov[[i]] <- aggregate(frm, data=tmp, mean, na.rm=TRUE)
           names(ov)[i] <- vname
         }
