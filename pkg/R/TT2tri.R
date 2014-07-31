@@ -2,7 +2,7 @@
 # Maintainer     : Tomislav Hengl (tom.hengl@wur.nl);
 # Contributions  : ;
 # Status         : pre-alpha
-# Note           : for more info see [http://gsif.isric.org/doku.php?id=wiki:soil_data];
+# Note           : some examples at [http://gsif.isric.org/doku.php?id=wiki:soil_data];
 
 
 .get.TF.from.XY <- function(xcoord, ycoord) {
