@@ -290,7 +290,7 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
             ## TH: Prediction error for randomForest
             message("Prediction error for 'randomForest' model estimated using the 'quantreg' package.")
             var.rf <- predict(object@regModel, predictionLocations@data[,covs], quantiles=c((1-.682)/2, 1-(1-.682)/2))
-            ## TH: this assumes Normal distribution! [https://en.wikipedia.org/wiki/File:Standard_deviation_diagram.svg]
+            ## TH: this formula assumes that the errors follow a normal distribution! [https://en.wikipedia.org/wiki/File:Standard_deviation_diagram.svg]
             predictionLocations@data[,"fit.var"] <- ((var.rf[,1] - var.rf[,2])/2)^2
           } else {
             predictionLocations@data[,"fit.var"] <- 0

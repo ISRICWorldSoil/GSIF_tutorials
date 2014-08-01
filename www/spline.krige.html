@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: Kriging combined with splines</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="R.css">
+</head><body>
+
+<table width="100%" summary="page for spline.krige {GSIF}"><tr><td>spline.krige {GSIF}</td><td align="right">R Documentation</td></tr></table>
+
+<h2>Kriging combined with splines</h2>
+
+<h3>Description</h3>
+
+<p>Combines kriging and spline interpolation to speed up kriging. Spline interpolation is implemented via the SAGA GIS function <code>"Cubic Spline Approximation"</code>.</p>
+
+
+<h3>Usage</h3>
+
+<pre>spline.krige(formula, locations, newdata, newlocs = NULL, model, 
+    te = as.vector(newdata@bbox), file.name, silent = FALSE, 
+    t_cellsize = newdata@grid@cellsize[1], optN = 20, quant.nndist = .5, 
+    nmax = 30, ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>formula</code></td>
+<td>
+<p>formula that defines the dependent variable as a linear model of independent variables; usually in the form <code>z~1</code></p>
+</td></tr>
+<tr valign="top"><td><code>locations</code></td>
+<td>
+<p>object of class <code>SpatialPoints</code>; sampling locations</p>
+</td></tr>
+<tr valign="top"><td><code>newdata</code></td>
+<td>
+<p>object of class <code>SpatialPixels*</code>; spatial domain of interest</p>
+</td></tr>
+<tr valign="top"><td><code>newlocs</code></td>
+<td>
+<p>object of class <code>SpatialPoints*</code>; prediction locations produced using the <code>resample.grid</code> function (if missing it will be generated using the <code>resample.grid</code> function)</p>
+</td></tr>
+<tr valign="top"><td><code>model</code></td>
+<td>
+<p>variogram model of dependent variable (or its residuals); see <code>gstat::krige</code></p>
+</td></tr>
+<tr valign="top"><td><code>te</code></td>
+<td>
+<p>numeric; a vector in the form c(xmin,ymin,xmax,ymax); sets bounding box of the kriging predictions</p>
+</td></tr>
+<tr valign="top"><td><code>file.name</code></td>
+<td>
+<p>character; optional output file name pattern</p>
+</td></tr>
+<tr valign="top"><td><code>silent</code></td>
+<td>
+<p>logical; specifies whether to print out the progress</p>
+</td></tr>
+<tr valign="top"><td><code>t_cellsize</code></td>
+<td>
+<p>numeric; target cell size (output grid)</p>
+</td></tr>
+<tr valign="top"><td><code>optN</code></td>
+<td>
+<p>integer; optimal number of prediction locations per sampling location</p>
+</td></tr>    
+<tr valign="top"><td><code>quant.nndist</code></td>
+<td>
+<p>numeric; threshold probability to determine the shortest distance</p>
+</td></tr>
+<tr valign="top"><td><code>nmax</code></td>
+<td>
+<p>integer; the number of nearest observations that
+should be used for kriging</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>other optional arguments that can be passed to function <code>gstat::krige</code></p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>Returns an object of class <code>"SpatialGridDataFrame"</code>, or output file name.
+</p>
+
+
+<h3>Note</h3>
+
+<p>The function adjusts grid density (prediction locations) to the actual sampling intensity and then fills in prediction gaps using spline interpolation. This allows for speeding up the kriging process in the order of magnitude times without loosing precision. 
+Spline interpolation is implemented via the SAGA GIS v2.1 function <code>"Cubic Spline Approximation"</code> using the default settings. This function is especially suitable for producing predictions for large grids where the sampling locations show high clustering.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p> Tomislav Hengl </p>
+
+
+<h3>Examples</h3>
+
+<pre>
+library(plotKML)
+library(spatstat)
+library(RSAGA)
+library(gstat)
+library(raster)
+data(eberg)
+data(eberg_grid25)
+library(sp)
+coordinates(eberg) &lt;- ~X+Y
+proj4string(eberg) &lt;- CRS("+init=epsg:31467")
+m &lt;- vgm(psill=320, model="Exp", range=1200, nugget=160)
+plot(variogram(SNDMHT_A~1, eberg[!is.na(eberg$SNDMHT_A),]), m)
+## prediction locations:
+gridded(eberg_grid25) &lt;- ~x+y
+proj4string(eberg_grid25) &lt;- CRS("+init=epsg:31467")
+grd &lt;- resample.grid(locations=eberg["SNDMHT_A"], newdata=eberg_grid25, 
+   t_cellsize=25, optN=5, quant.nndist=.5, nstrata=4)
+## plot resampled grid:
+plot(grd)
+points(eberg, pch=19, col="red", cex=.7)
+env &lt;- rsaga.env()
+if(env$version=="2.1.0"){
+ ## ordinary kriging:
+ res.ok &lt;- spline.krige(locations=eberg["SNDMHT_A"], t_cellsize=10, 
+      newdata=eberg_grid25, newlocs=grd, model=m)
+ plot(raster(res.ok[1]))
+}
+</pre>
+
+<hr><div align="center">[Package <em>GSIF</em> version 0.4-2 <a href="00Index.html">Index</a>]</div>
+</body></html>

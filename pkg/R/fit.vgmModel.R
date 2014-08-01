@@ -107,7 +107,7 @@ setMethod("fit.vgmModel", signature(formulaString = "formula", rmatrix = "data.f
     }
   }
     
-  if(any(!(names(rvgm) %in% c("range", "psill"))) & diff(rvgm$range)==0|diff(rvgm$psill)==0){
+  if(any(!(names(rvgm) %in% c("range", "psill"))) & (diff(rvgm$range)==0|diff(rvgm$psill)==0)){
     warning("Variogram shows no spatial dependence")     
   }
   
