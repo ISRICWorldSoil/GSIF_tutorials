@@ -2,7 +2,7 @@
 \alias{spline.krige}
 \alias{resample.grid}
 \title{Kriging combined with splines}
-\description{Combines kriging and spline interpolation to speed up kriging. Spline interpolation is implemented via the SAGA GIS function \code{"Cubic Spline Approximation"}.}
+\description{Combines kriging and spline interpolation to speed up the kriging with minimal loss in precision, whilst reducing generation of artifacts. Spline interpolation is implemented via the SAGA GIS function \code{"Cubic Spline Approximation"}.}
 \usage{spline.krige(formula, locations, newdata, newlocs = NULL, model, 
     te = as.vector(newdata@bbox), file.name, silent = FALSE, 
     t_cellsize = newdata@grid@cellsize[1], optN = 20, quant.nndist = .5, 
@@ -28,7 +28,7 @@
 Returns an object of class \code{"SpatialGridDataFrame"}, or output file name.
 }
 \note{
-The function adjusts grid density (prediction locations) to the actual sampling intensity and then fills in prediction gaps using spline interpolation. This allows for speeding up the kriging process in the order of magnitude times without loosing precision. 
+This function adjusts grid density (prediction locations) in reference to the actual local sampling intensity. High resolution grids are created where sampling density is higher and vice versa. Low resolution grids (due to sparse data) are then downscaled to the target resolution using spline interpolation. This allows for speeding up the kriging with minimal loss in precision, whilst reducing generation of artifacts. 
 Spline interpolation is implemented via the SAGA GIS v2.1 function \code{"Cubic Spline Approximation"} using the default settings. This function is especially suitable for producing predictions for large grids where the sampling locations show high clustering.
 }
 \author{ Tomislav Hengl }
@@ -39,6 +39,7 @@ library(RSAGA)
 library(gstat)
 library(raster)
 data(eberg)
+data(eberg_grid)
 data(eberg_grid25)
 library(sp)
 coordinates(eberg) <- ~X+Y
@@ -46,18 +47,28 @@ proj4string(eberg) <- CRS("+init=epsg:31467")
 m <- vgm(psill=320, model="Exp", range=1200, nugget=160)
 plot(variogram(SNDMHT_A~1, eberg[!is.na(eberg$SNDMHT_A),]), m)
 ## prediction locations:
+gridded(eberg_grid) <- ~x+y
+proj4string(eberg_grid) <- CRS("+init=epsg:31467")
 gridded(eberg_grid25) <- ~x+y
 proj4string(eberg_grid25) <- CRS("+init=epsg:31467")
 grd <- resample.grid(locations=eberg["SNDMHT_A"], newdata=eberg_grid25, 
-   t_cellsize=25, optN=5, quant.nndist=.5, nstrata=4)
+   t_cellsize=25, optN=5, quant.nndist=.5, nstrata=3)
 ## plot resampled grid:
 plot(grd)
 points(eberg, pch=19, col="red", cex=.7)
 env <- rsaga.env()
 if(env$version=="2.1.0"){
- ## ordinary kriging:
- res.ok <- spline.krige(locations=eberg["SNDMHT_A"], t_cellsize=10, 
-      newdata=eberg_grid25, newlocs=grd, model=m)
- plot(raster(res.ok[1]))
+ ## compare processing time:
+ system.time( SND.sok <- spline.krige(locations=eberg["SNDMHT_A"], 
+      t_cellsize=25, newdata=eberg_grid25, 
+      newlocs=grd, model=m, nmax=30) )
+ system.time( SND.ok <- krige(SNDMHT_A~1, 
+      eberg[!is.na(eberg$SNDMHT_A),], 
+      newdata=eberg_grid, m, 
+      debug.level = -1, nmax=30) )  
+ ## compare outputs visually:
+ par(mfrow=c(1,2))
+ plot(raster(SND.sok[1]))
+ plot(raster(SND.ok[1])) 
 }
 }
