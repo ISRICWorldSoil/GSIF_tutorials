@@ -252,6 +252,20 @@ setMethod("as.geosamples", signature(obj = "SpatialPointsDataFrame"),
 
 setMethod("subset", signature(x = "geosamples"), .subset.geosamples)
 
+.stack.geosamples <- function(x, lst=levels(x@methods$methodid), geo.columns=c("sampleid","longitude","latitude","altitude")){
+  require(reshape)
+  x.df.lst <- list(NULL)
+  for(j in 1:length(lst)){
+    x.df.lst[[j]] <- subset(x, method=lst[j])
+    x.df.lst[[j]][,lst[j]] <- as.numeric(x.df.lst[[j]][,"observedValue"])
+    x.df.lst[[j]] <- x.df.lst[[j]][!is.na(x.df.lst[[j]][,lst[j]]),c(geo.columns,lst[j])]
+  }
+  x.df <- reshape::merge_recurse(x.df.lst)
+  return(x.df)
+}
+
+setMethod("stack", signature(x = "geosamples"), .stack.geosamples)
+
 ## summary values:
 setMethod("show", signature(object = "geosamples"), 
   function(object) 

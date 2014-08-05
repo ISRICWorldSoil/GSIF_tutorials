@@ -52,23 +52,29 @@ proj4string(eberg_grid) <- CRS("+init=epsg:31467")
 gridded(eberg_grid25) <- ~x+y
 proj4string(eberg_grid25) <- CRS("+init=epsg:31467")
 grd <- resample.grid(locations=eberg["SNDMHT_A"], newdata=eberg_grid25, 
-   t_cellsize=25, optN=5, quant.nndist=.5, nstrata=3)
+   t_cellsize=25, optN=5, quant.nndist=.9, nstrata=5)
 ## plot resampled grid:
-plot(grd)
+plot(raster(grd$density))
+plot(grd$newlocs)
 points(eberg, pch=19, col="red", cex=.7)
 env <- rsaga.env()
 if(env$version=="2.1.0"){
  ## compare processing time:
  system.time( SND.sok <- spline.krige(locations=eberg["SNDMHT_A"], 
       t_cellsize=25, newdata=eberg_grid25, 
-      newlocs=grd, model=m, nmax=30) )
+      newlocs=grd$newlocs, model=m, nmax=30) )
  system.time( SND.ok <- krige(SNDMHT_A~1, 
       eberg[!is.na(eberg$SNDMHT_A),], 
       newdata=eberg_grid, m, 
+      debug.level = -1, nmax=30) )
+ system.time( SND.ok25 <- krige(SNDMHT_A~1, 
+      eberg[!is.na(eberg$SNDMHT_A),], 
+      newdata=eberg_grid25, m, 
       debug.level = -1, nmax=30) )  
  ## compare outputs visually:
- par(mfrow=c(1,2))
- plot(raster(SND.sok[1]))
- plot(raster(SND.ok[1])) 
+ par(mfrow=c(1,3))
+ plot(raster(SND.sok[1]), main="spline.krige")
+ plot(raster(SND.ok25[1]), main="krige")
+ plot(raster(SND.ok[1]), main="krige (100 m)") 
 }
 }

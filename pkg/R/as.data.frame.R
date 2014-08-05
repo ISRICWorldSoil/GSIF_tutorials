@@ -48,7 +48,7 @@
 setMethod('as.data.frame', signature(x = "SoilProfileCollection"), .as.data.frame.SoilProfileCollection)
 
 
-# Reverse function -- extract horizons from a data.frame:
+## Reverse function -- extract horizons from a data.frame:
 getHorizons <- function(x, idcol, sel, pattern=paste("_", LETTERS[1:15], sep="")){
     require(plyr)
     if(!length(unique(sel))==length(sel)){

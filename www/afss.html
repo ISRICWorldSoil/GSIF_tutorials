@@ -56,13 +56,13 @@
 </dd>
 <dt><code>ALUM3S</code></dt><dd><p>numeric; Aluminium concentration in ppm (<code>m3.Al</code> in the LDSF Field Database)</p>
 </dd>
-<dt><code>ECAM3S</code></dt><dd><p>numeric; Exchangeable Ca in ppm (<code>ExCa</code> in the LDSF Field Database)</p>
+<dt><code>ECAM3S</code></dt><dd><p>numeric; Exchangeable Ca in cmolc/kg (<code>ExCa</code> in the LDSF Field Database)</p>
 </dd>
-<dt><code>EXKM3S</code></dt><dd><p>numeric; Exchangeable K in  ppm (<code>ExK</code> in the LDSF Field Database)</p>
+<dt><code>EXKM3S</code></dt><dd><p>numeric; Exchangeable K in  cmolc/kg (<code>ExK</code> in the LDSF Field Database)</p>
 </dd>
-<dt><code>EMGM3S</code></dt><dd><p>numeric; Exchangeable Mg in ppm (<code>ExMg</code> in the LDSF Field Database)</p>
+<dt><code>EMGM3S</code></dt><dd><p>numeric; Exchangeable Mg in cmolc/kg (<code>ExMg</code> in the LDSF Field Database)</p>
 </dd>
-<dt><code>ENAM3S</code></dt><dd><p>numeric; Exchangeable Mg in ppm (<code>ExNa</code> in the LDSF Field Database)</p>
+<dt><code>ENAM3S</code></dt><dd><p>numeric; Exchangeable Mg in cmolc/kg (<code>ExNa</code> in the LDSF Field Database)</p>
 </dd>
 <dt><code>NITCNS</code></dt><dd><p>numeric; Exchangeable N as volumetric percentage (<code>Total.Nitrogen</code> in the LDSF Field Database)</p>
 </dd>
@@ -86,7 +86,10 @@
 
 <h3>Note</h3>
 
-<p>The soil samples from the sentinel site network were collected using three stage sampling scheme: a number of sentinel sites (about 10 by 10 kilometers in size) have been first selected over the whole continent (60 sites in 2012). Each sentinel site is stratied into 16 grid cells (each 1 square kilometer), and sampling cluster centroids are randomly located within the grid cells. Around each centroid, 10 sampling plots are randomly located and soil samples taken (or 160 points per sentinel site). At each sampling plot, soil samples were taken at two depths: 0&ndash;20, and 20&ndash;50 cm. The block size of each sampling plot is 1000 square meters or 0.1 ha.</p>
+<p>The soil samples from the sentinel site network were collected using three stage sampling scheme: a number of sentinel sites (about 10 by 10 kilometers in size) have been first selected over the whole continent (60 sites in 2012). Each sentinel site is stratied into 16 grid cells (each 1 square kilometer), and sampling cluster centroids are randomly located within the grid cells. Around each centroid, 10 sampling plots are randomly located and soil samples taken (or 160 points per sentinel site). At each sampling plot, soil samples were taken at two depths: 0&ndash;20, and 20&ndash;50 cm. The block size of each sampling plot is 1000 square meters or 0.1 ha.
+All of the initial Mehlich-3 nutrient concentrations were in mg/kg (or ppm) units, and were converted to molar equivalent units in cmolc/kg (xCa = Ca/200, xK = K/391, xMg = Mg/121,
+xNa = Na/230).
+</p>
 
 
 <h3>Author(s)</h3>
@@ -140,5 +143,5 @@ str(afss.spec)
 ## End(Not run)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.4-3 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.4-2 <a href="00Index.html">Index</a>]</div>
 </body></html>

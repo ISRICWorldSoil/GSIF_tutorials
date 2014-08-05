@@ -12,7 +12,7 @@ spline.krige <- function(formula, locations, newdata, newlocs=NULL, model, te=as
     stop("Object 'newdata' of class 'SpatialPixelsDataFrame' expected")
   }
   if(is.null(newlocs)){ 
-     newlocs <- resample.grid(locations, newdata, silent=silent, t_cellsize=t_cellsize, quant.nndist=quant.nndist)
+     newlocs <- resample.grid(locations, newdata, silent=silent, t_cellsize=t_cellsize, quant.nndist=quant.nndist)$newlocs
   }
   if(silent==FALSE){
     message("Predicting at variable grid...")
@@ -78,7 +78,7 @@ resample.grid <- function(locations, newdata, silent=FALSE, t_cellsize, optN, qu
     dmap <- maptools::as.SpatialGridDataFrame.im(density(locs.ppp, sigma=quantile(dist.locs, quant.nndist)))
     dmap.max <- max(dmap@data[,1], na.rm=TRUE)
     dmap@data[,1] <- signif(dmap@data[,1]/dmap.max, 3)
-    ## TH: not sure if here is better to use quantiles or a regular split.
+    ## TH: not sure if here is better to use quantiles or a regular split?
     breaks.d <- seq(0, 1, by=1/(nstrata))
     #breaks.d <- quantile(dmap@data[,1], seq(0, 1, by=1/(nstrata+1)), na.rm=TRUE)
     if(sd(dmap@data[,1])==0){ stop("Density map shows no variance. See '?resample.grid' for more information.") }
@@ -105,7 +105,7 @@ resample.grid <- function(locations, newdata, silent=FALSE, t_cellsize, optN, qu
     if(silent==FALSE){
       message(paste("Generated:", length(newlocs), "prediction locations."))
     }
-    return(newlocs)
+    return(list(newlocs=newlocs, density=dmap))
 }
 
 ## end of script;

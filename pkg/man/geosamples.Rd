@@ -5,6 +5,7 @@
 \alias{show,geosamples-method}
 \alias{over,SpatialPixelsDataFrame,geosamples-method}
 \alias{over,RasterStack,geosamples-method}
+\alias{stack,geosamples-method}
 \alias{write.data}
 \alias{write.data,geosamples-method}
 \alias{write.data.geosamples}
@@ -25,10 +26,11 @@ The column names in the data slot largely reflect the \href{https://developers.g
 	\item{show}{\code{signature(obj = "geosamples")}: summarize object by listing methods, total number of observations, total area covered etc.}
 	\item{subset}{\code{signature(obj = "geosamples")}: subset to a single variable type; returns a data frame}
   \item{over}{\code{signature(x = "SpatialPixelsDataFrame" or "RasterStack", y = "geosamples")}: overlay geosamples and spatial pixels}
+  \item{stack}{\code{signature(x = "geosamples")}: stacks all observed values into a single table using reshape function}
   \item{write.data}{\code{signature(obj = "geosamples")}: write geosamples to an external format e.g. GeoEAS}
   }
 }
-\author{ Tomislav Hengl and Hannes I. Reuter }
+\author{ Tomislav Hengl }
 \references{
 \itemize{
 \item Dyson, E., (2003) \href{http://cdn.oreilly.com/radar/r1/09-03.pdf}{Online Registries: The DNS and Beyond\dots}. Edventure, Vol 21(8).
