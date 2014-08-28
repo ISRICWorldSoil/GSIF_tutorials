@@ -1,7 +1,7 @@
 import(utils, methods)
 importFrom("stats", prcomp, predict, shapiro.test)
 importFrom("aqp", SoilProfileCollection, horizonDepths, horizons)
-importFrom("sp", remove.duplicates, SpatialPolygons, SpatialPointsDataFrame, over, CRS, Polygons, flipVertical, spTransform, spsample, gridded, proj4string)
+importFrom("sp", remove.duplicates, SpatialPolygons, SpatialPointsDataFrame, over, CRS, Polygons, flipVertical, spTransform, spsample, gridded, proj4string, surfaceArea)
 importFrom("raster", extract, brick, stack, raster, writeRaster, extension, resample, removeTmpFiles, filename, maxValue, inMemory, projection, "projection<-", extent)
 importFrom("dismo", maxent, kfold)
 importFrom("nlme", gls, lme)

@@ -75,7 +75,9 @@ resample.grid <- function(locations, newdata, silent=FALSE, t_cellsize, optN, qu
     W <- ifelse(is.na(W), FALSE, TRUE)
     suppressWarnings( locs.ppp <- ppp(x=locations@coords[,1], y=locations@coords[,2], xrange=newdata@bbox[1,], yrange=newdata@bbox[2,], mask=t(W)[ncol(W):1,]) )
     dist.locs <- nndist(locs.ppp)
-    dmap <- maptools::as.SpatialGridDataFrame.im(density(locs.ppp, sigma=quantile(dist.locs, quant.nndist)))
+    n.sigma <- quantile(dist.locs, quant.nndist)
+    if(n.sigma > sqrt(surfaceArea(newdata[1])/length(locations))){ warning(paste0("'Sigma' set at ", signif(n.sigma, 3), ". This is possibly an unclustered point sample. See '?resample.grid' for more information.")) }
+    dmap <- maptools::as.SpatialGridDataFrame.im(density(locs.ppp, sigm=n.sigma))
     dmap.max <- max(dmap@data[,1], na.rm=TRUE)
     dmap@data[,1] <- signif(dmap@data[,1]/dmap.max, 3)
     ## TH: not sure if here is better to use quantiles or a regular split?

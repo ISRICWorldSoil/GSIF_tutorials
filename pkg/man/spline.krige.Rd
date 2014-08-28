@@ -14,22 +14,29 @@
   \item{newdata}{object of class \code{SpatialPixels*}; spatial domain of interest}
   \item{newlocs}{object of class \code{SpatialPoints*}; prediction locations produced using the \code{resample.grid} function (if missing it will be generated using the \code{resample.grid} function)}
   \item{model}{variogram model of dependent variable (or its residuals); see \code{gstat::krige}}
-  \item{te}{numeric; a vector in the form c(xmin,ymin,xmax,ymax); sets bounding box of the kriging predictions}
+  \item{te}{numeric; a vector in the form \code{c(xmin,ymin,xmax,ymax)}; sets bounding box of the kriging predictions}
   \item{file.name}{character; optional output file name pattern}
   \item{silent}{logical; specifies whether to print out the progress}
   \item{t_cellsize}{numeric; target cell size (output grid)}
-  \item{optN}{integer; optimal number of prediction locations per sampling location}    
-  \item{quant.nndist}{numeric; threshold probability to determine the shortest distance}
+  \item{optN}{integer; optimal number of prediction locations per sampling location e.g. 1 sampling location is used to predict values for 20 new pixels}    
+  \item{quant.nndist}{numeric; threshold probability to determine the search radius (sigma)}
   \item{nmax}{integer; the number of nearest observations that
   should be used for kriging}
   \item{\dots}{other optional arguments that can be passed to function \code{gstat::krige}}
 }
 \value{
-Returns an object of class \code{"SpatialGridDataFrame"}, or output file name.
+Returns an object of class \code{"SpatialGridDataFrame"}, or an output file name.
 }
 \note{
-This function adjusts grid density (prediction locations) in reference to the actual local sampling intensity. High resolution grids are created where sampling density is higher and vice versa. Low resolution grids (due to sparse data) are then downscaled to the target resolution using spline interpolation. This allows for speeding up the kriging with minimal loss in precision, whilst reducing generation of artifacts. 
-Spline interpolation is implemented via the SAGA GIS v2.1 function \code{"Cubic Spline Approximation"} using the default settings. This function is especially suitable for producing predictions for large grids where the sampling locations show high clustering.
+This function adjusts grid density (prediction locations) in reference to the actual local sampling intensity. High resolution grids are created where sampling density is higher and vice versa (\href{http://dx.doi.org/10.1016/j.cageo.2005.11.008}{Hengl, 2006}). Low resolution grids (due to sparse data) are then downscaled to the target resolution using spline interpolation. This allows for speeding up the kriging with minimal loss in precision, whilst reducing generation of artifacts. 
+Spline interpolation is implemented via the SAGA GIS v2.1 function \code{"Cubic Spline Approximation"} using the default settings. This function is especially suitable for producing predictions for large grids where the sampling locations show high spatial clustering. It is NOT intended for predicting using point samples collected using sampling designs with high spatial spreading e.g. based on simple random sampling or grid sampling.
+}
+\references{
+\itemize{
+\item Hengl T., (2006) \href{http://dx.doi.org/10.1016/j.cageo.2005.11.008}{Finding the right pixel size}. Computers and Geosciences, 32(9): 1283-1298.
+\item SAGA GIS (\url{http://saga-gis.org})
+\item SpatStat package (\url{http://www.spatstat.org})
+}
 }
 \author{ Tomislav Hengl }
 \examples{
@@ -51,6 +58,7 @@ gridded(eberg_grid) <- ~x+y
 proj4string(eberg_grid) <- CRS("+init=epsg:31467")
 gridded(eberg_grid25) <- ~x+y
 proj4string(eberg_grid25) <- CRS("+init=epsg:31467")
+## prepare prediction locations for spline.krige:
 grd <- resample.grid(locations=eberg["SNDMHT_A"], newdata=eberg_grid25, 
    t_cellsize=25, optN=5, quant.nndist=.9, nstrata=5)
 ## plot resampled grid:
@@ -73,8 +81,8 @@ if(env$version=="2.1.0"){
       debug.level = -1, nmax=30) )  
  ## compare outputs visually:
  par(mfrow=c(1,3))
- plot(raster(SND.sok[1]), main="spline.krige")
- plot(raster(SND.ok25[1]), main="krige")
+ plot(raster(SND.sok[1]), main="spline.krige (25 m)")
+ plot(raster(SND.ok25[1]), main="krige (25 m)")
  plot(raster(SND.ok[1]), main="krige (100 m)") 
 }
 }

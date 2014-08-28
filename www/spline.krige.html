@@ -47,7 +47,7 @@
 </td></tr>
 <tr valign="top"><td><code>te</code></td>
 <td>
-<p>numeric; a vector in the form c(xmin,ymin,xmax,ymax); sets bounding box of the kriging predictions</p>
+<p>numeric; a vector in the form <code>c(xmin,ymin,xmax,ymax)</code>; sets bounding box of the kriging predictions</p>
 </td></tr>
 <tr valign="top"><td><code>file.name</code></td>
 <td>
@@ -63,11 +63,11 @@
 </td></tr>
 <tr valign="top"><td><code>optN</code></td>
 <td>
-<p>integer; optimal number of prediction locations per sampling location</p>
+<p>integer; optimal number of prediction locations per sampling location e.g. 1 sampling location is used to predict values for 20 new pixels</p>
 </td></tr>    
 <tr valign="top"><td><code>quant.nndist</code></td>
 <td>
-<p>numeric; threshold probability to determine the shortest distance</p>
+<p>numeric; threshold probability to determine the search radius (sigma)</p>
 </td></tr>
 <tr valign="top"><td><code>nmax</code></td>
 <td>
@@ -83,20 +83,41 @@ should be used for kriging</p>
 
 <h3>Value</h3>
 
-<p>Returns an object of class <code>"SpatialGridDataFrame"</code>, or output file name.
+<p>Returns an object of class <code>"SpatialGridDataFrame"</code>, or an output file name.
 </p>
 
 
 <h3>Note</h3>
 
+<<<<<<< .mine
+<p>This function adjusts grid density (prediction locations) in reference to the actual local sampling intensity. High resolution grids are created where sampling density is higher and vice versa (<a href="http://dx.doi.org/10.1016/j.cageo.2005.11.008">Hengl, 2006</a>). Low resolution grids (due to sparse data) are then downscaled to the target resolution using spline interpolation. This allows for speeding up the kriging with minimal loss in precision, whilst reducing generation of artifacts. 
+Spline interpolation is implemented via the SAGA GIS v2.1 function <code>"Cubic Spline Approximation"</code> using the default settings. This function is especially suitable for producing predictions for large grids where the sampling locations show high spatial clustering. It is NOT intended for predicting using point samples collected using sampling designs with high spatial spreading e.g. based on simple random sampling or grid sampling.
+=======
 <p>This function adjusts grid density (prediction locations) in reference to the actual local sampling intensity. High resolution grids are created where sampling density is higher and vice versa. Low resolution grids (due to sparse data) are then downscaled to the target resolution using spline interpolation. This allows for speeding up the kriging with minimal loss in precision, whilst reducing generation of artifacts. 
 Spline interpolation is implemented via the SAGA GIS v2.1 function <code>"Cubic Spline Approximation"</code> using the default settings. This function is especially suitable for producing predictions for large grids where the sampling locations show high clustering.
+>>>>>>> .r138
 </p>
 
 
 <h3>Author(s)</h3>
 
 <p> Tomislav Hengl </p>
+
+
+<h3>References</h3>
+
+
+<ul>
+<li><p> Hengl T., (2006) <a href="http://dx.doi.org/10.1016/j.cageo.2005.11.008">Finding the right pixel size</a>. Computers and Geosciences, 32(9): 1283-1298.
+</p>
+</li>
+<li><p> SAGA GIS (<a href="http://saga-gis.org">http://saga-gis.org</a>)
+</p>
+</li>
+<li><p> SpatStat package (<a href="http://www.spatstat.org">http://www.spatstat.org</a>)
+</p>
+</li></ul>
+
 
 
 <h3>Examples</h3>
@@ -120,13 +141,38 @@ gridded(eberg_grid) &lt;- ~x+y
 proj4string(eberg_grid) &lt;- CRS("+init=epsg:31467")
 gridded(eberg_grid25) &lt;- ~x+y
 proj4string(eberg_grid25) &lt;- CRS("+init=epsg:31467")
+## prepare prediction locations for spline.krige:
 grd &lt;- resample.grid(locations=eberg["SNDMHT_A"], newdata=eberg_grid25, 
+<<<<<<< .mine
+   t_cellsize=25, optN=5, quant.nndist=.9, nstrata=5)
+=======
    t_cellsize=25, optN=5, quant.nndist=.5, nstrata=3)
+>>>>>>> .r138
 ## plot resampled grid:
-plot(grd)
+plot(raster(grd$density))
+plot(grd$newlocs)
 points(eberg, pch=19, col="red", cex=.7)
 env &lt;- rsaga.env()
 if(env$version=="2.1.0"){
+<<<<<<< .mine
+ ## compare processing time:
+ system.time( SND.sok &lt;- spline.krige(locations=eberg["SNDMHT_A"], 
+      t_cellsize=25, newdata=eberg_grid25, 
+      newlocs=grd$newlocs, model=m, nmax=30) )
+ system.time( SND.ok &lt;- krige(SNDMHT_A~1, 
+      eberg[!is.na(eberg$SNDMHT_A),], 
+      newdata=eberg_grid, m, 
+      debug.level = -1, nmax=30) )
+ system.time( SND.ok25 &lt;- krige(SNDMHT_A~1, 
+      eberg[!is.na(eberg$SNDMHT_A),], 
+      newdata=eberg_grid25, m, 
+      debug.level = -1, nmax=30) )  
+ ## compare outputs visually:
+ par(mfrow=c(1,3))
+ plot(raster(SND.sok[1]), main="spline.krige (25 m)")
+ plot(raster(SND.ok25[1]), main="krige (25 m)")
+ plot(raster(SND.ok[1]), main="krige (100 m)") 
+=======
  ## compare processing time:
  system.time( SND.sok &lt;- spline.krige(locations=eberg["SNDMHT_A"], 
       t_cellsize=25, newdata=eberg_grid25, 
@@ -139,6 +185,7 @@ if(env$version=="2.1.0"){
  par(mfrow=c(1,2))
  plot(raster(SND.sok[1]))
  plot(raster(SND.ok[1])) 
+>>>>>>> .r138
 }
 </pre>
 

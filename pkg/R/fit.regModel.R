@@ -102,6 +102,7 @@ setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.f
   }
   
   if(method == "randomForest"|method == "quantregForest"){
+    require(randomForest)
     ## fit/filter the regression model:
     message("Fitting a randomForest model...")
     ## NA's not permitted and need to be filtered out:
