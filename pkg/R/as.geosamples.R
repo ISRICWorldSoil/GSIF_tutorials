@@ -287,7 +287,7 @@ setMethod("show", signature(object = "geosamples"),
   # estimate the total area covered by the samples:
   sp.gc <- spTransform(sp, CRS("+proj=sinu +lon_0=0 +x_0=0 +y_0=0 +a=6371007.181 +b=6371007.181 +units=m +no_defs"))
   Tarea <- signif(diff(sp.gc@bbox[1,])*diff(sp.gc@bbox[2,])/1e6, 4)
-  cat("  Total area          :", paste(Tarea), "(square-km)", "\n")
+  cat("  Total area (app.)   :", paste(Tarea), "(square-km)", "\n")
 })
 
 

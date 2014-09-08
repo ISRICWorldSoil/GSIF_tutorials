@@ -21,6 +21,6 @@ importClassesFrom("dismo", DistModel, MaxEnt)
 importClassesFrom("raster", RasterLayer, RasterStack)
 
 exportClasses(geosamples, WPS, SpatialComponents, gstatModel, GlobalSoilMap, SoilGrids)
-exportMethods(as.data.frame, mpspline, as.geosamples, getID, getProcess, describe, over, spc, fit.gstatModel, fit.vgmModel, fit.regModel, test.gstatModel, spfkm, spmultinom, make.3Dgrid, sp3D, subset, warp, write.data, MaxEnt, merge, predict, validate, summary, tile, getSpatialTiles, extract)
+exportMethods(as.data.frame, mpspline, as.geosamples, getID, getProcess, describe, over, spc, fit.gstatModel, fit.vgmModel, fit.regModel, test.gstatModel, spfkm, spmultinom, make.3Dgrid, sp3D, subset, warp, write.data, MaxEnt, merge, predict, validate, summary, tile, getSpatialTiles, extract, stack, show)
 S3method(print, gstatModel)
 exportPattern("^[^\\.]")

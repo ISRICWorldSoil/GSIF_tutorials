@@ -30,7 +30,7 @@ Horizons table contains the following columns:
   \item{\code{EMGM3S}}{numeric; Exchangeable Mg in cmolc/kg (\code{ExMg} in the LDSF Field Database)}
   \item{\code{ENAM3S}}{numeric; Exchangeable Mg in cmolc/kg (\code{ExNa} in the LDSF Field Database)}
   \item{\code{NITCNS}}{numeric; Exchangeable N as volumetric percentage (\code{Total.Nitrogen} in the LDSF Field Database)}
-  \item{\code{SNDLDF}}{numeric; weight percentage of the sand particles (0.0002--0.05 mm; \code{Sand} in the LDSF Field Database)}
+  \item{\code{SNDLDF}}{numeric; weight percentage of the sand particles (0.05--2.0 mm; \code{Sand} in the LDSF Field Database)}
 }
 \code{afss.spec} table contains the following columns:
   \describe{
