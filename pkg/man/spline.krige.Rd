@@ -2,7 +2,7 @@
 \alias{spline.krige}
 \alias{resample.grid}
 \title{Kriging combined with splines}
-\description{Combines kriging and spline interpolation to speed up the kriging with minimal loss in precision, whilst reducing generation of artifacts. Spline interpolation is implemented via the SAGA GIS function \code{"Cubic Spline Approximation"}.}
+\description{Combines kriging and spline interpolation to speed up the kriging with minimal loss in precision, whilst reducing generation of artifacts. Spline interpolation is implemented via the SAGA GIS function \code{"Cubic Spline Approximation"} (SAGA GIS needs to be installed separately).}
 \usage{spline.krige(formula, locations, newdata, newlocs = NULL, model, 
     te = as.vector(newdata@bbox), file.name, silent = FALSE, 
     t_cellsize = newdata@grid@cellsize[1], optN = 20, quant.nndist = .5, 
@@ -85,4 +85,5 @@ if(env$version=="2.1.0"){
  plot(raster(SND.ok25[1]), main="krige (25 m)")
  plot(raster(SND.ok[1]), main="krige (100 m)") 
 }
+## less artifacts, faster processing time
 }
