@@ -65,6 +65,7 @@ grd <- resample.grid(locations=eberg["SNDMHT_A"], newdata=eberg_grid25,
 plot(raster(grd$density))
 plot(grd$newlocs)
 points(eberg, pch=19, col="red", cex=.7)
+\dontrun{
 env <- rsaga.env()
 if(env$version=="2.1.0"){
  ## compare processing time:
@@ -85,5 +86,6 @@ if(env$version=="2.1.0"){
  plot(raster(SND.ok25[1]), main="krige (25 m)")
  plot(raster(SND.ok[1]), main="krige (100 m)") 
 }
-## less artifacts, faster processing time
+}
+## conclusion: less artifacts, faster processing time
 }
