@@ -10,7 +10,7 @@
 
 <h3>Description</h3>
 
-<p>A subset of the <a href="http://africasoils.net/data/legacyprofile">Africa Soil Profiles Database</a> (AFSP) that contains over 12,000 geo-referenced legacy soil profile records for 37 countries.</p>
+<p>A subset of the <a href="http://africasoils.net/data/legacyprofile">Africa Soil Profiles Database</a> (AFSP) that contains over 17,000 geo-referenced legacy soil profile records for 37 countries.</p>
 
 
 <h3>Usage</h3>
@@ -44,6 +44,8 @@
 </dd>
 <dt><code>TAXNUSDA</code></dt><dd><p>factor; Keys to Soil Taxonomy taxon name e.g. <code>"Plinthic Udoxic Dystropept"</code> (<code>USDA</code> in the AFSP)</p>
 </dd>
+<dt><code>DRAINFAO</code></dt><dd><p>factor; drainage class based on the FAO guidelines for soil description: <code>E</code> (excessively drained), <code>S</code> (somewhat excessively drained), <code>W</code> (well drained), <code>M</code> (moderately well drained), <code>I</code> (somewhat poorly drained) and <code>V</code> (very poorly drained)</p>
+</dd>
 </dl>
 
 <p>Horizons table contains the following columns:
@@ -70,13 +72,17 @@
 </dd>
 <dt><code>BLD</code></dt><dd><p>bulk density in tonnes per cubic-meter (<code>BlkDens</code> in the AFSP)</p>
 </dd>
-<dt><code>PHIHO5</code></dt><dd><p>numeric; pH index measured in water solution (<code>PHH2O</code> in the AFSP)</p>
+<dt><code>PHIHOX</code></dt><dd><p>numeric; pH index measured in water solution (<code>PHH2O</code> in the AFSP)</p>
 </dd>
 <dt><code>PHIKCL</code></dt><dd><p>numeric; pH index measured in KCl solution (<code>PHKCl</code> in the AFSP)</p>
+</dd>
+<dt><code>ECN</code></dt><dd><p>numeric; electrical conductivity (<code>EC</code> in the AFSP)</p>
 </dd>
 <dt><code>ORCDRC</code></dt><dd><p>numeric; soil organic carbon content in permilles (<code>OrgC</code> in the AFSP)</p>
 </dd>
 <dt><code>CEC</code></dt><dd><p>numeric; Cation Exchange Capacity in cmol+/kg (<code>CecSoil</code> in the AFSP)</p>
+</dd>
+<dt><code>EACKCL</code></dt><dd><p>numeric; exchangable acidity (<code>ExAcid</code> in the AFSP)</p>
 </dd>
 </dl>
 
@@ -138,7 +144,7 @@
 
 
 <ul>
-<li><p> Leenaars, J.G.B. (2012) <a href="http://www.isric.org/content/publications">Africa Soil Profiles Database, Version 1.0. A compilation of geo-referenced and standardized legacy soil profile data for Sub Saharan Africa (with dataset)</a>. ISRIC report 2012/03. Africa Soil Information Service (AfSIS) project and ISRIC &mdash; World Soil Information, Wageningen, the Netherlands.
+<li><p> Leenaars, J.G.B. (2014) <a href="http://www.isric.org/content/publications">Africa Soil Profiles Database, Version 1.2. A compilation of geo-referenced and standardized legacy soil profile data for Sub Saharan Africa (with dataset)</a>. ISRIC report 2012/03. Africa Soil Information Service (AfSIS) project and ISRIC &mdash; World Soil Information, Wageningen, the Netherlands.
 </p>
 </li>
 <li><p> Africa Soil Information Service (<a href="http://africasoils.net">http://africasoils.net</a>) 
@@ -183,5 +189,5 @@ writeGDAL(afgrid20["TDMMOD0a"], "TDMMOD0a.tif", "GTiff", mvFlag=-99999)
 ## End(Not run)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.4-3 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.4-2 <a href="00Index.html">Index</a>]</div>
 </body></html>

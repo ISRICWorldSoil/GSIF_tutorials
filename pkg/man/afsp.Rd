@@ -3,7 +3,7 @@
 \encoding{latin1}
 \alias{afsp}
 \title{Africa Soil Profiles Database}
-\description{A subset of the \href{http://africasoils.net/data/legacyprofile}{Africa Soil Profiles Database} (AFSP) that contains over 12,000 geo-referenced legacy soil profile records for 37 countries.}
+\description{A subset of the \href{http://africasoils.net/data/legacyprofile}{Africa Soil Profiles Database} (AFSP) that contains over 17,000 geo-referenced legacy soil profile records for 37 countries.}
 \usage{data(afsp)}
 \format{
 The \code{afsp} data set contains two data frames --- sites and horizons. Sites table contains the following columns:
@@ -18,6 +18,7 @@ The \code{afsp} data set contains two data frames --- sites and horizons. Sites 
   \item{\code{TAXNFAO}}{factor; full soil classification code based on the FAO 1988 classification system (\code{FAO88} in the AFSP)}
   \item{\code{TAXGWRB}}{factor; abbreviated soil group based on the WRB classification system (\code{WRB06rg} in the AFSP)}
   \item{\code{TAXNUSDA}}{factor; Keys to Soil Taxonomy taxon name e.g. \code{"Plinthic Udoxic Dystropept"} (\code{USDA} in the AFSP)}
+  \item{\code{DRAINFAO}}{factor; drainage class based on the FAO guidelines for soil description: \code{E} (excessively drained), \code{S} (somewhat excessively drained), \code{W} (well drained), \code{M} (moderately well drained), \code{I} (somewhat poorly drained) and \code{V} (very poorly drained)}
 }
 Horizons table contains the following columns:
   \describe{
@@ -31,10 +32,12 @@ Horizons table contains the following columns:
   \item{\code{SLTPPT}}{numeric; weight percentage of the silt particles (0.05--2 mm; \code{Silt} in the AFSP)}
   \item{\code{CLYPPT}}{numeric; weight percentage of the clay particles (<0.0002 mm; \code{Clay} in the AFSP)}
   \item{\code{BLD}}{bulk density in tonnes per cubic-meter (\code{BlkDens} in the AFSP)}
-  \item{\code{PHIHO5}}{numeric; pH index measured in water solution (\code{PHH2O} in the AFSP)}
+  \item{\code{PHIHOX}}{numeric; pH index measured in water solution (\code{PHH2O} in the AFSP)}
   \item{\code{PHIKCL}}{numeric; pH index measured in KCl solution (\code{PHKCl} in the AFSP)}
+  \item{\code{ECN}}{numeric; electrical conductivity (\code{EC} in the AFSP)}
   \item{\code{ORCDRC}}{numeric; soil organic carbon content in permilles (\code{OrgC} in the AFSP)}
   \item{\code{CEC}}{numeric; Cation Exchange Capacity in cmol+/kg (\code{CecSoil} in the AFSP)}
+  \item{\code{EACKCL}}{numeric; exchangable acidity (\code{ExAcid} in the AFSP)}
 }
 The \code{afgrid20} \code{"SpatialPixelsDataFrame"} object contains a list of soil covariates prepared for Africa at 20 km resolution (45,997 grid nodes) obtained from WorldGrids.org:
   \describe{
@@ -62,7 +65,7 @@ The \code{afgrid20} \code{"SpatialPixelsDataFrame"} object contains a list of so
 \author{The Africa Soil Profiles Database have been prepared by Johan Leenaars <johan.leenaars@wur.nl>. This is a subset of the original database that can be downloaded via \href{http://www.isric.org/content/africa-soil-profiles-database}{www.isric.org}. The processing steps used to prepare this data are described in \href{https://code.google.com/p/gsif/source/browse/trunk/AFRICA/ASPDB/rw_AFSP.R}{this script}.}
 \references{
 \itemize{
-\item Leenaars, J.G.B. (2012) \href{http://www.isric.org/content/publications}{Africa Soil Profiles Database, Version 1.0. A compilation of geo-referenced and standardized legacy soil profile data for Sub Saharan Africa (with dataset)}. ISRIC report 2012/03. Africa Soil Information Service (AfSIS) project and ISRIC --- World Soil Information, Wageningen, the Netherlands.
+\item Leenaars, J.G.B. (2014) \href{http://www.isric.org/content/publications}{Africa Soil Profiles Database, Version 1.2. A compilation of geo-referenced and standardized legacy soil profile data for Sub Saharan Africa (with dataset)}. ISRIC report 2012/03. Africa Soil Information Service (AfSIS) project and ISRIC --- World Soil Information, Wageningen, the Netherlands.
 \item Africa Soil Information Service (\url{http://africasoils.net}) 
 }
 }
