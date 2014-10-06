@@ -4,7 +4,7 @@
 # Dev Status     : Stable
 # Note           : Formula available from [http://www.sciencedirect.com/science/article/pii/S001670611200417X]
 
-AWCPTF <- function(SNDPPT, SLTPPT, CLYPPT, ORCDRC, BLD=1682, CEC, PHIHOX, h1=-10, h2=-20, h3=-31.6, pwp=-1585, PTF.coef, fix.values=TRUE){
+AWCPTF <- function(SNDPPT, SLTPPT, CLYPPT, ORCDRC, BLD=1682, CEC, PHIHOX, h1=-10, h2=-20, h3=-31.6, pwp=-1585, PTF.coef, fix.values=TRUE, print.coef=TRUE){
  ## pedotransfer coefficients developed by Hodnett and Tomasella (2002)
  if(missing(PTF.coef)){
    PTF.coef <- data.frame(
@@ -13,7 +13,6 @@ AWCPTF <- function(SNDPPT, SLTPPT, CLYPPT, ORCDRC, BLD=1682, CEC, PHIHOX, h1=-10
      tetaS = c(81.799, 0, 0, 0.099, 0, -31.42, 0.018, 0.451, 0, 0, 0, -5e-04),
      tetaR = c(22.733, -0.164, 0, 0, 0, 0, 0.235, -0.831, 0, 0.0018, 0, 0.0026)
    )
-   row.names(PTF.coef) <- c("ai1", "sand", "silt", "clay", "oc", "bd", "cec", "ph", "silt^2", "clay^2", "sand*silt", "sand*clay")
  }
  ## standardize sand silt clay:
  if(fix.values){
@@ -46,5 +45,9 @@ AWCPTF <- function(SNDPPT, SLTPPT, CLYPPT, ORCDRC, BLD=1682, CEC, PHIHOX, h1=-10
  AWCh2 <- tetah2 - WWP
  AWCh3 <- tetah3 - WWP
  out <- data.frame(AWCh1=signif(AWCh1,3), AWCh2=signif(AWCh2,3), AWCh3=signif(AWCh3,3), WWP=signif(WWP,3))
+ if(print.coef==TRUE){
+   attr(out, "coef") <- as.list(PTF.coef)
+   attr(out, "PTF.names") <- list(variable=c("ai1", "sand", "silt", "clay", "oc", "bd", "cec", "ph", "silt^2", "clay^2", "sand*silt", "sand*clay"))
+ }
  return(out)
 }

@@ -17,7 +17,7 @@
 
 <pre>AWCPTF(SNDPPT, SLTPPT, CLYPPT, ORCDRC, 
     BLD=1682, CEC, PHIHOX, h1=-10, h2=-20, h3=-31.6, 
-    pwp=-1585, PTF.coef, fix.values=TRUE )
+    pwp=-1585, PTF.coef, fix.values=TRUE, print.coef=TRUE)
 </pre>
 
 
@@ -70,11 +70,15 @@
 </td></tr>
 <tr valign="top"><td><code>PTF.coef</code></td>
 <td>
-<p>data.frame; optional conversion coefficients (Pedo-Transfer Function)</p>
+<p>data.frame; optional conversion coefficients (Pedo-Transfer Function) with rows <code>"ai1"</code>, <code>"sand"</code>, <code>"silt"</code>, <code>"clay"</code>, <code>"oc"</code>, <code>"bd"</code>, <code>"cec"</code>, <code>"ph"</code>, <code>"silt^2"</code>, <code>"clay^2"</code>, <code>"sand*silt"</code>, <code>"sand*clay"</code> and colums <code>"lnAlfa"</code>, <code>"lnN"</code>, <code>"tetaS"</code> and <code>"tetaR"</code> (see Wösten et al. 2013 for more details)</p>
 </td></tr>
 <tr valign="top"><td><code>fix.values</code></td>
 <td>
-<p>logical; specifies whether to correct values of textures and bulk density to avoid creating non-sensical values</p>
+<p>logical; specifies whether to correct values of textures and bulk density to avoid creating nonsensical values</p>
+</td></tr>
+<tr valign="top"><td><code>print.coef</code></td>
+<td>
+<p>logical; specifies whether to attach the PTF coefficients to the output object</p>
 </td></tr>
 </table>
 
@@ -133,17 +137,19 @@ CLYPPT = 48
 ORCDRC = 23 
 BLD = 1200 
 CEC = 12 
-PHIOX = 6.4
+PHIHOX = 6.4
 x &lt;- AWCPTF(SNDPPT, SLTPPT, CLYPPT, ORCDRC, BLD, CEC, PHIHOX)
-x
+str(x)
+attr(x, "coef")
 ## predict AWC for the whole AfSP DB:
 data(afsp)
-names(afsp$horizons) 
-BLDf &lt;- ifelse(is.na(afsp$horizons$BLD), 
-   mean(afsp$horizons$BLD, na.rm=TRUE), afsp$horizons$BLD)
-xd &lt;- AWCPTF(afsp$horizons$SNDPPT, afsp$horizons$SLTPPT, 
-  afsp$horizons$CLYPPT, afsp$horizons$ORCDRC, 
-  BLD=BLDf*1000, afsp$horizons$CEC, afsp$horizons$PHIHOX)
+names(afsp$horizons)
+## subset to 10% of data:
+hor &lt;- afsp$horizons[runif(nrow(afsp$horizons))&lt;.1,]
+BLDf &lt;- ifelse(is.na(hor$BLD), 
+   mean(hor$BLD, na.rm=TRUE), hor$BLD)
+xd &lt;- AWCPTF(hor$SNDPPT, hor$SLTPPT, hor$CLYPPT, 
+  hor$ORCDRC, BLD=BLDf*1000, hor$CEC, hor$PHIHOX)
 str(xd)
 </pre>
 

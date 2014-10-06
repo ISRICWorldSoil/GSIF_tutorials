@@ -5,7 +5,7 @@
 \description{Derive available soil water capacity  (in cubic-meter per cubic-meter) based on a Pedo-Transfer Function developed using the Africa Soil Profile Database (\enc{Wösten}{Wosten} et al. 2013).}
 \usage{AWCPTF(SNDPPT, SLTPPT, CLYPPT, ORCDRC, 
     BLD=1682, CEC, PHIHOX, h1=-10, h2=-20, h3=-31.6, 
-    pwp=-1585, PTF.coef, fix.values=TRUE )
+    pwp=-1585, PTF.coef, fix.values=TRUE, print.coef=TRUE)
 }
 \arguments{
   \item{SNDPPT}{numeric; sand content in percent}
@@ -19,8 +19,9 @@
   \item{h2}{numeric; moisture potential in kPa e.g. -20 (pF 2.3)}
   \item{h3}{numeric; moisture potential in kPa e.g. -31.6 (pF 2.5)}
   \item{pwp}{numeric; moisture potential at wilting point in kPa e.g. -1585 (pF 4.2)}
-  \item{PTF.coef}{data.frame; optional conversion coefficients (Pedo-Transfer Function)}
-  \item{fix.values}{logical; specifies whether to correct values of textures and bulk density to avoid creating non-sensical values}
+  \item{PTF.coef}{data.frame; optional conversion coefficients (Pedo-Transfer Function) with rows \code{"ai1"}, \code{"sand"}, \code{"silt"}, \code{"clay"}, \code{"oc"}, \code{"bd"}, \code{"cec"}, \code{"ph"}, \code{"silt^2"}, \code{"clay^2"}, \code{"sand*silt"}, \code{"sand*clay"} and colums \code{"lnAlfa"}, \code{"lnN"}, \code{"tetaS"} and \code{"tetaR"} (see \enc{Wösten}{Wosten} et al. 2013 for more details)}
+  \item{fix.values}{logical; specifies whether to correct values of textures and bulk density to avoid creating nonsensical values}
+  \item{print.coef}{logical; specifies whether to attach the PTF coefficients to the output object}
 }
 \value{
 Returns a data frame with the following columns:
@@ -48,16 +49,18 @@ CLYPPT = 48
 ORCDRC = 23 
 BLD = 1200 
 CEC = 12 
-PHIOX = 6.4
+PHIHOX = 6.4
 x <- AWCPTF(SNDPPT, SLTPPT, CLYPPT, ORCDRC, BLD, CEC, PHIHOX)
-x
+str(x)
+attr(x, "coef")
 ## predict AWC for the whole AfSP DB:
 data(afsp)
-names(afsp$horizons) 
-BLDf <- ifelse(is.na(afsp$horizons$BLD), 
-   mean(afsp$horizons$BLD, na.rm=TRUE), afsp$horizons$BLD)
-xd <- AWCPTF(afsp$horizons$SNDPPT, afsp$horizons$SLTPPT, 
-  afsp$horizons$CLYPPT, afsp$horizons$ORCDRC, 
-  BLD=BLDf*1000, afsp$horizons$CEC, afsp$horizons$PHIHOX)
+names(afsp$horizons)
+## subset to 10% of data:
+hor <- afsp$horizons[runif(nrow(afsp$horizons))<.1,]
+BLDf <- ifelse(is.na(hor$BLD), 
+   mean(hor$BLD, na.rm=TRUE), hor$BLD)
+xd <- AWCPTF(hor$SNDPPT, hor$SLTPPT, hor$CLYPPT, 
+  hor$ORCDRC, BLD=BLDf*1000, hor$CEC, hor$PHIHOX)
 str(xd)
 }
