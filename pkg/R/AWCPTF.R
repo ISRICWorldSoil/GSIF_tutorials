@@ -20,8 +20,8 @@ AWCPTF <- function(SNDPPT, SLTPPT, CLYPPT, ORCDRC, BLD=1682, CEC, PHIHOX, h1=-10
    CLYPPT <- CLYPPT/(sum.tex)*100
    SLTPPT <- SLTPPT/(sum.tex)*100
    SNDPPT <- SNDPPT/(sum.tex)*100
-   BLD[BLD<800] <- 800
-   BLD[BLD>2900] <- 2900
+   BLD[BLD<100] <- 100
+   BLD[BLD>2650] <- 2650  ## weight of quartz
  }
  ## rows:
  clm <- data.frame(SNDPPT, SLTPPT, CLYPPT, ORCDRC/10, BLD*0.001, CEC, PHIHOX, SLTPPT^2, CLYPPT^2, SNDPPT*SLTPPT, SNDPPT*CLYPPT)
@@ -31,15 +31,19 @@ AWCPTF <- function(SNDPPT, SLTPPT, CLYPPT, ORCDRC, BLD=1682, CEC, PHIHOX, h1=-10
  tetaR <- apply(clm, 1, function(x){ (PTF.coef$tetaR[1] + sum(PTF.coef$tetaR[-1] * x))/100 })
  ## change negative of tetaR to 0
  tetaR[tetaR < 0] <- 0
+ tetaS[tetaS > 100] <- 100
  m <- 1-1/N
- tetah1 <- tetaR + ((tetaS-tetaR)/((1+(alfa*-1*h1)^N))^m)
- tetah2 <- tetaR + ((tetaS-tetaR)/((1+(alfa*-1*h2)^N))^m)
- tetah3 <- tetaR + ((tetaS-tetaR)/((1+(alfa*-1*h3)^N))^m)
- WWP <- tetaR + ((tetaS-tetaR)/((1+(alfa*-1*pwp)^N))^m)
+ tetah1 <- tetaR + (tetaS-tetaR)/((1+(alfa*-1*h1)^N))^m
+ tetah2 <- tetaR + (tetaS-tetaR)/((1+(alfa*-1*h2)^N))^m
+ tetah3 <- tetaR + (tetaS-tetaR)/((1+(alfa*-1*h3)^N))^m
+ WWP <- tetaR + (tetaS-tetaR)/((1+(alfa*-1*pwp)^N))^m
  if(fix.values){
    ## if any of the teath values is smaller then WWP then replace:
    sel <- which(WWP > tetah1 | WWP > tetah2 | WWP > tetah3)
-   if(length(sel)>0){ WWP[sel] <- apply(data.frame(tetah1[sel], tetah2[sel], tetah3[sel]), 1, function(x){min(x, na.rm=TRUE)}) }
+   if(length(sel)>0){ 
+     WWP[sel] <- apply(data.frame(tetah1[sel], tetah2[sel], tetah3[sel]), 1, function(x){min(x, na.rm=TRUE)}) 
+     warning(paste("Wilting point capacity for", length(sel), "points higher than h1, h2 and/or h3"))
+   }
  }
  AWCh1 <- tetah1 - WWP
  AWCh2 <- tetah2 - WWP

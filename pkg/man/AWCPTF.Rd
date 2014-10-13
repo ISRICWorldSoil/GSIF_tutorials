@@ -56,11 +56,14 @@ attr(x, "coef")
 ## predict AWC for the whole AfSP DB:
 data(afsp)
 names(afsp$horizons)
-## subset to 10% of data:
-hor <- afsp$horizons[runif(nrow(afsp$horizons))<.1,]
+## profile of interest:
+sel <- afsp$horizons$SOURCEID=="NG 28440_Z5"
+hor <- afsp$horizons[sel,]
+## replace missing values:
 BLDf <- ifelse(is.na(hor$BLD), 
    mean(hor$BLD, na.rm=TRUE), hor$BLD)
-xd <- AWCPTF(hor$SNDPPT, hor$SLTPPT, hor$CLYPPT, 
-  hor$ORCDRC, BLD=BLDf*1000, hor$CEC, hor$PHIHOX)
-str(xd)
+hor <- cbind(hor, AWCPTF(hor$SNDPPT, hor$SLTPPT, 
+  hor$CLYPPT, hor$ORCDRC, BLD=BLDf*1000, hor$CEC, 
+  hor$PHIHOX))
+str(hor)
 }

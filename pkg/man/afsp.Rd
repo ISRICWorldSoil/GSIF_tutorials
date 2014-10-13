@@ -35,7 +35,7 @@ Horizons table contains the following columns:
   \item{\code{PHIHOX}}{numeric; pH index measured in water solution (\code{PHH2O} in the AFSP)}
   \item{\code{PHIKCL}}{numeric; pH index measured in KCl solution (\code{PHKCl} in the AFSP)}
   \item{\code{ECN}}{numeric; electrical conductivity (\code{EC} in the AFSP)}
-  \item{\code{ORCDRC}}{numeric; soil organic carbon content in permilles (\code{OrgC} in the AFSP)}
+  \item{\code{ORCDRC}}{numeric; soil organic carbon content in permilles (\code{OrgC}*10 in the AFSP)}
   \item{\code{CEC}}{numeric; Cation Exchange Capacity in cmol+/kg (\code{CecSoil} in the AFSP)}
   \item{\code{EACKCL}}{numeric; exchangable acidity (\code{ExAcid} in the AFSP)}
 }

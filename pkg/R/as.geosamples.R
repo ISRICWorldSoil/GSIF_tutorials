@@ -124,6 +124,7 @@ setMethod("as.geosamples", signature(obj = "SpatialPointsDataFrame"),
   function(obj, registry = as.character(NA), sample.area = 1, mxd = 2, TimeSpan.begin, TimeSpan.end) 
   {
   
+  require(plotKML)
   ## SpatialPoints should be in the WGS84 projection system:
   if(is.na(proj4string(obj))|!check_projection(obj)){ 
     stop(paste("proj4 string", get("ref_CRS", envir = plotKML.opts), "required")) 

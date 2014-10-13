@@ -10,7 +10,7 @@
 
 <h3>Description</h3>
 
-<p>Combines kriging and spline interpolation to speed up the kriging with minimal loss in precision, whilst reducing generation of artifacts. Spline interpolation is implemented via the SAGA GIS function <code>"Cubic Spline Approximation"</code> (SAGA GIS needs to be installed separately).</p>
+<p>Combines kriging and spline interpolation to speed up the kriging with minimal loss in precision, whilst reducing generation of artifacts. Spline interpolation is implemented via the SAGA GIS function <code>"Multilevel B-Spline Interpolation"</code> (SAGA GIS needs to be installed separately).</p>
 
 
 <h3>Usage</h3>
@@ -18,7 +18,7 @@
 <pre>spline.krige(formula, locations, newdata, newlocs = NULL, model, 
     te = as.vector(newdata@bbox), file.name, silent = FALSE, 
     t_cellsize = newdata@grid@cellsize[1], optN = 20, quant.nndist = .5, 
-    nmax = 30, ...)
+    nmax = 30, predictOnly = FALSE, resample = TRUE, ...)
 </pre>
 
 
@@ -51,7 +51,7 @@
 </td></tr>
 <tr valign="top"><td><code>file.name</code></td>
 <td>
-<p>character; optional output file name pattern</p>
+<p>character; optional output file name pattern (without any file extension)</p>
 </td></tr>
 <tr valign="top"><td><code>silent</code></td>
 <td>
@@ -74,6 +74,14 @@
 <p>integer; the number of nearest observations that
 should be used for kriging</p>
 </td></tr>
+<tr valign="top"><td><code>predictOnly</code></td>
+<td>
+<p>logical; specifies whether to generate only predictions (<code>var1.pred</code> column)</p>
+</td></tr>
+<tr valign="top"><td><code>resample</code></td>
+<td>
+<p>logical; specifies whether to down or upscale SAGA GIS grids to match the grid system of <code>newdata</code></p>
+</td></tr>
 <tr valign="top"><td><code>...</code></td>
 <td>
 <p>other optional arguments that can be passed to function <code>gstat::krige</code></p>
@@ -90,7 +98,7 @@ should be used for kriging</p>
 <h3>Note</h3>
 
 <p>This function adjusts grid density (prediction locations) in reference to the actual local sampling intensity. High resolution grids are created where sampling density is higher and vice versa (<a href="http://dx.doi.org/10.1016/j.cageo.2005.11.008">Hengl, 2006</a>). Low resolution grids (due to sparse data) are then downscaled to the target resolution using spline interpolation. This allows for speeding up the kriging with minimal loss in precision, whilst reducing generation of artifacts. 
-Spline interpolation is implemented via the SAGA GIS v2.1 function <code>"Cubic Spline Approximation"</code> using the default settings. This function is especially suitable for producing predictions for large grids where the sampling locations show high spatial clustering. It is NOT intended for predicting using point samples collected using sampling designs with high spatial spreading e.g. based on simple random sampling or grid sampling.
+Spline interpolation is implemented via the SAGA GIS v2.1 function <code>"Multilevel B-Spline Interpolation"</code> using the default settings. This function is especially suitable for producing predictions for large grids where the sampling locations show high spatial clustering. It is NOT intended for predicting using point samples collected using sampling designs with constant spatial sampling intensity e.g. point samples collected using simple random sampling or grid sampling.
 </p>
 
 
@@ -137,12 +145,13 @@ proj4string(eberg_grid) &lt;- CRS("+init=epsg:31467")
 gridded(eberg_grid25) &lt;- ~x+y
 proj4string(eberg_grid25) &lt;- CRS("+init=epsg:31467")
 ## prepare prediction locations for spline.krige:
-grd &lt;- resample.grid(locations=eberg["SNDMHT_A"], newdata=eberg_grid25, 
-   t_cellsize=25, optN=5, quant.nndist=.9, nstrata=5)
+grd &lt;- resample.grid(locations=eberg["SNDMHT_A"], t_cellsize=25,
+   newdata=eberg_grid25, optN=5, quant.nndist=.9)
 ## plot resampled grid:
 plot(raster(grd$density))
 plot(grd$newlocs)
 points(eberg, pch=19, col="red", cex=.7)
+## Not run: 
 env &lt;- rsaga.env()
 if(env$version=="2.1.0"){
  ## compare processing time:
@@ -163,7 +172,9 @@ if(env$version=="2.1.0"){
  plot(raster(SND.ok25[1]), main="krige (25 m)")
  plot(raster(SND.ok[1]), main="krige (100 m)") 
 }
-## less artifacts, faster processing time
+
+## End(Not run)
+## conclusion: less artifacts, faster processing time
 </pre>
 
 <hr><div align="center">[Package <em>GSIF</em> version 0.4-2 <a href="00Index.html">Index</a>]</div>

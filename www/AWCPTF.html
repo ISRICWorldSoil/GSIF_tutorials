@@ -144,13 +144,16 @@ attr(x, "coef")
 ## predict AWC for the whole AfSP DB:
 data(afsp)
 names(afsp$horizons)
-## subset to 10% of data:
-hor &lt;- afsp$horizons[runif(nrow(afsp$horizons))&lt;.1,]
+## profile of interest:
+sel &lt;- afsp$horizons$SOURCEID=="NG 28440_Z5"
+hor &lt;- afsp$horizons[sel,]
+## replace missing values:
 BLDf &lt;- ifelse(is.na(hor$BLD), 
    mean(hor$BLD, na.rm=TRUE), hor$BLD)
-xd &lt;- AWCPTF(hor$SNDPPT, hor$SLTPPT, hor$CLYPPT, 
-  hor$ORCDRC, BLD=BLDf*1000, hor$CEC, hor$PHIHOX)
-str(xd)
+hor &lt;- cbind(hor, AWCPTF(hor$SNDPPT, hor$SLTPPT, 
+  hor$CLYPPT, hor$ORCDRC, BLD=BLDf*1000, hor$CEC, 
+  hor$PHIHOX))
+str(hor)
 </pre>
 
 <hr><div align="center">[Package <em>GSIF</em> version 0.4-2 <a href="00Index.html">Index</a>]</div>
