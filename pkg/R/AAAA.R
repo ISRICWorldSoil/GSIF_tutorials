@@ -126,7 +126,7 @@ setClass(Class="FAO.SoilProfileCollection",
 })
 
 ## A new class for models fitted in gstat:
-setClass("gstatModel", representation(regModel = "ANY", vgmModel = "data.frame", sp = "SpatialPoints"), validity = function(object) {
+setClass("gstatModel", slots = c(regModel = "ANY", vgmModel = "data.frame", svgmModel = "data.frame", sp = "SpatialPoints"), validity = function(object) {
     ml = c("lm", "glm", "rpart", "randomForest", "lme", "gls", "zeroinfl")
     if(!any(class(object@regModel) %in% ml))
       return(paste("Only models of type", paste(ml, collapse=", "), "are accepted"))
