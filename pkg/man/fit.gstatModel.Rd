@@ -79,11 +79,14 @@ demo(meuse, echo=FALSE)
 omm <- fit.gstatModel(meuse, log1p(om)~dist+ffreq, meuse.grid, method="rpart")
 summary(omm@regModel)
 ## plot a regression-tree:
-plot(omm@regModel, uniform=TRUE); text(omm@regModel, use.n=TRUE, all=TRUE, cex=.8)
+plot(omm@regModel, uniform=TRUE)
+text(omm@regModel, use.n=TRUE, all=TRUE, cex=.8)
 omm@vgmModel    
 ## fit a randomForest model:
 omm <- fit.gstatModel(meuse, log1p(om)~dist+ffreq, meuse.grid, method="randomForest")
 summary(omm@regModel)
+## plot to see how good is the fit:
+plot(omm)
 ## plot the estimated error for number of bootstrapped trees:
 plot(omm@regModel)
 omm@vgmModel

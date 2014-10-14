@@ -1,12 +1,12 @@
 # Purpose        : Fitting 2D or 3D variograms;
-# Maintainer     : Tomislav Hengl (tom.hengl@wur.nl)
-# Contributions  : Gerard Heuvelink (gerard.heuvelink@wur.nl), Bas Kempen (bas.kempen@wur.nl); 
+# Maintainer     : Bas Kempen (bas.kempen@wur.nl);
+# Contributions  : Tomislav Hengl (tom.hengl@wur.nl) and Gerard Heuvelink (gerard.heuvelink@wur.nl); 
 # Dev Status     : Pre-Alpha
 # Note           : The variogram fitting in geoR is probably more robust, but also more time consuming;
 
 
 ## fit variogram to a 2D or 3D point object:
-setMethod("fit.vgmModel", signature(formulaString = "formula", rmatrix = "data.frame", predictionDomain = "SpatialPixelsDataFrame"), function(formulaString, rmatrix, predictionDomain, vgmFun = "Exp", dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]], anis = NULL, subsample = nrow(rmatrix), ivgm, cutoff, width, cressie, ...){
+setMethod("fit.vgmModel", signature(formulaString = "formula", rmatrix = "data.frame", predictionDomain = "SpatialPixelsDataFrame"), function(formulaString, rmatrix, predictionDomain, vgmFun = "Exp", dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]], anis = NULL, subsample = nrow(rmatrix), ivgm, cutoff, width = cutoff/15, cressie = FALSE, ...){
 
   ## check input object:
   if(is.na(proj4string(predictionDomain))){ stop("proj4 string required for argument 'predictionDomain'") }
@@ -108,30 +108,17 @@ setMethod("fit.vgmModel", signature(formulaString = "formula", rmatrix = "data.f
       cutoff = dbbox
     }
     
-    ## BK: if not given, determine sample variogram bin width based on gstat default
-    if(missing(width)) {
-      width = cutoff/15
-    }
-    
-    ## BK: if not given, set the cressie robust estimator to FALSE (gstat default)
-    if(missing(cressie)) {
-      cressie = FALSE
-    }
   }
-  
-  
   
   ## initial variogram:    
   if(missing(ivgm)){
     if(dimensions == "2D"|dimensions == "3D"){
-      ## BK: since most variograms have a nugget effect, I suggest to set the initial nugget equal to the initial partial sill
-      ivgm <- gstat::vgm(nugget=var(rmatrix@data[,tv])/2, model=vgmFun, range=Range, psill=var(rmatrix@data[,tv])/2, anis = anis)
+      ## BK: since most variograms have a nugget effect, set the initial nugget equal to the initial partial sill:
+      ivgm <- gstat::vgm(nugget=var(rmatrix@data[,tv])/5, model=vgmFun, range=Range, psill=var(rmatrix@data[,tv])*4/5, anis = anis)
       #ivgm <- vgm(nugget=0, model=vgmFun, range=Range, psill=var(rmatrix@data[,tv]), anis = anis)
     }
   }
   ## TH: 2D+T and 3D+T variogram fitting will be added;
-
-  ## BK: I would first fit the sample variogram and store this in the output. Users can then inspect the sample and fitted variograms
   
   ## fit sample variogram 
   svgm <- gstat::variogram(formulaString, rmatrix, cutoff=cutoff, width=width, cressie=cressie)

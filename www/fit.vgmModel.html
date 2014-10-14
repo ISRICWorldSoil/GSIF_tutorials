@@ -20,7 +20,8 @@
 fit.vgmModel(formulaString,
       rmatrix, predictionDomain, vgmFun = "Exp", 
       dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]],
-      anis = NULL, subsample = nrow(rmatrix), ivgm, cutoff, ...)
+      anis = NULL, subsample = nrow(rmatrix), ivgm, cutoff,
+      width, cressie = FALSE, ...)
 </pre>
 
 
@@ -61,7 +62,15 @@ fit.vgmModel(formulaString,
 </td></tr>
 <tr valign="top"><td><code>cutoff</code></td>
 <td>
-<p>cutoff; distance up to which point pairs are included in semivariance estimates</p>
+<p>numeric; distance up to which point pairs are included in semivariance estimates</p>
+</td></tr>
+<tr valign="top"><td><code>width</code></td>
+<td>
+<p>numeric; sample variogram bin width</p>
+</td></tr>
+<tr valign="top"><td><code>cressie</code></td>
+<td>
+<p>logical; specifies whether to use cressie robust estimator</p>
 </td></tr>
 <tr valign="top"><td><code>...</code></td>
 <td>
@@ -101,5 +110,5 @@ v &lt;- fit.vgmModel(om~1, rmatrix=ov, meuse.grid, dimensions="2D")
 plot(variogram(om ~ 1, meuse[!is.na(meuse$om),]), v$vgm)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.4-3 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.4-2 <a href="00Index.html">Index</a>]</div>
 </body></html>

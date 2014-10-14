@@ -25,6 +25,8 @@
 <dl>
 <dt><code>regModel</code>:</dt><dd><p>object of class <code>"ANY"</code>; output of fitting a generalized linear model (GLM) or any similar regression model</p>
 </dd>
+<dt><code>svgmModel</code>:</dt><dd><p>object of class <code>"data.frame"</code>; sample variogram with semivariances and distances</p>
+</dd>
 <dt><code>vgmModel</code>:</dt><dd><p>object of class <code>"data.frame"</code>; the fitted gstat variogram model parameters containing variogram model, nugget, sill, range and the five anisotropy parameters</p>
 </dd>
 <dt><code>sp</code>:</dt><dd><p>object of class <code>"SpatialPoints"</code>; observation locations</p>
@@ -40,6 +42,8 @@
 <dt>predict</dt><dd><p><code>signature(obj = "gstatModel")</code>: makes predictions for a set of given predictionLocations (gridded maps) at block support corresponding to the <code>cellsize</code> slot in the object of class <code>"SpatialPixelsDataFrame"</code>; to produce predictions at point support, submit the <code>predictionLocations</code> as <code>"SpatialPointsDataFrame"</code> </p>
 </dd>
 <dt>validate</dt><dd><p><code>signature(obj = "gstatModel")</code>: runs <EM>n</EM>-fold cross-validation of the existing gstatModel (it re-fits the model using existing formula string and model data, then estimates the mapping error at validation locations)</p>
+</dd>
+<dt>plot</dt><dd><p><code>signature(obj = "gstatModel", ...)</code>: plots goodness of fit and variogram model</p>
 </dd>
 </dl>
 
@@ -88,15 +92,15 @@ proj4string(meuse.grid) &lt;- CRS("+init=epsg:28992")
 ## fit a model:
 omm &lt;- fit.gstatModel(meuse, om~dist+ffreq, 
   fit.family=gaussian(link="log"), meuse.grid)
-show(omm@regModel)
+plot(omm)
 ## produce SpatialPredictions:
 om.rk &lt;- predict(omm, predictionLocations = meuse.grid)
-#plotKML(om.rk)
+plot(om.rk)
 ## run a proper cross-validation:
 rk.cv &lt;- validate(omm)
 ## RMSE:
 sqrt(mean((rk.cv$validation$var1.pred-rk.cv$validation$observed)^2))
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.4-3 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.4-2 <a href="00Index.html">Index</a>]</div>
 </body></html>

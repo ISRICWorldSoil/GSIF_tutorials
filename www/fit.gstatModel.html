@@ -156,11 +156,14 @@ demo(meuse, echo=FALSE)
 omm &lt;- fit.gstatModel(meuse, log1p(om)~dist+ffreq, meuse.grid, method="rpart")
 summary(omm@regModel)
 ## plot a regression-tree:
-plot(omm@regModel, uniform=TRUE); text(omm@regModel, use.n=TRUE, all=TRUE, cex=.8)
+plot(omm@regModel, uniform=TRUE)
+text(omm@regModel, use.n=TRUE, all=TRUE, cex=.8)
 omm@vgmModel    
 ## fit a randomForest model:
 omm &lt;- fit.gstatModel(meuse, log1p(om)~dist+ffreq, meuse.grid, method="randomForest")
 summary(omm@regModel)
+## plot to see how good is the fit:
+plot(omm)
 ## plot the estimated error for number of bootstrapped trees:
 plot(omm@regModel)
 omm@vgmModel
@@ -249,5 +252,5 @@ plotKML(SNDMHT.rk.sd1, z.lim=c(5,85))
 ## End(Not run)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.4-3 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.4-2 <a href="00Index.html">Index</a>]</div>
 </body></html>

@@ -154,4 +154,29 @@ setMethod("fit.gstatModel", signature(observations = "geosamples", formulaString
 })
 
 
+"print.gstatModel" <- function(x, ...){
+  print(x@regModel)
+  print(x@vgmModel)
+  summary(x@sp)
+}
+
+## BK: plot functionality; see also ?plotKML::plot.SpatialPredictions
+"plot.gstatModel" <- function(x, ...){
+  dev.new(width=9, height=5)
+  par(mfrow=c(1,2))
+  if(any(class(x@regModel) == "lm")){
+    plot(y=x@regModel$fitted.values, x=x@regModel$y, pch=19, col="black", xlab='observed', ylab='predicted', main='Goodness of fit', asp=1, xlim=range(x@regModel$y), ylim=range(x@regModel$y), ...)
+  } else {   
+    plot(y=predict(x@regModel), x=x@regModel$y, pch=19, col="black", xlab='observed', ylab='predicted', main='Goodness of fit', asp=1, xlim=range(x@regModel$y), ylim=range(x@regModel$y), ...)
+  }
+  abline(a=0, b=1, lwd=2, lty=2, col="green")
+  vgmmodel <- x@vgmModel
+  class(vgmmodel) <- c("variogramModel","data.frame")
+  plot(x=x@svgmModel$dist, y=x@svgmModel$gamma, pch="+", col = "black", xlab='distance', cex=1.4, ylab='gamma', ylim = c(0, max(x@svgmModel$gamma)), main='Residual variogram')
+  vline <- variogramLine(vgmmodel, maxdist=max(x@svgmModel$dist), n=length(x@svgmModel$dist))
+  lines(x=vline$dist, y=vline$gamma, col="green", lwd=2)
+}
+
+setMethod("plot", signature("gstatModel"), plot.gstatModel)
+
 # end of script;

@@ -10,16 +10,20 @@
 
 <h3>Description</h3>
 
-<p>Overlays and extracts values at points from a list of files (GDAL compatible). Extends the <code>extract</code> function from the <a href="http://cran.r-project.org/package=raster">raster</a> package. This method is especially suitable for extracting values of a large list of rasters that have not been organized into a mosaick (a virtual stack), for example a list of Landsat scenes.</p>
+<p>Overlays and extracts values at points from a list of raster layers defined as file names (e.g. GeoTiffs). Extends the <code>extract</code> function from the <a href="http://cran.r-project.org/package=raster">raster</a> package. Especially suitable for extracting values of a large list of rasters that have not been organized into a mosaick (a virtual stack), for example a list of Landsat scenes.</p>
 
 
 <h3>Usage</h3>
 
 <pre>
 ## S4 method for signature 'SpatialPoints,character'
-extract(x, y, path=".", ID = "SOURCEID", method = "simple", is.pattern = FALSE, force.projection = TRUE, NAflag = "", ...)
+extract(x, y, 
+   path=".", ID = "SOURCEID", 
+   method = "simple", is.pattern = FALSE, force.projection = TRUE, NAflag = "", ...)
 ## S4 method for signature 'SpatialPointsDataFrame,character'
-extract(x, y, path = ".", ID="SOURCEID", method = "simple", is.pattern = FALSE, force.projection = TRUE, NAflag = "", ...)
+extract(x, y, 
+   path = ".", ID = "SOURCEID", 
+   method = "simple", is.pattern = FALSE, force.projection = TRUE, NAflag = "", ...)
 </pre>
 
 
@@ -28,7 +32,7 @@ extract(x, y, path = ".", ID="SOURCEID", method = "simple", is.pattern = FALSE, 
 <table summary="R argblock">
 <tr valign="top"><td><code>x</code></td>
 <td>
-<p>object of class <code>"SpatialPoints"</code> or <code>"SpatialPointsDataFrame"</code></p>
+<p>object of class <code>"SpatialPoints*"</code></p>
 </td></tr> 
 <tr valign="top"><td><code>y</code></td>
 <td>
@@ -40,7 +44,7 @@ extract(x, y, path = ".", ID="SOURCEID", method = "simple", is.pattern = FALSE, 
 </td></tr>
 <tr valign="top"><td><code>ID</code></td>
 <td>
-<p>character; column name for the unique identifier that will be generated</p>
+<p>character; column name for the unique identifier (if object is of class <code>"SpatialPoints"</code> <code>"SOURCEID"</code> column is automatically generated)</p>
 </td></tr> 
 <tr valign="top"><td><code>method</code></td>
 <td>
@@ -67,7 +71,7 @@ extract(x, y, path = ".", ID="SOURCEID", method = "simple", is.pattern = FALSE, 
 
 <h3>Note</h3>
 
-<p>The method will try to reproject the values to the native coordinate system (if available). If both <code>x</code> and <code>y</code> are in the same coordinate system, then reprojection is turned of by setting <code>force.projection = TRUE</code>. In the case <code>is.pattern = TRUE</code> (search by pattern), missing values are removed by default and if multiple rasters covering the same area are found, values will be aggregated to the mean value.
+<p>The method will try to reproject the values to the native coordinate system, hence it is highly advisible to embed the proj4 string into the GeoTiffs. If both <code>x</code> and <code>y</code> are in the same coordinate system, then reprojection can be turned off by setting <code>force.projection = TRUE</code>. In the case <code>is.pattern = TRUE</code> (search by pattern), missing values are removed by default and if multiple rasters covering the same area are found, values are aggregated to the mean value.
 </p>
 
 

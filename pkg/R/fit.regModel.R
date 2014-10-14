@@ -171,26 +171,10 @@ setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.f
   
   ## TH: refit non-linear trend model using the GLS weights? This can be very time consuming and is not recommended for large data sets
   
-  ## save the output: ## BK: The sample variogram is now saved as well 
   message("Saving an object of class 'gstatModel'...")  
   rkm <- new("gstatModel", regModel = rgm, vgmModel = as.data.frame(rvgm[[1]]), svgmModel = as.data.frame(rvgm[[3]]), sp = rvgm[[2]])
   return(rkm)
 
 })
-
-"print.gstatModel" <- function(x, ...){
-  print(x@regModel)
-  print(x@vgmModel)
-  summary(x@sp)
-}
-
-## BK: added plot functionality
-"plot.gstatModel" <- function(x, ...){
-  varModel <- x@vgmModel
-  class(varModel) <- c("variogramModel","data.frame")
-  sampleVar <- x@svgmModel
-  class(sampleVar) <- c("gstatVariogram","data.frame")
-  plot(sampleVar,varModel)
-}
 
 ## end of script;
