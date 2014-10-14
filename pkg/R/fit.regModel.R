@@ -143,16 +143,16 @@ setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.f
   ## If variogram is not defined, try to fit variogram 2D or 3D data:
     if(dimensions == "2D"){ 
       message("Fitting a 2D variogram...")
-      rvgm <- fit.vgmModel(residual ~ 1, rmatrix = rmatrix, predictionDomain = predictionDomain, dimensions = "2D") 
+      rvgm <- fit.vgmModel(residual ~ 1, rmatrix = rmatrix, predictionDomain = predictionDomain, dimensions = "2D", ...) 
     }
     if(dimensions == "3D"){ 
       message("Fitting a 3D variogram...")
-      rvgm <- fit.vgmModel(residual ~ 1, rmatrix = rmatrix, predictionDomain = predictionDomain, dimensions = "3D") 
+      rvgm <- fit.vgmModel(residual ~ 1, rmatrix = rmatrix, predictionDomain = predictionDomain, dimensions = "3D", ...) 
     }
     } else {
       ## TH: The nlme package fits a variogram, but this is difficult to translate to gstat format:
       if(missing(rvgm)&any(class(rgm)=="gls")){
-           rvgm <- fit.vgmModel(residual ~ 1, rmatrix = rmatrix, predictionDomain = predictionDomain, dimensions = "2D")
+           rvgm <- fit.vgmModel(residual ~ 1, rmatrix = rmatrix, predictionDomain = predictionDomain, dimensions = "2D", ...)
       } else { 
         ## Use a pure nugget effect if variogram is set to NULL
         if(is.null(rvgm)){
@@ -164,16 +164,16 @@ setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.f
           proj4string(rmatrix) = predictionDomain@proj4string
           observations = as(rmatrix, "SpatialPoints")
           ## othewise copy the variogram submitted by the user:
-          rvgm <- list(vgm=rvgm, observations=observations)
+          rvgm <- list(vgm=rvgm, observations=observations, svgm=NA)
           }
        }
   }
   
   ## TH: refit non-linear trend model using the GLS weights? This can be very time consuming and is not recommended for large data sets
   
-  ## save the output:
+  ## save the output: ## BK: The sample variogram is now saved as well 
   message("Saving an object of class 'gstatModel'...")  
-  rkm <- new("gstatModel", regModel = rgm, vgmModel = as.data.frame(rvgm[[1]]), sp = rvgm[[2]])
+  rkm <- new("gstatModel", regModel = rgm, vgmModel = as.data.frame(rvgm[[1]]), svgmModel = as.data.frame(rvgm[[3]]), sp = rvgm[[2]])
   return(rkm)
 
 })
@@ -182,6 +182,15 @@ setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.f
   print(x@regModel)
   print(x@vgmModel)
   summary(x@sp)
+}
+
+## BK: added plot functionality
+"plot.gstatModel" <- function(x, ...){
+  varModel <- x@vgmModel
+  class(varModel) <- c("variogramModel","data.frame")
+  sampleVar <- x@svgmModel
+  class(sampleVar) <- c("gstatVariogram","data.frame")
+  plot(sampleVar,varModel)
 }
 
 ## end of script;
