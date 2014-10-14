@@ -1,12 +1,12 @@
 # Purpose        : Fitting 2D or 3D variograms;
 # Maintainer     : Tomislav Hengl (tom.hengl@wur.nl)
-# Contributions  : Gerard Heuvelink (gerard.heuvelink@wur.nl); 
+# Contributions  : Gerard Heuvelink (gerard.heuvelink@wur.nl), Bas Kempen (bas.kempen@wur.nl); 
 # Dev Status     : Pre-Alpha
 # Note           : The variogram fitting in geoR is probably more robust, but also more time consuming;
 
 
 ## fit variogram to a 2D or 3D point object:
-setMethod("fit.vgmModel", signature(formulaString = "formula", rmatrix = "data.frame", predictionDomain = "SpatialPixelsDataFrame"), function(formulaString, rmatrix, predictionDomain, vgmFun = "Exp", dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]], anis = NULL, subsample = nrow(rmatrix), ivgm, cutoff, ...){
+setMethod("fit.vgmModel", signature(formulaString = "formula", rmatrix = "data.frame", predictionDomain = "SpatialPixelsDataFrame"), function(formulaString, rmatrix, predictionDomain, vgmFun = "Exp", dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]], anis = NULL, subsample = nrow(rmatrix), ivgm, cutoff, width, cressie, ...){
 
   ## check input object:
   if(is.na(proj4string(predictionDomain))){ stop("proj4 string required for argument 'predictionDomain'") }
@@ -36,7 +36,8 @@ setMethod("fit.vgmModel", signature(formulaString = "formula", rmatrix = "data.f
 
   ## model does not have to be fitted?
   if(vgmFun == "Nug"){
-    rvgm <- vgm(nugget=var(rmatrix@data[,tv]), model=vgmFun, range=0, psill=var(rmatrix@data[,tv]))
+    rvgm <- gstat::vgm(nugget=var(rmatrix@data[,tv]), model=vgmFun, range=0, psill=var(rmatrix@data[,tv]))
+    svgm <- NA
   } else {
 
   ## subset if necessary to speed up the computing:
@@ -80,28 +81,69 @@ setMethod("fit.vgmModel", signature(formulaString = "formula", rmatrix = "data.f
         p.2 <- matrix(c(predictionDomain@bbox[2,1], predictionDomain@bbox[2,2]), ncol=2, dimnames=list(1,c("lon","lat")))  
         Range = fossil::deg.dist(lat1=p.1[,2], long1=p.1[,1], lat2=p.2[,2], long2=p.2[,1])/2
       } else {
-        Range = sqrt(areaSpatialGrid(predictionDomain))/2      
+        
+        ## BK: To avoid problems in variogram fitting (singularity warnings) the default range value should be chosen in proportion to the cut-off value.
+        ## BK: To determine the cut-off value of the sample variogram I suggest to use the default gstat value.
+        ## BK: Edzer -> "gstat uses one third of the diagonal of the rectangular (or block for 3D) that spans the data locations."  
+        ## BK: The initial value for the range can then be chosen as one-third of the cut-off value
+        
+        ## compute one third of the diagonal of the bbox of the point locations using Pythagoras theorem
+        dbbox <- round((sqrt((rmatrix@bbox[1,2]-rmatrix@bbox[1,1])**2+(rmatrix@bbox[2,2]-rmatrix@bbox[2,1])**2))/3,0)
+        Range = dbbox/3
+        #Range = sqrt(areaSpatialGrid(predictionDomain))/2      
       }
     } else {
-      Range = sqrt(areaSpatialGrid(predictionDomain))/2
+      dbbox <- round((sqrt((rmatrix@bbox[1,2]-rmatrix@bbox[1,1])**2+(rmatrix@bbox[2,2]-rmatrix@bbox[2,1])**2))/3,0)
+      Range = dbbox/3
+      #Range = sqrt(areaSpatialGrid(predictionDomain))/2
     }
+    
     ## estimate anisotropy parameters:
     anis = c(0, 1)
-    if(missing(cutoff)) { cutoff = Range }
+    #if(missing(cutoff)) { cutoff = Range } ##BK: I think this does not give a proper default cutoff value for variogram estimation. I suggest to use the GSTAT default value.
+    
+    ## BK: if not given, determine sample variogram cutoff value based on gstat default
+    if(missing(cutoff)) {
+      dbbox <- round((sqrt((rmatrix@bbox[1,2]-rmatrix@bbox[1,1])**2+(rmatrix@bbox[2,2]-rmatrix@bbox[2,1])**2))/3,0)
+      cutoff = dbbox
+    }
+    
+    ## BK: if not given, determine sample variogram bin width based on gstat default
+    if(missing(width)) {
+      width = cutoff/15
+    }
+    
+    ## BK: if not given, set the cressie robust estimator to FALSE (gstat default)
+    if(missing(cressie)) {
+      cressie = FALSE
+    }
   }
+  
+  
   
   ## initial variogram:    
   if(missing(ivgm)){
     if(dimensions == "2D"|dimensions == "3D"){
-      ivgm <- vgm(nugget=0, model=vgmFun, range=Range, psill=var(rmatrix@data[,tv]), anis = anis)
+      ## BK: since most variograms have a nugget effect, I suggest to set the initial nugget equal to the initial partial sill
+      ivgm <- gstat::vgm(nugget=var(rmatrix@data[,tv])/2, model=vgmFun, range=Range, psill=var(rmatrix@data[,tv])/2, anis = anis)
+      #ivgm <- vgm(nugget=0, model=vgmFun, range=Range, psill=var(rmatrix@data[,tv]), anis = anis)
     }
   }
   ## TH: 2D+T and 3D+T variogram fitting will be added;
 
+  ## BK: I would first fit the sample variogram and store this in the output. Users can then inspect the sample and fitted variograms
+  
+  ## fit sample variogram 
+  svgm <- gstat::variogram(formulaString, rmatrix, cutoff=cutoff, width=width, cressie=cressie)
+    
   ## try to fit a variogram:
-  try(rvgm <- gstat::fit.variogram(variogram(formulaString, rmatrix, cutoff=cutoff), model=ivgm, ...))   
+  try(rvgm <- gstat::fit.variogram(svgm, model=ivgm, ...))   
+  #try(rvgm <- gstat::fit.variogram(variogram(formulaString, rmatrix, cutoff=cutoff), model=ivgm, ...))  
+  
+    
+  ## BK: the code below does not work for 'singular model' warnings, only when the function does not fit at all
   if(class(.Last.value)[1]=="try-error"){
-    try(rvgm <- gstat::fit.variogram(variogram(formulaString, rmatrix, cutoff=cutoff), model=ivgm, fit.ranges = FALSE, ...))
+    try(rvgm <- gstat::fit.variogram(gstat::variogram(formulaString, rmatrix, cutoff=cutoff), model=ivgm, fit.ranges = FALSE, ...))
     if(class(.Last.value)[1]=="try-error"){    
       stop("Variogram model could not be fitted.") 
     }
@@ -113,7 +155,8 @@ setMethod("fit.vgmModel", signature(formulaString = "formula", rmatrix = "data.f
   
   }
   
-  return(list(vgm=rvgm, observations=observations))
+  ## BK: sample variogram is now stored as well
+  return(list(vgm=rvgm, observations=observations, svgm=svgm))
   
 })
 
