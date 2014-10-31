@@ -9,7 +9,7 @@
         <altitude>894.1</altitude>
         <altitudeMode>absolute</altitudeMode>
         <Icon>
-          <href>http://http://gsif.r-forge.r-project.org/cookfarm_PHIHOX_5.png</href>
+          <href>http://gsif.r-forge.r-project.org/cookfarm_PHIHOX_5.png</href>
         </Icon>
         <LatLonBox>
           <north>46.7843431757815</north>
@@ -22,7 +22,7 @@
     <ScreenOverlay>
       <name>Legend</name>
       <Icon>
-        <href>http://http://gsif.r-forge.r-project.org/cookfarm_PHIHOX_legend.png</href>
+        <href>http://gsif.r-forge.r-project.org/cookfarm_PHIHOX_legend.png</href>
       </Icon>
       <overlayXY x="0" y="1" xunits="fraction" yunits="fraction"/>
       <screenXY x="0" y="1" xunits="fraction" yunits="fraction"/>
