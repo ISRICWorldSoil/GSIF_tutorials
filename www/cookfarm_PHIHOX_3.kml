@@ -1,0 +1,31 @@
+<kml xmlns:xsd="http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd" xmlns:xmlns="http://www.opengis.net/kml/2.2/" version="1.0">
+  <Document>
+    <name>cookfarm_PHIHOX_3</name>
+    <open>1</open>
+    <Folder>
+      <name>SpatialGridDataFrame</name>
+      <GroundOverlay>
+        <name>PHIHOX</name>
+        <altitude>1014</altitude>
+        <altitudeMode>absolute</altitudeMode>
+        <Icon>
+          <href>http://http://gsif.r-forge.r-project.org/cookfarm_PHIHOX_3.png</href>
+        </Icon>
+        <LatLonBox>
+          <north>46.7843431757815</north>
+          <south>46.7778631757815</south>
+          <east>-117.075605430446</east>
+          <west>-117.090015430446</west>
+        </LatLonBox>
+      </GroundOverlay>
+    </Folder>
+    <ScreenOverlay>
+      <name>Legend</name>
+      <Icon>
+        <href>http://http://gsif.r-forge.r-project.org/cookfarm_PHIHOX_legend.png</href>
+      </Icon>
+      <overlayXY x="0" y="1" xunits="fraction" yunits="fraction"/>
+      <screenXY x="0" y="1" xunits="fraction" yunits="fraction"/>
+    </ScreenOverlay>
+  </Document>
+</kml>
