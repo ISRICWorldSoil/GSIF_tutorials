@@ -50,10 +50,14 @@ The \code{weather} data frame contains daily temperatures and rainfall from the 
 \author{Caley Gasch, Tomislav Hengl and David J. Brown}
 \references{
 \itemize{
-\item Gasch, C., Hengl, T., \enc{Gräler}{Graeler}, B., Meyer, H., Magney, T., Brown, D.J., 2015? Spatio-temporal interpolation of soil moisture, temperature, and electrical conductivity in 3D+T: the Cook Farm data set. Spatial Statistics Journal, in review. 
+\item Gasch, C., Hengl, T., \enc{Gr?ler}{Graeler}, B., Meyer, H., Magney, T., Brown, D.J., 2015? Spatio-temporal interpolation of soil moisture, temperature, and electrical conductivity in 3D+T: the Cook Farm data set. Spatial Statistics Journal, in review. 
 }
 }
 \examples{
+## An example for 3D+T kriging applied to the cookfarm data set can be assesed via 
+## demo(cookfarm_3DT_kriging)
+## Please note that the demo might take 10 - 15 minutes to complete.
+
 library(rgdal)
 library(sp)
 library(spacetime)
