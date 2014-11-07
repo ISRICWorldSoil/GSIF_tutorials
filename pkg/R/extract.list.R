@@ -7,8 +7,8 @@
 extract.list <- function(x, y, path=".", ID="SOURCEID", method="simple", is.pattern=FALSE, force.projection = TRUE, NAflag = "", ...){
   require(reshape)
   if(path=="."){ path <- getwd() }
-  if(!file.info(path)[1,"isdir"]) { stop(paste("Directory:", path, "does not exists")) }
-  if(length(y)<2){ stop("'list' argument must contain more than one element") }
+  if(!file.exists(path)|!file.info(path)[1,"isdir"]) { stop(paste("Directory:", path, "does not exists")) }
+  if(length(y)<2){ stop("Argument 'list' must contain at least two elements") }
   if(class(x)=="SpatialPoints"){
     x <- SpatialPointsDataFrame(x, data.frame(ID=as.factor(as.character(1:nrow(coordinates(x))))))
     names(x) <- paste(ID)
@@ -45,7 +45,7 @@ extract.list <- function(x, y, path=".", ID="SOURCEID", method="simple", is.patt
       for(i in 1:length(y)){
         ## normalize var name:
         vname <- gsub("[[:punct:]]", "", y[i])
-        ## list all files (each can have a different coordinate system!):
+        ## list all files (each can have a different coordinate system):
         lst <- list.files(path=path, pattern=glob2rx(y[i]), recursive=TRUE)
         if(length(lst)>0){
           tmp <- list(NULL)
@@ -60,7 +60,7 @@ extract.list <- function(x, y, path=".", ID="SOURCEID", method="simple", is.patt
               names(tmp[[k]]) <- paste(c(ID, vname))
               ## remove missing values:
               if(!NAflag==""){ tmp[[k]] <- tmp[[k]][!tmp[[k]][,2]==NAflag,] }
-              }
+            }
           }
           ## fill-in missing pixels:
           tmp <- do.call(rbind, tmp)
