@@ -61,7 +61,7 @@ spline.krige <- function(formula, locations, newdata, newlocs=NULL, model, te=as
       }
       unlink(paste0(tmp.out[[k]],".*"))
     } else {
-      if(silent==FALSE){ message(paste0("Created output SAGA GIS file: ", tmp.out[[k]], ".sdat")) }
+      if(silent==FALSE){ message(paste0("Created output SAGA GIS grid: ", tmp.out[[k]], ".sdat")) }
     }
   }
   if(missing(file.name)){

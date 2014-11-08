@@ -42,6 +42,7 @@ Spline interpolation is implemented via the SAGA GIS v2.1 function \code{"Multil
 }
 \author{ Tomislav Hengl }
 \examples{
+\dontrun{
 library(plotKML)
 library(spatstat)
 library(RSAGA)
@@ -67,9 +68,8 @@ grd <- resample.grid(locations=eberg["SNDMHT_A"], t_cellsize=25,
 plot(raster(grd$density))
 plot(grd$newlocs)
 points(eberg, pch=19, col="red", cex=.7)
-\dontrun{
 env <- rsaga.env()
-if(env$version=="2.1.0"){
+if(exists("env") & env$version=="2.1.0"){
  ## compare processing time:
  system.time( SND.sok <- spline.krige(locations=eberg["SNDMHT_A"], 
       t_cellsize=25, newdata=eberg_grid25, 
@@ -89,5 +89,6 @@ if(env$version=="2.1.0"){
  plot(raster(SND.ok[1]), main="krige (100 m)") 
 }
 }
-## conclusion: less artifacts, faster processing time
+## conclusion: spline.krige produces less artifacts, 
+## and is at order of magnitude faster than simple 'krige'
 }

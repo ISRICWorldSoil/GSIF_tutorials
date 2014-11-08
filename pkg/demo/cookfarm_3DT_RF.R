@@ -9,6 +9,7 @@
 #                                       #
 #########################################
 
+library(GSIF)
 library(rgdal)
 library(sp)
 library(spacetime)
@@ -17,6 +18,7 @@ library(splines)
 library(randomForest)
 library(plyr)
 library(plotKML)
+## load the data set:
 data(cookfarm)
 
 ## gridded data:
@@ -50,7 +52,6 @@ m.PHI <- fit.gstatModel(profs.geo, PHIHOX~DEM+TWI+MUSYM+Cook_fall_ECa
     +Cook_spr_ECa+ns(altitude, df = 4), grid10m)
 plot(m.PHI)
 
-\dontrun{
 ## prepare 3D locations:
 s <- c(-.3,-.6,-.9,-1.2,-1.5)
 new3D <- sp3D(grid10m, stdepths=s)
@@ -162,8 +163,8 @@ for(j in 1:length(dates.lst)){
   newD[,outn] <- predict(fit.RF, newD)
   for(k in 1:length(s)){
     tif.out <- paste0(outn, "_Port_", k, ".tif")
-    outP <- newD[newD$altitude==s[k], c("Easting","Northing",outn)]
-    gridded(outP) <- ~ Easting+Northing
+    outP <- newD[newD$altitude==s[k], c("x","y",outn)]
+    gridded(outP) <- ~ x+y
     proj4string(outP) <- grid10m@proj4string
     writeGDAL(outP, tif.out, "GTiff", mvFlag=-99999)
   }
