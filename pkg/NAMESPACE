@@ -1,7 +1,9 @@
 import(utils, methods)
+
+importFrom("tools", file_ext)
 importFrom("stats", prcomp, predict, shapiro.test)
 importFrom("aqp", SoilProfileCollection, horizonDepths, horizons)
-importFrom("sp", remove.duplicates, SpatialPolygons, SpatialPointsDataFrame, over, CRS, Polygons, flipVertical, spTransform, spsample, gridded, proj4string, surfaceArea)
+import("sp")
 importFrom("raster", extract, brick, stack, raster, writeRaster, extension, resample, removeTmpFiles, filename, maxValue, inMemory, projection, "projection<-", extent)
 importFrom("dismo", maxent, kfold)
 importFrom("nlme", gls, lme)
@@ -16,7 +18,6 @@ importFrom("randomForest", randomForest)
 
 importClassesFrom("aqp", SoilProfileCollection)
 importClassesFrom("plotKML", SpatialPredictions, SpatialMaxEntOutput, RasterBrickSimulations)
-importClassesFrom("sp", SpatialPointsDataFrame, SpatialPixelsDataFrame, SpatialPolygons, CRS)
 importClassesFrom("dismo", DistModel, MaxEnt)
 importClassesFrom("raster", RasterLayer, RasterStack)
 

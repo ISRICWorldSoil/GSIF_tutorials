@@ -6,13 +6,18 @@
 
 .programPath <- function(path, utility){
   if(missing(path)){
-  require(gdalUtils)
-    path <- getOption("gdalUtils_gdalPath")[[1]]$path
-    if(is.null(path)){
-      ## force gdal installation:
-      gdal_setInstallation()
-      message("Forcing installation of GDAL utilities...")                        
+    if(!file.exists("C:/PROGRA~1/GDAL/")&.Platform$OS.type == "windows"){
+      require(gdalUtils)
       path <- getOption("gdalUtils_gdalPath")[[1]]$path
+      if(is.null(path)){
+        ## force gdal installation:
+        gdalUtils::gdal_setInstallation()
+        message("Forcing installation of GDAL utilities... this might take time.")                        
+        path <- getOption("gdalUtils_gdalPath")[[1]]$path
+      }
+    }
+    if(file.exists(paste0("C:/PROGRA~1/GDAL/", utility, ".exe"))&.Platform$OS.type == "windows"){
+      program = shQuote(shortPathName(normalizePath(file.path("C:/PROGRA~1/GDAL/", paste0(utility, ".exe")))))
     }
   }
   
@@ -52,7 +57,7 @@
         } else {
            ## file extension:
            require(tools)
-           extension <- paste(".", file_ext(raster::filename(obj)), sep="")
+           extension <- paste(".", tools::file_ext(raster::filename(obj)), sep="")
            tf <- strsplit(raster::filename(obj), extension)[[1]]
         }
     }
@@ -176,7 +181,7 @@
   flush.console()
   
   } else { 
-    stop("Could not locate FWTools. First install and test FWTools (see package 'gdalUtils').") 
+    stop("Could not locate GDAL. For more info see package 'gdalUtils'.") 
   }
   
   return(res)

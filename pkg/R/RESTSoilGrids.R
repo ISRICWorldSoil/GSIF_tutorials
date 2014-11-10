@@ -9,7 +9,7 @@ REST.SoilGrids <- function(attributes, depths=paste("sd",1:6,sep=""), confidence
   if(validate==TRUE){
   ## get the most recent description:
     require(rjson)
-    try( ret <- fromJSON(file=paste(get("REST.server", envir = GSIF.opts), "query/describe", sep="")), silent = TRUE )
+    try( ret <- rjson::fromJSON(file=paste(get("REST.server", envir = GSIF.opts), "query/describe", sep="")), silent = TRUE )
     if(!class(.Last.value)[1]=="try-error" & !length(ret$query)==0){
       if(any(!attributes %in% ret$query$attributes)){
         stop(paste("Requested 'attributes' not present. See '", get("REST.server", envir = GSIF.opts),"' for more info.", sep=""))
@@ -56,7 +56,7 @@ setMethod("over", signature(x = "REST.SoilGrids", y = "SpatialPoints"),
   out <- NULL
   for(i in 1:nrow(y@coords)){
     uri <- .REST.uri(x, lon=y@coords[i,1], lat=y@coords[i,2])
-    try( ret <- fromJSON(file=uri), silent = TRUE )
+    try( ret <- rjson::fromJSON(file=uri), silent = TRUE )
     if(!class(.Last.value)[1]=="try-error" & !length(ret$properties)==0){
       out[[i]] <- data.frame(ret$properties)
       out[[i]]$lon <- y@coords[i,1]

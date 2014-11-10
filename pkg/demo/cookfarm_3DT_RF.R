@@ -9,7 +9,6 @@
 #                                       #
 #########################################
 
-library(GSIF)
 library(rgdal)
 library(sp)
 library(spacetime)
@@ -38,23 +37,23 @@ depths(profs) <- SOURCEID ~ UHDICM + LHDICM
 site(profs) <- ~ TAXSUSDA + Easting + Northing
 coordinates(profs) <- ~Easting + Northing
 proj4string(profs) <- CRS(cookfarm$proj4string)
-profs.geo <- as.geosamples(profs)
+profs.geo <- GSIF::as.geosamples(profs)
 
 ## fit models for Bt horizon and soil pH:
-m.Bt <- fit.gstatModel(profs.geo, Bt~DEM+TWI+MUSYM+Cook_fall_ECa
+m.Bt <- GSIF::fit.gstatModel(profs.geo, Bt~DEM+TWI+MUSYM+Cook_fall_ECa
    +Cook_spr_ECa+ns(altitude, df = 4), grid10m, fit.family = binomial(logit))
 plot(m.Bt)
 ## fix vgm manually:
 m.Bt@vgmModel$psill <- c(0.37,0.09)
 m.Bt@vgmModel$range <- c(0,60)
 plot(m.Bt)
-m.PHI <- fit.gstatModel(profs.geo, PHIHOX~DEM+TWI+MUSYM+Cook_fall_ECa
+m.PHI <- GSIF::fit.gstatModel(profs.geo, PHIHOX~DEM+TWI+MUSYM+Cook_fall_ECa
     +Cook_spr_ECa+ns(altitude, df = 4), grid10m)
 plot(m.PHI)
 
 ## prepare 3D locations:
 s <- c(-.3,-.6,-.9,-1.2,-1.5)
-new3D <- sp3D(grid10m, stdepths=s)
+new3D <- GSIF::sp3D(grid10m, stdepths=s)
 ## predict using 3D regression-kriging:
 rk.Bt <- lapply(new3D, function(x){
   predict(m.Bt, predictionLocations=x, nfold=0, nmax=50)

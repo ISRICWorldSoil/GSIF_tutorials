@@ -79,9 +79,9 @@ resample.grid <- function(locations, newdata, silent=FALSE, n.sigma, t_cellsize,
     ## derive density map:
     W <- as.matrix(newdata[1])
     W <- ifelse(is.na(W), FALSE, TRUE)
-    suppressWarnings( locs.ppp <- ppp(x=locations@coords[,1], y=locations@coords[,2], xrange=newdata@bbox[1,], yrange=newdata@bbox[2,], mask=t(W)[ncol(W):1,]) )
+    suppressWarnings( locs.ppp <- spatstat::ppp(x=locations@coords[,1], y=locations@coords[,2], xrange=newdata@bbox[1,], yrange=newdata@bbox[2,], mask=t(W)[ncol(W):1,]) )
     if(missing(n.sigma)){
-      dist.locs <- nndist(locs.ppp)
+      dist.locs <- spatstat::nndist(locs.ppp)
       n.sigma <- quantile(dist.locs, quant.nndist)
     }
     if(n.sigma < 2*t_cellsize){ 
