@@ -28,8 +28,8 @@ Horizons table contains the following columns:
   \item{\code{LHDICM}}{numeric; lower horizon depth from the surface in cm (\code{LowDpth} in the AFSP)}
   \item{\code{MCOMNS}}{factor; Munsell color moist (\code{ColorM} in the NSCD)}
   \item{\code{CRFVOL}}{numeric; volume percentage of coarse fragments (> 2 mm; \code{CfPc} in the AFSP)}
-  \item{\code{SNDPPT}}{numeric; weight percentage of the sand particles (0.0002--0.05 mm; \code{Sand} in the AFSP)}
-  \item{\code{SLTPPT}}{numeric; weight percentage of the silt particles (0.05--2 mm; \code{Silt} in the AFSP)}
+  \item{\code{SNDPPT}}{numeric; weight percentage of the sand particles (0.05--2 mm; \code{Sand} in the AFSP)}
+  \item{\code{SLTPPT}}{numeric; weight percentage of the silt particles (0.0002--0.05 mm; \code{Silt} in the AFSP)}
   \item{\code{CLYPPT}}{numeric; weight percentage of the clay particles (<0.0002 mm; \code{Clay} in the AFSP)}
   \item{\code{BLD}}{bulk density in tonnes per cubic-meter (\code{BlkDens} in the AFSP)}
   \item{\code{PHIHOX}}{numeric; pH index measured in water solution (\code{PHH2O} in the AFSP)}

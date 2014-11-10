@@ -36,7 +36,6 @@ Horizons table contains the following columns:
 \author{ISRIC --- World Soil Information}
 \examples{
 library(rgdal)
-library(aqp)
 library(sp)
 
 data(isis)

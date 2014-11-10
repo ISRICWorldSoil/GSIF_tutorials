@@ -152,15 +152,21 @@ library(gstat)
 ## load the Meuse data set:
 demo(meuse, echo=FALSE)
 
+## simple model:
+omm &lt;- fit.gstatModel(meuse, om~dist+ffreq, meuse.grid,
+   family = gaussian(log))
+
 ## fit a regression-tree:
-omm &lt;- fit.gstatModel(meuse, log1p(om)~dist+ffreq, meuse.grid, method="rpart")
+omm &lt;- fit.gstatModel(meuse, log1p(om)~dist+ffreq, meuse.grid, 
+   method="rpart")
 summary(omm@regModel)
 ## plot a regression-tree:
 plot(omm@regModel, uniform=TRUE)
 text(omm@regModel, use.n=TRUE, all=TRUE, cex=.8)
 omm@vgmModel    
 ## fit a randomForest model:
-omm &lt;- fit.gstatModel(meuse, log1p(om)~dist+ffreq, meuse.grid, method="randomForest")
+omm &lt;- fit.gstatModel(meuse, log1p(om)~dist+ffreq, meuse.grid, 
+   method="randomForest")
 summary(omm@regModel)
 ## plot to see how good is the fit:
 plot(omm)
@@ -168,7 +174,8 @@ plot(omm)
 plot(omm@regModel)
 omm@vgmModel
 ## fit a GLM with a gaussian log-link:
-omm &lt;- fit.gstatModel(meuse, om~dist+ffreq, meuse.grid, fit.family = gaussian(log))
+omm &lt;- fit.gstatModel(meuse, om~dist+ffreq, meuse.grid, 
+   fit.family = gaussian(log))
 ## it was succesful!
 summary(omm@regModel)
 v = omm@vgmModel; class(v) = c("variogramModel", "data.frame")
@@ -190,7 +197,8 @@ plotKML(om.rk)
 ## End(Not run)
 
 ## binary variable (0/1):
-som &lt;- fit.gstatModel(meuse, I(soil==1)~dist+ffreq, meuse.grid, fit.family = binomial(logit))
+som &lt;- fit.gstatModel(meuse, I(soil==1)~dist+ffreq, meuse.grid, 
+   fit.family = binomial(logit))
 summary(som@regModel)
 som.sp &lt;- SpatialPointsDataFrame(som@sp, data = som@regModel$model)
 som.sp$I.soil = as.numeric(som.sp@data[,1])
