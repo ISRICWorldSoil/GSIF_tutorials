@@ -143,20 +143,20 @@ setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.f
   ## If variogram is not defined, try to fit variogram 2D or 3D data:
     if(dimensions == "2D"){ 
       message("Fitting a 2D variogram...")
-      rvgm <- fit.vgmModel(residual ~ 1, rmatrix = rmatrix, predictionDomain = predictionDomain, dimensions = "2D", ...) 
+      rvgm <- fit.vgmModel(residual ~ 1, rmatrix = rmatrix, predictionDomain = predictionDomain, dimensions = "2D") 
     }
     if(dimensions == "3D"){ 
       message("Fitting a 3D variogram...")
-      rvgm <- fit.vgmModel(residual ~ 1, rmatrix = rmatrix, predictionDomain = predictionDomain, dimensions = "3D", ...) 
+      rvgm <- fit.vgmModel(residual ~ 1, rmatrix = rmatrix, predictionDomain = predictionDomain, dimensions = "3D") 
     }
     } else {
       ## TH: The nlme package fits a variogram, but this is difficult to translate to gstat format:
       if(missing(rvgm)&any(class(rgm)=="gls")){
-           rvgm <- fit.vgmModel(residual ~ 1, rmatrix = rmatrix, predictionDomain = predictionDomain, dimensions = "2D", ...)
+           rvgm <- fit.vgmModel(residual ~ 1, rmatrix = rmatrix, predictionDomain = predictionDomain, dimensions = "2D")
       } else { 
         ## Use a pure nugget effect if variogram is set to NULL
         if(is.null(rvgm)){
-          rvgm <- fit.vgmModel(residual ~ 1, rmatrix = rmatrix, predictionDomain = predictionDomain, dimensions = dimensions, vgmFun = "Nug", ...)
+          rvgm <- fit.vgmModel(residual ~ 1, rmatrix = rmatrix, predictionDomain = predictionDomain, dimensions = dimensions, vgmFun = "Nug")
         } else {
           xyn = attr(predictionDomain@bbox, "dimnames")[[1]]
           ## create spatial points:
