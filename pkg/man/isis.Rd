@@ -3,7 +3,7 @@
 \encoding{latin1}
 \alias{isis}
 \title{ISRIC Soil Information System}
-\description{ISRIC's collection of global soil monoliths that represent the main soil reference groups of the World Reference Base for Soil Resources (WRB). Includes some 950 monoliths (785 with coordinates) from over 70 countries with detailed soil profile and environmental data.}
+\description{\href{http://www.isric.org/projects/isric-soil-information-system-isis}{ISRIC's collection of global soil monoliths} that represent the main soil reference groups of the World Reference Base for Soil Resources (WRB). Includes some 950 monoliths (785 with coordinates) from over 70 countries with detailed soil profile and environmental data.}
 \usage{data(isis)}
 \format{
 The \code{isis} data set contains two data frames --- sites and horizons. Sites table contains the following columns:
@@ -33,7 +33,7 @@ Horizons table contains the following columns:
   \item{\code{BLD}}{bulk density in tonnes per cubic-meter}
 }
 }
-\author{ISRIC --- World Soil Information}
+\author{\href{http://www.isric.org/projects/isric-soil-information-system-isis}{ISRIC --- World Soil Information}}
 \examples{
 library(rgdal)
 library(sp)
