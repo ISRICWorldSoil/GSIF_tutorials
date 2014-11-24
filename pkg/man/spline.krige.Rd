@@ -6,7 +6,8 @@
 \usage{spline.krige(formula, locations, newdata, newlocs = NULL, model, 
     te = as.vector(newdata@bbox), file.name, silent = FALSE, 
     t_cellsize = newdata@grid@cellsize[1], optN = 20, quant.nndist = .5, 
-    nmax = 30, predictOnly = FALSE, resample = TRUE, \dots)
+    nmax = 30, predictOnly = FALSE, resample = TRUE, saga.env, 
+    saga.lib=c("grid_spline","grid_tools"), saga.module=c(4,0), \dots)
 }
 \arguments{
   \item{formula}{formula that defines the dependent variable as a linear model of independent variables; usually in the form \code{z~1}}
@@ -24,6 +25,9 @@
   should be used for kriging}
   \item{predictOnly}{logical; specifies whether to generate only predictions (\code{var1.pred} column)}
   \item{resample}{logical; specifies whether to down or upscale SAGA GIS grids to match the grid system of \code{newdata}}
+  \item{saga.env}{list; path to location of the SAGA binaries (extracted using \code{rsaga.env()})}
+  \item{saga.lib}{character; names of the SAGA libraries used}
+  \item{saga.module}{integer; corresponding module numbers}
   \item{\dots}{other optional arguments that can be passed to function \code{gstat::krige}}
 }
 \value{

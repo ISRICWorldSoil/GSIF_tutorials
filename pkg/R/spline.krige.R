@@ -4,7 +4,7 @@
 # Status         : pre-alpha
 # Note           : this function is ONLY useful for highly clustered point data sets;
 
-spline.krige <- function(formula, locations, newdata, newlocs=NULL, model, te=as.vector(newdata@bbox), file.name, silent=FALSE, t_cellsize=newdata@grid@cellsize[1], optN=20, quant.nndist=.5, nmax=30, predictOnly=FALSE, resample=TRUE, ...){
+spline.krige <- function(formula, locations, newdata, newlocs=NULL, model, te=as.vector(newdata@bbox), file.name, silent=FALSE, t_cellsize=newdata@grid@cellsize[1], optN=20, quant.nndist=.5, nmax=30, predictOnly=FALSE, resample=TRUE, saga.env, saga.lib=c("grid_spline","grid_tools"), saga.module=c(4,0), ...){
   if(!class(locations)=="SpatialPointsDataFrame"){
     stop("Object 'locations' of class 'SpatialPointsDataFrame' expected")
   }
@@ -13,6 +13,9 @@ spline.krige <- function(formula, locations, newdata, newlocs=NULL, model, te=as
   }
   if(is.null(newlocs)){ 
     newlocs <- resample.grid(locations, newdata, silent=silent, t_cellsize=t_cellsize, quant.nndist=quant.nndist)$newlocs
+  }
+  if(missing(saga.env)){
+    saga.env <- rsaga.env() 
   }
   s_te <- as.vector(newdata@bbox)
   if(silent==FALSE){
@@ -39,15 +42,15 @@ spline.krige <- function(formula, locations, newdata, newlocs=NULL, model, te=as
       tmp.out[[k]] <- paste(file.name, k, sep="_")
     }
     ## point to grid (spline interpolation):
-    rsaga.geoprocessor(lib="grid_spline", module=4, param=list(SHAPES=tmp[[k]], FIELD=0, TARGET=0, METHOD=1, LEVEL_MAX=14, USER_XMIN=te[1]+t_cellsize/2, USER_XMAX=te[3]-t_cellsize/2, USER_YMIN=te[2]+t_cellsize/2, USER_YMAX=te[4]-t_cellsize/2, USER_SIZE=t_cellsize, USER_GRID=set.file.extension(tmp.out[[k]], ".sgrd")), show.output.on.console = FALSE)
+    suppressWarnings( rsaga.geoprocessor(lib=saga.lib[1], module=saga.module[1], param=list(SHAPES=tmp[[k]], FIELD=0, TARGET=0, METHOD=1, LEVEL_MAX=14, USER_XMIN=te[1]+t_cellsize/2, USER_XMAX=te[3]-t_cellsize/2, USER_YMIN=te[2]+t_cellsize/2, USER_YMAX=te[4]-t_cellsize/2, USER_SIZE=t_cellsize, USER_GRID=set.file.extension(tmp.out[[k]], ".sgrd")), show.output.on.console = FALSE, env=saga.env) )
     if(resample==TRUE){
       if(!all(te==s_te)|t_cellsize<newdata@grid@cellsize[1]){
         if(silent==FALSE){ message(paste("Resampling band", k, "to the target resolution and extent...")) }
         if(t_cellsize<newdata@grid@cellsize[1]){
-          rsaga.geoprocessor(lib="grid_tools", module=0, param=list(INPUT=set.file.extension(tmp.out[[k]], ".sgrd"), TARGET=0, SCALE_DOWN_METHOD=4, USER_XMIN=s_te[1]+t_cellsize/2, USER_XMAX=s_te[3]-t_cellsize/2, USER_YMIN=s_te[2]+t_cellsize/2, USER_YMAX=s_te[4]-t_cellsize/2, USER_SIZE=t_cellsize, USER_GRID=set.file.extension(tmp.out[[k]], ".sgrd")), show.output.on.console=FALSE)
+          suppressWarnings( rsaga.geoprocessor(lib=saga.lib[2], module=saga.module[2], param=list(INPUT=set.file.extension(tmp.out[[k]], ".sgrd"), TARGET=0, SCALE_DOWN_METHOD=4, USER_XMIN=s_te[1]+t_cellsize/2, USER_XMAX=s_te[3]-t_cellsize/2, USER_YMIN=s_te[2]+t_cellsize/2, USER_YMAX=s_te[4]-t_cellsize/2, USER_SIZE=t_cellsize, USER_GRID=set.file.extension(tmp.out[[k]], ".sgrd")), show.output.on.console=FALSE, env=saga.env) )
         } else {
           ## upscale:
-          rsaga.geoprocessor(lib="grid_tools", module=0, param=list(INPUT=set.file.extension(tmp.out[[k]], ".sgrd"), TARGET=0, SCALE_DOWN_METHOD=0, SCALE_UP_METHOD=0, USER_XMIN=s_te[1]+t_cellsize/2, USER_XMAX=s_te[3]-t_cellsize/2, USER_YMIN=s_te[2]+t_cellsize/2, USER_YMAX=s_te[4]-t_cellsize/2, USER_SIZE=t_cellsize, USER_GRID=set.file.extension(tmp.out[[k]], ".sgrd")), show.output.on.console=FALSE)
+          suppressWarnings( rsaga.geoprocessor(lib=saga.lib[2], module=saga.module[2], param=list(INPUT=set.file.extension(tmp.out[[k]], ".sgrd"), TARGET=0, SCALE_DOWN_METHOD=0, SCALE_UP_METHOD=0, USER_XMIN=s_te[1]+t_cellsize/2, USER_XMAX=s_te[3]-t_cellsize/2, USER_YMIN=s_te[2]+t_cellsize/2, USER_YMAX=s_te[4]-t_cellsize/2, USER_SIZE=t_cellsize, USER_GRID=set.file.extension(tmp.out[[k]], ".sgrd")), show.output.on.console=FALSE, env=saga.env) )
         }
       }
     }
