@@ -57,5 +57,14 @@ proj4string(prof1) <- CRS("+proj=longlat +datum=WGS84")
 ## fit a spline:
 ORCDRC.s <- mpspline(prof1, var.name="ORCDRC")
 str(ORCDRC.s)
+
+\dontrun{## make some fake, but reasonable profiles:
+d <- ldply(1:10, random_profile, n=c(6, 7, 8), n_prop=1, method='LPP')
+## promote to SPC and plot
+depths(d) <- id ~ top + bottom
+plot(d, color='p1')
+## fit MP spline by profile
+m <- mpspline(d, 'p1', mxd=150)
+}
 }
 \keyword{methods}
