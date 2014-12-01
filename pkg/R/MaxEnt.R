@@ -29,7 +29,7 @@ setMethod("MaxEnt", signature(occurrences = "ppp", covariates = "SpatialPixelsDa
     # Load rJava
   	if (is.null(getOption('dismo_rJavaLoaded'))) {
 		if ( require(rJava) ) {
-			.jpackage('dismo')
+			rJava::.jpackage('dismo')
 			options(dismo_rJavaLoaded=TRUE)
 		  } else {
 			stop('rJava cannot be loaded')
@@ -55,7 +55,7 @@ setMethod("MaxEnt", signature(occurrences = "ppp", covariates = "SpatialPixelsDa
     return(out)
     
   } else {
-    paste("Maxent software could not be located. See 'dismo::maxent' for more info.")
+    paste("Maxent software could not be located. See '?dismo::maxent' for more info.")
   }
   
 })

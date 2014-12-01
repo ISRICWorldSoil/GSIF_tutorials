@@ -336,6 +336,10 @@ if(!isGeneric("spc")){
   setGeneric("spc", function(obj, formulaString, ...){standardGeneric("spc")})
 }
 
+if(!isGeneric("spsample.prob")){
+  setGeneric("spsample.prob", function(observations, covariates, ...){standardGeneric("spsample.prob")})
+}
+
 if(!isGeneric("make.3Dgrid")){
   setGeneric("make.3Dgrid", function(obj, ...){standardGeneric("make.3Dgrid")})
 }

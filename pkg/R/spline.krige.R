@@ -91,7 +91,7 @@ resample.grid <- function(locations, newdata, silent=FALSE, n.sigma, t_cellsize,
       warning(paste0("Estimated 'Sigma' too small. Using 2 * newdata cellsize."))
       n.sigma = 2*newdata@grid@cellsize[1]
     }
-    if(n.sigma > sqrt(surfaceArea(newdata[1])/length(locations))){ 
+    if(n.sigma > sqrt(length(newdata)*newdata@grid@cellsize[1]*newdata@grid@cellsize[2]/length(locations))){ 
       warning(paste0("'Sigma' set at ", signif(n.sigma, 3), ". This is possibly an unclustered point sample. See '?resample.grid' for more information.")) 
     }
     dmap <- maptools::as.SpatialGridDataFrame.im(density(locs.ppp, sigm=n.sigma))

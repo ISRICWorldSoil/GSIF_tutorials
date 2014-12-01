@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: Estimate inclusion probabilities of a sampling plan (points)</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="R.css">
+</head><body>
+
+<table width="100%" summary="page for spsample.prob {GSIF}"><tr><td>spsample.prob {GSIF}</td><td align="right">R Documentation</td></tr></table>
+
+<h2>Estimate inclusion probabilities of a sampling plan (points)</h2>
+
+<h3>Description</h3>
+
+<p>Estimates inclusion probabilities as an average between the kernel density estimation (geographical) and MaxEnt analysis (feature space). The output <code>'iprob'</code> indicates whether the sampling plan  has systematically missed some important locations / features, and can be used to adjust geostatistical modelling.</p>
+
+
+<h3>Usage</h3>
+
+<pre> 
+## S4 method for signature 'SpatialPoints,SpatialPixelsDataFrame'
+spsample.prob(observations, covariates, 
+   test.SRS = FALSE, quant.nndist=.95, n.sigma, ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>observations</code></td>
+<td>
+<p>object of class <code>SpatialPoints</code>; sampling locations</p>
+</td></tr>
+<tr valign="top"><td><code>covariates</code></td>
+<td>
+<p>object of class <code>SpatialPixelsDataFrame</code>; list of covariates of interest</p>
+</td></tr>
+<tr valign="top"><td><code>test.SRS</code></td>
+<td>
+<p>logical; specifies whether to test complete Spatial Randomness</p>
+</td></tr>
+<tr valign="top"><td><code>quant.nndist</code></td>
+<td>
+<p>numeric; threshold probability to determine the search radius (sigma)</p>
+</td></tr>
+<tr valign="top"><td><code>n.sigma</code></td>
+<td>
+<p>numeric; size of sigma used for kernel density estimation (optional)</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>other optional arguments that can be passed to function <code>spatstat::density</code></p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>Returns a list of objects where <code>'iprob'</code> (<code>"SpatialPixelsDataFrame"</code>) is the map showing the estimated inclusion probability.
+</p>
+
+
+<h3>Note</h3>
+
+<p>Inclusion probabilities for geographical space are derived using kernel density estimator. The sampling intensities are converted to probabilities by deviding the sampling intensity by the maximum sampling intensity for the study area.<br> 
+This function can be time consuming for large grids. For more information on how to install MaxEnt and use it in R, see <a href="http://CRAN.R-project.org/package=dismo">dismo</a> package documentation.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p> Tomislav Hengl </p>
+
+
+<h3>References</h3>
+
+
+<ul>
+<li><p> Baddeley, A. (2008) <a href="http://www.csiro.au/resources/pf16h.html">Analysing spatial point patterns in R</a>. Technical report, CSIRO Australia. Version 4.
+</p>
+</li>
+<li><p> Phillips, S.J., Anderson, R.P., Schapire, R.E., (2006) <a href="http://dx.doi.org/10.1016/j.ecolmodel.2005.03.026">Maximum entropy modeling of species geographic distributions</a>. Ecological Modelling, 190:231-259.
+</p>
+</li>
+<li><p> MaxEnt software (<a href="http://www.cs.princeton.edu/~schapire/maxent/">http://www.cs.princeton.edu/~schapire/maxent/</a>)
+</p>
+</li></ul>
+
+
+
+<h3>See Also</h3>
+
+ <p><code>MaxEnt</code> </p>
+
+
+<h3>Examples</h3>
+
+<pre>
+library(plotKML)
+library(dismo)
+library(rJava)
+library(spatstat)
+library(maptools)
+
+data(eberg)
+data(eberg_grid)
+# prepare data for spatial analysis:
+eberg.xy &lt;- eberg[runif(nrow(eberg)) &lt; .3,c("X","Y")]
+coordinates(eberg.xy) &lt;- ~X+Y
+proj4string(eberg.xy) &lt;- CRS("+init=epsg:31467")
+# format gridded data:
+gridded(eberg_grid) &lt;- ~x+y
+proj4string(eberg_grid) &lt;- CRS("+init=epsg:31467")
+# convert to a "ppp" object:
+# run MaxEnt analysis (evaluates sampling bias or mis-representation):
+jar &lt;- paste(system.file(package="dismo"), "/java/maxent.jar", sep='')
+if(file.exists(jar)){
+  iprob &lt;- spsample.prob(eberg.xy, eberg_grid)
+  ## compare with random sampling:
+  rnd &lt;- spsample(eberg_grid, type="random",
+      n=length(iprob[["observations"]]))
+  iprob2 &lt;- spsample.prob(rnd, eberg_grid)
+  par(mfrow=c(1,2))
+  plot(raster(iprob[[1]]), zlim=c(0,.8))
+  points(iprob[["observations"]])
+  plot(raster(iprob2[[1]]), zlim=c(0,.8))
+  points(iprob2[["observations"]])
+}
+</pre>
+
+<hr><div align="center">[Package <em>GSIF</em> version 0.4-3 <a href="00Index.html">Index</a>]</div>
+</body></html>

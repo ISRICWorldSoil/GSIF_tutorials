@@ -98,23 +98,23 @@ MaxEnt(occurrences, covariates,
 <pre>
 # load data:
 library(plotKML)
-library(dismo)
+library(rJava)
 library(spatstat)
+library(maptools)
+library(dismo)
+
 data(eberg)
 data(eberg_grid)
-# prepare data for spatial analysis:
+## prepare data for spatial analysis:
 eberg.xy &lt;- eberg[runif(nrow(eberg)) &lt; .3,]
 coordinates(eberg.xy) &lt;- ~X+Y
 proj4string(eberg.xy) &lt;- CRS("+init=epsg:31467")
-# format gridded data:
+## format gridded data:
 gridded(eberg_grid) &lt;- ~x+y
 proj4string(eberg_grid) &lt;- CRS("+init=epsg:31467")
-# convert to a "ppp" object:
-library(spatstat)
-library(maptools)
+## convert to a "ppp" object:
 eberg.ppp &lt;- as.ppp(eberg.xy)
-library(dismo)
-# run MaxEnt analysis (evaluates sampling bias or mis-representation):
+## run MaxEnt analysis (evaluates sampling bias or mis-representation):
 jar &lt;- paste(system.file(package="dismo"), "/java/maxent.jar", sep='')
 if(file.exists(jar)){
   me.eberg &lt;- MaxEnt(occurrences=eberg.ppp, covariates=eberg_grid)
@@ -128,5 +128,5 @@ if(file.exists(jar)){
 }
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.4-2 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.4-3 <a href="00Index.html">Index</a>]</div>
 </body></html>

@@ -33,23 +33,23 @@
 \examples{
 # load data:
 library(plotKML)
-library(dismo)
+library(rJava)
 library(spatstat)
+library(maptools)
+library(dismo)
+
 data(eberg)
 data(eberg_grid)
-# prepare data for spatial analysis:
+## prepare data for spatial analysis:
 eberg.xy <- eberg[runif(nrow(eberg)) < .3,]
 coordinates(eberg.xy) <- ~X+Y
 proj4string(eberg.xy) <- CRS("+init=epsg:31467")
-# format gridded data:
+## format gridded data:
 gridded(eberg_grid) <- ~x+y
 proj4string(eberg_grid) <- CRS("+init=epsg:31467")
-# convert to a "ppp" object:
-library(spatstat)
-library(maptools)
+## convert to a "ppp" object:
 eberg.ppp <- as.ppp(eberg.xy)
-library(dismo)
-# run MaxEnt analysis (evaluates sampling bias or mis-representation):
+## run MaxEnt analysis (evaluates sampling bias or mis-representation):
 jar <- paste(system.file(package="dismo"), "/java/maxent.jar", sep='')
 if(file.exists(jar)){
   me.eberg <- MaxEnt(occurrences=eberg.ppp, covariates=eberg_grid)
