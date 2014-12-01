@@ -20,7 +20,7 @@
 Returns a list of objects where \code{'iprob'} (\code{"SpatialPixelsDataFrame"}) is the map showing the estimated inclusion probability.
 }
 \note{
-Inclusion probabilities for geographical space are derived using kernel density estimator. The sampling intensities are converted to probabilities by deviding the sampling intensity by the maximum sampling intensity for the study area.\cr 
+Inclusion probabilities for geographical space are derived using kernel density estimator. The sampling intensities are converted to probabilities by deviding the sampling intensity by the maximum sampling intensity for the study area. The lower the average inclusion probability for the whole study area, the lower the representation efficiency of a sampling plan. \cr 
 This function can be time consuming for large grids. For more information on how to install MaxEnt and use it in R, see \href{http://CRAN.R-project.org/package=dismo}{dismo} package documentation.
 }
 \references{
@@ -48,8 +48,7 @@ proj4string(eberg.xy) <- CRS("+init=epsg:31467")
 # format gridded data:
 gridded(eberg_grid) <- ~x+y
 proj4string(eberg_grid) <- CRS("+init=epsg:31467")
-# convert to a "ppp" object:
-# run MaxEnt analysis (evaluates sampling bias or mis-representation):
+
 jar <- paste(system.file(package="dismo"), "/java/maxent.jar", sep='')
 if(file.exists(jar)){
   iprob <- spsample.prob(eberg.xy, eberg_grid)

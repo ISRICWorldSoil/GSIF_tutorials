@@ -60,7 +60,7 @@ spsample.prob(observations, covariates,
 
 <h3>Note</h3>
 
-<p>Inclusion probabilities for geographical space are derived using kernel density estimator. The sampling intensities are converted to probabilities by deviding the sampling intensity by the maximum sampling intensity for the study area.<br> 
+<p>Inclusion probabilities for geographical space are derived using kernel density estimator. The sampling intensities are converted to probabilities by deviding the sampling intensity by the maximum sampling intensity for the study area. The lower the average inclusion probability for the whole study area, the lower the representation efficiency of a sampling plan. <br> 
 This function can be time consuming for large grids. For more information on how to install MaxEnt and use it in R, see <a href="http://CRAN.R-project.org/package=dismo">dismo</a> package documentation.
 </p>
 
@@ -109,8 +109,7 @@ proj4string(eberg.xy) &lt;- CRS("+init=epsg:31467")
 # format gridded data:
 gridded(eberg_grid) &lt;- ~x+y
 proj4string(eberg_grid) &lt;- CRS("+init=epsg:31467")
-# convert to a "ppp" object:
-# run MaxEnt analysis (evaluates sampling bias or mis-representation):
+
 jar &lt;- paste(system.file(package="dismo"), "/java/maxent.jar", sep='')
 if(file.exists(jar)){
   iprob &lt;- spsample.prob(eberg.xy, eberg_grid)
