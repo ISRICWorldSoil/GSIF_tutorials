@@ -6,29 +6,27 @@
 \description{Fits a mass preserving spline to a soil profile data.}
 \usage{
 \S4method{mpspline}{SoilProfileCollection}(obj, var.name, 
-      mxd = 200, lam = 0.1, d = t(c(0,5,15,30,60,100,200)), 
-      vlow = 0, vhigh = 1000)
+        lam = 0.1, d = t(c(0,5,15,30,60,100,200)), vlow = 0, vhigh = 1000, show.progress=TRUE)
 }
 \arguments{
   \item{obj}{object of class \code{"SoilProfileCollection"}} 
-  \item{var.name}{character; target variable name (must be a numeric variable)}
-  \item{mxd}{numeric; maximum depth to which spline should be fitted}        
+  \item{var.name}{character; target variable name (must be a numeric variable)}     
   \item{lam}{numeric; lambda the smoothing parameter}
   \item{d}{numeric; standard depths}
   \item{vlow}{numeric; smallest value of the target variable (smaller values will be replaced)}
   \item{vhigh}{numeric; highest value of the target variable (larger values will be replaced)}
+  \item{show.progress}{logical; Display the progress bar?)}
 }
 \value{Returns a list with four elements:
   \describe{
    \item{\code{idcol}}{site ID column}
-   \item{\code{depth}}{matrix; are observed depths of horizon boundaries}
    \item{\code{var.fitted}}{matrix; are are spline-estimated values of the target variable at observed depths}
    \item{\code{var.std}}{matrix; are spline-estimated values of the target variable at standard depths} 
    \item{\code{var.1cm}}{matrix; are spline-estimated values of the target variable using the 1 cm increments}   
 }
-All detphs are commonly expressed in centimeters. The returned values refer to point support and can be used to construct a \code{"SpatialPointsDataFrame"} (3-dimensional).
 }
-\note{Target variable needs to be a numeric vector measured at least 3 horizons. Only positive numbers for upper and lower depths can be accepted and the maximum depth is set at 200 cm if not otherwise indicated. It is assumed that soil variables collected per horizon refer to block support i.e. they represent composite values for the whole horizon. This operation can be time-consuming for large data sets.}
+\note{Target variable needs to be a numeric vector measured at least 3 horizons. Only positive numbers for upper and lower depths can be accepted. It is assumed that soil variables collected per horizon refer to block support i.e. they represent averaged values for the whole horizon. This operation can be time-consuming for large data sets.}
+
 \author{ Brendan Malone and Tomislav Hengl }
 \references{
 \itemize{
@@ -59,13 +57,15 @@ ORCDRC.s <- mpspline(prof1, var.name="ORCDRC")
 str(ORCDRC.s)
 
 
-\dontrun{## make some fake, but reasonable profiles:
-d <- ldply(1:10, random_profile, n=c(6, 7, 8), n_prop=1, method='LPP')
+## Example with multiple soil profiles.
+## Make some fake, but reasonable profiles:
+rand.prof <- ldply(1:100, random_profile, n=c(6, 7, 8), n_prop=1, method='LPP')
 ## promote to SPC and plot
-depths(d) <- id ~ top + bottom
-plot(d, color='p1')
+depths(rand.prof ) <- id ~ top + bottom
+plot(rand.prof , color='p1')
 ## fit MP spline by profile
-m <- mpspline(d, 'p1', mxd=150)
+m <- mpspline(rand.prof , 'p1')
+str(m)
 }
 }
 \keyword{methods}
