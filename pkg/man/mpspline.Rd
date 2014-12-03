@@ -58,6 +58,7 @@ proj4string(prof1) <- CRS("+proj=longlat +datum=WGS84")
 ORCDRC.s <- mpspline(prof1, var.name="ORCDRC")
 str(ORCDRC.s)
 
+
 \dontrun{## make some fake, but reasonable profiles:
 d <- ldply(1:10, random_profile, n=c(6, 7, 8), n_prop=1, method='LPP')
 ## promote to SPC and plot
