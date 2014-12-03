@@ -24,6 +24,7 @@ Horizons table contains the following columns:
   \describe{
   \item{\code{SOURCEID}}{factor; a short label to help a user identify a particular site (\code{ProfileID} in the AFSP)}
   \item{\code{LSQINT}}{integer; a layer sequence number 1 to N (\code{LayerNr} in the AFSP)}
+  \item{\code{HZDFAO}}{factor; original horizon designation (\code{HorDes} in the AFSP)}
   \item{\code{UHDICM}}{numeric; upper horizon depth from the surface in cm (\code{UpDpth} in the AFSP)}
   \item{\code{LHDICM}}{numeric; lower horizon depth from the surface in cm (\code{LowDpth} in the AFSP)}
   \item{\code{MCOMNS}}{factor; Munsell color moist (\code{ColorM} in the NSCD)}
