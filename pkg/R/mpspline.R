@@ -1,6 +1,6 @@
-# Purpose        : Fits a mass-preserving (equal area) spline to soil profile data;
-# Maintainer     : B. Malone (brendan.malone@sydney.edu.au); 
-# Contributions  : Tomislav Hengl (tom.hengl@wur.nl); T.F.A. Bishop (t.bishop@usyd.edu.au);
+# Purpose        : Fits a mass-preserving (pycnophylactic) spline to soil profile data;
+# Maintainer     : Brendan Malone (brendan.malone@sydney.edu.au); 
+# Contributions  : Tomislav Hengl (tom.hengl@wur.nl); Tom Bishop (t.bishop@usyd.edu.au); David Rossiter (david.rossiter@wur.nl)
 # Status         : experimental
 # Note           : Mass-preserving spline explained in detail in [http://dx.doi.org/10.1016/S0016-7061(99)00003-8];
 # Note 2         : This code needs to be cleaned up;
@@ -8,7 +8,7 @@
 
 # Spline fitting for horizon data (created by Brandon Malone; adjusted by T. Hengl)
 setMethod('mpspline', signature(obj = "SoilProfileCollection"), 
-          function(obj, var.name, mxd = 200, lam = 0.1, d = t(c(0,5,15,30,60,100,200)), vlow = 0, vhigh = 1000){
+          function(obj, var.name, lam = 0.1, d = t(c(0,5,15,30,60,100,200)), vlow = 0, vhigh = 1000, show.progress=TRUE){
             
             depthcols = obj@depthcols
             idcol = obj@idcol
@@ -19,8 +19,9 @@ setMethod('mpspline', signature(obj = "SoilProfileCollection"),
             objd <- .as.data.frame.SoilProfileCollection(x=obj)
             # organize the data:
             ndata <- nrow(objd)
+            mxd<- max(d)
             # Matrix in which the averaged values of the spline are fitted. The depths are specified in the (d) object:
-            m_fyfit <- matrix(NA, ncol=length(c(0:mxd)), nrow=ndata)
+            m_fyfit <- matrix(NA, ncol=length(c(1:mxd)), nrow=ndata)
             # Matrix in which the sum of square errors of each lamda iteration for the working profile are stored
             yave <- matrix(NA, ncol=length(d), nrow=ndata)
             # Matrix in which the sum of square errors for eac h lambda iteration for each profile are stored
@@ -35,8 +36,6 @@ setMethod('mpspline', signature(obj = "SoilProfileCollection"),
             lowerb.lst <- grep(names(objd), pattern=glob2rx(paste(depthcols[2], "_*",sep="")))
             objd_m <- objd[,c(grep(names(objd), pattern=idcol), upperb.lst, lowerb.lst, svar.lst)]
             np <- length(svar.lst) # max number of horizons
-            # Matrix in which the observed depth will be entered:
-            obdep <- matrix(NA, ncol=np, nrow=ndata)
             # Matrix in which the averaged values of spline-fitted values at observed depths are entered:
             dave <- matrix(NA, ncol=np, nrow=ndata)
             
@@ -80,7 +79,7 @@ setMethod('mpspline', signature(obj = "SoilProfileCollection"),
               message("Fitting mass preserving splines per profile...")
               
               ## Fit splines profile by profile:
-              pb <- txtProgressBar(min=0, max=length(sel), style=3)
+              if (show.progress) pb <- txtProgressBar(min=0, max=length(sel), style=3)
               for(st in as.vector(which(sel))) {
                 subs <- matrix(unlist(c(1:np, as.vector(objd_m[st, upperb.lst]), as.vector(objd_m[st, lowerb.lst]), as.vector(objd_m[st, svar.lst]))), ncol=4)
                 d.ho <- rowMeans(data.frame(x=subs[,2], y=c(NA, subs[1:(nrow(subs)-1),3])), na.rm=TRUE) 
@@ -100,28 +99,29 @@ setMethod('mpspline', signature(obj = "SoilProfileCollection"),
                 
                 ## routine for handling profiles with one observation
                 if (n == 1){ 
-                  xfit <- as.matrix(t(c(0:mxd)))
-                  nj <- max(v)+1
+                  xfit<- as.matrix(t(c(1:mxd))) # spline will be interpolated onto these depths (1cm res)
+                  nj<- max(v)
                   if (nj > mxd)
-                  {nj <- mxd+1}
-                  yfit <- xfit 
+                  {nj<- mxd}
+                  yfit<- xfit
                   yfit[,1:nj]<- y   # values extrapolated onto yfit
-                  if (nj <= mxd)
-                  {yfit[,(nj+1):(mxd+1)]=NA}
-                  m_fyfit[st,] <- yfit
-                  nd <- length(d)-1  # number of depth intervals
-                  dl <- d+1     #  increase d by 1
+                  if (nj < mxd)
+                  {yfit[,(nj+1):mxd]=-9999}
+                  m_fyfit[st,]<- yfit
                   
-                  for (cj in 1:nd) {
+                  
+                  # Averages of the spline at specified depths
+                  nd<- length(d)-1  # number of depth intervals
+                  dl<-d+1     #  increase d by 1
+                  for (cj in 1:nd) { 
                     xd1<- dl[cj]
-                    xd2<- dl[cj+1]     
-                    if (nj>xd1 & nj<xd2)
-                    {xd2<- nj
+                    xd2<- dl[cj+1]-1
+                    if (nj>=xd1 & nj<=xd2)
+                    {xd2<- nj-1
                      yave[st,cj]<- mean(yfit[,xd1:xd2])}
                     else
-                    {yave[st,cj]<- mean(yfit[,xd1:xd2])}   # average of the yfit at the specified depth intervals
-                    yave[st,cj+1]<- max(v)
-                  }
+                    {yave[st,cj]<- mean(yfit[,xd1:xd2])}   # average of the spline at the specified depth intervals
+                    yave[st,cj+1]<- max(v)} #maximum soil depth
                 }
                 # End of single observation profile routine
                 
@@ -197,10 +197,10 @@ setMethod('mpspline', signature(obj = "SoilProfileCollection"),
                     
                     
                     # fit the spline 
-                    xfit<- as.matrix(t(c(0:mxd))) # spline will be interpolated onto these depths (1cm res)
+                    xfit<- as.matrix(t(c(1:mxd))) # spline will be interpolated onto these depths (1cm res)
                     nj<- max(v)
                     if (nj > mxd)
-                    {nj<- mxd+1}
+                    {nj<- mxd}
                     yfit<- xfit
                     for (k in 1:nj){
                       xd<-xfit[k]
@@ -215,8 +215,8 @@ setMethod('mpspline', signature(obj = "SoilProfileCollection"),
                          p=phi+b1[its]*(xd-v[its])}
                       }}
                       yfit[k]=p }
-                    if (nj <= mxd)
-                    {yfit[,nj:mxd+1]=-9999}
+                    if (nj < mxd)
+                    {yfit[,(nj+1):mxd]=NA}
                     m_fyfit[st,]<- yfit
                     
                     
@@ -237,38 +237,26 @@ setMethod('mpspline', signature(obj = "SoilProfileCollection"),
                     sset[st] <- tmse
                     
                     # Averages of the spline at specified depths
-                    nd <- length(d)-1  # number of depth intervals
-                    dl <- d+1     #  increase d by 1
-                    for (cj in 1:nd) {
+                    nd<- length(d)-1  # number of depth intervals
+                    dl<-d+1     #  increase d by 1
+                    for (cj in 1:nd) { 
                       xd1<- dl[cj]
-                      xd2<- dl[cj+1]     
-                      if (nj>xd1 & nj<xd2)
-                      {xd2<- nj
-                       yave[st,cj] <- mean(yfit[,xd1:xd2])}
+                      xd2<- dl[cj+1]-1
+                      if (nj>=xd1 & nj<=xd2)
+                      {xd2<- nj-1
+                       yave[st,cj]<- mean(yfit[,xd1:xd2])}
                       else
-                      {yave[st,cj] <- mean(yfit[,xd1:xd2])}   # average of the spline at the specified depth intervals
-                      yave[st,cj+1] <- max(v)
-                      
-                    }         
+                      {yave[st,cj]<- mean(yfit[,xd1:xd2])}   # average of the spline at the specified depth intervals
+                      yave[st,cj+1]<- max(v)} #maximum soil depth 
                     
                     # Spline estimates at observed depths
-                    dl <- t(d.ho[!is.na(d.ho)])+1
-                    obdep[st,] <- as.vector(d.ho)
-                    nd <- length(dl) # number of depth intervals
-                    for (cj in 1:nd) {
-                      if(dl[cj]<202) {
-                        dave[st,cj] <- sbar[cj,]
-                      }
-                    }         
-                    
+                    dave[st,1:n]<- sbar
                   }
                 }
                 
-                setTxtProgressBar(pb, st)          
+                if (show.progress) setTxtProgressBar(pb, st)      
               }
-              close(pb)
-              cat(st, "\r")
-              flush.console()
+              if (show.progress) { close(pb); cat(st, "\r"); flush.console()}
               
               yave <- ifelse(yave<vlow, vlow, yave) 
               dave <- ifelse(dave<vlow, vlow, dave) 
@@ -281,14 +269,14 @@ setMethod('mpspline', signature(obj = "SoilProfileCollection"),
               jmat<- matrix(NA,ncol=1,nrow=length(d))
               for (i in 1:length(d)-1) {
                 a1<-paste(d[i],d[i+1],sep="-")
-                a1<-paste(a1,"cm",sep="")
+                a1<-paste(a1,"cm",sep=" ")
                 jmat[i]<- a1}
               jmat[length(d)]<- "soil depth"
               for (jj in 1:length(jmat)){
                 names(yave)[jj]<- jmat[jj] 
               }
               
-              retval <- list(idcol=objd_m[,1], depths=obdep, var.fitted=dave, var.std=yave, var.1cm=t(m_fyfit))
+              retval <- list(idcol=objd_m[,1], var.fitted=dave, var.std=yave, var.1cm=t(m_fyfit))
               
               return(retval)
             }
