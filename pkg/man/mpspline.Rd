@@ -25,7 +25,7 @@
    \item{\code{var.1cm}}{matrix; are spline-estimated values of the target variable using the 1 cm increments}   
 }
 }
-\note{Target variable needs to be a numeric vector measured at least 3 horizons. Only positive numbers for upper and lower depths can be accepted. It is assumed that soil variables collected per horizon refer to block support i.e. they represent averaged values for the whole horizon. This operation can be time-consuming for large data sets.}
+\note{Target variable needs to be a numeric vector measured at least 2 horizons for the spline to be fitted. Profiles with 1 horizon are accepted and processed as per output requirements, but no spline is fitted as such. Only positive numbers for upper and lower depths can be accepted. It is assumed that soil variables collected per horizon refer to block support i.e. they represent averaged values for the whole horizon. This operation can be time-consuming for large data sets.}
 
 \author{ Brendan Malone and Tomislav Hengl }
 \references{
