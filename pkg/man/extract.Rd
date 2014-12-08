@@ -9,10 +9,12 @@
 \usage{
 \S4method{extract}{SpatialPoints,character}(x, y, 
    path=".", ID = "SOURCEID", 
-   method = "simple", is.pattern = FALSE, force.projection = TRUE, NAflag = "", \dots)
+   method = "simple", is.pattern = FALSE, force.projection = TRUE, 
+   NAflag = "", show.progress=TRUE, \dots)
 \S4method{extract}{SpatialPointsDataFrame,character}(x, y, 
    path = ".", ID = "SOURCEID", 
-   method = "simple", is.pattern = FALSE, force.projection = TRUE, NAflag = "", \dots)
+   method = "simple", is.pattern = FALSE, force.projection = TRUE, 
+   NAflag = "", show.progress=TRUE, \dots)
 }
 \arguments{
   \item{x}{object of class \code{"SpatialPoints*"}} 
@@ -23,6 +25,7 @@
   \item{is.pattern}{logical; specifies whether the list is a pattern}
   \item{force.projection}{logical; specifies whether the reprojection should be ignored}
   \item{NAflag}{character; missing value flag (all missing values are removed by default)}
+  \item{show.progress}{logical; specifies whether to display the progress bar}
   \item{\dots}{additional arguments that can be passed to the \code{raster::extract} function}
 }
 \note{The method will try to reproject the values to the native coordinate system, hence it is highly advisible to embed the proj4 string into the GeoTiffs. If both \code{x} and \code{y} are in the same coordinate system, then reprojection can be turned off by setting \code{force.projection = TRUE}. In the case \code{is.pattern = TRUE} (search by pattern), missing values are removed by default and if multiple rasters covering the same area are found, values are aggregated to the mean value.

@@ -16,7 +16,7 @@
 }
 \details{The advantage of converting the \code{"SoilProfileCollection"} data to a single table is that, once both tables have been merged to a single data frame, it can be more easily exported and visualized in a GIS and/or imported into a data base.}
 \note{Few profiles with a large number of horizons can make the whole data frame become large. Consider removing such locations or aggregating measured values per horizon to a lower number of horizons.}
-\author{ Tomislav Hengl }
+\author{ Tomislav Hengl and Brendan Malone }
 \seealso{ \code{\link{as.geosamples}}, \code{\link{mpspline}} }
 \examples{
 library(aqp)

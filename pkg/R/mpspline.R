@@ -17,26 +17,26 @@ setMethod('mpspline', signature(obj = "SoilProfileCollection"),
             ## TH: remove all horizons with negative depth!
             obj@horizons <- obj@horizons[!obj@horizons[,depthcols[1]]<0 & !obj@horizons[,depthcols[2]]<0,]
             objd <- .as.data.frame.SoilProfileCollection(x=obj)
-            # organize the data:
+            ## organize the data:
             ndata <- nrow(objd)
             mxd<- max(d)
-            # Matrix in which the averaged values of the spline are fitted. The depths are specified in the (d) object:
+            ## Matrix in which the averaged values of the spline are fitted. The depths are specified in the (d) object:
             m_fyfit <- matrix(NA, ncol=length(c(1:mxd)), nrow=ndata)
-            # Matrix in which the sum of square errors of each lamda iteration for the working profile are stored
+            ## Matrix in which the sum of square errors of each lamda iteration for the working profile are stored
             yave <- matrix(NA, ncol=length(d), nrow=ndata)
-            # Matrix in which the sum of square errors for eac h lambda iteration for each profile are stored
+            ## Matrix in which the sum of square errors for eac h lambda iteration for each profile are stored
             sse <- matrix(NA, ncol=length(lam), nrow=1)
             sset <- matrix(NA, ncol=length(lam), nrow=ndata)
             nl <- length(lam)  # Length of the lam matrix
             svar.lst <- grep(names(objd), pattern=glob2rx(paste(var.name, "_*", sep="")))
             s <- 0.05*sd(unlist(unclass(objd[,svar.lst])), na.rm=TRUE)  # 5% of the standard deviation of the target attribute 
             s2 <- s*s   # overall variance of soil attribute
-            # reformat table (profile no, upper boundary, lower boundary, vars):
+            ## reformat table (profile no, upper boundary, lower boundary, vars):
             upperb.lst <- grep(names(objd), pattern=glob2rx(paste(depthcols[1], "_*",sep="")))
             lowerb.lst <- grep(names(objd), pattern=glob2rx(paste(depthcols[2], "_*",sep="")))
             objd_m <- objd[,c(grep(names(objd), pattern=idcol), upperb.lst, lowerb.lst, svar.lst)]
             np <- length(svar.lst) # max number of horizons
-            # Matrix in which the averaged values of spline-fitted values at observed depths are entered:
+            ## Matrix in which the averaged values of spline-fitted values at observed depths are entered:
             dave <- matrix(NA, ncol=np, nrow=ndata)
             
             if(np<2|is.na(np)){print("Submitted soil profiles all have 1 horizon")}
@@ -62,7 +62,6 @@ setMethod('mpspline', signature(obj = "SoilProfileCollection"),
             uw.hor <- rowSums(!is.na(objd_m[,upperb.lst]))
             lw.hor <- as.vector(which(rowSums(!is.na(objd_m[,lowerb.lst])) < rowSums(!is.na(objd_m[,upperb.lst]))&rowSums(!is.na(objd_m[,upperb.lst]))>1))  # profiles with un-even number of lower/upper depths
             
-            
             ## add missing lower depth where necessary:
             for(lw in lw.hor){
               uwx <- objd_m[lw,upperb.lst[uw.hor[lw]]]
@@ -74,19 +73,19 @@ setMethod('mpspline', signature(obj = "SoilProfileCollection"),
                 }
               } 
             }
+
+            ## Fit splines profile by profile:            
             message("Fitting mass preserving splines per profile...")
-            
-            ## Fit splines profile by profile:
             if (show.progress) pb <- txtProgressBar(min=0, max=length(sel), style=3)
             for(st in as.vector(which(sel))) {
               subs <- matrix(unlist(c(1:np, as.vector(objd_m[st, upperb.lst]), as.vector(objd_m[st, lowerb.lst]), as.vector(objd_m[st, svar.lst]))), ncol=4)
               d.ho <- rowMeans(data.frame(x=subs[,2], y=c(NA, subs[1:(nrow(subs)-1),3])), na.rm=TRUE) 
-              # mask out missing values
+              ## mask out missing values
               if (ncol(as.matrix(subs[!is.na(subs[,2])&!is.na(subs[,3])&!is.na(subs[,4]),]))==1)
               {subs=t(as.matrix(subs[!is.na(subs[,2])&!is.na(subs[,3])&!is.na(subs[,4]),]))}
               else {subs<- subs[!is.na(subs[,2])&!is.na(subs[,3])&!is.na(subs[,4]),]}
               
-              # manipulate the profile data to the required form
+              ## manipulate the profile data to the required form
               ir <- c(1:length(subs[,1]))
               ir <- as.matrix(t(ir))
               u <- subs[ir,2]
@@ -101,20 +100,20 @@ setMethod('mpspline', signature(obj = "SoilProfileCollection"),
               ## routine for handling profiles with one observation
               if (n == 1){ 
                 message(paste("Spline not fitted to profile:", objd_m[st,1] ,sep=" "))  
-                xfit<- as.matrix(t(c(1:mxd))) # spline will be interpolated onto these depths (1cm res)
+                xfit<- as.matrix(t(c(1:mxd))) ## spline will be interpolated onto these depths (1cm res)
                 nj<- max(v)
                 if (nj > mxd)
                 {nj<- mxd}
                 yfit<- xfit
-                yfit[,1:nj]<- y   # values extrapolated onto yfit
+                yfit[,1:nj]<- y   ## values extrapolated onto yfit
                 if (nj < mxd)
                 {yfit[,(nj+1):mxd]=NA}
                 m_fyfit[st,]<- yfit
                 
                 
-                # Averages of the spline at specified depths
-                nd<- length(d)-1  # number of depth intervals
-                dl<-d+1     #  increase d by 1
+                ## Averages of the spline at specified depths
+                nd<- length(d)-1  ## number of depth intervals
+                dl<-d+1     ##  increase d by 1
                 for (cj in 1:nd) { 
                   xd1<- dl[cj]
                   xd2<- dl[cj+1]-1
@@ -125,20 +124,20 @@ setMethod('mpspline', signature(obj = "SoilProfileCollection"),
                   {yave[st,cj]<- mean(yfit[,xd1:xd2])}   # average of the spline at the specified depth intervals
                   yave[st,cj+1]<- max(v)} #maximum soil depth
               }
-              # End of single observation profile routine
+              ## End of single observation profile routine
               ###############################################################################################################################################################
               
-              # Start of routine for fitting spline to profiles with multiple observations         
+              ## Start of routine for fitting spline to profiles with multiple observations         
               
               else  {    
                 ###############################################################################################################################################################
-                #ESTIMATION OF SPLINE PARAMETERS
+                ## ESTIMATION OF SPLINE PARAMETERS
                 np1 <- n+1  # number of interval boundaries
                 nm1 <- n-1
                 delta <- v-u  # depths of each layer
                 del <- c(u[2:n],u[n])-v   # del is (u1-v0,u2-v1, ...)
                 
-                # create the (n-1)x(n-1) matrix r; first create r with 1's on the diagonal and upper diagonal, and 0's elsewhere
+                ## create the (n-1)x(n-1) matrix r; first create r with 1's on the diagonal and upper diagonal, and 0's elsewhere
                 r <- matrix(0,ncol=nm1,nrow=nm1)
                 for(dig in 1:nm1){
                   r[dig,dig]<-1
@@ -147,15 +146,15 @@ setMethod('mpspline', signature(obj = "SoilProfileCollection"),
                   r[udig,udig+1]<-1
                 }
                 
-                #then create a diagonal matrix d2 of differences to premultiply the current r
+                ## then create a diagonal matrix d2 of differences to premultiply the current r
                 d2 <- matrix(0, ncol=nm1, nrow=nm1)
                 diag(d2) <- delta[2:n]  # delta = depth of each layer
                 
-                # then premultiply and add the transpose; this gives half of r
+                ## then premultiply and add the transpose; this gives half of r
                 r <- d2 %*% r
                 r <- r + t(r)
                 
-                # then create a new diagonal matrix for differences to add to the diagonal
+                ## then create a new diagonal matrix for differences to add to the diagonal
                 d1 <- matrix(0, ncol=nm1, nrow=nm1)
                 diag(d1) <- delta[1:nm1]  # delta = depth of each layer
                 
@@ -164,7 +163,7 @@ setMethod('mpspline', signature(obj = "SoilProfileCollection"),
                 
                 r <- r+2*d1 + 6*d3
                 
-                # create the (n-1)xn matrix q
+                ## create the (n-1)xn matrix q
                 q <- matrix(0,ncol=n,nrow=n)
                 for (dig in 1:n){
                   q[dig,dig]<- -1 
@@ -175,37 +174,37 @@ setMethod('mpspline', signature(obj = "SoilProfileCollection"),
                 q <- q[1:nm1,1:n]
                 dim.mat <- matrix(q[],ncol=length(1:n),nrow=length(1:nm1))
                 
-                # inverse of r
+                ## inverse of r
                 rinv <- try(solve(r), TRUE)
                 
-                # Note: in same cases this will fail due to singular matrix problems, hence you need to check if the object is meaningfull:
+                ## Note: in same cases this will fail due to singular matrix problems, hence you need to check if the object is meaningfull:
                 if(is.matrix(rinv)){
-                  # identity matrix i
+                  ## identity matrix i
                   ind <- diag(n)
                   
-                  # create the matrix coefficent z
+                  ## create the matrix coefficent z
                   
                   pr.mat <- matrix(0,ncol=length(1:nm1),nrow=length(1:n))
                   pr.mat[] <- 6*n*lam
                   fdub <- pr.mat*t(dim.mat)%*%rinv
                   z <- fdub%*%dim.mat+ind
                   
-                  # solve for the fitted layer means
+                  ## solve for the fitted layer means
                   sbar <- solve(z,t(y))
                   
-                  # calculate the fitted value at the knots
+                  ## calculate the fitted value at the knots
                   b <- 6*rinv%*%dim.mat%*% sbar
                   b0 <- rbind(0,b) # add a row to top = 0
                   b1 <- rbind(b,0) # add a row to bottom = 0
                   gamma <- (b1-b0) / t(2*delta)
                   alfa <- sbar-b0 * t(delta) / 2-gamma * t(delta)^2/3
                   
-                  #END ESTIMATION OF SPLINE PARAMETERS
+                  ## END ESTIMATION OF SPLINE PARAMETERS
                   ###############################################################################################################################################################
                   
                   
-                  # fit the spline 
-                  xfit<- as.matrix(t(c(1:mxd))) # spline will be interpolated onto these depths (1cm res)
+                  ## fit the spline 
+                  xfit<- as.matrix(t(c(1:mxd))) ## spline will be interpolated onto these depths (1cm res)
                   nj<- max(v)
                   if (nj > mxd)
                   {nj<- mxd}
@@ -227,7 +226,7 @@ setMethod('mpspline', signature(obj = "SoilProfileCollection"),
                   {yfit[,(nj+1):mxd]=NA}
                   m_fyfit[st,]<- yfit
                   
-                  # Averages of the spline at specified depths
+                  ## Averages of the spline at specified depths
                   nd<- length(d)-1  # number of depth intervals
                   dl<-d+1     #  increase d by 1
                   for (cj in 1:nd) { 
@@ -240,39 +239,44 @@ setMethod('mpspline', signature(obj = "SoilProfileCollection"),
                     {yave[st,cj]<- mean(yfit[,xd1:xd2])}   # average of the spline at the specified depth intervals
                     yave[st,cj+1]<- max(v)} #maximum soil depth 
                   
-                  # Spline estimates at observed depths
+                  ## Spline estimates at observed depths
                   dave[st,1:n]<- sbar
                   
                   
-                  # CALCULATION OF THE ERROR BETWEEN OBSERVED AND FITTED VALUES
-                  # calculate Wahba's estimate of the residual variance sigma^2
+                  ## CALCULATION OF THE ERROR BETWEEN OBSERVED AND FITTED VALUES
+                  ## calculate Wahba's estimate of the residual variance sigma^2
                   ssq <- sum((t(y)-sbar)^2)
                   g <- solve(z)
                   ei <- eigen(g)
                   ei <- ei$values
                   df <- n-sum(ei)
                   sig2w <- ssq/df
-                  # calculate the Carter and Eagleson estimate of residual variance
+                  ## calculate the Carter and Eagleson estimate of residual variance
                   dfc <- n-2*sum(ei)+sum(ei^2)
                   sig2c <- ssq/dfc
-                  # calculate the estimate of the true mean squared error
+                  ## calculate the estimate of the true mean squared error
                   tmse <- ssq/n-2*s2*df/n+s2
                   sset[st] <- tmse
                   
                 }
               }
               
-              if (show.progress) setTxtProgressBar(pb, st)      
+              if (show.progress) { setTxtProgressBar(pb, st)  }
             }
-            if (show.progress) { close(pb); cat(st, "\r"); flush.console()}
+            if (show.progress) { 
+              close(pb)
+              #cat(st, "\r")  ## TH: Suggested by D. Rossiter but not required
+              #flush.console() 
+            }
             
             yave <- ifelse(yave<vlow, vlow, yave) 
             dave <- ifelse(dave<vlow, vlow, dave) 
             dave <- ifelse(dave>vhigh, NA, dave)
+            attr(dave, "upper") <- as.matrix(objd_m[upperb.lst])
+            attr(dave, "lower") <- as.matrix(objd_m[lowerb.lst])
             
-            
-            #asthetics for output 
-            #yave
+            ## asthetics for output 
+            ## yave
             yave<- as.data.frame(yave)
             jmat<- matrix(NA,ncol=1,nrow=length(d))
             for (i in 1:length(d)-1) {
@@ -289,6 +293,6 @@ setMethod('mpspline', signature(obj = "SoilProfileCollection"),
             return(retval)
             
             
-          })
+})
 
 # end of script;

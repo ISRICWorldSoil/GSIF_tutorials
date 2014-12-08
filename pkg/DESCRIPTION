@@ -2,12 +2,11 @@ Package: GSIF
 Type: Package
 Title: Global Soil Information Facilities
 Version: 0.4-3
-Date: 2014-12-01
+Date: 2014-12-08
 Authors@R: c(person("Tomislav", "Hengl", role = c("cre", "aut"), email = "tom.hengl@wur.nl"),
     person("Bas", "Kempen", role = "ctb", email = "bas.kempen@wur.nl"),
     person("Gerard", "Heuvelink", role = "ctb", email = "gerard.heuvelink@wur.nl"),
-  	person("Brendan", "Malone", role = "ctb", email = "brendan.malone@sydney.edu.au"),
-    person("Hannes", "Reuter", role = "ctb", email = "hannes.reuter@wur.nl"))
+  	person("Brendan", "Malone", role = "ctb", email = "brendan.malone@sydney.edu.au"))
 Maintainer: Tomislav Hengl <tom.hengl@wur.nl>
 Depends: R (>= 2.15.0)
 Imports: methods, sp (>= 1.0-8), RSAGA, dismo, rgdal, raster, aqp, plotKML, gstat, stats, boot, rpart, quantregForest, randomForest, nlme

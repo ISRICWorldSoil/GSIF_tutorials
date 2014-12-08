@@ -4,7 +4,7 @@
 # Status         : pre-alpha
 # Note           : in the case multiple files follow the same pattern the values are aggregated;
 
-extract.list <- function(x, y, path=".", ID="SOURCEID", method="simple", is.pattern=FALSE, force.projection = TRUE, NAflag = "", ...){
+extract.list <- function(x, y, path=".", ID="SOURCEID", method="simple", is.pattern=FALSE, force.projection = TRUE, NAflag = "", show.progress=TRUE, ...){
   require(reshape)
   if(path=="."){ path <- getwd() }
   if(!file.exists(path)|!file.info(path)[1,"isdir"]) { stop(paste("Directory:", path, "does not exists")) }
@@ -19,7 +19,7 @@ extract.list <- function(x, y, path=".", ID="SOURCEID", method="simple", is.patt
   ## simple case -> file list
   if(is.pattern==FALSE){
       message(paste("Extracting values for", length(x), "points from", length(y), "rasters..."))
-      pb <- txtProgressBar(min=0, max=length(y), style=3)
+      if (show.progress) { pb <- txtProgressBar(min=0, max=length(y), style=3) }
       for(i in 1:length(y)){
         fname <- normalizePath(paste(path, y[i], sep="\\"), winslash="/")
         try( r <- raster(fname) )
@@ -30,9 +30,9 @@ extract.list <- function(x, y, path=".", ID="SOURCEID", method="simple", is.patt
           ov[[i]] <- extract(r, x, method=method, ...)
           names(ov)[i] <- y[i]
         }
-        setTxtProgressBar(pb, i)
+        if (show.progress) { setTxtProgressBar(pb, i) }
       }
-      close(pb)
+      if (show.progress) { close(pb) }
 
       ## format to a data.frame:
       sel <- sapply(ov, is.null)

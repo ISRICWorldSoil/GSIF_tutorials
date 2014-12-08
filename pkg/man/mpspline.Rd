@@ -6,7 +6,8 @@
 \description{Fits a mass preserving spline to a soil profile data.}
 \usage{
 \S4method{mpspline}{SoilProfileCollection}(obj, var.name, 
-        lam = 0.1, d = t(c(0,5,15,30,60,100,200)), vlow = 0, vhigh = 1000, show.progress=TRUE)
+        lam = 0.1, d = t(c(0,5,15,30,60,100,200)), vlow = 0, 
+        vhigh = 1000, show.progress=TRUE)
 }
 \arguments{
   \item{obj}{object of class \code{"SoilProfileCollection"}} 
@@ -15,12 +16,12 @@
   \item{d}{numeric; standard depths}
   \item{vlow}{numeric; smallest value of the target variable (smaller values will be replaced)}
   \item{vhigh}{numeric; highest value of the target variable (larger values will be replaced)}
-  \item{show.progress}{logical; Display the progress bar?)}
+  \item{show.progress}{logical; specifies whether to display the progress bar}
 }
 \value{Returns a list with four elements:
   \describe{
    \item{\code{idcol}}{site ID column}
-   \item{\code{var.fitted}}{matrix; are are spline-estimated values of the target variable at observed depths}
+   \item{\code{var.fitted}}{matrix; are are spline-estimated values of the target variable at observed depths (upper and lower depths are indicated as attributes)}
    \item{\code{var.std}}{matrix; are spline-estimated values of the target variable at standard depths} 
    \item{\code{var.1cm}}{matrix; are spline-estimated values of the target variable using the 1 cm increments}   
 }
@@ -56,16 +57,14 @@ proj4string(prof1) <- CRS("+proj=longlat +datum=WGS84")
 ORCDRC.s <- mpspline(prof1, var.name="ORCDRC")
 str(ORCDRC.s)
 
-
 ## Example with multiple soil profiles.
 ## Make some fake, but reasonable profiles:
-rand.prof <- ldply(1:100, random_profile, n=c(6, 7, 8), n_prop=1, method='LPP')
+rand.prof <- ldply(1:20, random_profile, n=c(6, 7, 8), n_prop=1, method='LPP')
 ## promote to SPC and plot
 depths(rand.prof ) <- id ~ top + bottom
-plot(rand.prof , color='p1')
+plot(rand.prof, color='p1')
 ## fit MP spline by profile
-m <- mpspline(rand.prof , 'p1')
+m <- mpspline(rand.prof, 'p1')
 str(m)
-}
 }
 \keyword{methods}

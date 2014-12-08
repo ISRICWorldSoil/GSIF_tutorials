@@ -19,11 +19,13 @@
 ## S4 method for signature 'SpatialPoints,character'
 extract(x, y, 
    path=".", ID = "SOURCEID", 
-   method = "simple", is.pattern = FALSE, force.projection = TRUE, NAflag = "", ...)
+   method = "simple", is.pattern = FALSE, force.projection = TRUE, 
+   NAflag = "", show.progress=TRUE, ...)
 ## S4 method for signature 'SpatialPointsDataFrame,character'
 extract(x, y, 
    path = ".", ID = "SOURCEID", 
-   method = "simple", is.pattern = FALSE, force.projection = TRUE, NAflag = "", ...)
+   method = "simple", is.pattern = FALSE, force.projection = TRUE, 
+   NAflag = "", show.progress=TRUE, ...)
 </pre>
 
 
@@ -61,6 +63,10 @@ extract(x, y,
 <tr valign="top"><td><code>NAflag</code></td>
 <td>
 <p>character; missing value flag (all missing values are removed by default)</p>
+</td></tr>
+<tr valign="top"><td><code>show.progress</code></td>
+<td>
+<p>logical; specifies whether to display the progress bar</p>
 </td></tr>
 <tr valign="top"><td><code>...</code></td>
 <td>
