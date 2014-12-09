@@ -6,7 +6,7 @@
 # Note 2         : This code needs to be cleaned up;
 
 
-# Spline fitting for horizon data (created by Brandon Malone; adjusted by T. Hengl)
+# Spline fitting for horizon data (created by Brendan Malone; adjusted by T. Hengl)
 setMethod('mpspline', signature(obj = "SoilProfileCollection"), 
           function(obj, var.name, lam = 0.1, d = t(c(0,5,15,30,60,100,200)), vlow = 0, vhigh = 1000, show.progress=TRUE){
             
@@ -73,7 +73,7 @@ setMethod('mpspline', signature(obj = "SoilProfileCollection"),
                 }
               } 
             }
-
+            
             ## Fit splines profile by profile:            
             message("Fitting mass preserving splines per profile...")
             if (show.progress) pb <- txtProgressBar(min=0, max=length(sel), style=3)
@@ -224,6 +224,9 @@ setMethod('mpspline', signature(obj = "SoilProfileCollection"),
                     yfit[k]=p }
                   if (nj < mxd)
                   {yfit[,(nj+1):mxd]=NA}
+                  
+                  yfit[which(yfit > vhigh)] <- vhigh
+                  yfit[which(yfit < vlow)]  <-vlow
                   m_fyfit[st,]<- yfit
                   
                   ## Averages of the spline at specified depths
@@ -269,11 +272,6 @@ setMethod('mpspline', signature(obj = "SoilProfileCollection"),
               #flush.console() 
             }
             
-            yave <- ifelse(yave<vlow, vlow, yave) 
-            dave <- ifelse(dave<vlow, vlow, dave) 
-            dave <- ifelse(dave>vhigh, NA, dave)
-            attr(dave, "upper") <- as.matrix(objd_m[upperb.lst])
-            attr(dave, "lower") <- as.matrix(objd_m[lowerb.lst])
             
             ## asthetics for output 
             ## yave
@@ -293,6 +291,6 @@ setMethod('mpspline', signature(obj = "SoilProfileCollection"),
             return(retval)
             
             
-})
+          })
 
 # end of script;
