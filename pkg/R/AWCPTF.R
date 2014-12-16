@@ -38,7 +38,7 @@ AWCPTF <- function(SNDPPT, SLTPPT, CLYPPT, ORCDRC, BLD=1682, CEC, PHIHOX, h1=-10
  tetah3 <- tetaR + (tetaS-tetaR)/((1+(alfa*-1*h3)^N))^m
  WWP <- tetaR + (tetaS-tetaR)/((1+(alfa*-1*pwp)^N))^m
  if(fix.values){
-   ## if any of the teath values is smaller then WWP then replace:
+   ## if any of the tetah values is smaller than WWP, then replace:
    sel <- which(WWP > tetah1 | WWP > tetah2 | WWP > tetah3)
    if(length(sel)>0){ 
      WWP[sel] <- apply(data.frame(tetah1[sel], tetah2[sel], tetah3[sel]), 1, function(x){min(x, na.rm=TRUE)}) 
@@ -48,7 +48,7 @@ AWCPTF <- function(SNDPPT, SLTPPT, CLYPPT, ORCDRC, BLD=1682, CEC, PHIHOX, h1=-10
  AWCh1 <- tetah1 - WWP
  AWCh2 <- tetah2 - WWP
  AWCh3 <- tetah3 - WWP
- out <- data.frame(AWCh1=signif(AWCh1,3), AWCh2=signif(AWCh2,3), AWCh3=signif(AWCh3,3), WWP=signif(WWP,3))
+ out <- data.frame(AWCh1=signif(AWCh1,3), AWCh2=signif(AWCh2,3), AWCh3=signif(AWCh3,3), WWP=signif(WWP,3), tetaS=signif(tetaS,3))
  if(print.coef==TRUE){
    attr(out, "coef") <- as.list(PTF.coef)
    attr(out, "PTF.names") <- list(variable=c("ai1", "sand", "silt", "clay", "oc", "bd", "cec", "ph", "silt^2", "clay^2", "sand*silt", "sand*clay"))
