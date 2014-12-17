@@ -68,7 +68,7 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
   ## predict outputs from the nlme package:
   if(any(class(object@regModel)=="lme")){
     require(AICcmodavg)
-    rp <- AICcmodavg::predictSE.lme(object@regModel, predictionLocations)
+    rp <- AICcmodavg::predictSE(object@regModel, predictionLocations)
   }
   if(any(class(object@regModel)=="gls")){  
     rp <- list(predict(object@regModel, predictionLocations, na.action = na.pass))
