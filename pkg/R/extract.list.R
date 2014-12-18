@@ -28,7 +28,7 @@ extract.list <- function(x, y, path=".", ID="SOURCEID", method="simple", is.patt
             raster::projection(r) <- proj4string(x)
           }
           ov[[i]] <- extract(r, x, method=method, ...)
-          names(ov)[i] <- y[i]
+          names(ov)[i] <- basename(y[i])
         }
         if (show.progress) { setTxtProgressBar(pb, i) }
       }
