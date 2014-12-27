@@ -17,8 +17,8 @@
 
 <pre> 
 ## S4 method for signature 'SpatialPoints,SpatialPixelsDataFrame'
-spsample.prob(observations, covariates, 
-   test.SRS = FALSE, quant.nndist=.95, n.sigma, ...)
+spsample.prob(observations, 
+   covariates, quant.nndist=.95, n.sigma, ...)
 </pre>
 
 
@@ -32,10 +32,6 @@ spsample.prob(observations, covariates,
 <tr valign="top"><td><code>covariates</code></td>
 <td>
 <p>object of class <code>SpatialPixelsDataFrame</code>; list of covariates of interest</p>
-</td></tr>
-<tr valign="top"><td><code>test.SRS</code></td>
-<td>
-<p>logical; specifies whether to test complete Spatial Randomness</p>
 </td></tr>
 <tr valign="top"><td><code>quant.nndist</code></td>
 <td>
@@ -54,7 +50,7 @@ spsample.prob(observations, covariates,
 
 <h3>Value</h3>
 
-<p>Returns a list of objects where <code>'iprob'</code> (<code>"SpatialPixelsDataFrame"</code>) is the map showing the estimated inclusion probability.
+<p>Returns a list of objects where <code>'iprob'</code> (<code>"SpatialPixelsDataFrame"</code>) is the map showing the estimated inclusion probabilities.
 </p>
 
 
@@ -125,5 +121,5 @@ if(file.exists(jar)){
 }
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.4-3 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.4-4 <a href="00Index.html">Index</a>]</div>
 </body></html>

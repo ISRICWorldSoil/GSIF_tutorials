@@ -5,19 +5,18 @@
 \title{Estimate inclusion probabilities of a sampling plan (points)}
 \description{Estimates inclusion probabilities as an average between the kernel density estimation (geographical) and MaxEnt analysis (feature space). The output \code{'iprob'} indicates whether the sampling plan  has systematically missed some important locations / features, and can be used to adjust geostatistical modelling.}
 \usage{ 
-\S4method{spsample.prob}{SpatialPoints,SpatialPixelsDataFrame}(observations, covariates, 
-   test.SRS = FALSE, quant.nndist=.95, n.sigma, \dots)
+\S4method{spsample.prob}{SpatialPoints,SpatialPixelsDataFrame}(observations, 
+   covariates, quant.nndist=.95, n.sigma, \dots)
 }
 \arguments{
   \item{observations}{object of class \code{SpatialPoints}; sampling locations}
   \item{covariates}{object of class \code{SpatialPixelsDataFrame}; list of covariates of interest}
-  \item{test.SRS}{logical; specifies whether to test complete Spatial Randomness}
   \item{quant.nndist}{numeric; threshold probability to determine the search radius (sigma)}
   \item{n.sigma}{numeric; size of sigma used for kernel density estimation (optional)}
   \item{\dots}{other optional arguments that can be passed to function \code{spatstat::density}}
 }
 \value{
-Returns a list of objects where \code{'iprob'} (\code{"SpatialPixelsDataFrame"}) is the map showing the estimated inclusion probability.
+Returns a list of objects where \code{'iprob'} (\code{"SpatialPixelsDataFrame"}) is the map showing the estimated inclusion probabilities.
 }
 \note{
 Inclusion probabilities for geographical space are derived using kernel density estimator. The sampling intensities are converted to probabilities by deviding the sampling intensity by the maximum sampling intensity for the study area. The lower the average inclusion probability for the whole study area, the lower the representation efficiency of a sampling plan. \cr 

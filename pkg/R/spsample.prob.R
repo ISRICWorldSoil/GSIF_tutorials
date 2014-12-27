@@ -5,7 +5,7 @@
 # Note           : Not recommended for large grids;
 
 
-setMethod("spsample.prob", signature(observations = "SpatialPoints", covariates = "SpatialPixelsDataFrame"), function(observations, covariates, test.SRS = FALSE, quant.nndist=.95, n.sigma, ...){
+setMethod("spsample.prob", signature(observations = "SpatialPoints", covariates = "SpatialPixelsDataFrame"), function(observations, covariates, quant.nndist=.95, n.sigma, ...){
    
   ## mask out missing combinations:
   covariates <- covariates[stats::complete.cases(covariates@data),]
@@ -16,13 +16,6 @@ setMethod("spsample.prob", signature(observations = "SpatialPoints", covariates 
   mg_owin <- spatstat::as.owin(data.frame(x = data.frame(covariates)[,"x"], y = data.frame(covariates)[,"y"], window = TRUE))
   suppressWarnings( locs.ppp <- spatstat::ppp(x=coordinates(observations)[,1], y=coordinates(observations)[,2], window=mg_owin) )
   dist.locs <- spatstat::nndist(locs.ppp)                    
-  ## test Complete Spatial Randomness:
-  if(test.SRS == TRUE){
-    message("Testing spatial randomness of points...")
-    env <- spatstat::envelope(locs.ppp, fun=Gest)
-  } else {
-    env <- NULL
-  }
   ## inlcusion probabilities geographical space:
   if(missing(n.sigma)){
     n.sigma <- quantile(dist.locs, quant.nndist)
@@ -44,6 +37,6 @@ setMethod("spsample.prob", signature(observations = "SpatialPoints", covariates 
   ## sum two inclusion probabilities (this assumes that masks are exactly the same):
   covariates$iprob <- (as(me@predicted, "SpatialPixelsDataFrame")@data[,1] + dmap@data[,1])/2
    
-  out <- list(prob=covariates["iprob"], observations=as(observations, "SpatialPoints"), density=dmap, envelope=env, maxent=me)
+  out <- list(prob=covariates["iprob"], observations=as(observations, "SpatialPoints"), density=dmap, maxent=me)
   return(out) 
 })
