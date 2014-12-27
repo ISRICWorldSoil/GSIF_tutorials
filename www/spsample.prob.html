@@ -10,7 +10,7 @@
 
 <h3>Description</h3>
 
-<p>Estimates inclusion probabilities as an average between the kernel density estimation (geographical) and MaxEnt analysis (feature space). The output <code>'iprob'</code> indicates whether the sampling plan  has systematically missed some important locations / features, and can be used to adjust geostatistical modelling.</p>
+<p>Estimates inclusion probabilities as an average between the kernel density estimation (geographical spreading of points) and MaxEnt analysis (feature space spreading of points). The output <code>'iprob'</code> indicates whether the sampling plan  has systematically missed some important locations / features, and can be used as an input for geostatistical modelling.</p>
 
 
 <h3>Usage</h3>
@@ -56,7 +56,7 @@ spsample.prob(observations,
 
 <h3>Note</h3>
 
-<p>Inclusion probabilities for geographical space are derived using kernel density estimator. The sampling intensities are converted to probabilities by deviding the sampling intensity by the maximum sampling intensity for the study area. The lower the average inclusion probability for the whole study area, the lower the representation efficiency of a sampling plan. <br> 
+<p>Inclusion probabilities for geographical space are derived using kernel density estimator. The sampling intensities are converted to probabilities by deviding the sampling intensity by the maximum sampling intensity for the study area. The inclusion probabilities for feature space are determined using MaxEnt algorithm. The lower the average inclusion probability for the whole study area, the lower the representation efficiency of a sampling plan. <br> 
 This function can be time consuming for large grids. For more information on how to install MaxEnt and use it in R, see <a href="http://CRAN.R-project.org/package=dismo">dismo</a> package documentation.
 </p>
 
@@ -98,11 +98,11 @@ library(maptools)
 
 data(eberg)
 data(eberg_grid)
-# prepare data for spatial analysis:
-eberg.xy &lt;- eberg[runif(nrow(eberg)) &lt; .3,c("X","Y")]
+## existing sampling plan:
+eberg.xy &lt;- eberg[runif(nrow(eberg)) &lt; .2,c("X","Y")]
 coordinates(eberg.xy) &lt;- ~X+Y
 proj4string(eberg.xy) &lt;- CRS("+init=epsg:31467")
-# format gridded data:
+## covariates:
 gridded(eberg_grid) &lt;- ~x+y
 proj4string(eberg_grid) &lt;- CRS("+init=epsg:31467")
 
@@ -114,9 +114,9 @@ if(file.exists(jar)){
       n=length(iprob[["observations"]]))
   iprob2 &lt;- spsample.prob(rnd, eberg_grid)
   par(mfrow=c(1,2))
-  plot(raster(iprob[[1]]), zlim=c(0,.8))
+  plot(raster(iprob[[1]]), zlim=c(0,1), col=SAGA_pal[[1]])
   points(iprob[["observations"]])
-  plot(raster(iprob2[[1]]), zlim=c(0,.8))
+  plot(raster(iprob2[[1]]), zlim=c(0,1), col=SAGA_pal[[1]])
   points(iprob2[["observations"]])
 }
 </pre>

@@ -3,7 +3,7 @@
 \alias{spsample.prob}
 \alias{spsample.prob,SpatialPoints,SpatialPixelsDataFrame-method}
 \title{Estimate inclusion probabilities of a sampling plan (points)}
-\description{Estimates inclusion probabilities as an average between the kernel density estimation (geographical) and MaxEnt analysis (feature space). The output \code{'iprob'} indicates whether the sampling plan  has systematically missed some important locations / features, and can be used to adjust geostatistical modelling.}
+\description{Estimates inclusion probabilities as an average between the kernel density estimation (geographical spreading of points) and MaxEnt analysis (feature space spreading of points). The output \code{'iprob'} indicates whether the sampling plan  has systematically missed some important locations / features, and can be used as an input for geostatistical modelling.}
 \usage{ 
 \S4method{spsample.prob}{SpatialPoints,SpatialPixelsDataFrame}(observations, 
    covariates, quant.nndist=.95, n.sigma, \dots)
@@ -19,7 +19,7 @@
 Returns a list of objects where \code{'iprob'} (\code{"SpatialPixelsDataFrame"}) is the map showing the estimated inclusion probabilities.
 }
 \note{
-Inclusion probabilities for geographical space are derived using kernel density estimator. The sampling intensities are converted to probabilities by deviding the sampling intensity by the maximum sampling intensity for the study area. The lower the average inclusion probability for the whole study area, the lower the representation efficiency of a sampling plan. \cr 
+Inclusion probabilities for geographical space are derived using kernel density estimator. The sampling intensities are converted to probabilities by deviding the sampling intensity by the maximum sampling intensity for the study area. The inclusion probabilities for feature space are determined using MaxEnt algorithm. The lower the average inclusion probability for the whole study area, the lower the representation efficiency of a sampling plan. \cr 
 This function can be time consuming for large grids. For more information on how to install MaxEnt and use it in R, see \href{http://CRAN.R-project.org/package=dismo}{dismo} package documentation.
 }
 \references{
@@ -40,11 +40,11 @@ library(maptools)
 
 data(eberg)
 data(eberg_grid)
-# prepare data for spatial analysis:
-eberg.xy <- eberg[runif(nrow(eberg)) < .3,c("X","Y")]
+## existing sampling plan:
+eberg.xy <- eberg[runif(nrow(eberg)) < .2,c("X","Y")]
 coordinates(eberg.xy) <- ~X+Y
 proj4string(eberg.xy) <- CRS("+init=epsg:31467")
-# format gridded data:
+## covariates:
 gridded(eberg_grid) <- ~x+y
 proj4string(eberg_grid) <- CRS("+init=epsg:31467")
 
@@ -56,9 +56,9 @@ if(file.exists(jar)){
       n=length(iprob[["observations"]]))
   iprob2 <- spsample.prob(rnd, eberg_grid)
   par(mfrow=c(1,2))
-  plot(raster(iprob[[1]]), zlim=c(0,.8))
+  plot(raster(iprob[[1]]), zlim=c(0,1), col=SAGA_pal[[1]])
   points(iprob[["observations"]])
-  plot(raster(iprob2[[1]]), zlim=c(0,.8))
+  plot(raster(iprob2[[1]]), zlim=c(0,1), col=SAGA_pal[[1]])
   points(iprob2[["observations"]])
 }
 }
