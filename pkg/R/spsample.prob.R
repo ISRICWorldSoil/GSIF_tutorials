@@ -13,7 +13,7 @@ setMethod("spsample.prob", signature(observations = "SpatialPoints", covariates 
   observations <- observations[stats::complete.cases(ov),]
    
   require(spatstat)
-  mg_owin <- spatstat::as.owin(data.frame(x = data.frame(covariates)[,"x"], y = data.frame(covariates)[,"y"], window = TRUE))
+  mg_owin <- spatstat::as.owin(data.frame(x = covariates@coords[,1], y = covariates@coords[,2], window = TRUE))
   suppressWarnings( locs.ppp <- spatstat::ppp(x=coordinates(observations)[,1], y=coordinates(observations)[,2], window=mg_owin) )
   dist.locs <- spatstat::nndist(locs.ppp)                    
   ## inlcusion probabilities geographical space:
@@ -30,13 +30,16 @@ setMethod("spsample.prob", signature(observations = "SpatialPoints", covariates 
   dmap@data[,1] <- signif(dmap@data[,1]/dmap.max, 3)
   
   ## inclusion probabilities feature space:
-  require(dismo)
-  message("Deriving inclusion probabilities using MaxEnt analysis...")
-  me <- MaxEnt(occurrences=locs.ppp, covariates=covariates)
+  require(maxlike)
+  message("Deriving inclusion probabilities using MaxLike analysis...")
+  fm <- as.formula(paste("~", paste(names(covariates), collapse="+")))
+  ml <- maxlike(formula=get("fm"), rasters=stack(covariates), points=observations@coords, method="BFGS", savedata=TRUE)
   ## TH: this operation can be time consuming and is not recommended for large grids!
-  ## sum two inclusion probabilities (this assumes that masks are exactly the same):
-  covariates$iprob <- (as(me@predicted, "SpatialPixelsDataFrame")@data[,1] + dmap@data[,1])/2
+  ml.p <- predict(ml)
+  ml.p <- as(ml.p, "SpatialPixelsDataFrame") 
+  ## sum two inclusion probabilities (masks for the two maps need to be exactly the same):
+  covariates$iprob <- signif((ml.p@data[,1] + dmap@data[,1])/2, 3)
    
-  out <- list(prob=covariates["iprob"], observations=as(observations, "SpatialPoints"), density=dmap, maxent=me)
+  out <- list(prob=covariates["iprob"], observations=as(observations, "SpatialPoints"), density=dmap, maxlike=ml.p)
   return(out) 
 })
