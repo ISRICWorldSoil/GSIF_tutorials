@@ -9,7 +9,7 @@
 setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.frame", predictionDomain = "SpatialPixelsDataFrame", method = "character"), function(formulaString, rmatrix, predictionDomain, method = list("GLM", "rpart", "randomForest", "quantregForest", "lme")[[1]], dimensions = NULL, fit.family = gaussian(), stepwise = TRUE, rvgm, GLS = FALSE, random, steps = 100, ...){
 
   ## parent call:
-  parent_call <<- as.list(substitute(list(...)))[-1]
+  parent_call <- as.list(substitute(list(...)))[-1]
   
   ## target variable name:
   tv <- all.vars(formulaString)[1]  
