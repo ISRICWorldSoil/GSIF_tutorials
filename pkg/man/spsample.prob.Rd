@@ -3,7 +3,7 @@
 \alias{spsample.prob}
 \alias{spsample.prob,SpatialPoints,SpatialPixelsDataFrame-method}
 \title{Estimate inclusion probabilities of a sampling plan (points)}
-\description{Estimates inclusion probabilities as an average between the kernel density estimation (geographical spreading of points) and MaxLike analysis (feature space spreading of points). The output \code{'iprob'} indicates whether the sampling plan  has systematically missed some important locations / features, and can be used as an input for geostatistical modelling.}
+\description{Estimates inclusion probabilities as an average between the kernel density estimation (spreading of points in geographical space) and MaxLike analysis (spreading of points in feature space). The output \code{'iprob'} indicates whether the sampling plan has systematically missed some important locations / features, and can be used as an input for geostatistical modelling (e.g. as weights for regression modeling).}
 \usage{ 
 \S4method{spsample.prob}{SpatialPoints,SpatialPixelsDataFrame}(observations, 
    covariates, quant.nndist=.95, n.sigma, \dots)
@@ -20,7 +20,8 @@ Returns a list of objects where \code{'iprob'} (\code{"SpatialPixelsDataFrame"})
 }
 \note{
 Inclusion probabilities for geographical space are derived using kernel density estimator. The sampling intensities are converted to probabilities by deviding the sampling intensity by the maximum sampling intensity for the study area (Baddeley, 2008). The inclusion probabilities for feature space are determined using MaxLike algorithm (Royle et al., 2012). The lower the average inclusion probability for the whole study area, the lower the representation efficiency of a sampling plan. \cr 
-This function can be time consuming for large grids.
+MaxLike function might fail to produce predictions (e.g. if not at least one continuous covariate is provided) in which case an error message is generated. Running Principal Component analysis i.e. standardizing the covariates prior running \code{spsample.prob} is thus highly recommended.\cr 
+This function can be time consuming for large grids. 
 }
 \references{
 \itemize{
@@ -39,7 +40,8 @@ library(maptools)
 data(eberg)
 data(eberg_grid)
 ## existing sampling plan:
-eberg.xy <- eberg[runif(nrow(eberg)) < .2,c("X","Y")]
+sel <- runif(nrow(eberg)) < .2
+eberg.xy <- eberg[sel,c("X","Y")]
 coordinates(eberg.xy) <- ~X+Y
 proj4string(eberg.xy) <- CRS("+init=epsg:31467")
 ## covariates:
@@ -50,16 +52,34 @@ formulaString <- ~ PRMGEO6+DEMSRT6+TWISRT6+TIRAST6
 eberg_spc <- spc(eberg_grid, formulaString)
 
 ## derive inclusion probability:
-iprob <- spsample.prob(eberg.xy, eberg_spc@predicted[1:8])
+covs <- eberg_spc@predicted[1:8]
+iprob <- spsample.prob(eberg.xy, covs)
+## Note: obvious omission areas:
 hist(iprob[[1]]@data[,1])
 ## compare with random sampling:
 rnd <- spsample(eberg_grid, type="random",
      n=length(iprob[["observations"]]))
-iprob2 <- spsample.prob(rnd, eberg_spc@predicted[1:8])
+iprob2 <- spsample.prob(rnd, covs)
 ## compare the two:
 par(mfrow=c(1,2))
 plot(raster(iprob[[1]]), zlim=c(0,1), col=SAGA_pal[[1]])
 points(iprob[["observations"]])
 plot(raster(iprob2[[1]]), zlim=c(0,1), col=SAGA_pal[[1]])
 points(iprob2[["observations"]])
+
+## fit a weighted lm:
+eberg.xy <- eberg[sel,c("SNDMHT_A","X","Y")]
+coordinates(eberg.xy) <- ~X+Y
+proj4string(eberg.xy) <- CRS("+init=epsg:31467")
+eberg.xy$iprob <- over(eberg.xy, iprob[[1]])$iprob
+eberg.xy@data <- cbind(eberg.xy@data, over(eberg.xy, covs))
+fs <- as.formula(paste("SNDMHT_A ~ ", 
+    paste(names(covs), collapse="+")))
+## the lower the inclusion probability, the higher the weight:
+w <- 1/eberg.xy$iprob
+m <- lm(fs, eberg.xy, weights=w)
+summary(m)
+## all at once:
+gm <- fit.gstatModel(eberg.xy, fs, covs, weights=w)
+plot(gm)
 }

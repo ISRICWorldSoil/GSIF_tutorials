@@ -6,8 +6,11 @@
 
 
 ## Fit a GLM to spatial data:
-setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.frame", predictionDomain = "SpatialPixelsDataFrame", method = "character"), function(formulaString, rmatrix, predictionDomain, method = list("GLM", "rpart", "randomForest", "quantregForest", "lme")[[1]], dimensions = NULL, fit.family = gaussian(), stepwise = TRUE, rvgm, GLS = FALSE, random, steps=100, ...){
+setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.frame", predictionDomain = "SpatialPixelsDataFrame", method = "character"), function(formulaString, rmatrix, predictionDomain, method = list("GLM", "rpart", "randomForest", "quantregForest", "lme")[[1]], dimensions = NULL, fit.family = gaussian(), stepwise = TRUE, rvgm, GLS = FALSE, random, steps = 100, ...){
 
+  ## parent call:
+  parent_call <<- as.list(substitute(list(...)))[-1]
+  
   ## target variable name:
   tv <- all.vars(formulaString)[1]  
   if(!any(names(rmatrix) %in% tv)){
@@ -60,9 +63,13 @@ setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.f
       else {  
         message("Fitting a GLM...")
       }
-      rgm <- glm(formulaString, data=rmatrix, family=fit.family)
+      if(any(names(parent_call) %in% "weights")){ 
+        rgm <- glm(formulaString, data=rmatrix, family=fit.family, weights=eval(parent_call[['weights']]))
+      } else {
+        rgm <- glm(formulaString, data=rmatrix, family=fit.family)
+      }
       if(stepwise == TRUE){
-        rgm <- step(rgm, trace = 0, steps=steps)
+        rgm <- step(rgm, trace=0, steps=steps)
       }
    
       ## mask out the missing values:

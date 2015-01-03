@@ -10,7 +10,7 @@
 
 <h3>Description</h3>
 
-<p>Estimates inclusion probabilities as an average between the kernel density estimation (geographical spreading of points) and MaxLike analysis (feature space spreading of points). The output <code>'iprob'</code> indicates whether the sampling plan  has systematically missed some important locations / features, and can be used as an input for geostatistical modelling.</p>
+<p>Estimates inclusion probabilities as an average between the kernel density estimation (spreading of points in geographical space) and MaxLike analysis (spreading of points in feature space). The output <code>'iprob'</code> indicates whether the sampling plan has systematically missed some important locations / features, and can be used as an input for geostatistical modelling (e.g. as weights for regression modeling).</p>
 
 
 <h3>Usage</h3>
@@ -57,7 +57,8 @@ spsample.prob(observations,
 <h3>Note</h3>
 
 <p>Inclusion probabilities for geographical space are derived using kernel density estimator. The sampling intensities are converted to probabilities by deviding the sampling intensity by the maximum sampling intensity for the study area (Baddeley, 2008). The inclusion probabilities for feature space are determined using MaxLike algorithm (Royle et al., 2012). The lower the average inclusion probability for the whole study area, the lower the representation efficiency of a sampling plan. <br> 
-This function can be time consuming for large grids.
+MaxLike function might fail to produce predictions (e.g. if not at least one continuous covariate is provided) in which case an error message is generated. Running Principal Component analysis i.e. standardizing the covariates prior running <code>spsample.prob</code> is thus highly recommended.<br> 
+This function can be time consuming for large grids. 
 </p>
 
 
@@ -95,7 +96,8 @@ library(maptools)
 data(eberg)
 data(eberg_grid)
 ## existing sampling plan:
-eberg.xy &lt;- eberg[runif(nrow(eberg)) &lt; .2,c("X","Y")]
+sel &lt;- runif(nrow(eberg)) &lt; .2
+eberg.xy &lt;- eberg[sel,c("X","Y")]
 coordinates(eberg.xy) &lt;- ~X+Y
 proj4string(eberg.xy) &lt;- CRS("+init=epsg:31467")
 ## covariates:
@@ -106,18 +108,36 @@ formulaString &lt;- ~ PRMGEO6+DEMSRT6+TWISRT6+TIRAST6
 eberg_spc &lt;- spc(eberg_grid, formulaString)
 
 ## derive inclusion probability:
-iprob &lt;- spsample.prob(eberg.xy, eberg_spc@predicted[1:8])
+covs &lt;- eberg_spc@predicted[1:8]
+iprob &lt;- spsample.prob(eberg.xy, covs)
+## Note: obvious omission areas:
 hist(iprob[[1]]@data[,1])
 ## compare with random sampling:
 rnd &lt;- spsample(eberg_grid, type="random",
      n=length(iprob[["observations"]]))
-iprob2 &lt;- spsample.prob(rnd, eberg_spc@predicted[1:8])
+iprob2 &lt;- spsample.prob(rnd, covs)
 ## compare the two:
 par(mfrow=c(1,2))
 plot(raster(iprob[[1]]), zlim=c(0,1), col=SAGA_pal[[1]])
 points(iprob[["observations"]])
 plot(raster(iprob2[[1]]), zlim=c(0,1), col=SAGA_pal[[1]])
 points(iprob2[["observations"]])
+
+## fit a weighted lm:
+eberg.xy &lt;- eberg[sel,c("SNDMHT_A","X","Y")]
+coordinates(eberg.xy) &lt;- ~X+Y
+proj4string(eberg.xy) &lt;- CRS("+init=epsg:31467")
+eberg.xy$iprob &lt;- over(eberg.xy, iprob[[1]])$iprob
+eberg.xy@data &lt;- cbind(eberg.xy@data, over(eberg.xy, covs))
+fs &lt;- as.formula(paste("SNDMHT_A ~ ", 
+    paste(names(covs), collapse="+")))
+## the lower the inclusion probability, the higher the weights:
+w &lt;- 1/eberg.xy$iprob
+m &lt;- lm(fs, eberg.xy, weights=w)
+summary(m)
+## all at once:
+gm &lt;- fit.gstatModel(eberg.xy, fs, covs, weights=w)
+plot(gm)
 </pre>
 
 <hr><div align="center">[Package <em>GSIF</em> version 0.4-4 <a href="00Index.html">Index</a>]</div>

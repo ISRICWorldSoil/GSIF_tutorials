@@ -33,13 +33,15 @@ setMethod("spsample.prob", signature(observations = "SpatialPoints", covariates 
   require(maxlike)
   message("Deriving inclusion probabilities using MaxLike analysis...")
   fm <- as.formula(paste("~", paste(names(covariates), collapse="+")))
-  ml <- maxlike(formula=get("fm"), rasters=stack(covariates), points=observations@coords, method="BFGS", savedata=TRUE)
+  ml <- maxlike::maxlike(formula=fm, rasters=stack(covariates), points=observations@coords, method="BFGS", savedata=TRUE)
+  ## due to the bug in "maxlike" (https://github.com/rbchan/maxlike/issues/1) we need to replace this 'by hand':
+  ml$call$formula <- fm
   ## TH: this operation can be time consuming and is not recommended for large grids!
   ml.p <- predict(ml)
   ml.p <- as(ml.p, "SpatialPixelsDataFrame") 
   ## sum two inclusion probabilities (masks for the two maps need to be exactly the same):
   covariates$iprob <- signif((ml.p@data[,1] + dmap@data[,1])/2, 3)
    
-  out <- list(prob=covariates["iprob"], observations=as(observations, "SpatialPoints"), density=dmap, maxlike=ml.p)
+  out <- list(prob=covariates["iprob"], observations=as(observations, "SpatialPoints"), density=dmap, maxlike=ml.p, maxlikeFit=ml[-which(names(ml)=="rasters")])
   return(out) 
 })
