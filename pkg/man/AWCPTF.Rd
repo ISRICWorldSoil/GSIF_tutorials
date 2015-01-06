@@ -54,7 +54,8 @@ PHIHOX = 6.4
 x <- AWCPTF(SNDPPT, SLTPPT, CLYPPT, ORCDRC, BLD, CEC, PHIHOX)
 str(x)
 attr(x, "coef")
-## predict AWC for the whole AfSP DB:
+
+## predict AWC for AfSP DB profile:
 data(afsp)
 names(afsp$horizons)
 ## profile of interest:

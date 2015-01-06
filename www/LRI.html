@@ -50,7 +50,7 @@
 </td></tr>
 <tr valign="top"><td><code>BLD</code></td>
 <td>
-<p>numeric; bulk density in kg / cubic-meter for the horizon/solum</p>
+<p>numeric; bulk density in kg per cubic-meter for the horizon/solum</p>
 </td></tr>
 <tr valign="top"><td><code>ORCDRC</code></td>
 <td>
@@ -58,7 +58,7 @@
 </td></tr>
 <tr valign="top"><td><code>ECN</code></td>
 <td>
-<p>numeric; electrical conductivity in dS / m</p>
+<p>numeric; electrical conductivity in dS per m</p>
 </td></tr>
 <tr valign="top"><td><code>CEC</code></td>
 <td>
@@ -82,11 +82,15 @@
 </td></tr>
 <tr valign="top"><td><code>CRB</code></td>
 <td>
-<p>numeric; CaCO3 (carbonates) in g / kg</p>
+<p>numeric; CaCO3 (carbonates) in g per kg</p>
 </td></tr>  
 <tr valign="top"><td><code>GYP</code></td>
 <td>
-<p>numeric; CaSO4 (gypsum) in g / kg</p>
+<p>numeric; CaSO4 (gypsum) in g per kg</p>
+</td></tr>
+<tr valign="top"><td><code>tetaS</code></td>
+<td>
+<p>numeric; volumetric percentage (optional; if not provided it will be derived using the <code>AWCPTF</code> Pedo-Transfer Function)</p>
 </td></tr>
 <tr valign="top"><td><code>fix.values</code></td>
 <td>
@@ -94,7 +98,7 @@
 </td></tr>
 <tr valign="top"><td><code>thresholds</code></td>
 <td>
-<p>data.frame; optional table containing threshold values for <code>"CRFVOL"</code>, <code>"tetaS"</code> (volumetric percentage), <code>"BLD.f"</code> (clay-adjusted BLD), <code>"SNDPPT"</code>, <code>"CLY.d"</code> (difference in clay between horizons), <code>"SND.d"</code> (difference in sand between horizons), <code>"PHIHOX.L"</code> (lower limits for pH), <code>"PHIHOX.H"</code> (upper limits for pH), <code>"ECN"</code>, <code>"ENA.f"</code> (exchangable saturated Na), <code>"ENA"</code>, <code>"EACKCL.f"</code> (exchangable saturated acidity) and <code>"EACKCL"</code></p>
+<p>data.frame; optional table containing threshold values for <code>"CRFVOL"</code>, <code>"tetaS"</code> (volumetric percentage), <code>"BLD.f"</code> (clay-adjusted BLD), <code>"SNDPPT"</code>, <code>"CLY.d"</code> (difference in clay between horizons), <code>"SND.d"</code> (difference in sand between horizons), <code>"PHIHOX.L"</code> (lower limits for pH), <code>"PHIHOX.H"</code> (upper limits for pH), <code>"ECN"</code>, <code>"ENA.f"</code> (exchangable saturated Na), <code>"ENA"</code>, <code>"EACKCL.f"</code> (exchangable saturated acidity), <code>"CRB"</code> (carbonates), and <code>"GYP"</code> (gypsum)</p>
 </td></tr>
 <tr valign="top"><td><code>print.thresholds</code></td>
 <td>
@@ -111,7 +115,7 @@
 
 <h3>Note</h3>
 
-<p>Horizons need to be sorted by depth e.g. 0-5, 5-15, 15-30. For each soil property at least three depths are needed otherwise the function reports an error. Missing values will be automatically replaced using smoothing splines.
+<p>Horizons need to be sorted by depth e.g. 0-5, 5-15, 15-30... For each soil property at least three depths are needed otherwise the function reports an error. Missing values are automatically replaced using smoothing splines.
 </p>
 
 
@@ -147,7 +151,7 @@ x &lt;- LRI(UHDICM=UHDICM, LHDICM=LHDICM, SNDPPT=SNDPPT,
    BLD=BLD, ORCDRC=ORCDRC, CEC=CEC, ENA=ENA, EACKCL=EACKCL, 
    EXB=EXB, PHIHOX=PHIHOX, print.thresholds=TRUE)
 x
-## Most limiting: BLD.f and CRFVOL, but nothing bellow 20
+## Most limiting: BLD.f and CRFVOL, but nothing &lt; 20
 
 ## Effective Rootable Depth:
 sel &lt;- x==FALSE
@@ -158,5 +162,5 @@ if(!all(sel==FALSE)){
 }
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.4-3 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.4-4 <a href="00Index.html">Index</a>]</div>
 </body></html>

@@ -10,7 +10,7 @@
 
 <h3>Description</h3>
 
-<p>Derive available soil water capacity  (in cubic-meter per cubic-meter) based on a Pedo-Transfer Function developed using the Africa Soil Profile Database (Wösten et al. 2013).</p>
+<p>Derive available soil water capacity (in cubic-meter per cubic-meter) based on a Pedo-Transfer Function developed using the Africa Soil Profile Database (<a href="http://dx.doi.org/10.1016/S0016-7061(02)00105-2">Hodnett and Tomasella, 2002</a>; <a href="http://dx.doi.org/10.1016/j.geoderma.2012.11.021">Wösten et al. 2013</a>).</p>
 
 
 <h3>Usage</h3>
@@ -95,10 +95,13 @@
 <li> <p><code>AWCh2</code>: available soil water capacity (volumetric fraction) for h2;
 </p>
 </li>
-<li> <p><code>AWCh3</code>: available soil water capacity (volumetric fraction) for h3;     
+<li> <p><code>AWCh3</code>: available soil water capacity (volumetric fraction) for h3;
 </p>
 </li>
-<li> <p><code>WWP</code>: available soil water capacity (volumetric fraction) until wilting point;   
+<li> <p><code>WWP</code>: available soil water capacity (volumetric fraction) until wilting point;
+</p>
+</li>
+<li> <p><code>tetaS</code>: saturated water content;   
 </p>
 </li></ul>
 
@@ -141,7 +144,8 @@ PHIHOX = 6.4
 x &lt;- AWCPTF(SNDPPT, SLTPPT, CLYPPT, ORCDRC, BLD, CEC, PHIHOX)
 str(x)
 attr(x, "coef")
-## predict AWC for the whole AfSP DB:
+
+## predict AWC for AfSP DB profile:
 data(afsp)
 names(afsp$horizons)
 ## profile of interest:
@@ -156,5 +160,5 @@ hor &lt;- cbind(hor, AWCPTF(hor$SNDPPT, hor$SLTPPT,
 str(hor)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.4-3 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.4-4 <a href="00Index.html">Index</a>]</div>
 </body></html>

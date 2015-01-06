@@ -1,8 +1,8 @@
 # Purpose        : Limiting Rootability index / Effective Rootable Depth;
 # Maintainer     : Tomislav Hengl (tom.hengl@wur.nl)
-# Contributions  :
+# Contributions  : Johan Leenaars and Maria Ruiperez Gonzalez 
 # Dev Status     : Stable
-# Note           : Empirical formula by J. Leenaars
+# Note           : Empirical formula by J. Leenaars; threshold values need to be fine-tuned;
 
 
 .EffR <- function(x, hdepth, a0, b0, trend, r1, r2){
@@ -14,19 +14,20 @@
   }
   x.f <- a0*x + b0
   trend <- rep(trend, length(x))
-  out <- ifelse(trend==-1, ifelse(x < r1, 100, ifelse(x > r2, 0, x.f)), ifelse(x > r1, 100, ifelse(x < r2, 0, x.f)))
+  EffR <- ifelse(trend==-1, ifelse(x < r1, 100, ifelse(x > r2, 0, x.f)), ifelse(x > r1, 100, ifelse(x < r2, 0, x.f)))
+  return(EffR)
 }
 
 
-LRI <- function(UHDICM, LHDICM, SNDPPT, SLTPPT, CLYPPT, CRFVOL, BLD, ORCDRC, ECN, CEC, ENA, EACKCL, EXB, PHIHOX, CRB, GYP, fix.values=TRUE, thresholds, print.thresholds=FALSE){
+LRI <- function(UHDICM, LHDICM, SNDPPT, SLTPPT, CLYPPT, CRFVOL, BLD, ORCDRC, ECN, CEC, ENA, EACKCL, EXB, PHIHOX, CRB, GYP, tetaS, fix.values=TRUE, thresholds, print.thresholds=FALSE){
 
   if(length(UHDICM)<3){ stop("At least three horizons required for comparison") }
-  rn <- c("range", "CRFVOL", "tetaS", "BLD.f", "SNDPPT", "CLY.d", "SND.d", "PHIHOX.L", "PHIHOX.H", "ECN", "ENA.f", "ENA", "EACKCL.f", "EACKCL")
+  rn <- c("range", "CRFVOL", "tetaS", "BLD.f", "SNDPPT", "CLY.d", "SND.d", "PHIHOX.L", "PHIHOX.H", "ECN", "ENA.f", "ENA", "EACKCL.f", "EACKCL", "CRB", "GYP")
   if(missing(thresholds)){
    thresholds <- data.frame(
-     ERscore1 = c(100, 80, 40, 0, 95, 40, 40, 5.5, 7.8, 1.5, 10, 1, 35, 2.5),
-     ERscore2 = c(0, 90, 0, 0.4, 100, 60, 60, 3.5, 9.05, 6.7, 25, 5, 85, 6.5),
-     Trend = c(0, -1, 1, -1, -1, -1, -1, 1, -1, -1, -1, -1, -1, -1),
+     ERscore1 = c(100, 80, 40, 0, 95, 40, 40, 5.5, 7.8, 1.5, 10, 1, 35, 2.5, 150, 150),
+     ERscore2 = c(0, 90, 0, 0.4, 100, 60, 60, 3.5, 9.05, 6.7, 25, 5, 85, 6.5, 750, 750),
+     Trend = c(0, -1, 1, -1, -1, -1, -1, 1, -1, -1, -1, -1, -1, -1, -1, -1),
      Score = 20
     )
     row.names(thresholds) <- rn
@@ -41,7 +42,7 @@ LRI <- function(UHDICM, LHDICM, SNDPPT, SLTPPT, CLYPPT, CRFVOL, BLD, ORCDRC, ECN
   if(missing(CRB)){ CRB <- rep(0, length(UHDICM)) }
   if(missing(GYP)){ GYP <- rep(0, length(UHDICM)) }
   ## must be equal size:
-  lst.s <- sapply(list(UHDICM, LHDICM, SNDPPT, SLTPPT, CLYPPT, CRFVOL, BLD, ECN, CEC, ENA, EACKCL, EXB, PHIHOX, CRB, GYP), length)
+  lst.s <- sapply(list(UHDICM, LHDICM, SNDPPT, SLTPPT, CLYPPT, CRFVOL, BLD, ORCDRC, ECN, CEC, ENA, EACKCL, EXB, PHIHOX, CRB, GYP), length)
   if(sd(lst.s)>0){
     stop("Vectors of non-constant length provided")
   }
@@ -64,7 +65,9 @@ LRI <- function(UHDICM, LHDICM, SNDPPT, SLTPPT, CLYPPT, CRFVOL, BLD, ORCDRC, ECN
   CLY.d <- c(0, diff(CLYPPT))
   SND.d <- c(0, diff(SNDPPT))
   ## Derive tetaS (volumetric percentage):
-  tetaS <- 100*AWCPTF(SNDPPT, SLTPPT, CLYPPT, ORCDRC, BLD, CEC, PHIHOX)$tetaS
+  if(missing(tetaS)){
+    tetaS <- 100*AWCPTF(SNDPPT, SLTPPT, CLYPPT, ORCDRC, BLD, CEC, PHIHOX)$tetaS
+  }
   
   ## FAO Guidelines for soil description p.51:
   BLD.f <- BLD/1000 - (1.6-(0.003*CLYPPT))
