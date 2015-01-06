@@ -70,20 +70,24 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
     require(AICcmodavg)
     rp <- AICcmodavg::predictSE(object@regModel, predictionLocations)
   }
-  if(any(class(object@regModel)=="gls")){  
+  if(any(class(object@regModel)=="gls")){
+    require(nlme)
     rp <- list(predict(object@regModel, predictionLocations, na.action = na.pass))
   }
   
   if(any(class(object@regModel)=="rpart")){
+    require(rpart)
     rp <- list(predict(object@regModel, predictionLocations))
     variable = all.vars(attr(object@regModel$terms, "variables"))[1]
   }
   if(any(class(object@regModel)=="quantregForest")){
+    require(quantregForest)
     covs = attr(object@regModel$forest$ncat, "names")
     rp <- list(predict(object@regModel, predictionLocations@data[,covs], quantile=.5)) 
     variable = attr(object@regModel$y, "name")[1]
   }
   if(any(class(object@regModel)=="randomForest")&!any(class(object@regModel)=="quantregForest")){
+    require(randomForest)
     rp <- list(predict(object@regModel, predictionLocations, type="response"))
     variable = all.vars(attr(object@regModel$terms, "variables"))[1]
   }  
@@ -289,6 +293,7 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
           if(any(class(object@regModel)=="quantregForest")){     
             ## TH: Prediction error for randomForest
             message("Prediction error for 'randomForest' model estimated using the 'quantreg' package.")
+            require(quantregForest)
             var.rf <- predict(object@regModel, predictionLocations@data[,covs], quantiles=c((1-.682)/2, 1-(1-.682)/2))
             ## TH: this formula assumes that the errors follow a normal distribution! [https://en.wikipedia.org/wiki/File:Standard_deviation_diagram.svg]
             predictionLocations@data[,"fit.var"] <- ((var.rf[,1] - var.rf[,2])/2)^2
@@ -327,6 +332,7 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
                 cv$var1.var <- (rp.cv[["se.fit"]][subset.observations])^2 + (rp.cv[["residual.scale"]])^2              
               }
               message("Running GLM cross-validation without any extra model-fitting...")
+              require(boot)
               try( cv.err <- boot::glm.diag(object@regModel), silent=TRUE )
               if(class(.Last.value)[1]=="try-error" | is.null(cv.err)) { 
                 cv.err <- data.frame(res = rep(NA, length(cv$observed)), rd = rep(NA, length(cv$observed))) 

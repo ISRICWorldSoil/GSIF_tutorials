@@ -71,6 +71,7 @@ library(plyr)
 library(rpart)
 library(splines)
 library(gstat)
+library(randomForest)
 
 ## load the Meuse data set:
 demo(meuse, echo=FALSE)

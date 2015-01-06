@@ -3,7 +3,7 @@
 \title{Limiting Rootability}
 \description{Derive Limiting Rootability using observed soil properties at at least three depths.}
 \usage{LRI(UHDICM, LHDICM, SNDPPT, SLTPPT, CLYPPT, CRFVOL, BLD,
-   ORCDRC, ECN, CEC, ENA, EACKCL, EXB, PHIHOX, CRB, GYP, 
+   ORCDRC, ECN, CEC, ENA, EACKCL, EXB, PHIHOX, CRB, GYP, tetaS, 
    fix.values=TRUE, thresholds, print.thresholds=FALSE)
 }
 \arguments{
@@ -14,7 +14,7 @@
   \item{CLYPPT}{numeric; clay content in percent}
   \item{CRFVOL}{numeric; volume percentage of coarse fragments (> 2 mm)}
   \item{BLD}{numeric; bulk density in kg per cubic-meter for the horizon/solum}
-  \item{ORCDRC}{numeric; soil organic carbon concentration in permille or g / kg}
+  \item{ORCDRC}{numeric; soil organic carbon concentration in permille or g per kg}
   \item{ECN}{numeric; electrical conductivity in dS per m}
   \item{CEC}{numeric; Cation Exchange Capacity in cmol per kilogram}
   \item{ENA}{numeric; exchangable Na in cmol per kilogram}
