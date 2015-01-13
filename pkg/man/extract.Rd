@@ -28,7 +28,7 @@
   \item{show.progress}{logical; specifies whether to display the progress bar}
   \item{\dots}{additional arguments that can be passed to the \code{raster::extract} function}
 }
-\note{The method will try to reproject the values to the native coordinate system, hence it is highly advisible to embed the proj4 string into the GeoTiffs. If both \code{x} and \code{y} are in the same coordinate system, then reprojection can be turned off by setting \code{force.projection = TRUE}. In the case \code{is.pattern = TRUE} (search by pattern), missing values are removed by default and if multiple rasters covering the same area are found, values are aggregated to the mean value.
+\note{The method will try to reproject the values to the native coordinate system, hence it is highly advisible to embed the proj4 string into the GeoTiffs. If both \code{x} and \code{y} are in the same coordinate system, then reprojection can be turned off by setting \code{force.projection = FALSE}. In the case \code{is.pattern = TRUE} (search by pattern), missing values are removed by default and if multiple rasters covering the same area are found, values are aggregated to the mean value.
 }
 \author{ Tomislav Hengl }
 \seealso{ \code{raster::extract}, \code{\link{warp}} }

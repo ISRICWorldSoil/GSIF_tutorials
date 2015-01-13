@@ -21,7 +21,11 @@ extract.list <- function(x, y, path=".", ID="SOURCEID", method="simple", is.patt
       message(paste("Extracting values for", length(x), "points from", length(y), "rasters..."))
       if (show.progress) { pb <- txtProgressBar(min=0, max=length(y), style=3) }
       for(i in 1:length(y)){
-        fname <- normalizePath(paste(path, y[i], sep="\\"), winslash="/")
+        if(.Platform$OS.type == "windows"){
+          fname <- normalizePath(paste(path, y[i], sep="\\"), winslash="/")
+        } else {
+          fname <- normalizePath(paste(path, y[i], sep="/"))
+        }
         try( r <- raster(fname) )
         if(!class(.Last.value)[1]=="try-error"){
           if(force.projection==TRUE){ 
@@ -51,7 +55,11 @@ extract.list <- function(x, y, path=".", ID="SOURCEID", method="simple", is.patt
           tmp <- list(NULL)
           for(k in 1:length(lst)){
             ## overlay per file:
-            r <- raster(normalizePath(paste(path, lst[k], sep="\\"), winslash="/"))
+            if(.Platform$OS.type == "windows"){
+              r <- raster(normalizePath(paste(path, lst[k], sep="\\"), winslash="/"))
+            } else{
+              r <- raster(normalizePath(paste(path, lst[k], sep="/")))
+            }
             x.t <- spTransform(x, CRS(projection(r)))
             ## select only points within the bounding box to speed up:
             subs <- x.t@coords[,1] > extent(r)@xmin & x.t@coords[,1] < extent(r)@xmax & x.t@coords[,2] > extent(r)@ymin & x.t@coords[,2] < extent(r)@ymax
