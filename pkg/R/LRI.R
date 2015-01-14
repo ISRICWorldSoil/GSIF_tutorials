@@ -25,8 +25,8 @@ LRI <- function(UHDICM, LHDICM, SNDPPT, SLTPPT, CLYPPT, CRFVOL, BLD, ORCDRC, ECN
   rn <- c("range", "CRFVOL", "tetaS", "BLD.f", "SNDPPT", "CLY.d", "SND.d", "PHIHOX.L", "PHIHOX.H", "ECN", "ENA.f", "ENA", "EACKCL.f", "EACKCL", "CRB", "GYP")
   if(missing(thresholds)){
    thresholds <- data.frame(
-     ERscore1 = c(100, 80, 40, 0, 95, 40, 40, 5.5, 7.8, 1.5, 10, 1, 35, 2.5, 150, 150),
-     ERscore2 = c(0, 90, 0, 0.4, 100, 60, 60, 3.5, 9.05, 6.7, 25, 5, 85, 6.5, 750, 750),
+     ERscore1 = c(100, 80, 50, 0, 95, 40, 40, 5.5, 7.8, 1.5, 10, 1, 35, 2.5, 150, 150),
+     ERscore2 = c(0, 90, 30, 0.35, 100, 60, 60, 3.625, 9.05, 6.75, 25, 5, 85, 6.5, 750, 750),
      Trend = c(0, -1, 1, -1, -1, -1, -1, 1, -1, -1, -1, -1, -1, -1, -1, -1),
      Score = 20
     )
@@ -70,7 +70,7 @@ LRI <- function(UHDICM, LHDICM, SNDPPT, SLTPPT, CLYPPT, CRFVOL, BLD, ORCDRC, ECN
   }
   
   ## FAO Guidelines for soil description p.51:
-  BLD.f <- BLD/1000 - (1.6-(0.003*CLYPPT))
+  BLD.f <- BLD/1000 - (1.6-(0.0035*CLYPPT))
   ## Exchangable saturated acidity
   EACKCL.f <- EACKCL*100/(EXB+EACKCL)
   ENA.f <- ENA*100/CEC
