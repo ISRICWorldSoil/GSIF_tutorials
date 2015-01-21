@@ -121,14 +121,13 @@ setMethod("fit.vgmModel", signature(formulaString = "formula", rmatrix = "data.f
     ## TH: 2D+T and 3D+T variogram fitting will be added;
     
     ## fit sample variogram 
-    svgm <- gstat::variogram(formulaString, rmatrix, cutoff=cutoff, width=width, cressie=cressie)
+    try( svgm <- gstat::variogram(formulaString, rmatrix, cutoff=cutoff, width=width, cressie=cressie) )
       
     ## try to fit a variogram using default settings:
-    try(rvgm <- gstat::fit.variogram(svgm, model=ivgm, ...))   
-    #try(rvgm <- gstat::fit.variogram(variogram(formulaString, rmatrix, cutoff=cutoff), model=ivgm, ...))  
+    try( rvgm <- gstat::fit.variogram(svgm, model=ivgm, ...) )     
     ## BK: the code below does not work for 'singular model' warnings, only when the function does not fit at all
     if(class(.Last.value)[1]=="try-error"){
-      try(rvgm <- gstat::fit.variogram(gstat::variogram(formulaString, rmatrix, cutoff=cutoff), model=ivgm, fit.ranges = FALSE, ...))
+      try( rvgm <- gstat::fit.variogram(gstat::variogram(formulaString, rmatrix, cutoff=cutoff), model=ivgm, fit.ranges = FALSE, ...) )
       if(class(.Last.value)[1]=="try-error"){    
         warning("Variogram model could not be fitted.") 
       } 
