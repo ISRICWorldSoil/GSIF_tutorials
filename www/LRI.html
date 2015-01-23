@@ -109,7 +109,7 @@
 
 <h3>Value</h3>
 
-<p>Returns a vector with <code>TRUE</code> / <code>FALSE</code> values where <code>FALSE</code> indicates rooting not possible. Threshold values used to derive Limiting Rootability scores are set based on common soil agricultural productivity tresholds (e.g. for maize), and can be adjusted via the <code>thresholds</code> argument. This functions also accounts for textural changes (sudden changes in sand and clay content) and saturated water content.
+<p>Returns a vector with <code>TRUE</code> / <code>FALSE</code> values where <code>FALSE</code> indicates rooting not possible. Threshold values used to derive Limiting Rootability scores are set based on common soil agricultural productivity tresholds (e.g. in this case for maize), and can be adjusted via the <code>thresholds</code> argument. This functions also accounts for textural changes (sudden changes in sand and clay content) and saturated water content.
 </p>
 
 
@@ -160,6 +160,10 @@ if(!all(sel==FALSE)){
 } else {
   max(LHDICM)
 }
+
+xI &lt;- attr(x, "minimum.LRI")
+## derive Effective rooting depth:
+ERDICM(UHDICM=UHDICM, LHDICM=LHDICM, minimum.LRI=xI, DRAINFAO="M")
 </pre>
 
 <hr><div align="center">[Package <em>GSIF</em> version 0.4-4 <a href="00Index.html">Index</a>]</div>

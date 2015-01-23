@@ -1,5 +1,6 @@
 \name{LRI}
 \alias{LRI}
+\alias{ERZDICM}
 \title{Limiting Rootability}
 \description{Derive Limiting Rootability using observed soil properties at at least three depths.}
 \usage{LRI(UHDICM, LHDICM, SNDPPT, SLTPPT, CLYPPT, CRFVOL, BLD,
@@ -29,7 +30,7 @@
   \item{print.thresholds}{logical; specifies whether to attach the threshold values to the output object}
 }
 \value{
-Returns a vector with \code{TRUE} / \code{FALSE} values where \code{FALSE} indicates rooting not possible. Threshold values used to derive Limiting Rootability scores are set based on common soil agricultural productivity tresholds (e.g. for maize), and can be adjusted via the \code{thresholds} argument. This functions also accounts for textural changes (sudden changes in sand and clay content) and saturated water content.
+Returns a vector with \code{TRUE} / \code{FALSE} values where \code{FALSE} indicates rooting not possible. Threshold values used to derive Limiting Rootability scores are set based on common soil agricultural productivity tresholds (e.g. in this case for maize), and can be adjusted via the \code{thresholds} argument. This functions also accounts for textural changes (sudden changes in sand and clay content) and saturated water content.
 }
 \note{
 Horizons need to be sorted by depth e.g. 0-5, 5-15, 15-30\dots For each soil property at least three depths are needed otherwise the function reports an error. Missing values are automatically replaced using smoothing splines.
@@ -65,4 +66,8 @@ if(!all(sel==FALSE)){
 } else {
   max(LHDICM)
 }
+
+xI <- attr(x, "minimum.LRI")
+## derive Effective rooting depth:
+ERDICM(UHDICM=UHDICM, LHDICM=LHDICM, minimum.LRI=xI, DRAINFAO="M")
 }
