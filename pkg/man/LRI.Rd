@@ -1,6 +1,5 @@
 \name{LRI}
 \alias{LRI}
-\alias{ERZDICM}
 \title{Limiting Rootability}
 \description{Derive Limiting Rootability using observed soil properties at at least three depths.}
 \usage{LRI(UHDICM, LHDICM, SNDPPT, SLTPPT, CLYPPT, CRFVOL, BLD,
@@ -36,7 +35,7 @@ Returns a vector with \code{TRUE} / \code{FALSE} values where \code{FALSE} indic
 Horizons need to be sorted by depth e.g. 0-5, 5-15, 15-30\dots For each soil property at least three depths are needed otherwise the function reports an error. Missing values are automatically replaced using smoothing splines.
 }
 \author{ Johan Leenaars and Maria Ruiperez Gonzalez  }
-\seealso{ \code{\link{AWCPTF}} }
+\seealso{ \code{\link{AWCPTF}}, \code{\link{ERDICM}} }
 \examples{
 ## sample profile from Nigeria (ISRIC:NG0017):
 UHDICM = c(0, 18, 36, 65, 87, 127)
