@@ -146,7 +146,7 @@ setMethod("tile", signature(x = "SpatialPointsDataFrame"), .subsetTiles)
 setMethod("tile", signature(x = "SpatialPixelsDataFrame"), .subsetTiles)
 
 ## tile using the OGR2OGR function:
-.clipTiles <- function(x, y, block.x, tmp.file = FALSE, program, show.output.on.console = FALSE, ...){
+.clipTiles <- function(x, y, block.x, tmp.file = TRUE, program, show.output.on.console = FALSE, ...){
     
     if(missing(program)){
       program <- .programPath(utility="ogr2ogr")
@@ -162,7 +162,7 @@ setMethod("tile", signature(x = "SpatialPixelsDataFrame"), .subsetTiles)
     } else {
       tf <- normalizeFilename(deparse(substitute(x, env = parent.frame())))
     } 
-    writeOGR(x, set.file.extension(tf, ".shp"), layer=".", driver="ESRI Shapefile")
+    suppressMessages( writeOGR(x, set.file.extension(tf, ".shp"), layer=".", driver="ESRI Shapefile", overwrite_layer=TRUE) )
 
     ## clip by tiles:
     x.lst <- list()
@@ -178,11 +178,11 @@ setMethod("tile", signature(x = "SpatialPixelsDataFrame"), .subsetTiles)
       
       if(class(x)=="SpatialPolygonsDataFrame"){
         try(system(paste(program, '-where \"OGR_GEOMETRY=\'Polygon\'\" -f \"ESRI Shapefile\"', set.file.extension(outname, ".shp"), set.file.extension(tf, ".shp"), '-clipsrc',  y[j,1], y[j,2], y[j,3], y[j,4], '-skipfailures'), show.output.on.console = show.output.on.console))
-        try(x.lst[[j]] <- readOGR(normalizePath(set.file.extension(outname, ".shp")), layername, p4s=x@proj4string))
+        try(x.lst[[j]] <- readOGR(normalizePath(set.file.extension(outname, ".shp")), layername, verbose = FALSE))
       }
       if(class(x)=="SpatialLinesDataFrame"){
         try(system(paste(program, '-where \"OGR_GEOMETRY=\'Linestring\'\" -f \"ESRI Shapefile\"', set.file.extension(outname, ".shp"), set.file.extension(tf, ".shp"), '-clipsrc',  y[j,1], y[j,2], y[j,3], y[j,4], '-skipfailures'), show.output.on.console = show.output.on.console))
-        try(x.lst[[j]] <- readOGR(normalizePath(set.file.extension(outname, ".shp")), layername, p4s=x@proj4string))
+        try(x.lst[[j]] <- readOGR(normalizePath(set.file.extension(outname, ".shp")), layername, verbose = FALSE))
       }
     }
     return(x.lst)
@@ -192,7 +192,7 @@ setMethod("tile", signature(x = "SpatialPolygonsDataFrame"), .clipTiles)
 setMethod("tile", signature(x = "SpatialLinesDataFrame"), .clipTiles)
 
 ## tile external raster:
-setMethod("tile", signature(x = "RasterLayer"), function(x, y, block.x, tmp.file = FALSE, program, show.output.on.console = FALSE, ...){
+setMethod("tile", signature(x = "RasterLayer"), function(x, y, block.x, tmp.file = TRUE, program, show.output.on.console = FALSE, ...){
 
   if(filename(x)==""){
     stop("Function applicable only to 'RasterLayer' objects linking to external raster files")

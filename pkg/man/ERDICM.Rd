@@ -1,5 +1,5 @@
-\name{ERZDICM}
-\alias{ERZDICM}
+\name{ERDICM}
+\alias{ERDICM}
 \title{Effective Rooting Zone depth}
 \description{Derive Effective Rooting Zone depth i.e. an effective depth suitable for plant growth. Usually minimum depth of soil out of three standard rooting depths: limiting soil properties, depth to water-stagnating layer and depth to bedrock.}
 \usage{ERDICM(UHDICM, LHDICM, minimum.LRI, DRAINFAO, BDRICM, 

@@ -11,11 +11,11 @@
 \usage{
 \S4method{tile}{SpatialPointsDataFrame}(x, y, block.x, \dots)
 \S4method{tile}{SpatialPixelsDataFrame}(x, y, block.x, \dots)
-\S4method{tile}{SpatialPolygonsDataFrame}(x, y, block.x, tmp.file = FALSE, 
+\S4method{tile}{SpatialPolygonsDataFrame}(x, y, block.x, tmp.file = TRUE, 
     program, show.output.on.console = FALSE, \dots)
-\S4method{tile}{SpatialLinesDataFrame}(x, y, block.x, tmp.file = FALSE, 
+\S4method{tile}{SpatialLinesDataFrame}(x, y, block.x, tmp.file = TRUE, 
     program, show.output.on.console = FALSE, \dots)
-\S4method{tile}{RasterLayer}(x, y, block.x, tmp.file = FALSE, 
+\S4method{tile}{RasterLayer}(x, y, block.x, tmp.file = TRUE, 
     program, show.output.on.console = FALSE, \dots)
 }
 \arguments{
@@ -50,19 +50,20 @@ spplot(line.lst[[1]][2])
 data(eberg_zones)
 ## this one requires ogr2ogr function:
 pol.lst <- tile(eberg_zones, block.x=5000)
-spplot(pol.lst[[1]][2])
+spplot(pol.lst[[1]][1])
 ## raster files via rgdal:
 library(rgdal)
 fn = system.file("pictures/SP27GTIF.TIF", 
  package = "rgdal")
 obj <- GDALinfo(fn)
 ras.lst <- getSpatialTiles(obj, block.x=1000)
-offset <- c(ras.lst$offset.y[i], ras.lst$offset.x[i])
-region.dim <- c(ras.lst$region.dim.y[i], 
-  ras.lst$region.dim.x[i])
+offset <- c(ras.lst$offset.y[1], ras.lst$offset.x[1])
+region.dim <- c(ras.lst$region.dim.y[1], 
+  ras.lst$region.dim.x[1])
 ## read the first tile:
 SP27GTIF_T1 <- readGDAL(fn, offset=offset, 
   region.dim=region.dim)
+str(SP27GTIF_T1)
 }
 }
 \keyword{methods}
