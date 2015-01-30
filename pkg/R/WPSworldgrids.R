@@ -6,40 +6,43 @@
 
 ## get capacities:
 setMethod("show", signature(object = "WPS"), function(object){
-  require(XML)
-  uri = paste(paste(object@server$URI, "?", sep=""), paste(object@server$service, object@server$version, "request=GetCapabilities", sep="&"), sep="")
-  ret <- XML::xmlTreeParse(uri, useInternalNodes = TRUE)
-  ret <- unlist(XML::xmlToList(ret, addAttributes=FALSE))
-  # convert to a table:
-  ret <- data.frame(field=gsub("\\.", "_", attr(ret, "names")), value=paste(ret), stringsAsFactors = FALSE)
-    cat("Raster layers", ":", object@inRastername, "\n")
-  for(i in 1:nrow(ret)){
-    cat(ret$field[i], ":", ret$value[i], "\n")
+  if(requireNamespace("XML", quietly = TRUE)){
+    uri = paste(paste(object@server$URI, "?", sep=""), paste(object@server$service, object@server$version, "request=GetCapabilities", sep="&"), sep="")
+    ret <- XML::xmlTreeParse(uri, useInternalNodes = TRUE)
+    ret <- unlist(XML::xmlToList(ret, addAttributes=FALSE))
+    # convert to a table:
+    ret <- data.frame(field=gsub("\\.", "_", attr(ret, "names")), value=paste(ret), stringsAsFactors = FALSE)
+      cat("Raster layers", ":", object@inRastername, "\n")
+    for(i in 1:nrow(ret)){
+      cat(ret$field[i], ":", ret$value[i], "\n")
+    }
   }
 })
 
 ## get processes:
 setMethod("getProcess", signature(x = "WPS"), function(x){
-  require(XML)
-  uri = paste(paste(x@server$URI, "?", sep=""), paste(x@server$service, x@server$version, "request=GetCapabilities", sep="&"), sep="")
-  ret <- XML::xmlTreeParse(uri, useInternalNodes = TRUE)
-  ret <- unlist(XML::xmlToList(ret, addAttributes=FALSE))
-  # convert to a table:
-  ret <- data.frame(field=gsub("\\.", "_", attr(ret, "names")), value=paste(ret), stringsAsFactors = FALSE)
-  proc <- ret[grep(ret$field, pattern="Process1"),"value"]
-  attr(proc, "names") <- ret[grep(ret$field, pattern="Process2"),"value"]
-  return(proc)  
+  if(requireNamespace("XML", quietly = TRUE)){
+    uri = paste(paste(x@server$URI, "?", sep=""), paste(x@server$service, x@server$version, "request=GetCapabilities", sep="&"), sep="")
+    ret <- XML::xmlTreeParse(uri, useInternalNodes = TRUE)
+    ret <- unlist(XML::xmlToList(ret, addAttributes=FALSE))
+    # convert to a table:
+    ret <- data.frame(field=gsub("\\.", "_", attr(ret, "names")), value=paste(ret), stringsAsFactors = FALSE)
+    proc <- ret[grep(ret$field, pattern="Process1"),"value"]
+    attr(proc, "names") <- ret[grep(ret$field, pattern="Process2"),"value"]
+    return(proc)
+  }  
 })
 
 ## get arguments:
 setMethod("describe", signature(x = "WPS"), function(x, request = "describeprocess", identifier){
-  require(XML)
-  uri = paste(paste(x@server$URI, "?", sep=""), paste(x@server$service, x@server$version, paste("request=", request, sep=""), paste("identifier=", identifier, sep=""), sep="&"), sep="")
-  ret <- XML::xmlTreeParse(uri, useInternalNodes = TRUE)
-  ret <- unlist(XML::xmlToList(ret, addAttributes=FALSE))
-  # convert to a table:
-  ret <- data.frame(field=gsub("\\.", "_", attr(ret, "names")), value=paste(ret), stringsAsFactors = FALSE)
-  return(ret)  
+  if(requireNamespace("XML", quietly = TRUE)){
+    uri = paste(paste(x@server$URI, "?", sep=""), paste(x@server$service, x@server$version, paste("request=", request, sep=""), paste("identifier=", identifier, sep=""), sep="&"), sep="")
+    ret <- XML::xmlTreeParse(uri, useInternalNodes = TRUE)
+    ret <- unlist(XML::xmlToList(ret, addAttributes=FALSE))
+    # convert to a table:
+    ret <- data.frame(field=gsub("\\.", "_", attr(ret, "names")), value=paste(ret), stringsAsFactors = FALSE)
+    return(ret)
+  }  
 })
 
 ## overlay points (single point)
@@ -47,56 +50,56 @@ setMethod("over", signature(x = "WPS", y = "SpatialPoints"),
   function(x, y) 
   {
 
-  require(RCurl)
-  require(XML)
-  # point by point
-  out <- NULL
-  for(i in 1:nrow(y@coords)){
-    ret <- paste("[x=", y@coords[i,1], ";y=", y@coords[i,2], ";inRastername=", x@inRastername,"]", sep="")
-    uri = paste(paste(x@server$URI, "?", sep=""), paste(x@server$service, x@server$version, "request=execute", "identifier=sampler_local1pt_nogml", paste("datainputs=", ret, sep=""), sep="&"), sep="")
-    ret <- XML::xmlTreeParse(getURL(uri), useInternalNodes = TRUE)
-    nx <- unlist(XML::xmlToList(ret, addAttributes=FALSE))
-      if(any(nx %in% "OutData")){
-      out[i] <- XML::xmlValue(ret[["//wps:LiteralData"]])
-      }
-      else {
-      out[i] <- NA
-      }
+  if(requireNamespace("RCurl", quietly = TRUE)&requireNamespace("XML", quietly = TRUE)){
+    ## point by point
+    out <- NULL
+    for(i in 1:nrow(y@coords)){
+      ret <- paste("[x=", y@coords[i,1], ";y=", y@coords[i,2], ";inRastername=", x@inRastername,"]", sep="")
+      uri = paste(paste(x@server$URI, "?", sep=""), paste(x@server$service, x@server$version, "request=execute", "identifier=sampler_local1pt_nogml", paste("datainputs=", ret, sep=""), sep="&"), sep="")
+      ret <- XML::xmlTreeParse(getURL(uri), useInternalNodes = TRUE)
+      nx <- unlist(XML::xmlToList(ret, addAttributes=FALSE))
+        if(any(nx %in% "OutData")){
+        out[i] <- XML::xmlValue(ret[["//wps:LiteralData"]])
+        }
+        else {
+        out[i] <- NA
+        }
+    }
+  
+    return(out)
   }
-
-  return(out)
 })
 
 ## subset grid:
 setMethod("subset", signature(x = "WPS"), function(x, bbox, import = TRUE){
 
-  require(RCurl)
-  require(XML)
-  # check that bbox is fine:
-  if(nrow(bbox)==2&ncol(bbox)==2&bbox[1,2]<180&bbox[2,2]<90&bbox[1,2]>bbox[1,1]&bbox[1,1]>-180&bbox[2,1]>-90&bbox[2,2]>bbox[2,1]){
-    ret <- paste('[bbox=', bbox[1,1], ',', bbox[2,1], ',', bbox[1,2], ',', bbox[2,2], ';inRastername=', x@inRastername, ']', sep="")
-    uri = paste(paste(x@server$URI, "?", sep=""), paste(x@server$service, x@server$version, "request=execute", "identifier=subset", paste("datainputs=", ret, sep=""), "responsedocument=OutData=@asreference=true", sep="&"), sep="")
-    ret <- XML::xmlTreeParse(getURL(uri), useInternalNodes = TRUE)  
-    nx <- unlist(XML::xmlToList(ret, addAttributes=FALSE))
-    if(any(nx %in% "Output Subset data")){
-       objectname <- XML::xmlAttrs(ret[["//wps:Reference"]], FALSE, FALSE)
-       objectname <- objectname[names(objectname)=="href"]
-       out <- set.file.extension(paste(x@inRastername, paste(as.vector(bbox), collapse="_"), sep="_"), ".tif")
-       try(download.file(objectname, destfile=out, mode="wb"))
-      }
-      else { stop("Layer not avaialable. Visit www.worldgrids.org for more info.") }  
-  }
-  else { stop("Bounding box required as matrix with LatMin, LatMax, LonMin, LonMax") }
-
-  if(import == TRUE){
-   out <- readGDAL(out)
-   if(length(grep(pattern="examine data for flipping", names(warnings())))>0){  out <- flipVertical(out) }
-   names(out) <- x@inRastername
-   proj4string(out) <- get("ref_CRS", envir = GSIF.opts)
-   return(out)
-  }
-  else {
-    GDALinfo(out)    
+  if(requireNamespace("RCurl", quietly = TRUE)&requireNamespace("XML", quietly = TRUE)){
+    # check that bbox is fine:
+    if(nrow(bbox)==2&ncol(bbox)==2&bbox[1,2]<180&bbox[2,2]<90&bbox[1,2]>bbox[1,1]&bbox[1,1]>-180&bbox[2,1]>-90&bbox[2,2]>bbox[2,1]){
+      ret <- paste('[bbox=', bbox[1,1], ',', bbox[2,1], ',', bbox[1,2], ',', bbox[2,2], ';inRastername=', x@inRastername, ']', sep="")
+      uri = paste(paste(x@server$URI, "?", sep=""), paste(x@server$service, x@server$version, "request=execute", "identifier=subset", paste("datainputs=", ret, sep=""), "responsedocument=OutData=@asreference=true", sep="&"), sep="")
+      ret <- XML::xmlTreeParse(getURL(uri), useInternalNodes = TRUE)  
+      nx <- unlist(XML::xmlToList(ret, addAttributes=FALSE))
+      if(any(nx %in% "Output Subset data")){
+         objectname <- XML::xmlAttrs(ret[["//wps:Reference"]], FALSE, FALSE)
+         objectname <- objectname[names(objectname)=="href"]
+         out <- set.file.extension(paste(x@inRastername, paste(as.vector(bbox), collapse="_"), sep="_"), ".tif")
+         try(download.file(objectname, destfile=out, mode="wb"))
+        }
+        else { stop("Layer not avaialable. Visit www.worldgrids.org for more info.") }  
+    }
+    else { stop("Bounding box required as matrix with LatMin, LatMax, LonMin, LonMax") }
+  
+    if(import == TRUE){
+     out <- readGDAL(out)
+     if(length(grep(pattern="examine data for flipping", names(warnings())))>0){  out <- flipVertical(out) }
+     names(out) <- x@inRastername
+     proj4string(out) <- get("ref_CRS", envir = GSIF.opts)
+     return(out)
+    }
+    else {
+      GDALinfo(out)    
+    }
   }
 })
 

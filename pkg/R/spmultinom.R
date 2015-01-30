@@ -8,7 +8,6 @@
 ## fit a multinomial logistic regression and make predictions:
 setMethod("spmultinom", signature(formulaString = "formula", observations = "SpatialPointsDataFrame", covariates = "SpatialPixelsDataFrame"), function(formulaString, observations, covariates, class.stats = TRUE, predict.probs = TRUE, ...){
 
-  require(plyr)
   ## generate formula if missing:
   if(missing(formulaString)) {  
     formulaString <- as.formula(paste(names(observations)[1], "~", paste(names(covariates), collapse="+"), sep=""))
@@ -29,7 +28,6 @@ setMethod("spmultinom", signature(formulaString = "formula", observations = "Spa
   ov <- over(observations, covariates[sel])  
   ov <- cbind(data.frame(observations[tv]), ov)
     
-  require(nnet)
   message("Fitting a multinomial logistic regression model...")
   mout <- nnet::multinom(formulaString, ov, ...)
   cout <- as.factor(paste(predict(mout, newdata=covariates, na.action = na.pass)))
@@ -44,17 +42,17 @@ setMethod("spmultinom", signature(formulaString = "formula", observations = "Spa
      pm@data[,names(covariates)[1]] <- NULL    
      
      ## kappa statistics:
-     require(mda)
-     require(psych)
-     cout.m <- as.factor(paste(predict(mout, newdata=ov, na.action = na.pass)))
-     cf <- confusion(cout.m, as.character(ov[,tv]))
-     ## remove missing classes:
-     a = attr(cf, "dimnames")[[1]] %in% attr(cf, "dimnames")[[2]] 
-     b = attr(cf, "dimnames")[[2]] %in% attr(cf, "dimnames")[[1]]
-     c.kappa = cohen.kappa(cf[a,b])
-     ac <- sum(diag(cf))/sum(cf)*100
-     message(paste("Estimated Cohen Kappa (weighted):", signif(c.kappa$weighted.kappa, 4)))
-     message(paste("Map purity:", signif(ac, 3)))
+     if(requireNamespace("mda", quietly = TRUE)&requireNamespace("psych", quietly = TRUE)){
+       cout.m <- as.factor(paste(predict(mout, newdata=ov, na.action = na.pass)))
+       cf <- mda::confusion(cout.m, as.character(ov[,tv]))
+       ## remove missing classes:
+       a = attr(cf, "dimnames")[[1]] %in% attr(cf, "dimnames")[[2]] 
+       b = attr(cf, "dimnames")[[2]] %in% attr(cf, "dimnames")[[1]]
+       c.kappa = psych::cohen.kappa(cf[a,b])
+       ac <- sum(diag(cf))/sum(cf)*100
+       message(paste("Estimated Cohen Kappa (weighted):", signif(c.kappa$weighted.kappa, 4)))
+       message(paste("Map purity:", signif(ac, 3)))
+     }
   }
   
   ## remove object class for consistency:

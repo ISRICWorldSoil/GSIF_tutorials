@@ -223,8 +223,11 @@ setClass("WPS", representation (server = 'list', inRastername = 'character'), va
       return(paste("Expecting only column names:", paste(cnames, collapse=", ")))
    ## check if URI exists:
    uri = paste(paste(object@server$URI, "?", sep=""), object@server$version, object@server$service, "request=GetCapabilities", sep="&") 
-   require(RCurl)
-   try(z <- getURI(uri, .opts=curlOptions(header=TRUE, nobody=TRUE, transfertext=TRUE, failonerror=FALSE)))
+   if(requireNamespace("RCurl", quietly = TRUE)){
+     try(z <- RCurl::getURI(uri, .opts=RCurl::curlOptions(header=TRUE, nobody=TRUE, transfertext=TRUE, failonerror=FALSE)))
+   } else {
+     z <- NA
+   }
    if(!length(x <- grep(z, pattern="404 Not Found"))==0)
       return("Server error: 404 Not Found")
 })
@@ -234,8 +237,11 @@ setClass("REST.SoilGrids", representation (server = 'character', query = 'list',
    prototype = list(server=get("REST.server", envir = GSIF.opts), query=list(attributes=get("attributes", envir = GSIF.opts), confidence=c("U","M","L"), depths=c("sd1","sd2","sd3","sd4","sd5","sd6")), stream=list(clipList=NA, param=NA)), ## TH: Might change in future!
    validity = function(object) {
    ## check if URI exists:
-   require(RCurl)
-   try(z <- getURI(object@server, .opts=curlOptions(header=TRUE, nobody=TRUE, transfertext=TRUE, failonerror=FALSE)))
+   if(requireNamespace("RCurl", quietly = TRUE)){
+     try(z <- RCurl::getURI(object@server, .opts=RCurl::curlOptions(header=TRUE, nobody=TRUE, transfertext=TRUE, failonerror=FALSE)))
+   } else {
+     z <- NA
+   }
    if(!length(x <- grep(z, pattern="404 Not Found"))==0){
       return("Server error: 404 Not Found")
    } 

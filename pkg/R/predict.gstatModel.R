@@ -67,30 +67,47 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
   
   ## predict outputs from the nlme package:
   if(any(class(object@regModel)=="lme")){
-    require(AICcmodavg)
-    rp <- AICcmodavg::predictSE(object@regModel, predictionLocations)
+    if(requireNamespace("AICcmodavg", quietly = TRUE)){
+      rp <- AICcmodavg::predictSE(object@regModel, predictionLocations)
+    } else {
+      rp <- NULL
+    }
   }
   if(any(class(object@regModel)=="gls")){
-    require(nlme)
-    rp <- list(predict(object@regModel, predictionLocations, na.action = na.pass))
+    if(requireNamespace("nlme", quietly = TRUE)){
+      rp <- list(predict(object@regModel, predictionLocations, na.action = na.pass))
+    } else {
+      rp <- NULL
+    }
   }
   
   if(any(class(object@regModel)=="rpart")){
-    require(rpart)
-    rp <- list(predict(object@regModel, predictionLocations))
-    variable = all.vars(attr(object@regModel$terms, "variables"))[1]
+    if(requireNamespace("rpart", quietly = TRUE)){
+      rp <- list(predict(object@regModel, predictionLocations))
+      variable = all.vars(attr(object@regModel$terms, "variables"))[1]
+    } else {
+      rp <- NULL
+    }
   }
   if(any(class(object@regModel)=="quantregForest")){
-    require(quantregForest)
-    covs = attr(object@regModel$forest$ncat, "names")
-    rp <- list(predict(object@regModel, predictionLocations@data[,covs], quantile=.5)) 
-    variable = attr(object@regModel$y, "name")[1]
+    if(requireNamespace("quantregForest", quietly = TRUE)){
+      covs = attr(object@regModel$forest$ncat, "names")
+      rp <- list(predict(object@regModel, predictionLocations@data[,covs], quantile=.5)) 
+      variable = attr(object@regModel$y, "name")[1]
+    } else {
+      rp <- NULL
+      variable <- NA
+    }
   }
   if(any(class(object@regModel)=="randomForest")&!any(class(object@regModel)=="quantregForest")){
-    require(randomForest)
-    rp <- list(predict(object@regModel, predictionLocations, type="response"))
-    variable = all.vars(attr(object@regModel$terms, "variables"))[1]
-  }  
+    if(requireNamespace("randomForest", quietly = TRUE)){
+      rp <- list(predict(object@regModel, predictionLocations, type="response"))
+      variable = all.vars(attr(object@regModel$terms, "variables"))[1]
+    } else {
+      rp <- NULL
+      variable <- NA
+    }
+  }
   ## rename the target variable:   
   if(any(class(object@regModel) %in% c("randomForest", "rpart", "gls"))){
     names(rp)[1] = "fit"
@@ -293,10 +310,11 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
           if(any(class(object@regModel)=="quantregForest")){     
             ## TH: Prediction error for randomForest
             message("Prediction error for 'randomForest' model estimated using the 'quantreg' package.")
-            require(quantregForest)
-            var.rf <- predict(object@regModel, predictionLocations@data[,covs], quantiles=c((1-.682)/2, 1-(1-.682)/2))
-            ## TH: this formula assumes that the errors follow a normal distribution! [https://en.wikipedia.org/wiki/File:Standard_deviation_diagram.svg]
-            predictionLocations@data[,"fit.var"] <- ((var.rf[,1] - var.rf[,2])/2)^2
+            if(requireNamespace("quantregForest", quietly = TRUE)){
+              var.rf <- predict(object@regModel, predictionLocations@data[,covs], quantiles=c((1-.682)/2, 1-(1-.682)/2))
+              ## TH: this formula assumes that the errors follow a normal distribution! [https://en.wikipedia.org/wiki/File:Standard_deviation_diagram.svg]
+              predictionLocations@data[,"fit.var"] <- ((var.rf[,1] - var.rf[,2])/2)^2
+            }
           } else {
             predictionLocations@data[,"fit.var"] <- 0
           }
@@ -332,11 +350,12 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
                 cv$var1.var <- (rp.cv[["se.fit"]][subset.observations])^2 + (rp.cv[["residual.scale"]])^2              
               }
               message("Running GLM cross-validation without any extra model-fitting...")
-              require(boot)
-              try( cv.err <- boot::glm.diag(object@regModel), silent=TRUE )
-              if(class(.Last.value)[1]=="try-error" | is.null(cv.err)) { 
-                cv.err <- data.frame(res = rep(NA, length(cv$observed)), rd = rep(NA, length(cv$observed))) 
-                warning("Cross-validation using 'boot::glm.diag' resulted in an empty set.", call.=FALSE, immediate.=TRUE)
+              if(requireNamespace("boot", quietly = TRUE)){
+                try( cv.err <- boot::glm.diag(object@regModel), silent=TRUE )
+                if(class(.Last.value)[1]=="try-error" | is.null(cv.err)) { 
+                  cv.err <- data.frame(res = rep(NA, length(cv$observed)), rd = rep(NA, length(cv$observed))) 
+                  warning("Cross-validation using 'boot::glm.diag' resulted in an empty set.", call.=FALSE, immediate.=TRUE)
+                }
               }
               cv$residual <- cv.err$res[subset.observations]
               cv$zscore <- cv.err$rd[subset.observations]

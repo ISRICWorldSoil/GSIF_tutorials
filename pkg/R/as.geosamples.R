@@ -10,113 +10,114 @@ setMethod("as.geosamples", signature(obj = "SoilProfileCollection"),
   {
 
   # reproject if necessary:
-  require(aqp)
-  if(!check_projection(obj@sp)){
-     obj@sp <- reproject(obj@sp)
-  }
-
-  # check for duplicates:
-  dp <- duplicated(obj@site[,obj@idcol])
-  if(sum(dp)>0){
-    warning(paste("Duplicated IDs detected in the 'site' slot and will be removed:", paste(obj@site[dp, obj@idcol], collapse=", ", sep="")))
-    obj@site <- obj@site[!dp,]
-    obj@sp <- obj@sp[!dp,]
-  } 
-
-  # estimate thickness in m and depths:
-  sampleThickness <- abs(obj@horizons[,obj@depthcols[2]] - obj@horizons[,obj@depthcols[1]])/100 
-  depths <- - (obj@horizons[,obj@depthcols[1]] + (obj@horizons[,obj@depthcols[2]] - obj@horizons[,obj@depthcols[1]])/2)/100
-
-  # add the time coordinate if missing:
-  if(!missing(TimeSpan.begin)&!missing(TimeSpan.end)){
-    if(!length(TimeSpan.begin)==length(TimeSpan.end)){ stop("Arguments 'TimeSpan.begin' and 'TimeSpan.end' of the same length required") }
-    if(!any(class(TimeSpan.begin)=="POSIXct")&!any(class(TimeSpan.end)=="POSIXct")){ stop("Arguments 'TimeSpan.begin' and 'TimeSpan.end' of class 'POSIXct' required") }
-    XYT <- data.frame(cbind(obj@sp@coords, time=(unclass(TimeSpan.begin)+unclass(TimeSpan.end))/2), dtime=(unclass(TimeSpan.end) - unclass(TimeSpan.begin))/2)
-  } else {
-    XYT <- data.frame(cbind(obj@sp@coords, time=rep(NA, nrow(obj@sp@coords))), dtime=0)
-  }
-
-  names(XYT)[1:2] <- c("x", "y")
-  XYT$ID <- obj@site[,obj@idcol]
-  ## TH: this assumes that the 'sp' slot and the 'site' slot have the same order;
-  
-  # convert site data to geosamples:
-  x <- NULL
-  site <- obj@site
-  # remove columns that are not of interest:
-  site[,obj@idcol] <- NULL
-
-  ## if empty skip this step:
-  if(ncol(site)>0){
-  # add the location error:
-  locationError = attr(obj@sp@coords, "locationError")
-  if(is.null(locationError)) { locationError = rep(as.character(NA), nrow(obj@sp@coords)) }
-  XYT$locationError <- locationError
-  
-  # for each soil variable
-  for(j in 1:length(names(site))){
-    ll <- length(site[,names(site)[j]])
-    observationid = attr(site[,names(site)[j]], "IGSN")
-    if(is.null(observationid)) { observationid = rep(as.character(NA), ll) } 
-    measurementError = attr(site[,names(site)[j]], "measurementError")
-    if(is.null(measurementError)) { measurementError = rep(as.character(NA), ll) }
-    sampleArea = attr(site[,names(site)[j]], "sampleArea")
-    if(is.null(sampleArea)) { sampleArea = rep(sample.area, ll) }    
-    x[[j]] <- data.frame(observationid = as.character(observationid), sampleid = obj@site[,obj@idcol], longitude = XYT[,1], latitude = XYT[,2], locationError = as.numeric(locationError), TimeSpan.begin = as.POSIXct(XYT[,3]-XYT[,"dtime"]/2, origin="1970-01-01"), TimeSpan.end = as.POSIXct(XYT[,3]+XYT[,"dtime"]/2, origin="1970-01-01"), altitude = as.numeric(rep(0, ll)), altitudeMode = rep("relativeToGround", ll), sampleArea = sampleArea, sampleThickness = rep(mxd*sample.area, ll), observedValue = as.character(site[,names(site)[j]]), methodid = rep(names(site)[j], ll), measurementError = as.numeric(measurementError), stringsAsFactors = FALSE) 
-  }
-    rx <- do.call(rbind, x)
-  } else {
-    rx <- NULL
-  }
-      
-  # convert horizon data to geosamples:
-  y <- NULL
-  hors <- obj@horizons
-  # remove columns that are not of interest:
-  hors[,obj@idcol] <- NULL
-  hors[,obj@depthcols[1]] <- NULL
-  hors[,obj@depthcols[2]] <- NULL
-  
-  ## if empty skip this step:
-  if(ncol(hors)>0){
-    # add coordinates:
-    XYTh <- merge(data.frame(ID=obj@horizons[,obj@idcol]), XYT, by="ID", all.x=TRUE)
-  
-  # for each soil variable
-    for(j in 1:length(names(hors))){
-      ll <- length(hors[,names(hors)[j]])
-      observationid = attr(hors[,names(hors)[j]], "IGSN")
-      if(is.null(observationid)) { observationid = rep(as.character(NA), ll) } 
-      measurementError = attr(hors[,names(hors)[j]], "measurementError")
-      if(is.null(measurementError)) { measurementError = rep(as.character(NA), ll) }
-      sampleArea = attr(hors[,names(hors)[j]], "sampleArea")
-      if(is.null(sampleArea)) { sampleArea = rep(sample.area, ll) }
-        y[[j]] <- data.frame(observationid = as.character(observationid), sampleid = XYTh$ID, longitude = XYTh$x, latitude = XYTh$y, locationError = as.numeric(XYTh$locationError), TimeSpan.begin = as.POSIXct(XYTh$time-XYTh$dtime/2, origin="1970-01-01"), TimeSpan.end = as.POSIXct(XYTh$time+XYTh$dtime/2, origin="1970-01-01"), altitude = as.numeric(depths), altitudeMode = rep("relativeToGround", ll), sampleArea = sampleArea, sampleThickness = sampleThickness, observedValue = as.character(hors[,names(hors)[j]]), methodid = rep(names(hors)[j], ll), measurementError = as.numeric(measurementError), stringsAsFactors = FALSE) 
+  if(requireNamespace("aqp", quietly = TRUE)){
+    if(!check_projection(obj@sp)){
+       obj@sp <- reproject(obj@sp)
     }
-    ry <- do.call(rbind, y)
-  } else {
-    ry <- NULL
-  }
   
-  # merge the sites and horizons tables:
-  tb <- rbind(rx, ry)
-  tb$methodid <- as.factor(tb$methodid)
-
-  # check if the metadata comply with the geosamples standard:
-  mnames = c("methodid", "description", "units", "detectionLimit")
-  if(any(!(names(obj@metadata) %in% mnames))){ 
-    # warning(paste("Missing column names in the 'metadata' slot:", paste(mnames, collapse=", "))) 
-    tnames <- levels(tb$methodid)
-    metadata <- data.frame(tnames, rep(NA, length(tnames)), rep(NA, length(tnames)), rep(NA, length(tnames)))
-    names(metadata) <- mnames
-  } else {
-    metadata = obj@metadata
-  }
- 
-  # make geosamples:
-  gs <- new("geosamples", registry = registry, methods = metadata, data = tb)
+    # check for duplicates:
+    dp <- duplicated(obj@site[,obj@idcol])
+    if(sum(dp)>0){
+      warning(paste("Duplicated IDs detected in the 'site' slot and will be removed:", paste(obj@site[dp, obj@idcol], collapse=", ", sep="")))
+      obj@site <- obj@site[!dp,]
+      obj@sp <- obj@sp[!dp,]
+    } 
+  
+    # estimate thickness in m and depths:
+    sampleThickness <- abs(obj@horizons[,obj@depthcols[2]] - obj@horizons[,obj@depthcols[1]])/100 
+    depths <- - (obj@horizons[,obj@depthcols[1]] + (obj@horizons[,obj@depthcols[2]] - obj@horizons[,obj@depthcols[1]])/2)/100
+  
+    # add the time coordinate if missing:
+    if(!missing(TimeSpan.begin)&!missing(TimeSpan.end)){
+      if(!length(TimeSpan.begin)==length(TimeSpan.end)){ stop("Arguments 'TimeSpan.begin' and 'TimeSpan.end' of the same length required") }
+      if(!any(class(TimeSpan.begin)=="POSIXct")&!any(class(TimeSpan.end)=="POSIXct")){ stop("Arguments 'TimeSpan.begin' and 'TimeSpan.end' of class 'POSIXct' required") }
+      XYT <- data.frame(cbind(obj@sp@coords, time=(unclass(TimeSpan.begin)+unclass(TimeSpan.end))/2), dtime=(unclass(TimeSpan.end) - unclass(TimeSpan.begin))/2)
+    } else {
+      XYT <- data.frame(cbind(obj@sp@coords, time=rep(NA, nrow(obj@sp@coords))), dtime=0)
+    }
+  
+    names(XYT)[1:2] <- c("x", "y")
+    XYT$ID <- obj@site[,obj@idcol]
+    ## TH: this assumes that the 'sp' slot and the 'site' slot have the same order;
     
-  return(gs)
+    # convert site data to geosamples:
+    x <- NULL
+    site <- obj@site
+    # remove columns that are not of interest:
+    site[,obj@idcol] <- NULL
+  
+    ## if empty skip this step:
+    if(ncol(site)>0){
+    # add the location error:
+    locationError = attr(obj@sp@coords, "locationError")
+    if(is.null(locationError)) { locationError = rep(as.character(NA), nrow(obj@sp@coords)) }
+    XYT$locationError <- locationError
+    
+    # for each soil variable
+    for(j in 1:length(names(site))){
+      ll <- length(site[,names(site)[j]])
+      observationid = attr(site[,names(site)[j]], "IGSN")
+      if(is.null(observationid)) { observationid = rep(as.character(NA), ll) } 
+      measurementError = attr(site[,names(site)[j]], "measurementError")
+      if(is.null(measurementError)) { measurementError = rep(as.character(NA), ll) }
+      sampleArea = attr(site[,names(site)[j]], "sampleArea")
+      if(is.null(sampleArea)) { sampleArea = rep(sample.area, ll) }    
+      x[[j]] <- data.frame(observationid = as.character(observationid), sampleid = obj@site[,obj@idcol], longitude = XYT[,1], latitude = XYT[,2], locationError = as.numeric(locationError), TimeSpan.begin = as.POSIXct(XYT[,3]-XYT[,"dtime"]/2, origin="1970-01-01"), TimeSpan.end = as.POSIXct(XYT[,3]+XYT[,"dtime"]/2, origin="1970-01-01"), altitude = as.numeric(rep(0, ll)), altitudeMode = rep("relativeToGround", ll), sampleArea = sampleArea, sampleThickness = rep(mxd*sample.area, ll), observedValue = as.character(site[,names(site)[j]]), methodid = rep(names(site)[j], ll), measurementError = as.numeric(measurementError), stringsAsFactors = FALSE) 
+    }
+      rx <- do.call(rbind, x)
+    } else {
+      rx <- NULL
+    }
+        
+    # convert horizon data to geosamples:
+    y <- NULL
+    hors <- obj@horizons
+    # remove columns that are not of interest:
+    hors[,obj@idcol] <- NULL
+    hors[,obj@depthcols[1]] <- NULL
+    hors[,obj@depthcols[2]] <- NULL
+    
+    ## if empty skip this step:
+    if(ncol(hors)>0){
+      # add coordinates:
+      XYTh <- merge(data.frame(ID=obj@horizons[,obj@idcol]), XYT, by="ID", all.x=TRUE)
+    
+    # for each soil variable
+      for(j in 1:length(names(hors))){
+        ll <- length(hors[,names(hors)[j]])
+        observationid = attr(hors[,names(hors)[j]], "IGSN")
+        if(is.null(observationid)) { observationid = rep(as.character(NA), ll) } 
+        measurementError = attr(hors[,names(hors)[j]], "measurementError")
+        if(is.null(measurementError)) { measurementError = rep(as.character(NA), ll) }
+        sampleArea = attr(hors[,names(hors)[j]], "sampleArea")
+        if(is.null(sampleArea)) { sampleArea = rep(sample.area, ll) }
+          y[[j]] <- data.frame(observationid = as.character(observationid), sampleid = XYTh$ID, longitude = XYTh$x, latitude = XYTh$y, locationError = as.numeric(XYTh$locationError), TimeSpan.begin = as.POSIXct(XYTh$time-XYTh$dtime/2, origin="1970-01-01"), TimeSpan.end = as.POSIXct(XYTh$time+XYTh$dtime/2, origin="1970-01-01"), altitude = as.numeric(depths), altitudeMode = rep("relativeToGround", ll), sampleArea = sampleArea, sampleThickness = sampleThickness, observedValue = as.character(hors[,names(hors)[j]]), methodid = rep(names(hors)[j], ll), measurementError = as.numeric(measurementError), stringsAsFactors = FALSE) 
+      }
+      ry <- do.call(rbind, y)
+    } else {
+      ry <- NULL
+    }
+    
+    # merge the sites and horizons tables:
+    tb <- rbind(rx, ry)
+    tb$methodid <- as.factor(tb$methodid)
+  
+    # check if the metadata comply with the geosamples standard:
+    mnames = c("methodid", "description", "units", "detectionLimit")
+    if(any(!(names(obj@metadata) %in% mnames))){ 
+      # warning(paste("Missing column names in the 'metadata' slot:", paste(mnames, collapse=", "))) 
+      tnames <- levels(tb$methodid)
+      metadata <- data.frame(tnames, rep(NA, length(tnames)), rep(NA, length(tnames)), rep(NA, length(tnames)))
+      names(metadata) <- mnames
+    } else {
+      metadata = obj@metadata
+    }
+   
+    # make geosamples:
+    gs <- new("geosamples", registry = registry, methods = metadata, data = tb)
+      
+    return(gs)
+  }
 })
 
 
@@ -124,7 +125,6 @@ setMethod("as.geosamples", signature(obj = "SpatialPointsDataFrame"),
   function(obj, registry = as.character(NA), sample.area = 1, mxd = 2, TimeSpan.begin, TimeSpan.end) 
   {
   
-  require(plotKML)
   ## SpatialPoints should be in the WGS84 projection system:
   if(is.na(proj4string(obj))|!check_projection(obj)){ 
     stop(paste("proj4 string", get("ref_CRS", envir = plotKML.opts), "required")) 
@@ -254,15 +254,16 @@ setMethod("as.geosamples", signature(obj = "SpatialPointsDataFrame"),
 setMethod("subset", signature(x = "geosamples"), .subset.geosamples)
 
 .stack.geosamples <- function(x, lst=levels(x@methods$methodid), geo.columns=c("sampleid","longitude","latitude","altitude")){
-  require(reshape)
-  x.df.lst <- list(NULL)
-  for(j in 1:length(lst)){
-    x.df.lst[[j]] <- subset(x, method=lst[j])
-    x.df.lst[[j]][,lst[j]] <- as.numeric(x.df.lst[[j]][,"observedValue"])
-    x.df.lst[[j]] <- x.df.lst[[j]][!is.na(x.df.lst[[j]][,lst[j]]),c(geo.columns,lst[j])]
+  if(requireNamespace("reshape", quietly = TRUE)){
+    x.df.lst <- list(NULL)
+    for(j in 1:length(lst)){
+      x.df.lst[[j]] <- subset(x, method=lst[j])
+      x.df.lst[[j]][,lst[j]] <- as.numeric(x.df.lst[[j]][,"observedValue"])
+      x.df.lst[[j]] <- x.df.lst[[j]][!is.na(x.df.lst[[j]][,lst[j]]),c(geo.columns,lst[j])]
+    }
+    x.df <- reshape::merge_recurse(x.df.lst)
+    return(x.df)
   }
-  x.df <- reshape::merge_recurse(x.df.lst)
-  return(x.df)
 }
 
 setMethod("stack", signature(x = "geosamples"), .stack.geosamples)

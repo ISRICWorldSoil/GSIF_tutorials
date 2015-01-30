@@ -47,8 +47,7 @@ setMethod("validate", signature(obj = "gstatModel"), function(obj, nfold = 5, pr
     ## re-fit the data in loops:
     m.l <- list(NULL)
     cv.l <- list(NULL)
-    require(dismo)
-    sel <- kfold(ov, k=nfold)
+    sel <- dismo::kfold(ov, k=nfold)
     message(paste("Running ", nfold, "-fold cross validation with model re-fitting...", sep=""))
     for(j in 1:nfold){
       rmatrix <- ov[!sel==j,]

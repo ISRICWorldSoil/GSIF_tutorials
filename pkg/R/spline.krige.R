@@ -74,11 +74,10 @@ spline.krige <- function(formula, locations, newdata, newlocs=NULL, model, te=as
 
 ## resample using variable sampling intensity:
 resample.grid <- function(locations, newdata, silent=FALSE, n.sigma, t_cellsize, optN, quant.nndist=.5, breaks.d=NULL){
-    if(silent==FALSE){
-      message("Deriving density map...")
-    }
-    require(spatstat)
-    require(maptools)
+  if(silent==FALSE){
+    message("Deriving density map...")
+  }
+  if(requireNamespace("spatstat", quietly = TRUE)&requireNamespace("maptools", quietly = TRUE)){
     ## derive density map:
     W <- as.matrix(newdata[1])
     W <- ifelse(is.na(W), FALSE, TRUE)
@@ -127,6 +126,7 @@ resample.grid <- function(locations, newdata, silent=FALSE, n.sigma, t_cellsize,
       message(paste("Generated:", length(newlocs), "prediction locations."))
     }
     return(list(newlocs=newlocs, density=dmap))
+  }
 }
 
 ## end of script;

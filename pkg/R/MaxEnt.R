@@ -7,10 +7,7 @@
 
 ## Wrapper function for MaxEnt:
 setMethod("MaxEnt", signature(occurrences = "ppp", covariates = "SpatialPixelsDataFrame"), function(occurrences, covariates, nfold = 5, Npoints = 1000, sciname = as.character(NA), period = c(Sys.Date()-1, Sys.Date()),  ...){
-  
-  require(spatstat)
-  require(maptools)
-  
+   
   # only run if the maxent.jar file is available, in the right folder
   jar <- paste(system.file(package="dismo"), "/java/maxent.jar", sep='')
   if (file.exists(jar)) {
@@ -28,12 +25,12 @@ setMethod("MaxEnt", signature(occurrences = "ppp", covariates = "SpatialPixelsDa
 
     # Load rJava
   	if (is.null(getOption('dismo_rJavaLoaded'))) {
-		if ( require(rJava) ) {
-			rJava::.jpackage('dismo')
-			options(dismo_rJavaLoaded=TRUE)
-		  } else {
-			stop('rJava cannot be loaded')
-		  }
+  		if (requireNamespace("rJava", quietly = TRUE)) {
+  			rJava::.jpackage('dismo')
+  			options(dismo_rJavaLoaded=TRUE)
+  		  } else {
+  			stop('rJava cannot be loaded')
+  		  }
 	  }
 
     # predict distribution:
@@ -42,7 +39,7 @@ setMethod("MaxEnt", signature(occurrences = "ppp", covariates = "SpatialPixelsDa
     fold <- kfold(xy, k=nfold)
     # randomly take 20% of observations:
     xy.test <- xy[fold == 1,]
-    bgp <- randomPoints(covariates, Npoints)  
+    bgp <- dismo::randomPoints(covariates, Npoints)  
     ev <- evaluate(me, p=xy.test, a=bgp, x=covariates)
     # this allows estimation of the threshold probability:
     threshold <- ev@t[which.max(ev@TPR + ev@TNR)]

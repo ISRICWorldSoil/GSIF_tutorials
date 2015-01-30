@@ -34,7 +34,6 @@ Data of class \code{"FAO.SoilProfileCollection"} must satisfy all of the followi
 }
 \examples{
 library(aqp)
-library(plyr)
 library(sp)
 
 LONWGS84 = 3.90

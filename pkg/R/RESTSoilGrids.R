@@ -6,24 +6,25 @@
 
 
 REST.SoilGrids <- function(attributes, depths=paste("sd",1:6,sep=""), confidence=c("L","M","U"), validate=FALSE){
-  if(validate==TRUE){
-  ## get the most recent description:
-    require(rjson)
-    try( ret <- rjson::fromJSON(file=paste(get("REST.server", envir = GSIF.opts), "query/describe", sep="")), silent = TRUE )
-    if(!class(.Last.value)[1]=="try-error" & !length(ret$query)==0){
-      if(any(!attributes %in% ret$query$attributes)){
-        stop(paste("Requested 'attributes' not present. See '", get("REST.server", envir = GSIF.opts),"' for more info.", sep=""))
+  if(requireNamespace("rjson", quietly = TRUE)){
+    if(validate==TRUE){
+    ## get the most recent description:
+      try( ret <- rjson::fromJSON(file=paste(get("REST.server", envir = GSIF.opts), "query/describe", sep="")), silent = TRUE )
+      if(!class(.Last.value)[1]=="try-error" & !length(ret$query)==0){
+        if(any(!attributes %in% ret$query$attributes)){
+          stop(paste("Requested 'attributes' not present. See '", get("REST.server", envir = GSIF.opts),"' for more info.", sep=""))
+        }
+        if(any(!depths %in% ret$query$depths)){
+          stop(paste("Requested 'depths' not present. See '", get("REST.server", envir = GSIF.opts), "' for more info.", sep=""))
+        }
+        if(any(!confidence %in% ret$query$confidence)){
+          stop(paste("Requested 'confidence' not present. See '", get("REST.server", envir = GSIF.opts),"' for more info.", sep=""))
+        }        
       }
-      if(any(!depths %in% ret$query$depths)){
-        stop(paste("Requested 'depths' not present. See '", get("REST.server", envir = GSIF.opts), "' for more info.", sep=""))
-      }
-      if(any(!confidence %in% ret$query$confidence)){
-        stop(paste("Requested 'confidence' not present. See '", get("REST.server", envir = GSIF.opts),"' for more info.", sep=""))
-      }        
     }
+    out <- new("REST.SoilGrids", server=get("REST.server", envir = GSIF.opts), query=list(attributes=attributes, confidence=confidence, depths=depths), stream=list(clipList=NA, param=NA))
+    return(out)
   }
-  out <- new("REST.SoilGrids", server=get("REST.server", envir = GSIF.opts), query=list(attributes=attributes, confidence=confidence, depths=depths), stream=list(clipList=NA, param=NA))
-  return(out)
 }
 
 
@@ -50,24 +51,24 @@ setMethod("over", signature(x = "REST.SoilGrids", y = "SpatialPoints"),
   function(x, y) 
   {
 
-  require(rjson)
-  require(plyr)
-  ## run point by point
-  out <- NULL
-  for(i in 1:nrow(y@coords)){
-    uri <- .REST.uri(x, lon=y@coords[i,1], lat=y@coords[i,2])
-    try( ret <- rjson::fromJSON(file=uri), silent = TRUE )
-    if(!class(.Last.value)[1]=="try-error" & !length(ret$properties)==0){
-      out[[i]] <- data.frame(ret$properties)
-      out[[i]]$lon <- y@coords[i,1]
-      out[[i]]$lat <- y@coords[i,2]
-    } else {    
-      out[[i]] <- data.frame(lon=y@coords[i,1], lat=y@coords[i,2])
+  if(requireNamespace("rjson", quietly = TRUE)){
+    ## run point by point
+    out <- NULL
+    for(i in 1:nrow(y@coords)){
+      uri <- .REST.uri(x, lon=y@coords[i,1], lat=y@coords[i,2])
+      try( ret <- rjson::fromJSON(file=uri), silent = TRUE )
+      if(!class(.Last.value)[1]=="try-error" & !length(ret$properties)==0){
+        out[[i]] <- data.frame(ret$properties)
+        out[[i]]$lon <- y@coords[i,1]
+        out[[i]]$lat <- y@coords[i,2]
+      } else {    
+        out[[i]] <- data.frame(lon=y@coords[i,1], lat=y@coords[i,2])
+      }
     }
+    ## bind all elements together:
+    out <- plyr::rbind.fill(out)
+    return(out)
   }
-  ## bind all elements together:
-  out <- plyr::rbind.fill(out)
-  return(out)
 })
 
 ## end of script;

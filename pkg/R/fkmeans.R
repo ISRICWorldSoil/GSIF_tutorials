@@ -8,7 +8,6 @@
 # Fit a supervised fuzzy kmeans model and predict memberships:
 setMethod("spfkm", signature(formulaString = "formula", observations = "SpatialPointsDataFrame", covariates = "SpatialPixelsDataFrame"), function(formulaString, observations, covariates, class.c = NULL, class.sd = NULL, fuzzy.e = 1.2){
   
-  require(plyr)
   ## generate formula if missing:
   if(missing(formulaString)) {  
     formulaString <- as.formula(paste(names(observations)[1], "~", paste(names(covariates), collapse="+"), sep=""))
@@ -86,14 +85,16 @@ setMethod("spfkm", signature(formulaString = "formula", observations = "SpatialP
   sel.c <- !is.na(ov[,tv]) & !is.na(observations@data[,tv])
 
   ## kappa statistics:
-  require(mda)
-  require(psych)
-  cf <- confusion(ov[sel.c,tv], as.character(observations@data[sel.c,tv]))
-  ## remove missing classes:
-  a = attr(cf, "dimnames")[[1]] %in% attr(cf, "dimnames")[[2]] 
-  b = attr(cf, "dimnames")[[2]] %in% attr(cf, "dimnames")[[1]]
-  c.kappa = cohen.kappa(cf[a,b])
-  message(paste("Estimated Cohen Kappa (weighted):", signif(c.kappa$weighted.kappa, 4)))  
+  if(requireNamespace("mda", quietly = TRUE)&requireNamespace("psych", quietly = TRUE)){
+    cf <- mda::confusion(ov[sel.c,tv], as.character(observations@data[sel.c,tv]))
+    ## remove missing classes:
+    a = attr(cf, "dimnames")[[1]] %in% attr(cf, "dimnames")[[2]] 
+    b = attr(cf, "dimnames")[[2]] %in% attr(cf, "dimnames")[[1]]
+    c.kappa = psych::cohen.kappa(cf[a,b])
+    message(paste("Estimated Cohen Kappa (weighted):", signif(c.kappa$weighted.kappa, 4)))  
+  } else {
+    cf <- NULL
+  }
   
   ## create the output object:
   out <- new("SpatialMemberships", predicted = pm, model = mout, mu = mm, class.c = class.c, class.sd = class.sd, confusion = cf)

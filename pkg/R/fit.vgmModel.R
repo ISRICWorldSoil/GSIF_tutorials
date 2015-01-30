@@ -76,14 +76,16 @@ setMethod("fit.vgmModel", signature(formulaString = "formula", rmatrix = "data.f
       ## check if it is projected object:
       if(!is.na(proj4string(predictionDomain))){
         if(!is.projected(predictionDomain)){
-          require(fossil)  # Haversine Formula for Great Circle distance
-          p.1 <- matrix(c(predictionDomain@bbox[1,1], predictionDomain@bbox[1,2]), ncol=2, dimnames=list(1,c("lon","lat")))  
-          p.2 <- matrix(c(predictionDomain@bbox[2,1], predictionDomain@bbox[2,2]), ncol=2, dimnames=list(1,c("lon","lat")))  
-          Range = fossil::deg.dist(lat1=p.1[,2], long1=p.1[,1], lat2=p.2[,2], long2=p.2[,1])/2
+          if(requireNamespace("fossil", quietly = TRUE)){
+            ## Haversine Formula for Great Circle distance
+            p.1 <- matrix(c(predictionDomain@bbox[1,1], predictionDomain@bbox[1,2]), ncol=2, dimnames=list(1,c("lon","lat")))  
+            p.2 <- matrix(c(predictionDomain@bbox[2,1], predictionDomain@bbox[2,2]), ncol=2, dimnames=list(1,c("lon","lat")))  
+            Range = fossil::deg.dist(lat1=p.1[,2], long1=p.1[,1], lat2=p.2[,2], long2=p.2[,1])/2
+          }
         } else {
           
           ## BK: To avoid problems in variogram fitting (singularity warnings) the default range value should be chosen in proportion to the cut-off value.
-          ## BK: To determine the cut-off value of the sample variogram I suggest to use the default gstat value.
+          ## BK: To determine the cut-off value of the sample variogram use the default gstat value.
           ## BK: Edzer -> "gstat uses one third of the diagonal of the rectangular (or block for 3D) that spans the data locations."  
           ## BK: The initial value for the range can then be chosen as one-third of the cut-off value
           
