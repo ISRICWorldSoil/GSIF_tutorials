@@ -1,16 +1,16 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><head><title>R: Estimate inclusion probabilities of a sampling plan (points)</title>
+<html><head><title>R: Estimate occurrence probabilities of a sampling plan (points)</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <link rel="stylesheet" type="text/css" href="R.css">
 </head><body>
 
 <table width="100%" summary="page for spsample.prob {GSIF}"><tr><td>spsample.prob {GSIF}</td><td align="right">R Documentation</td></tr></table>
 
-<h2>Estimate inclusion probabilities of a sampling plan (points)</h2>
+<h2>Estimate occurrence probabilities of a sampling plan (points)</h2>
 
 <h3>Description</h3>
 
-<p>Estimates inclusion probabilities as an average between the kernel density estimation (spreading of points in geographical space) and MaxLike analysis (spreading of points in feature space). The output <code>'iprob'</code> indicates whether the sampling plan has systematically missed some important locations / features, and can be used as an input for geostatistical modelling (e.g. as weights for regression modeling).</p>
+<p>Estimates occurrence probabilities as an average between the kernel density estimation (spreading of points in geographical space) and MaxLike analysis (spreading of points in feature space). The output <code>'iprob'</code> indicates whether the sampling plan has systematically missed some important locations / features, and can be used as an input for geostatistical modelling (e.g. as weights for regression modeling).</p>
 
 
 <h3>Usage</h3>
@@ -50,13 +50,13 @@ spsample.prob(observations, covariates,
 
 <h3>Value</h3>
 
-<p>Returns a list of objects where <code>'iprob'</code> (<code>"SpatialPixelsDataFrame"</code>) is the map showing the estimated inclusion probabilities.
+<p>Returns a list of objects where <code>'iprob'</code> (<code>"SpatialPixelsDataFrame"</code>) is the map showing the estimated occurrence probabilities.
 </p>
 
 
 <h3>Note</h3>
 
-<p>Inclusion probabilities for geographical space are derived using kernel density estimator. The sampling intensities are converted to probabilities by deviding the sampling intensity by the maximum sampling intensity for the study area (Baddeley, 2008). The inclusion probabilities for feature space are determined using MaxLike algorithm (Royle et al., 2012). The lower the average inclusion probability for the whole study area, the lower the representation efficiency of a sampling plan. <br> 
+<p>Occurrence probabilities for geographical space are derived using kernel density estimator. The sampling intensities are converted to probabilities by deviding the sampling intensity by the maximum sampling intensity for the study area (Baddeley, 2008). The occurrence probabilities for feature space are determined using MaxLike algorithm (Royle et al., 2012). The lower the average occurrence probability for the whole study area, the lower the representation efficiency of a sampling plan. <br> 
 MaxLike function might fail to produce predictions (e.g. if not at least one continuous covariate is provided and if the <code>optim</code> function is not able to find the global optima) in which case an error message is generated. Running Principal Component analysis i.e. standardizing the covariates prior to running <code>spsample.prob</code> is, thus, highly recommended.<br> 
 This function can be time consuming for large grids. 
 </p>
@@ -107,7 +107,7 @@ proj4string(eberg_grid) &lt;- CRS("+init=epsg:31467")
 formulaString &lt;- ~ PRMGEO6+DEMSRT6+TWISRT6+TIRAST6
 eberg_spc &lt;- spc(eberg_grid, formulaString)
 
-## derive inclusion probability:
+## derive occurrence probability:
 covs &lt;- eberg_spc@predicted[1:8]
 iprob &lt;- spsample.prob(eberg.xy, covs)
 ## Note: obvious omission areas:
@@ -131,7 +131,7 @@ eberg.xy$iprob &lt;- over(eberg.xy, iprob[[1]])$iprob
 eberg.xy@data &lt;- cbind(eberg.xy@data, over(eberg.xy, covs))
 fs &lt;- as.formula(paste("SNDMHT_A ~ ", 
     paste(names(covs), collapse="+")))
-## the lower the inclusion probability, the higher the weight:
+## the lower the occurrence probability, the higher the weight:
 w &lt;- 1/eberg.xy$iprob
 m &lt;- lm(fs, eberg.xy, weights=w)
 summary(m)
@@ -145,5 +145,5 @@ gm &lt;- fit.gstatModel(eberg.xy, fs, covs, weights=w)
 plot(gm)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.4-4 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.4-5 <a href="00Index.html">Index</a>]</div>
 </body></html>

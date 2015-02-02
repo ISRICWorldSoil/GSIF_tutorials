@@ -2,8 +2,8 @@
 \docType{methods}
 \alias{spsample.prob}
 \alias{spsample.prob,SpatialPoints,SpatialPixelsDataFrame-method}
-\title{Estimate inclusion probabilities of a sampling plan (points)}
-\description{Estimates inclusion probabilities as an average between the kernel density estimation (spreading of points in geographical space) and MaxLike analysis (spreading of points in feature space). The output \code{'iprob'} indicates whether the sampling plan has systematically missed some important locations / features, and can be used as an input for geostatistical modelling (e.g. as weights for regression modeling).}
+\title{Estimate occurrence probabilities of a sampling plan (points)}
+\description{Estimates occurrence probabilities as an average between the kernel density estimation (spreading of points in geographical space) and MaxLike analysis (spreading of points in feature space). The output \code{'iprob'} indicates whether the sampling plan has systematically missed some important locations / features, and can be used as an input for geostatistical modelling (e.g. as weights for regression modeling).}
 \usage{ 
 \S4method{spsample.prob}{SpatialPoints,SpatialPixelsDataFrame}(observations, covariates, 
   quant.nndist=.95, n.sigma, \dots)
@@ -16,10 +16,10 @@
   \item{\dots}{other optional arguments that can be passed to function \code{spatstat::density}}
 }
 \value{
-Returns a list of objects where \code{'iprob'} (\code{"SpatialPixelsDataFrame"}) is the map showing the estimated inclusion probabilities.
+Returns a list of objects where \code{'iprob'} (\code{"SpatialPixelsDataFrame"}) is the map showing the estimated occurrence probabilities.
 }
 \note{
-Inclusion probabilities for geographical space are derived using kernel density estimator. The sampling intensities are converted to probabilities by deviding the sampling intensity by the maximum sampling intensity for the study area (Baddeley, 2008). The inclusion probabilities for feature space are determined using MaxLike algorithm (Royle et al., 2012). The lower the average inclusion probability for the whole study area, the lower the representation efficiency of a sampling plan. \cr 
+Occurrence probabilities for geographical space are derived using kernel density estimator. The sampling intensities are converted to probabilities by deviding the sampling intensity by the maximum sampling intensity for the study area (Baddeley, 2008). The occurrence probabilities for feature space are determined using MaxLike algorithm (Royle et al., 2012). The lower the average occurrence probability for the whole study area, the lower the representation efficiency of a sampling plan. \cr 
 MaxLike function might fail to produce predictions (e.g. if not at least one continuous covariate is provided and if the \code{optim} function is not able to find the global optima) in which case an error message is generated. Running Principal Component analysis i.e. standardizing the covariates prior to running \code{spsample.prob} is, thus, highly recommended.\cr 
 This function can be time consuming for large grids. 
 }
@@ -51,7 +51,7 @@ proj4string(eberg_grid) <- CRS("+init=epsg:31467")
 formulaString <- ~ PRMGEO6+DEMSRT6+TWISRT6+TIRAST6
 eberg_spc <- spc(eberg_grid, formulaString)
 
-## derive inclusion probability:
+## derive occurrence probability:
 covs <- eberg_spc@predicted[1:8]
 iprob <- spsample.prob(eberg.xy, covs)
 ## Note: obvious omission areas:
@@ -75,7 +75,7 @@ eberg.xy$iprob <- over(eberg.xy, iprob[[1]])$iprob
 eberg.xy@data <- cbind(eberg.xy@data, over(eberg.xy, covs))
 fs <- as.formula(paste("SNDMHT_A ~ ", 
     paste(names(covs), collapse="+")))
-## the lower the inclusion probability, the higher the weight:
+## the lower the occurrence probability, the higher the weight:
 w <- 1/eberg.xy$iprob
 m <- lm(fs, eberg.xy, weights=w)
 summary(m)

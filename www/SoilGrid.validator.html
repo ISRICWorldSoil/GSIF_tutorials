@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: Validate spatial predictions (soil property or class)</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="R.css">
+</head><body>
+
+<table width="100%" summary="page for SoilGrid.validator {GSIF}"><tr><td>SoilGrid.validator {GSIF}</td><td align="right">R Documentation</td></tr></table>
+
+<h2>Validate spatial predictions (soil property or class)</h2>
+
+<h3>Description</h3>
+
+<p>Validate spatial predictions for soil property maps following the GSIF validation protocol.</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+SoilGrid.validator(obj, domain, ground.truth, N.sample=2000, 
+   xml.file, z.lim, md.type="INSPIRE", test.URL=FALSE)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>obj</code></td>
+<td>
+<p><code>"GDALobj"</code> object i.e. a pointer to a spatial layer of interest (single slice)</p>
+</td></tr>
+<tr valign="top"><td><code>domain</code></td>
+<td>
+<p><code>"GDALobj"</code> object i.e. a pointer to a spatial layer contain soil mask</p>
+</td></tr>
+<tr valign="top"><td><code>ground.truth</code></td>
+<td>
+<p><code>"SpatialPointsDataFrame"</code>; contains values of the target variable at exactly the same depth / same support size</p>
+</td></tr>  
+<tr valign="top"><td><code>N.sample</code></td>
+<td>
+<p>integer; random sampling size</p>
+</td></tr>  
+<tr valign="top"><td><code>xml.file</code></td>
+<td>
+<p>character; metadata file (should have the same name as <code>obj</code> file)</p>
+</td></tr>    
+<tr valign="top"><td><code>z.lim</code></td>
+<td>
+<p>numeric; upper and lower physical limits</p>
+</td></tr>
+<tr valign="top"><td><code>md.type</code></td>
+<td>
+<p>character; metadata standard (currently only <a href="http://inspire.ec.europa.eu/">INSPIRE</a>)</p>
+</td></tr>    
+<tr valign="top"><td><code>test.URL</code></td>
+<td>
+<p>logical; specifies whether to validate XML schema / test download times and proj4 string</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>Returns a data frame with validation results.</p>
+
+
+<h3>Note</h3>
+
+<p>One SoilGrid layer (2D slice) basically contains predictions on a regular grid for a specific soil depth (at either point or block support). The <code>ground.truth</code> data must refer to the exactly the same depth and the same support size and should ideally be collected using some objective spatial sampling (see e.g. <code>sp::spsample</code>). To estimate values of soil properties at standard depths, consider using <code><a href="mpspline.html">mpspline</a></code> function.<br>
+Increasing <code>N.sample</code> can lead to more precise results at the cost of higher computing time.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Tomislav Hengl </p>
+
+
+<h3>See Also</h3>
+
+<p><code>plotKML::spMetadata</code> </p>
+
+<hr><div align="center">[Package <em>GSIF</em> version 0.4-5 <a href="00Index.html">Index</a>]</div>
+</body></html>
