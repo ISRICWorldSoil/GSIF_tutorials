@@ -9,7 +9,7 @@ SoilGrid.validator <- function(obj, domain, ground.truth, N.sample=2000, xml.fil
   if(!class(obj)=="GDALobj"|!class(domain)=="GDALobj"){
     stop("Objects of class \"GDALobj\" required.")
   }
-  if(obj[["bands"]]>1){ warning("File contains multiple layers. Only first layer will be used.") }
+  if(obj[["bands"]]>1){ stop("File contains multiple layers. Layer with a single band required.") }
   if(!missing(ground.truth)){
     if(!class(ground.truth)=="SpatialPointsDataFrame"){
       stop("'ground.truth' object of class \"SpatialPointsDataFrame\" required.")
@@ -17,7 +17,7 @@ SoilGrid.validator <- function(obj, domain, ground.truth, N.sample=2000, xml.fil
   }
   
   if(requireNamespace("RCurl", quietly = TRUE)&requireNamespace("Hmisc", quietly = TRUE)&requireNamespace("XML", quietly = TRUE)){
- 
+         
     GDALobj.file <- attr(obj, "file")
     domain.file <- attr(domain, "file")
     prj4_string <- attr(obj, "projection")
@@ -152,7 +152,11 @@ SoilGrid.validator <- function(obj, domain, ground.truth, N.sample=2000, xml.fil
       R_RME <- NA
     }
     if(!missing(z.lim)){
-      N_LIM <- ifelse(z.rn[1]<z.lim[1]|z.rn[2]>z.lim[2], "Predictions outside natural limits", "Predictions within limits")
+      if(is.numeric(z.lim)&length(z.lim)==2){
+        N_LIM <- ifelse(z.rn[1]<z.lim[1]|z.rn[2]>z.lim[2], "Predictions outside natural limits", "Predictions within limits")
+      } else {
+        N_LIM <- NA
+      }
     } else {
       N_LIM <- NA
     }
@@ -173,7 +177,7 @@ SoilGrid.validator <- function(obj, domain, ground.truth, N.sample=2000, xml.fil
       N_HST <- NA
     }
     
-    out <- data.frame(file.name=basename(GDALobj.file), prj4_string=N_PRJ, rows=rows, columns=columns, GDType=GDType, ll.x=ll.x, ll.y=ll.y, Z_MIN=signif(min(ov$z[NA.mask], na.rm=TRUE), 3), Z_MAX=signif(max(ov$z[NA.mask], na.rm=TRUE), 3), Z_STD=signif(sd(ov$z[NA.mask], na.rm=TRUE), 3), numeric.resolution=signif(numeric.resolution, 3), N_LIM=N_LIM, mask.size=mask.size, C_SMK=C_SMK, C_MTD=C_MTD, C_MTS=C_MTS, C_URL=C_URL, C_URD=C_URD, R_RME=R_RME, RMSE=RMSE, R_RMS=R_RMS, N_HST=N_HST, download.time=download.time)
+    out <- list(file.name=basename(GDALobj.file), prj4_string=N_PRJ, rows=rows, columns=columns, GDType=GDType, ll.x=ll.x, ll.y=ll.y, Z_MIN=signif(min(ov$z[NA.mask], na.rm=TRUE), 3), Z_MAX=signif(max(ov$z[NA.mask], na.rm=TRUE), 3), Z_STD=signif(sd(ov$z[NA.mask], na.rm=TRUE), 3), numeric.resolution=signif(numeric.resolution, 3), N_LIM=N_LIM, mask.size=mask.size, C_SMK=C_SMK, C_MTD=C_MTD, C_MTS=C_MTS, C_URL=C_URL, C_URD=C_URD, R_RME=R_RME, RMSE=RMSE, R_RMS=R_RMS, N_HST=N_HST, download.time=download.time)
     message("Finished!")
     return(out)
   }

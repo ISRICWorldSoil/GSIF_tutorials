@@ -16,7 +16,7 @@ SoilGrid.validator(obj, domain, ground.truth, N.sample=2000,
   \item{md.type}{character; metadata standard (currently \href{http://inspire.ec.europa.eu/}{INSPIRE})}    
   \item{test.URL}{logical; specifies whether to validate XML schema / test download times and proj4 string}
 }
-\value{Returns a data frame with validation results. Explanation of codes is available in the SoilGrids.org data validation protocol.}
+\value{Returns a list with validation results. Explanation of codes is available in the SoilGrids.org data validation protocol.}
 \note{One SoilGrid layer (2D slice) basically contains predictions on a regular grid for a specific soil depth (at either point or block support). The \code{ground.truth} data must refer to the exactly the same depth and the same support size and should ideally be collected using some probability spatial sampling (see e.g. \code{sp::spsample}). To estimate values of soil properties at standard depths, consider using \code{\link{mpspline}} function.\cr
 Numeric resolution is derived as estimated RMSE/2. Numeric resolution can be best specified as \code{Attribute_Measurement_Resolution} (the smallest unit increment to which an attribute value is measured). \cr
 Increasing \code{N.sample} can lead to more precise results at the cost of higher computing time.
