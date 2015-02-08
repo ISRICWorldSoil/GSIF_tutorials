@@ -164,6 +164,9 @@ SoilGrid.validator <- function(obj, domain, ground.truth, N.sample=2000, xml.fil
     ## R_RMS | Spatial overlays using independent point data sets (at least 3 study areas / subsets representing the domain of interest) do not show RMSE > 2 times higher than the original RMSE i.e. four times the numeric resolution specified (extra analysis required)?
     if(!missing(ground.truth)){
       message("Testing RMSE using ground truth data (first column) ...")
+      if(!proj4string(ground.truth)==prj4_string){
+         ground.truth <- spTransform(ground.truth, CRS(prj4_string))
+      }
       ov.cv <- data.frame(meas=ground.truth$z, pred=extract(x=ri, y=ground.truth))
       RMSE <- signif( sqrt(mean((ov.cv$meas - ov.cv$pred)^2, na.rm=TRUE)) , 3)
       R_RMS <- ifelse(RMSE>4*numeric.resolution, "RMSE exceeds 2 x declared RMSE", "RMSE within limits")
@@ -175,9 +178,10 @@ SoilGrid.validator <- function(obj, domain, ground.truth, N.sample=2000, xml.fil
       RMSE <- NA
       R_RMS <- NA
       N_HST <- NA
+      ov.cv <- NA
     }
     
-    out <- list(file.name=basename(GDALobj.file), prj4_string=N_PRJ, rows=rows, columns=columns, GDType=GDType, ll.x=ll.x, ll.y=ll.y, Z_MIN=signif(min(ov$z[NA.mask], na.rm=TRUE), 3), Z_MAX=signif(max(ov$z[NA.mask], na.rm=TRUE), 3), Z_STD=signif(sd(ov$z[NA.mask], na.rm=TRUE), 3), numeric.resolution=signif(numeric.resolution, 3), N_LIM=N_LIM, mask.size=mask.size, C_SMK=C_SMK, C_MTD=C_MTD, C_MTS=C_MTS, C_URL=C_URL, C_URD=C_URD, R_RME=R_RME, RMSE=RMSE, R_RMS=R_RMS, N_HST=N_HST, download.time=download.time)
+    out <- list(summaries=list(file.name=basename(GDALobj.file), prj4_string=N_PRJ, rows=rows, columns=columns, GDType=GDType, ll.x=ll.x, ll.y=ll.y, Z_MIN=signif(min(ov$z[NA.mask], na.rm=TRUE), 3), Z_MAX=signif(max(ov$z[NA.mask], na.rm=TRUE), 3), Z_STD=signif(sd(ov$z[NA.mask], na.rm=TRUE), 3), numeric.resolution=signif(numeric.resolution, 3), N_LIM=N_LIM, mask.size=mask.size, C_SMK=C_SMK, C_MTD=C_MTD, C_MTS=C_MTS, C_URL=C_URL, C_URD=C_URD, R_RME=R_RME, RMSE=RMSE, R_RMS=R_RMS, N_HST=N_HST, download.time=download.time), cross.val=ov.cv)
     message("Finished!")
     return(out)
   }
