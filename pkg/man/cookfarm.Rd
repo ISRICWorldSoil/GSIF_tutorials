@@ -3,10 +3,10 @@
 \encoding{latin1}
 \alias{cookfarm}
 \title{The Cook Farm data set}
-\description{The R.J. Cook Agronomy Farm (Cook Farm) is a Long-Term Agro-Ecosystem Research Site operated by Washington State University and the USDA Agricultural Research Service, located near Pullman, Washington, USA. Contains spatio-temporal (3D+T) measurements of three soil properties and a number of spatial and temporal regression covariates.}
+\description{The R.J. Cook Agronomy Farm (Cook Farm) is a Long-Term Agroecosystem Research Site operated by Washington State University, located near Pullman, Washington, USA. Contains spatio-temporal (3D+T) measurements of three soil properties and a number of spatial and temporal regression covariates.}
 \usage{data(cookfarm)}
 \format{
-The \code{cookfarm} data set contains four data frames. The \code{readings} data frame contains measurements of volumetric water content (cubic-m/cubic-m), temperature (degree C) and bulk electrical conductivity, measured at 42 locations using 5TE sensors at five standard depths (0.3, 0.6, 0.9, 1.2, 1.5 m) for the period "2011-01-01" to "2012-12-31":
+The \code{cookfarm} data set contains four data frames. The \code{readings} data frame contains measurements of volumetric water content (cubic-m/cubic-m), temperature (degree C) and bulk electrical conductivity (dS/m), measured at 42 locations using 5TE sensors at five standard depths (0.3, 0.6, 0.9, 1.2, 1.5 m) for the period "2011-01-01" to "2012-12-31":
 \describe{
   \item{\code{SOURCEID}}{factor; unique station ID}
   \item{\code{Date}}{date; observation day}
@@ -86,6 +86,11 @@ site(profs) <- ~ TAXSUSDA + Easting + Northing
 coordinates(profs) <- ~Easting + Northing
 proj4string(profs) <- CRS(cookfarm$proj4string)
 profs.geo <- as.geosamples(profs)
+
+## fit model for Bt horizon:
+m.Bt <- GSIF::fit.gstatModel(profs.geo, Bt~DEM+TWI+MUSYM+Cook_fall_ECa
+   +Cook_spr_ECa+ns(altitude, df = 4), grid10m, fit.family = binomial(logit))
+plot(m.Bt)
 
 ## fit model for soil pH:
 m.PHI <- fit.gstatModel(profs.geo, PHIHOX~DEM+TWI+MUSYM+Cook_fall_ECa

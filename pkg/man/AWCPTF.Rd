@@ -36,7 +36,7 @@ Returns a data frame with the following columns:
 \note{
 Pedotransfer coefficients (\code{PTF.coef}) developed by Hodnett and Tomasella (2002). \code{fix.values} will correct sand, silt and clay fractions so they sum up to 100, and will replace bulk density values using global minimum maximum values.
 }
-\author{ Johan Leenaars and Maria Ruiperez Gonzalez  }
+\author{ Johan Leenaars, Maria Ruiperez Gonzalez and Tomislav Hengl }
 \references{
 \itemize{
   \item Hodnett, M. G., & Tomasella, J. (2002). \href{http://dx.doi.org/10.1016/S0016-7061(02)00105-2}{Marked differences between van Genuchten soil water-retention parameters for temperate and tropical soils: a new water-retention pedo-transfer functions developed for tropical soils}. Geoderma, 108(3), 155-180.

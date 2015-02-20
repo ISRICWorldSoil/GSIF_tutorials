@@ -19,5 +19,5 @@
 \value{
 Returns a vector of effective rooting depth in cm.
 }
-\author{ Johan Leenaars and Maria Ruiperez Gonzalez  }
+\author{ Johan Leenaars, Maria Ruiperez Gonzalez and Tomislav Hengl }
 \seealso{ \code{\link{LRI}} }
