@@ -48,7 +48,6 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
   
   ## predict LM/GLM model (output is a list):
   if(any(class(object@regModel)=="glm")){
-
     ## filter the missing classes
     ## TH: this is a simplified solution!
     if(any(x <- sapply(object@regModel$model, is.factor))){
@@ -161,20 +160,8 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
   }
   
   ## generate "observed" values:
-  if(any(class(object@regModel)=="glm")){
-     observed <- SpatialPointsDataFrame(object@sp[subset.observations,], data=object@regModel$model[subset.observations,]) 
-  }
-  if(any(class(object@regModel) %in% c("randomForest", "rpart"))){
-    observed <- SpatialPointsDataFrame(object@sp[subset.observations,], data=data.frame(object@regModel$y[subset.observations])) 
-  }
-  if(any(class(object@regModel) %in% c("gls", "lme"))){
-    observed <- SpatialPointsDataFrame(object@sp[subset.observations,], data=data.frame(fitted.values(object@regModel)[subset.observations] + resid(object@regModel)[subset.observations]))
-  }
+  observed <- object@sp[subset.observations,]
   
-  ## TH: Rename the column? is this necessary?
-  ## (this assumes that the first variable on the list is always the target var)
-  names(observed@data)[1] = variable
-
   if(!is.null(vgmmodel)){
     ## check that the proj4 strings match:
     if(!proj4string(observed)==proj4string(predictionLocations)){
@@ -198,22 +185,14 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
       if(object@regModel$family$family == "Gamma"){ zmin = 0; zmax = Inf }
   }
   
+  ## get fitted values:
   if(any(class(object@regModel) %in% c("glm", "lme", "gls"))){
-  ## get fitted valus and residuals:
-    observed@data[,paste(variable, "modelFit", sep=".")] <- fitted.values(object@regModel)[subset.observations]
-    observed@data[,paste(variable, "residual", sep=".")] <- resid(object@regModel)[subset.observations]
+    observed@data[,paste(variable, "modelFit", sep=".")] <- fitted(object@regModel)[subset.observations]
   }
- 
-  if(any(class(object@regModel)=="rpart")){
-    observed@data[,paste(variable, "modelFit", sep=".")] <- predict(object@regModel)[subset.observations]
-  }
-  if(any(class(object@regModel)=="randomForest")){
-    observed@data[,paste(variable, "modelFit", sep=".")] <- object@regModel$predicted[subset.observations]
-  }
-  if(any(class(object@regModel) %in% c("rpart", "randomForest"))&!is.null(object@regModel$y)){
-    observed@data[,paste(variable, "residual", sep=".")] <- (object@regModel$y[subset.observations] - observed@data[,paste(variable, "modelFit", sep=".")])
+  if(any(class(object@regModel) %in% c("rpart", "randomForest"))){
+    observed@data[,paste(variable, "modelFit", sep=".")] <- predict(object@regModel, observed@data)
     rp[["residual.scale"]] <- sqrt(mean((observed@data[,paste(variable, "residual", sep=".")])^2, na.rm=TRUE))
-    if(is.null(rp[["residual.scale"]])){ rp[["residual.scale"]] = NA }    
+    if(is.null(rp[["residual.scale"]])){ rp[["residual.scale"]] = NA } 
   }
     
   if(!is.null(vgmmodel)){  

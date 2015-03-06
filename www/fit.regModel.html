@@ -20,7 +20,7 @@
 fit.regModel(formulaString, rmatrix, predictionDomain, 
       method = list("GLM", "rpart", "randomForest", "quantregForest", "lme")[[1]], 
       dimensions = NULL, fit.family = gaussian(), stepwise = TRUE, rvgm, 
-      GLS = FALSE, random, steps, ...)
+      GLS = FALSE, random, steps, subsample, subsample.reg, ...)
 </pre>
 
 
@@ -71,6 +71,14 @@ fit.regModel(formulaString, rmatrix, predictionDomain,
 <td>
 <p>integer; the maximum number of steps to be considered for step-wise regression; see <code>stats::step</code> for more details</p>
 </td></tr>
+<tr valign="top"><td><code>subsample</code></td>
+<td>
+<p>integer; maximum number of observations to be taken for variogram model fitting (to speed up variogram fitting)</p>
+</td></tr>
+<tr valign="top"><td><code>subsample.reg</code></td>
+<td>
+<p>integer; maximum number of observations to be taken for regression model fitting (especially important for randomForest modelling)</p>
+</td></tr>
 <tr valign="top"><td><code>...</code></td>
 <td>
 <p>other optional arguments that can be passed to <code>gstat::fit.variogram</code></p>
@@ -100,6 +108,7 @@ fit.regModel(formulaString, rmatrix, predictionDomain,
 library(sp)
 library(rpart)
 library(nlme)
+library(gstat)
 
 ## load the Meuse data set:
 demo(meuse, echo=FALSE)
@@ -112,17 +121,26 @@ m &lt;- fit.regModel(om~dist+ffreq, rmatrix=ov, meuse.grid,
     fit.family=gaussian(log), method="GLM", rvgm=NULL)
 m@regModel
 m@vgmModel
+plot(m)
 ## fit a GLM with variogram:
 m1 &lt;- fit.regModel(om~dist+ffreq, rmatrix=ov, meuse.grid, 
     fit.family=gaussian(log), method="GLM")
 m1@vgmModel
+plot(m1)
 ## fit a regression tree with variogram:
 m2 &lt;- fit.regModel(log1p(om)~dist+ffreq, rmatrix=ov, meuse.grid,
      method="rpart")
+plot(m2)
 ## fit a lme model with variogram:
 m3 &lt;- fit.regModel(log1p(om)~dist, rmatrix=ov, meuse.grid,
      method="lme", random=~1|ffreq)
+plot(m3)
+## fit a randomForest model with variogram
+## (no transformation needed!):
+m4 &lt;- fit.regModel(om~dist+ffreq, rmatrix=ov, meuse.grid,
+     method="randomForest")
+plot(m4)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.4-3 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.4-5 <a href="00Index.html">Index</a>]</div>
 </body></html>

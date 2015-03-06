@@ -13,7 +13,7 @@
     \item{\code{regModel}:}{object of class \code{"ANY"}; output of fitting a generalized linear model (GLM) or any similar regression model}
     \item{\code{svgmModel}:}{object of class \code{"data.frame"}; sample variogram with semivariances and distances}
     \item{\code{vgmModel}:}{object of class \code{"data.frame"}; the fitted gstat variogram model parameters containing variogram model, nugget, sill, range and the five anisotropy parameters}
-    \item{\code{sp}:}{object of class \code{"SpatialPoints"}; observation locations}
+    \item{\code{sp}:}{object of class \code{"SpatialPointsDataFrame"}; observation locations}
   }
 }
 \section{Methods}{

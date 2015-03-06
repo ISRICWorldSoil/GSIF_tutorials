@@ -14,22 +14,22 @@
      method = list("GLM", "rpart", "randomForest", "quantregForest")[[1]], 
      dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]],
      fit.family = gaussian(), stepwise = TRUE, vgmFun = "Exp", 
-     subsample = 5000, \dots)
+     subsample = 5000, subsample.reg = 10000, \dots)
 \S4method{fit.gstatModel}{geosamples,formula,SpatialPixelsDataFrame}(observations, formulaString, covariates, 
      method = list("GLM", "rpart", "randomForest", "quantregForest")[[1]], 
      dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]],
      fit.family = gaussian(), stepwise = TRUE, 
-     vgmFun = "Exp", subsample = 5000, \dots)
+     vgmFun = "Exp", subsample = 5000, subsample.reg = 10000, \dots)
 \S4method{fit.gstatModel}{geosamples,formula,list}(observations, formulaString, covariates, 
      method = list("GLM", "rpart", "randomForest", "quantregForest")[[1]], 
      dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]],
      fit.family = gaussian(), stepwise = TRUE, 
-     vgmFun = "Exp", subsample = 5000, \dots)
+     vgmFun = "Exp", subsample = 5000, subsample.reg = 10000, \dots)
 \S4method{fit.gstatModel}{geosamples,list,list}(observations, formulaString, covariates, 
      method = list("GLM", "rpart", "randomForest", "quantregForest")[[1]], 
      dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]],
      fit.family = gaussian(), stepwise = TRUE, 
-     vgmFun = "Exp", subsample = 5000, \dots)
+     vgmFun = "Exp", subsample = 5000, subsample.reg = 10000, \dots)
 }
 \arguments{
   \item{observations}{object of type \code{"SpatialPointsDataFrame"} or \code{"geosamples-class"}}
@@ -40,7 +40,8 @@
   \item{fit.family}{character string defyning the GLM family (for more info see \code{stats::glm})}
   \item{stepwise}{specifies whether to run step-wise regression on top of GLM to get an optimal subset of predictors}
   \item{vgmFun}{variogram function (\code{"Exp"} by default)}
-  \item{subsample}{integer; maximum number of observations to be taken for model fitting (to speed up variogram fitting)}
+  \item{subsample}{integer; maximum number of observations to be taken for variogram model fitting (to speed up variogram fitting)}
+  \item{subsample.reg}{integer; maximum number of observations to be taken for regression model fitting (currently only used for randomForest)}
   \item{\dots}{other optional arguments that can be passed to \code{glm} and/or \code{fit.variogram}}  
 }
 \details{The GLM method by default assumes that the target variable follows a normal distribution \code{fit.family = gaussian()}. Other possible families are:
@@ -103,10 +104,9 @@ omm <- fit.gstatModel(meuse, om~dist+ffreq, meuse.grid,
 ## it was succesful!
 summary(omm@regModel)
 v = omm@vgmModel; class(v) = c("variogramModel", "data.frame")
-om.sp <- SpatialPointsDataFrame(omm@sp, data = omm@regModel$model)
 \dontrun{## plot a variogram:
-vve = variogram(om~1, om.sp)
-vvres = variogram(om~dist+ffreq, om.sp)
+vve = variogram(om~1, omm@sp)
+vvres = variogram(om~dist+ffreq, omm@sp)
 plot(x=vvres$dist, y=vvres$gamma, pch=20, xlab='distance',
     cex=1.1, ylab='gamma', ylim = c(0, max(vve$gamma)))
 points(x=vve$dist, y=vve$gamma, pch="+", cex=1.1, col = "grey")
@@ -122,7 +122,7 @@ plotKML(om.rk)
 som <- fit.gstatModel(meuse, I(soil==1)~dist+ffreq, meuse.grid, 
    fit.family = binomial(logit))
 summary(som@regModel)
-som.sp <- SpatialPointsDataFrame(som@sp, data = som@regModel$model)
+som.sp <- som@sp
 som.sp$I.soil = as.numeric(som.sp@data[,1])
 \dontrun{# plot a variogram:
 v2 = som@vgmModel; class(v2) = c("variogramModel", "data.frame")

@@ -6,15 +6,28 @@
 
 
 ## Fit a GLM to spatial data:
-setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.frame", predictionDomain = "SpatialPixelsDataFrame", method = "character"), function(formulaString, rmatrix, predictionDomain, method = list("GLM", "rpart", "randomForest", "quantregForest", "lme")[[1]], dimensions = NULL, fit.family = gaussian(), stepwise = TRUE, rvgm, GLS = FALSE, random, steps = 100, ...){
+setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.frame", predictionDomain = "SpatialPixelsDataFrame", method = "character"), function(formulaString, rmatrix, predictionDomain, method = list("GLM", "rpart", "randomForest", "quantregForest", "lme")[[1]], dimensions = NULL, fit.family = gaussian(), stepwise = TRUE, rvgm, GLS = FALSE, random, steps = 100, subsample, subsample.reg, ...){                         
 
   ## parent call:
   parent_call <- as.list(substitute(list(...)))[-1]
+  
+  ## subsample regression if necessary:
+  s <- 1:nrow(rmatrix)
+  if(!missing(subsample.reg)){
+     if(nrow(rmatrix) > subsample.reg){
+       message(paste0("Subsetting regression matrix to ", subsample.reg, " observations..."))
+       s <- sample(1:nrow(rmatrix), subsample.reg)
+     }
+  }
   
   ## target variable name:
   tv <- all.vars(formulaString)[1]  
   if(!any(names(rmatrix) %in% tv)){
     stop("Target variable not found in the 'rmatrix' object.")
+  }
+  ## reserved names:
+  if(any(names(rmatrix) %in% paste(tv, "residual", sep="."))){
+    warning(paste0("Name mismatch in the rmatrix: '", tv, ".residual' already in use"))
   }
   
   ## spatial coordinates (column names):
@@ -35,15 +48,16 @@ setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.f
   if(method == "lme" | !missing(random)){
     message("Fitting a Mixel-effect linear model...")
     if(requireNamespace("nlme", quietly = TRUE)){
+      rmatrix <- rmatrix[s,]
       ## check if the random component is defined:
       if(!missing(random)){
-        rgm <- nlme::lme(formulaString, random=random, data=rmatrix, na.action=na.omit)
+        rgm <- nlme::lme(formulaString, random=random, data=rmatrix[s,], na.action=na.omit)
       } else {
-        rgm <- nlme::lme(formulaString, data=rmatrix, na.action=na.omit)
+        rgm <- nlme::lme(formulaString, data=rmatrix[s,], na.action=na.omit)
       }
       ## extract the residuals:
       if(any(names(rgm) == "na.action")){  rmatrix <- rmatrix[-rgm$na.action,] }
-      rmatrix$residual <- resid(rgm)
+      rmatrix[,paste(tv, "residual", sep=".")] <- resid(rgm)
     }
   }
   
@@ -53,10 +67,9 @@ setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.f
       if(!dimensions == "2D"){ stop("Fitting of the models using the GLS option possible with '2D' data only") }
       message("Fitting a LM using Generalized Least Squares...")
       if(requireNamespace("nlme", quietly = TRUE)){
-        rgm <- nlme::gls(formulaString, rmatrix, correlation=corExp(nugget=TRUE), na.action=na.omit)
+        rgm <- nlme::gls(formulaString, rmatrix[s,], correlation=corExp(nugget=TRUE), na.action=na.omit)
         ## extract the residuals:
-        if(any(names(rgm) == "na.action")){  rmatrix <- rmatrix[-rgm$na.action,] }
-        rmatrix$residual <- resid(rgm)
+        rmatrix[,paste(tv, "residual", sep=".")] <- rmatrix[,tv] - predict(rgm, rmatrix)
       }
     } else {
       if(all(c("family","link") %in% names(fit.family))){
@@ -67,6 +80,7 @@ setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.f
       else {  
         message("Fitting a GLM...")
       }
+      rmatrix <- rmatrix[s,]
       if(any(names(parent_call) %in% "weights")){ 
         rmatrix$weights <- eval(parent_call[['weights']])
         rgm <- glm(formulaString, data=rmatrix, family=fit.family, weights=weights)
@@ -75,12 +89,10 @@ setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.f
       }
       if(stepwise == TRUE){
         rgm <- step(rgm, trace=0, steps=steps)
-      }
-   
-      ## mask out the missing values:
-      if(any(names(rgm) == "na.action")){  rmatrix <- rmatrix[-rgm$na.action,] }
+      }      
       ## extract the response residuals: [http://stackoverflow.com/questions/2531489/understanding-glmresiduals-and-residglm] 
-        rmatrix$residual <- resid(rgm, type="response")
+      if(any(names(rgm) == "na.action")){  rmatrix <- rmatrix[-rgm$na.action,] }
+      rmatrix[,paste(tv, "residual", sep=".")] <- resid(rgm, type="response")
     }
   }
   
@@ -88,7 +100,7 @@ setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.f
     ## fit/filter the regression model:
     message("Fitting a regression tree model...")
     if(requireNamespace("rpart", quietly = TRUE)){
-      rgm <- rpart::rpart(formulaString, data=rmatrix)
+      rgm <- rpart::rpart(formulaString, data=rmatrix[s,])
       if(stepwise == TRUE){
         ## TH: "A good choice of cp for pruning is often the leftmost value for which the mean lies below the horizontal line"
         ## BK: determine row in complexity table with smallest xerror:
@@ -110,8 +122,7 @@ setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.f
         rgm <- rpart::prune(rgm, cp=cpar)
       }  
       ## extract the residuals:
-      if(any(names(rgm) == "na.action")){  rmatrix <- rmatrix[-rgm$na.action,] } 
-      rmatrix$residual <- resid(rgm)  
+      rmatrix[,paste(tv, "residual", sep=".")] <- rmatrix[,tv] - predict(rgm, rmatrix)
     }
   }
   
@@ -123,27 +134,27 @@ setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.f
       f <- stats::complete.cases(rmatrix[,all.vars(formulaString)])
       rmatrix <- rmatrix[f,]    
       if(method == "randomForest"){
-        rgm <- randomForest::randomForest(formulaString, data=rmatrix, importance=TRUE, na.action=na.omit)
+        rgm <- randomForest::randomForest(formulaString, data=rmatrix[s,], importance=TRUE, na.action=na.omit)
       } else {
         ## TH: the quantreg package developed by Nicolai Meinshausen <meinshausen@stats.ox.ac.uk> is slower but more flexible      
         if(requireNamespace("quantregForest", quietly = TRUE)){
-          rgm <- quantregForest::quantregForest(y=eval(formulaString[[2]], rmatrix), x=rmatrix[,all.vars(formulaString)[-1]])
+          rgm <- quantregForest::quantregForest(y=eval(formulaString[[2]], rmatrix[s,]), x=rmatrix[s,all.vars(formulaString)[-1]])
           attr(rgm$y, "name") <- tv
         }  
       }
       ## extract the residuals:
-      rmatrix$residual <- rgm$predicted - rgm$y
+      rmatrix[,paste(tv, "residual", sep=".")] <- rmatrix[,tv] - predict(rgm, rmatrix)
     }
   }
   
   ## TH: here we will add more regression models...
   
   ## test the normality of residuals:
-  if(length(rmatrix$residual)>4999){
+  if(length(rmatrix[,paste(tv, "residual", sep=".")])>4999){
     # subset residuals if necessary...
-    x = rmatrix$residual[runif(length(rmatrix$residual))<4000/length(rmatrix$residual)]
+    x = rmatrix[sample(1:nrow(rmatrix), 4999), paste(tv, "residual", sep=".")]
   } else {
-    x = rmatrix$residual
+    x = rmatrix[,paste(tv, "residual", sep=".")]
   }
   st = shapiro.test(x)
   if(st$p.value < 0.05|is.na(st$p.value)){
@@ -156,24 +167,27 @@ setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.f
     }
   }
 
+  if(missing(subsample)){
+    subsample <- nrow(rmatrix)
+  }
   if(missing(rvgm)&GLS==FALSE){
   ## If variogram is not defined, try to fit variogram 2D or 3D data:
     if(dimensions == "2D"){ 
       message("Fitting a 2D variogram...")
-      rvgm <- fit.vgmModel(residual ~ 1, rmatrix = rmatrix, predictionDomain = predictionDomain, dimensions = "2D") 
+      rvgm <- fit.vgmModel(as.formula(paste0(tv, ".residual ~ 1")), rmatrix = rmatrix, predictionDomain = predictionDomain, dimensions = "2D", subsample=subsample) 
     }
     if(dimensions == "3D"){ 
       message("Fitting a 3D variogram...")
-      rvgm <- fit.vgmModel(residual ~ 1, rmatrix = rmatrix, predictionDomain = predictionDomain, dimensions = "3D") 
+      rvgm <- fit.vgmModel(as.formula(paste0(tv, ".residual ~ 1")), rmatrix = rmatrix, predictionDomain = predictionDomain, dimensions = "3D", subsample=subsample) 
     }
     } else {
       ## TH: The nlme package fits a variogram, but this is difficult to translate to gstat format:
       if(missing(rvgm)&any(class(rgm)=="gls")){
-           rvgm <- fit.vgmModel(residual ~ 1, rmatrix = rmatrix, predictionDomain = predictionDomain, dimensions = "2D")
+           rvgm <- fit.vgmModel(as.formula(paste0(tv, ".residual ~ 1")), rmatrix = rmatrix, predictionDomain = predictionDomain, dimensions = "2D", subsample=subsample)
       } else { 
         ## Use a pure nugget effect if variogram is set to NULL
         if(is.null(rvgm)){
-          rvgm <- fit.vgmModel(residual ~ 1, rmatrix = rmatrix, predictionDomain = predictionDomain, dimensions = dimensions, vgmFun = "Nug")
+          rvgm <- fit.vgmModel(as.formula(paste0(tv, ".residual ~ 1")), rmatrix = rmatrix, predictionDomain = predictionDomain, dimensions = dimensions, vgmFun = "Nug", subsample=subsample)
         } else {
           xyn = attr(predictionDomain@bbox, "dimnames")[[1]]
           ## create spatial points:
@@ -181,7 +195,8 @@ setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.f
           proj4string(rmatrix) = predictionDomain@proj4string
           observations = as(rmatrix, "SpatialPoints")
           ## othewise copy the variogram submitted by the user:
-          rvgm <- list(vgm=rvgm, observations=observations, svgm=NA)
+          svgm <- gstat::variogram(formulaString, rmatrix)
+          rvgm <- list(vgm=rvgm, observations=observations, svgm=svgm)
           }
        }
   }

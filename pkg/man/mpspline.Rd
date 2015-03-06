@@ -57,14 +57,13 @@ proj4string(prof1) <- CRS("+proj=longlat +datum=WGS84")
 ORCDRC.s <- mpspline(prof1, var.name="ORCDRC")
 str(ORCDRC.s)
 
-## Example with multiple soil profiles.
+## Example with multiple soil profiles
 ## Make some fake, but reasonable profiles:
 rand.prof <- ldply(1:20, random_profile, n=c(6, 7, 8), n_prop=1, method='LPP')
 ## promote to SPC and plot
 depths(rand.prof ) <- id ~ top + bottom
 plot(rand.prof, color='p1')
 ## fit MP spline by profile
-m <- mpspline(rand.prof, 'p1')
-str(m)
+try( m <- mpspline(rand.prof, 'p1') )
 }
 \keyword{methods}
