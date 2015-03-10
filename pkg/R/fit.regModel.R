@@ -44,7 +44,8 @@ setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.f
   ## check if the method exists:
   if(length(method)>1){ stop("'method' argument contains multiple options") }
   if(!any(method %in% list("GLM", "rpart", "randomForest", "quantregForest", "lme"))){ stop(paste(method, "method not available.")) }
-    
+  
+  ## 1. REGRESSION MODEL FITTING
   if(method == "lme" | !missing(random)){
     message("Fitting a Mixel-effect linear model...")
     if(requireNamespace("nlme", quietly = TRUE)){
@@ -167,6 +168,12 @@ setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.f
     }
   }
 
+  ## 2. VARIOGRAM FITTING
+  if(any(names(parent_call) %in% "cutoff")){
+     cutoff <- eval(parent_call[["cutoff"]])
+  } else {
+     cutoff <- NULL
+  }
   if(missing(subsample)){
     subsample <- nrow(rmatrix)
   }
@@ -174,16 +181,16 @@ setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.f
   ## If variogram is not defined, try to fit variogram 2D or 3D data:
     if(dimensions == "2D"){ 
       message("Fitting a 2D variogram...")
-      rvgm <- fit.vgmModel(as.formula(paste0(tv, ".residual ~ 1")), rmatrix = rmatrix, predictionDomain = predictionDomain, dimensions = "2D", subsample=subsample) 
+      rvgm <- fit.vgmModel(as.formula(paste0(tv, ".residual ~ 1")), rmatrix = rmatrix, predictionDomain = predictionDomain, dimensions = "2D", subsample=subsample, cutoff=cutoff) 
     }
     if(dimensions == "3D"){ 
       message("Fitting a 3D variogram...")
-      rvgm <- fit.vgmModel(as.formula(paste0(tv, ".residual ~ 1")), rmatrix = rmatrix, predictionDomain = predictionDomain, dimensions = "3D", subsample=subsample) 
+      rvgm <- fit.vgmModel(as.formula(paste0(tv, ".residual ~ 1")), rmatrix = rmatrix, predictionDomain = predictionDomain, dimensions = "3D", subsample=subsample, cutoff=cutoff) 
     }
     } else {
       ## TH: The nlme package fits a variogram, but this is difficult to translate to gstat format:
       if(missing(rvgm)&any(class(rgm)=="gls")){
-           rvgm <- fit.vgmModel(as.formula(paste0(tv, ".residual ~ 1")), rmatrix = rmatrix, predictionDomain = predictionDomain, dimensions = "2D", subsample=subsample)
+           rvgm <- fit.vgmModel(as.formula(paste0(tv, ".residual ~ 1")), rmatrix = rmatrix, predictionDomain = predictionDomain, dimensions = "2D", subsample=subsample, cutoff=cutoff)
       } else { 
         ## Use a pure nugget effect if variogram is set to NULL
         if(is.null(rvgm)){

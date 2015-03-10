@@ -7,7 +7,7 @@
 \S4method{fit.vgmModel}{formula,data.frame,SpatialPixelsDataFrame}(formulaString,
       rmatrix, predictionDomain, vgmFun = "Exp", 
       dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]],
-      anis = NULL, subsample = nrow(rmatrix), ivgm, cutoff,
+      anis = NULL, subsample = nrow(rmatrix), ivgm, cutoff = NULL,
       width, cressie = FALSE, \dots)
 }
 \arguments{

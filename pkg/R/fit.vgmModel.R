@@ -6,7 +6,7 @@
 
 
 ## fit variogram to a 2D or 3D point object:
-setMethod("fit.vgmModel", signature(formulaString = "formula", rmatrix = "data.frame", predictionDomain = "SpatialPixelsDataFrame"), function(formulaString, rmatrix, predictionDomain, vgmFun = "Exp", dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]], anis = NULL, subsample = nrow(rmatrix), ivgm, cutoff, width = cutoff/15, cressie = FALSE, ...){
+setMethod("fit.vgmModel", signature(formulaString = "formula", rmatrix = "data.frame", predictionDomain = "SpatialPixelsDataFrame"), function(formulaString, rmatrix, predictionDomain, vgmFun = "Exp", dimensions = list("3D", "2D", "2D+T", "3D+T")[[1]], anis = NULL, subsample = nrow(rmatrix), ivgm, cutoff = NULL, width = cutoff/15, cressie = FALSE, ...){
 
   ## check input object:
   if(is.na(proj4string(predictionDomain))){ stop("proj4 string required for argument 'predictionDomain'") }
@@ -69,7 +69,7 @@ setMethod("fit.vgmModel", signature(formulaString = "formula", rmatrix = "data.f
         ## estimate anisotropy parameters:
         anis = c(0, 0, 0, 1, a2)
       }
-      if(missing(cutoff)) { cutoff = Range }
+      if(missing(cutoff)|is.null(cutoff)) { cutoff = Range }
     }
     
     if(dimensions == "2D"){
@@ -104,7 +104,7 @@ setMethod("fit.vgmModel", signature(formulaString = "formula", rmatrix = "data.f
       anis = c(0, 1)
       
       ## BK: if not given, determine sample variogram cutoff value based on gstat default
-      if(missing(cutoff)) {
+      if(missing(cutoff)|is.null(cutoff)) {
         dbbox <- round((sqrt((rmatrix@bbox[1,2]-rmatrix@bbox[1,1])**2+(rmatrix@bbox[2,2]-rmatrix@bbox[2,1])**2))/3,0)
         cutoff = dbbox
       }

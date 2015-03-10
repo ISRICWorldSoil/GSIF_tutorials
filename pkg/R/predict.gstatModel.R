@@ -143,14 +143,12 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
           message("Sorting and subsetting observations to fit the prediction domain in 3D...")
           closest.points <- abs(object@sp@coords[,3] - mean(predictionLocations@bbox[3,]))
           sel3D <- which(ave(closest.points, IDs, FUN=rank)==1)
-          subset.observations = object@sp@coords[sel3D,1] > predictionLocations@bbox[1,1]-extend*R & object@sp@coords[sel3D,1] < predictionLocations@bbox[1,2]+extend*R & object@sp@coords[sel3D,2] > predictionLocations@bbox[2,1]-extend*R & object@sp@coords[sel3D,2] < predictionLocations@bbox[2,2]+extend*R
+          subset.observations <- object@sp@coords[sel3D,1] > predictionLocations@bbox[1,1]-extend*R & object@sp@coords[sel3D,1] < predictionLocations@bbox[1,2]+extend*R & object@sp@coords[sel3D,2] > predictionLocations@bbox[2,1]-extend*R & object@sp@coords[sel3D,2] < predictionLocations@bbox[2,2]+extend*R
         } else {
           message("Subsetting observations to fit the prediction domain in 3D...")
           subset.observations = object@sp@coords[,1] > predictionLocations@bbox[1,1]-extend*R & object@sp@coords[,1] < predictionLocations@bbox[1,2]+extend*R & object@sp@coords[,2] > predictionLocations@bbox[2,1]-extend*R & object@sp@coords[,2] < predictionLocations@bbox[2,2]+extend*R & object@sp@coords[,3] > predictionLocations@bbox[3,1]-extend*Rv & object@sp@coords[,3] < predictionLocations@bbox[3,2]+extend*Rv
         }
       }
-    } else {
-      subset.observations = !is.na(object@sp@coords[,1])
     }
     
     if(!sum(subset.observations)>nmin){
@@ -234,7 +232,7 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
     
       if(nsim==0){
         message("Generating predictions using the trend model (KED method)...")
-        rk <- gstat::krige(formula=formString, locations=observed, newdata=predictionLocations, model = vgmmodel, beta = betas, nmin = nmin, nmax = nmax, debug.level = debug.level, block = block, ...)
+        rk <- gstat::krige(formula=formString, locations=observed, newdata=predictionLocations, model=vgmmodel, beta=betas, nmin=nmin, nmax=nmax, debug.level=debug.level, block=block, ...)
         
         ## mask extrapolation areas:
         rk@data[,paste(variable, "svar", sep=".")] <- rk$var1.var / var(observed@data[,variable], na.rm=TRUE)
@@ -266,7 +264,7 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
       }
       else {
         message(paste("Generating", nsim, "conditional simulations using the trend model (KED method)..."))
-        rk <- gstat::krige(formString, locations=observed, newdata=predictionLocations, model = vgmmodel, nmin = nmin, nmax = nmax, debug.level = debug.level, nsim = nsim, block = block, ...)
+        rk <- gstat::krige(formString, locations=observed, newdata=predictionLocations, model=vgmmodel, nmin=nmin, nmax=nmax, debug.level=debug.level, nsim=nsim, block=block, ...)
         ## mask out values outside physical limits:
         for(i in 1:nsim){
           rk@data[,i] <- ifelse(rk@data[,i] > zmax, zmax, ifelse(rk@data[,i] < zmin, zmin, rk@data[,i]))
