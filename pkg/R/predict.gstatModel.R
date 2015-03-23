@@ -91,7 +91,7 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
   if(any(class(object@regModel)=="quantregForest")){
     if(requireNamespace("quantregForest", quietly = TRUE)){
       covs = attr(object@regModel$forest$ncat, "names")
-      rp <- list(predict(object@regModel, predictionLocations@data[,covs], quantile=.5)) 
+      rp <- list(predict(object@regModel, data.frame(predictionLocations)[,covs], quantile=.5)) 
       variable = attr(object@regModel$y, "name")[1]
     } else {
       rp <- NULL
@@ -100,7 +100,7 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
   }
   if(any(class(object@regModel)=="randomForest")&!any(class(object@regModel)=="quantregForest")){
     if(requireNamespace("randomForest", quietly = TRUE)){
-      rp <- list(predict(object@regModel, predictionLocations, type="response"))
+      rp <- list(predict(object@regModel, data.frame(predictionLocations), type="response"))
       variable = all.vars(attr(object@regModel$terms, "variables"))[1]
     } else {
       rp <- NULL
@@ -188,7 +188,7 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
     observed@data[,paste(variable, "modelFit", sep=".")] <- fitted(object@regModel)[subset.observations]
   }
   if(any(class(object@regModel) %in% c("rpart", "randomForest"))){
-    observed@data[,paste(variable, "modelFit", sep=".")] <- predict(object@regModel, observed@data)
+    observed@data[,paste(variable, "modelFit", sep=".")] <- predict(object@regModel, data.frame(observed))
     rp[["residual.scale"]] <- sqrt(mean((observed@data[,paste(variable, "residual", sep=".")])^2, na.rm=TRUE))
     if(is.null(rp[["residual.scale"]])){ rp[["residual.scale"]] = NA } 
   }
