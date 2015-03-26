@@ -1,6 +1,6 @@
 # Purpose        : Fit a 2D or 3D regression model;
 # Maintainer     : Tomislav Hengl (tom.hengl@wur.nl)
-# Contributions  : Bas Kempen (bas.kempen@wur.nl) and Gerard B.M. Heuvelink (gerard.heuvelink@wur.nl) and Mario Antonio Guevara; 
+# Contributions  : Bas Kempen (bas.kempen@wur.nl) and Gerard B.M. Heuvelink (gerard.heuvelink@wur.nl) and Mario Antonio Guevara (mguevara@udel.edu); 
 # Dev Status     : Alpha
 # Note           : Regression families considered spatial GLMs, CART, random forest, linear mixed-effect models ...;
 
