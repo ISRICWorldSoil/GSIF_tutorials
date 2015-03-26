@@ -135,7 +135,12 @@ setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.f
       f <- stats::complete.cases(rmatrix[,all.vars(formulaString)])
       rmatrix <- rmatrix[f,]    
       if(method == "randomForest"){
-        rgm <- randomForest::randomForest(formulaString, data=rmatrix[s,], importance=TRUE, na.action=na.omit)
+        if(any(names(parent_call) %in% "mtry")){
+          mtry <- eval(parent_call[["mtry"]])
+          rgm <- randomForest::randomForest(formulaString, data=rmatrix[s,], importance=TRUE, na.action=na.omit, mtry=mtry)
+        } else {
+          rgm <- randomForest::randomForest(formulaString, data=rmatrix[s,], importance=TRUE, na.action=na.omit)
+        }
       } else {
         ## TH: the quantreg package developed by Nicolai Meinshausen <meinshausen@stats.ox.ac.uk> is slower but more flexible      
         if(requireNamespace("quantregForest", quietly = TRUE)){

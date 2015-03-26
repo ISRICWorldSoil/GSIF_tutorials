@@ -26,7 +26,7 @@
   \item{\dots}{other optional arguments that can be passed to \code{gstat::fit.variogram}}
 }
 \details{Produces an object of class \code{"gstatModel"} that contains: (1) fitted regression model (e.g. a GLM, cubist model, or randomForest model), (2) fitted variogram, and (c) object of class \code{"SpatialPoints"} with observation locations. To combine overlay and model fitting operations, consider using \code{\link{fit.gstatModel}}.}
-\author{ Tomislav Hengl, Gerard B.M. Heuvelink and Bas Kempen }
+\author{ Tomislav Hengl, Mario Antonio Guevara Santamaria and Bas Kempen}
 \seealso{ \code{\link{fit.gstatModel}}, \code{stats::glm}, \code{gstat::fit.variogram}, \code{randomForest::randomForest} }
 \examples{
 ## Meuse data:
@@ -61,8 +61,12 @@ m3 <- fit.regModel(log1p(om)~dist, rmatrix=ov, meuse.grid,
      method="lme", random=~1|ffreq)
 plot(m3)
 ## fit a randomForest model with variogram
-## (no transformation needed!):
+## NOTE: no transformation required
 m4 <- fit.regModel(om~dist+ffreq, rmatrix=ov, meuse.grid,
      method="randomForest")
 plot(m4)
+## RF is very sensitive to the 'mtry' argument:
+m4b <- fit.regModel(om~dist+ffreq, rmatrix=ov, meuse.grid,
+     method="randomForest", mtry=2)
+plot(m4b)
 }

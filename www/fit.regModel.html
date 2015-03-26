@@ -93,7 +93,7 @@ fit.regModel(formulaString, rmatrix, predictionDomain,
 
 <h3>Author(s)</h3>
 
-<p> Tomislav Hengl, Gerard B.M. Heuvelink and Bas Kempen </p>
+<p> Tomislav Hengl, Mario Antonio Guevara Santamaria and Bas Kempen</p>
 
 
 <h3>See Also</h3>
@@ -136,10 +136,14 @@ m3 &lt;- fit.regModel(log1p(om)~dist, rmatrix=ov, meuse.grid,
      method="lme", random=~1|ffreq)
 plot(m3)
 ## fit a randomForest model with variogram
-## (no transformation needed!):
+## NOTE: no transformation required
 m4 &lt;- fit.regModel(om~dist+ffreq, rmatrix=ov, meuse.grid,
      method="randomForest")
 plot(m4)
+## RF is very sensitive to the 'mtry' argument:
+m4b &lt;- fit.regModel(om~dist+ffreq, rmatrix=ov, meuse.grid,
+     method="randomForest", mtry=2)
+plot(m4b)
 </pre>
 
 <hr><div align="center">[Package <em>GSIF</em> version 0.4-5 <a href="00Index.html">Index</a>]</div>
