@@ -43,7 +43,7 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
  
   ## target variable name: 
   if(any(class(object@regModel)=="glm"|class(object@regModel)=="lme"|class(object@regModel)=="gls")){
-    variable = all.vars(formula(object@regModel))[1]
+    variable <- all.vars(formula(object@regModel))[1]
   }
   
   ## predict LM/GLM model (output is a list):
@@ -81,18 +81,23 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
   }
   
   if(any(class(object@regModel)=="rpart")){
+    covs <- all.vars(attr(object@regModel$terms, "variables"))[-1]
     if(requireNamespace("rpart", quietly = TRUE)){
       rp <- list(predict(object@regModel, predictionLocations))
-      variable = all.vars(attr(object@regModel$terms, "variables"))[1]
+      variable <- all.vars(attr(object@regModel$terms, "variables"))[1]
     } else {
       rp <- NULL
     }
   }
+  if(any(class(object@regModel)=="randomForest")){
+    covs <- attr(object@regModel$forest$ncat, "names")
+  }
   if(any(class(object@regModel)=="quantregForest")){
     if(requireNamespace("quantregForest", quietly = TRUE)){
-      covs = attr(object@regModel$forest$ncat, "names")
-      rp <- list(predict(object@regModel, data.frame(predictionLocations)[,covs], quantile=.5)) 
-      variable = attr(object@regModel$y, "name")[1]
+      ## select complete observations only:
+      f <- which(stats::complete.cases(predictionLocations@data[,covs]))
+      rp <- list(predict(object@regModel, data.frame(predictionLocations)[f,covs], quantiles=.5)) 
+      variable <- attr(object@regModel$y, "name")[1]
     } else {
       rp <- NULL
       variable <- NA
@@ -100,8 +105,8 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
   }
   if(any(class(object@regModel)=="randomForest")&!any(class(object@regModel)=="quantregForest")){
     if(requireNamespace("randomForest", quietly = TRUE)){
-      rp <- list(predict(object@regModel, data.frame(predictionLocations), type="response"))
-      variable = all.vars(attr(object@regModel$terms, "variables"))[1]
+      rp <- list(predict(object@regModel, data.frame(predictionLocations)[,covs], type="response"))
+      variable <- all.vars(attr(object@regModel$terms, "variables"))[1]
     } else {
       rp <- NULL
       variable <- NA
@@ -124,9 +129,9 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
   if(!is.null(vgmmodel)){
     if(missing(subset.observations)){
       if(class(predictionLocations)=="SpatialPixelsDataFrame"){
-        R = sqrt(areaSpatialGrid(predictionLocations))/3
+        R <- sqrt(areaSpatialGrid(predictionLocations))/3
       } else {
-        R = sqrt(diff(predictionLocations@bbox[1,])*diff(predictionLocations@bbox[2,]))/3
+        R <- sqrt(diff(predictionLocations@bbox[1,])*diff(predictionLocations@bbox[2,]))/3
       }
       ## 2D:
       if(length(attr(predictionLocations@bbox, "dimnames")[[1]])==2){
@@ -134,7 +139,7 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
         subset.observations = object@sp@coords[,1] > predictionLocations@bbox[1,1]-extend*R & object@sp@coords[,1] < predictionLocations@bbox[1,2]+extend*R & object@sp@coords[,2] > predictionLocations@bbox[2,1]-extend*R & object@sp@coords[,2] < predictionLocations@bbox[2,2]+extend*R
       } else {
         ## 3D:
-        Rv = sd(object@sp@coords[,3])/3
+        Rv <- sd(object@sp@coords[,3])/3
         ## remove spatial duplicates (points above each other)
         ## TH: this would lead to artifacts in kriging, the same way spatial duplicates do...
         IDs <- as.factor(paste(object@sp@coords[,1], object@sp@coords[,2], sep="_"))
@@ -146,7 +151,7 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
           subset.observations <- object@sp@coords[sel3D,1] > predictionLocations@bbox[1,1]-extend*R & object@sp@coords[sel3D,1] < predictionLocations@bbox[1,2]+extend*R & object@sp@coords[sel3D,2] > predictionLocations@bbox[2,1]-extend*R & object@sp@coords[sel3D,2] < predictionLocations@bbox[2,2]+extend*R
         } else {
           message("Subsetting observations to fit the prediction domain in 3D...")
-          subset.observations = object@sp@coords[,1] > predictionLocations@bbox[1,1]-extend*R & object@sp@coords[,1] < predictionLocations@bbox[1,2]+extend*R & object@sp@coords[,2] > predictionLocations@bbox[2,1]-extend*R & object@sp@coords[,2] < predictionLocations@bbox[2,2]+extend*R & object@sp@coords[,3] > predictionLocations@bbox[3,1]-extend*Rv & object@sp@coords[,3] < predictionLocations@bbox[3,2]+extend*Rv
+          subset.observations <- object@sp@coords[,1] > predictionLocations@bbox[1,1]-extend*R & object@sp@coords[,1] < predictionLocations@bbox[1,2]+extend*R & object@sp@coords[,2] > predictionLocations@bbox[2,1]-extend*R & object@sp@coords[,2] < predictionLocations@bbox[2,2]+extend*R & object@sp@coords[,3] > predictionLocations@bbox[3,1]-extend*Rv & object@sp@coords[,3] < predictionLocations@bbox[3,2]+extend*Rv
         }
       }
     }
@@ -188,9 +193,14 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
     observed@data[,paste(variable, "modelFit", sep=".")] <- fitted(object@regModel)[subset.observations]
   }
   if(any(class(object@regModel) %in% c("rpart", "randomForest"))){
-    observed@data[,paste(variable, "modelFit", sep=".")] <- predict(object@regModel, data.frame(observed))
+    if(any(class(object@regModel)=="quantregForest")){
+      f0 <- which(stats::complete.cases(observed@data[,covs]))
+      observed@data[f0,paste(variable, "modelFit", sep=".")] <- predict(object@regModel, newdata=data.frame(observed)[f0,covs], quantiles=.5)  
+    } else {
+      observed@data[,paste(variable, "modelFit", sep=".")] <- predict(object@regModel, newdata=data.frame(observed),  na.action = na.pass)
+    }
     rp[["residual.scale"]] <- sqrt(mean((observed@data[,paste(variable, "residual", sep=".")])^2, na.rm=TRUE))
-    if(is.null(rp[["residual.scale"]])){ rp[["residual.scale"]] = NA } 
+    if(is.null(rp[["residual.scale"]])){ rp[["residual.scale"]] <- NA } 
   }
     
   if(!is.null(vgmmodel)){  
@@ -288,9 +298,9 @@ predict.gstatModel <- function(object, predictionLocations, nmin = 10, nmax = 30
             ## TH: Prediction error for randomForest
             message("Prediction error for 'randomForest' model estimated using the 'quantreg' package.")
             if(requireNamespace("quantregForest", quietly = TRUE)){
-              var.rf <- predict(object@regModel, predictionLocations@data[,covs], quantiles=c((1-.682)/2, 1-(1-.682)/2))
+              var.rf <- predict(object@regModel, predictionLocations@data[f,covs], quantiles=c((1-.682)/2, 1-(1-.682)/2))
               ## TH: this formula assumes that the errors follow a normal distribution! [https://en.wikipedia.org/wiki/File:Standard_deviation_diagram.svg]
-              predictionLocations@data[,"fit.var"] <- ((var.rf[,1] - var.rf[,2])/2)^2
+              predictionLocations@data[f,"fit.var"] <- ((var.rf[,1] - var.rf[,2])/2)^2
             }
           } else {
             predictionLocations@data[,"fit.var"] <- 0

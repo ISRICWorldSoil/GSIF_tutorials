@@ -168,8 +168,12 @@ setMethod("fit.gstatModel", signature(observations = "geosamples", formulaString
     if(any(class(x@regModel) == "lm")){
       plot(y=fitted(x@regModel), x=x@regModel$y, pch=19, col="black", xlab='observed', ylab='predicted', main='Goodness of fit', asp=1, xlim=range(x@regModel$y), ylim=range(x@regModel$y), ...)
     }
-    if(any(class(x@regModel)=="quantregForest")|any(class(x@regModel)=="randomForest")|any(class(x@regModel)=="rpart")){
-      plot(y=predict(x@regModel), x=x@regModel$y, pch=19, col="black", xlab='observed', ylab='predicted', main='Goodness of fit', asp=1, xlim=range(x@regModel$y), ylim=range(x@regModel$y), ...)
+    if(class(x@regModel)[1]=="quantregForest"){
+      plot(y=predict(x@regModel, quantiles=.5), x=x@regModel$y, pch=19, col="black", xlab='observed', ylab='predicted', main='Goodness of fit', asp=1, xlim=range(x@regModel$y), ylim=range(x@regModel$y), ...)
+    } else {
+      if(any(class(x@regModel)=="randomForest")|any(class(x@regModel)=="rpart")){
+        plot(y=predict(x@regModel), x=x@regModel$y, pch=19, col="black", xlab='observed', ylab='predicted', main='Goodness of fit', asp=1, xlim=range(x@regModel$y), ylim=range(x@regModel$y), ...)
+      }
     }
   } else {   
     pred <- fitted(x@regModel)

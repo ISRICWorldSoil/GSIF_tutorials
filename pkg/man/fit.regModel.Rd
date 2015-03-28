@@ -34,6 +34,8 @@ library(sp)
 library(rpart)
 library(nlme)
 library(gstat)
+library(randomForest)
+library(quantregForest)
 
 ## load the Meuse data set:
 demo(meuse, echo=FALSE)
@@ -69,4 +71,8 @@ plot(m4)
 m4b <- fit.regModel(om~dist+ffreq, rmatrix=ov, meuse.grid,
      method="randomForest", mtry=2)
 plot(m4b)
+## RF with uncertainty (quantregForest package)
+m5 <- fit.regModel(om~dist+ffreq, rmatrix=ov, meuse.grid,
+     method="quantregForest")
+plot(m5)
 }

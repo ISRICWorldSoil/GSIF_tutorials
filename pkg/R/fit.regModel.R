@@ -11,15 +11,6 @@ setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.f
   ## parent call:
   parent_call <- as.list(substitute(list(...)))[-1]
   
-  ## subsample regression if necessary:
-  s <- 1:nrow(rmatrix)
-  if(!missing(subsample.reg)){
-     if(nrow(rmatrix) > subsample.reg){
-       message(paste0("Subsetting regression matrix to ", subsample.reg, " observations..."))
-       s <- sample(1:nrow(rmatrix), subsample.reg)
-     }
-  }
-  
   ## target variable name:
   tv <- all.vars(formulaString)[1]  
   if(!any(names(rmatrix) %in% tv)){
@@ -45,16 +36,26 @@ setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.f
   if(length(method)>1){ stop("'method' argument contains multiple options") }
   if(!any(method %in% list("GLM", "rpart", "randomForest", "quantregForest", "lme"))){ stop(paste(method, "method not available.")) }
   
+  ## subsample regression if necessary:
+  s <- 1:nrow(rmatrix)
+  if(!missing(subsample.reg)){
+     if(nrow(rmatrix) > subsample.reg){
+       message(paste0("Subsetting regression matrix to ", subsample.reg, " observations..."))
+       s <- sample(1:nrow(rmatrix), subsample.reg)
+     }
+  }
+  rmatrix.s <- rmatrix[s,]
+   
   ## 1. REGRESSION MODEL FITTING
   if(method == "lme" | !missing(random)){
     message("Fitting a Mixel-effect linear model...")
     if(requireNamespace("nlme", quietly = TRUE)){
-      rmatrix <- rmatrix[s,]
+      if(!missing(subsample.reg)){ message("Ignoring 'subsample.reg' argument...") }
       ## check if the random component is defined:
       if(!missing(random)){
-        rgm <- nlme::lme(formulaString, random=random, data=rmatrix[s,], na.action=na.omit)
+        rgm <- nlme::lme(formulaString, random=random, data=rmatrix, na.action=na.omit)
       } else {
-        rgm <- nlme::lme(formulaString, data=rmatrix[s,], na.action=na.omit)
+        rgm <- nlme::lme(formulaString, data=rmatrix, na.action=na.omit)
       }
       ## extract the residuals:
       if(any(names(rgm) == "na.action")){  rmatrix <- rmatrix[-rgm$na.action,] }
@@ -68,20 +69,19 @@ setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.f
       if(!dimensions == "2D"){ stop("Fitting of the models using the GLS option possible with '2D' data only") }
       message("Fitting a LM using Generalized Least Squares...")
       if(requireNamespace("nlme", quietly = TRUE)){
-        rgm <- nlme::gls(formulaString, rmatrix[s,], correlation=corExp(nugget=TRUE), na.action=na.omit)
+        rgm <- nlme::gls(formulaString, rmatrix.s, correlation=corExp(nugget=TRUE), na.action=na.omit)
         ## extract the residuals:
         rmatrix[,paste(tv, "residual", sep=".")] <- rmatrix[,tv] - predict(rgm, rmatrix)
       }
     } else {
+      if(!missing(subsample.reg)){ message("Ignoring 'subsample.reg' argument...") }
       if(all(c("family","link") %in% names(fit.family))){
         if(fit.family$family=="gaussian"&fit.family$link=="identity"){
           message("Fitting a linear model...")
         } 
-      }
-      else {  
+      } else {  
         message("Fitting a GLM...")
       }
-      rmatrix <- rmatrix[s,]
       if(any(names(parent_call) %in% "weights")){ 
         rmatrix$weights <- eval(parent_call[['weights']])
         rgm <- glm(formulaString, data=rmatrix, family=fit.family, weights=weights)
@@ -91,9 +91,9 @@ setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.f
       if(stepwise == TRUE){
         rgm <- step(rgm, trace=0, steps=steps)
       }      
-      ## extract the response residuals: [http://stackoverflow.com/questions/2531489/understanding-glmresiduals-and-residglm] 
+      ## extract the response residuals: [http://stackoverflow.com/questions/2531489/understanding-glmresiduals-and-residglm]
       if(any(names(rgm) == "na.action")){  rmatrix <- rmatrix[-rgm$na.action,] }
-      rmatrix[,paste(tv, "residual", sep=".")] <- resid(rgm, type="response")
+      rmatrix[,paste(tv, "residual", sep=".")] <- resid(rgm, type="response") 
     }
   }
   
@@ -101,7 +101,7 @@ setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.f
     ## fit/filter the regression model:
     message("Fitting a regression tree model...")
     if(requireNamespace("rpart", quietly = TRUE)){
-      rgm <- rpart::rpart(formulaString, data=rmatrix[s,])
+      rgm <- rpart::rpart(formulaString, data=rmatrix.s)
       if(stepwise == TRUE){
         ## TH: "A good choice of cp for pruning is often the leftmost value for which the mean lies below the horizontal line"
         ## BK: determine row in complexity table with smallest xerror:
@@ -122,8 +122,6 @@ setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.f
         message(paste("Estimated Complexity Parameter (for prunning):", signif(cpar, 4)))
         rgm <- rpart::prune(rgm, cp=cpar)
       }  
-      ## extract the residuals:
-      rmatrix[,paste(tv, "residual", sep=".")] <- rmatrix[,tv] - predict(rgm, rmatrix)
     }
   }
   
@@ -132,25 +130,33 @@ setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.f
       ## fit/filter the regression model:
       message("Fitting a randomForest model...")
       ## NA's not permitted and need to be filtered out:
-      f <- stats::complete.cases(rmatrix[,all.vars(formulaString)])
-      rmatrix <- rmatrix[f,]    
+      f <- stats::complete.cases(rmatrix.s[,all.vars(formulaString)])
+      rmatrix.s <- rmatrix.s[f,]    
       if(method == "randomForest"){
         if(any(names(parent_call) %in% "mtry")){
           mtry <- eval(parent_call[["mtry"]])
-          rgm <- randomForest::randomForest(formulaString, data=rmatrix[s,], importance=TRUE, na.action=na.omit, mtry=mtry)
+          rgm <- randomForest::randomForest(formulaString, data=rmatrix.s, importance=TRUE, na.action=na.omit, mtry=mtry)
         } else {
-          rgm <- randomForest::randomForest(formulaString, data=rmatrix[s,], importance=TRUE, na.action=na.omit)
+          rgm <- randomForest::randomForest(formulaString, data=rmatrix.s, importance=TRUE, na.action=na.omit)
         }
       } else {
         ## TH: the quantreg package developed by Nicolai Meinshausen <meinshausen@stats.ox.ac.uk> is slower but more flexible      
         if(requireNamespace("quantregForest", quietly = TRUE)){
-          rgm <- quantregForest::quantregForest(y=eval(formulaString[[2]], rmatrix[s,]), x=rmatrix[s,all.vars(formulaString)[-1]])
+          rgm <- quantregForest::quantregForest(y=eval(formulaString[[2]], rmatrix.s), x=rmatrix.s[,all.vars(formulaString)[-1]])
           attr(rgm$y, "name") <- tv
         }  
       }
-      ## extract the residuals:
-      rmatrix[,paste(tv, "residual", sep=".")] <- rmatrix[,tv] - predict(rgm, rmatrix)
     }
+  }
+  
+  ## Extract residuals:
+  if(method == "quantregForest"){
+    ## breaks if there are incomplete obs:
+    f0 <- which(stats::complete.cases(rmatrix[,all.vars(formulaString)]))
+    rmatrix[f0,paste(tv, "residual", sep=".")] <- rmatrix[f0,tv] - predict(rgm, newdata=rmatrix[f0,attr(rgm$forest$ncat, "names")], quantiles=.5)
+  } 
+  if(method == "randomForest"|method == "rpart"){
+    rmatrix[,paste(tv, "residual", sep=".")] <- rmatrix[,tv] - predict(rgm, newdata=rmatrix, na.action = na.pass)
   }
   
   ## TH: here we will add more regression models...
@@ -162,7 +168,7 @@ setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.f
   } else {
     x = rmatrix[,paste(tv, "residual", sep=".")]
   }
-  st = shapiro.test(x)
+  st <- shapiro.test(x)
   if(st$p.value < 0.05|is.na(st$p.value)){
     ## try second test:
     if(requireNamespace("nortest", quietly = TRUE)){

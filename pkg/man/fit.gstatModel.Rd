@@ -73,6 +73,8 @@ library(rpart)
 library(splines)
 library(gstat)
 library(randomForest)
+library(quantregForest)
+library(plotKML)
 
 ## load the Meuse data set:
 demo(meuse, echo=FALSE)
@@ -80,6 +82,16 @@ demo(meuse, echo=FALSE)
 ## simple model:
 omm <- fit.gstatModel(meuse, om~dist+ffreq, meuse.grid,
    family = gaussian(log))
+om.rk <- predict(omm, meuse.grid)
+plot(om.rk)
+## it was succesful!
+
+## fit a GLM with a gaussian log-link:
+omm <- fit.gstatModel(meuse, om~dist+ffreq, meuse.grid, 
+   fit.family = gaussian(log))
+summary(omm@regModel)
+om.rk <- predict(omm, meuse.grid)
+plot(om.rk)
 
 ## fit a regression-tree:
 omm <- fit.gstatModel(meuse, log1p(om)~dist+ffreq, meuse.grid, 
@@ -89,46 +101,34 @@ summary(omm@regModel)
 plot(omm@regModel, uniform=TRUE)
 text(omm@regModel, use.n=TRUE, all=TRUE, cex=.8)
 omm@vgmModel    
+
 ## fit a randomForest model:
-omm <- fit.gstatModel(meuse, log1p(om)~dist+ffreq, meuse.grid, 
+omm <- fit.gstatModel(meuse, om~dist+ffreq, meuse.grid, 
    method="randomForest")
-summary(omm@regModel)
 ## plot to see how good is the fit:
 plot(omm)
 ## plot the estimated error for number of bootstrapped trees:
 plot(omm@regModel)
 omm@vgmModel
-## fit a GLM with a gaussian log-link:
-omm <- fit.gstatModel(meuse, om~dist+ffreq, meuse.grid, 
-   fit.family = gaussian(log))
-## it was succesful!
-summary(omm@regModel)
-v = omm@vgmModel; class(v) = c("variogramModel", "data.frame")
-\dontrun{## plot a variogram:
-vve = variogram(om~1, omm@sp)
-vvres = variogram(om~dist+ffreq, omm@sp)
-plot(x=vvres$dist, y=vvres$gamma, pch=20, xlab='distance',
-    cex=1.1, ylab='gamma', ylim = c(0, max(vve$gamma)))
-points(x=vve$dist, y=vve$gamma, pch="+", cex=1.1, col = "grey")
-vline <- variogramLine(v, maxdist=max(vvres$dist), n=length(vvres$dist))
-lines(x=vline$dist, y=vline$gamma)
-}
 om.rk <- predict(omm, meuse.grid)
-\dontrun{## plot the results in Google Earth:
+plot(om.rk)
+## Compare with "quantregForest" package:
+omm <- fit.gstatModel(meuse, om~dist+ffreq, meuse.grid, 
+   method="quantregForest")
+\dontrun{
+om.rk <- predict(omm, meuse.grid, nfold=0)
+plot(om.rk)
+## plot the results in Google Earth:
 plotKML(om.rk)
 }
 
 ## binary variable (0/1):
-som <- fit.gstatModel(meuse, I(soil==1)~dist+ffreq, meuse.grid, 
+meuse$soil.1 <- as.numeric(I(meuse$soil==1))
+som <- fit.gstatModel(meuse, soil.1~dist+ffreq, meuse.grid, 
    fit.family = binomial(logit))
 summary(som@regModel)
-som.sp <- som@sp
-som.sp$I.soil = as.numeric(som.sp@data[,1])
-\dontrun{# plot a variogram:
-v2 = som@vgmModel; class(v2) = c("variogramModel", "data.frame")
-plot(variogram(I.soil~dist+ffreq, som.sp), v2)
-}
 som.rk <- predict(som, meuse.grid)
+plot(som.rk)
 \dontrun{# plot the results in Google Earth:
 plotKML(som.rk)
 }
@@ -160,6 +160,7 @@ glm.formulaString = as.formula(paste("SNDMHT ~ ",
   paste(names(eberg_grid), collapse="+"), "+ ns(altitude, df=4)"))
 SNDMHT.m <- fit.gstatModel(observations=eberg.geo, glm.formulaString, 
   covariates=eberg_grid)
+plot(SNDMHT.m)
 ## problems with the variogram?
 \dontrun{## remove classes from the PRMGEO6 that are not represented in the model:
 sel = !(levels(eberg_grid$PRMGEO6) \%in\% levels(SNDMHT.m@regModel$model$PRMGEO6))
