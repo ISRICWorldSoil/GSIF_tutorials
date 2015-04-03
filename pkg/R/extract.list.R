@@ -4,11 +4,10 @@
 # Status         : pre-alpha
 # Note           : in the case multiple files follow the same pattern the values are aggregated;
 
-extract.list <- function(x, y, path=".", ID="SOURCEID", method="simple", is.pattern=FALSE, force.projection = TRUE, NAflag = "", show.progress=TRUE, ...){
+extract.list <- function(x, y, path=".", ID="SOURCEID", method="simple", is.pattern=FALSE, force.projection = TRUE, NAflag = "", show.progress=TRUE, isFactor=FALSE, ...){
   if(requireNamespace("reshape", quietly = TRUE)){
     if(path=="."){ path <- getwd() }
     if(!file.exists(path)|!file.info(path)[1,"isdir"]) { stop(paste("Directory:", path, "does not exists")) }
-    if(length(y)<2){ stop("Argument 'list' must contain at least two elements") }
     if(class(x)=="SpatialPoints"){
       x <- SpatialPointsDataFrame(x, data.frame(ID=as.factor(as.character(1:nrow(coordinates(x))))))
       names(x) <- paste(ID)
@@ -45,10 +44,10 @@ extract.list <- function(x, y, path=".", ID="SOURCEID", method="simple", is.patt
     ## look for pattern in files (e.g. Landsat scenes):
     } else {
         message(paste("Extracting values for", length(x), "points using pattern matching..."))
-        pb <- txtProgressBar(min=0, max=length(y), style=3)
+        if (show.progress) { pb <- txtProgressBar(min=0, max=length(y), style=3) }
         for(i in 1:length(y)){
           ## normalize var name:
-          vname <- gsub("[[:punct:]]", "", y[i])
+          vname <- make.names(gsub("[[:punct:]]", "", y[i]))
           ## list all files (each can have a different coordinate system):
           lst <- list.files(path=path, pattern=glob2rx(y[i]), recursive=TRUE)
           if(length(lst)>0){
@@ -72,15 +71,23 @@ extract.list <- function(x, y, path=".", ID="SOURCEID", method="simple", is.patt
             }
             ## fill-in missing pixels:
             tmp <- do.call(rbind, tmp)
-            frm <- as.formula(paste(vname, "~", ID))
-            message("Aggregating values using the ID column...")
-            ov[[i]] <- aggregate(frm, data=tmp, mean, na.rm=TRUE)
+            if(isFactor==FALSE){
+              frm <- as.formula(paste(vname, "~", ID))
+              message("Aggregating values using the ID column...")
+              ov[[i]] <- aggregate(frm, data=tmp, mean, na.rm=TRUE)
+            } else {
+              ov[[i]] <- tmp
+            }
             names(ov)[i] <- vname
           }
-          setTxtProgressBar(pb, i)
-        } 
-        close(pb)
-        ov.df <- reshape::merge_recurse(ov)
+          if (show.progress) { setTxtProgressBar(pb, i) }
+        }
+        if (show.progress) { close(pb) }
+        if(length(y)>1){
+          ov.df <- reshape::merge_recurse(ov)
+        } else {
+          ov.df <- ov[[1]]
+        }
     }
     return(ov.df)
   }
