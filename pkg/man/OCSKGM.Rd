@@ -2,7 +2,7 @@
 \alias{OCSKGM}
 \title{Soil organic carbon stock}
 \description{Derive soil organic carbon stock / storage (in kilograms per square-meter) and propagated uncertainty for a given horizon/solum depth and based on soil organic carbon concentration, horizon/solum thickness, bulk density and percentage of coarse fragments.}
-\usage{OCSKGM(ORCDRC, BLD=1682, CRFVOL=0, HSIZE, 
+\usage{OCSKGM(ORCDRC, BLD=1400, CRFVOL=0, HSIZE, 
      ORCDRC.sd=10, BLD.sd=100, CRFVOL.sd=5, se.prop=TRUE)
 }
 \arguments{

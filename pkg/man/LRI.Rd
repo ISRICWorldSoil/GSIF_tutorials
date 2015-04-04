@@ -35,6 +35,12 @@ Returns a vector with \code{TRUE} / \code{FALSE} values where \code{FALSE} indic
 Horizons need to be sorted by depth e.g. 0-5, 5-15, 15-30\dots For each soil property at least three depths are needed otherwise the function reports an error. Missing values are automatically replaced using smoothing splines.
 }
 \author{ Johan Leenaars and Maria Ruiperez Gonzalez  }
+\references{
+\itemize{
+\item Driessen, P. M., & Konijn, N. T. (1992) Land-use systems analysis. Wageningen Agricultural University.
+\item Rijsberman, F. R., & Wolman, M. G. (1985) Effect of erosion on soil productivity: an international comparison. Journal of soil and water conservation, 40(4), 349-354.
+}
+}
 \seealso{ \code{\link{AWCPTF}}, \code{\link{ERDICM}} }
 \examples{
 ## sample profile from Nigeria (ISRIC:NG0017):

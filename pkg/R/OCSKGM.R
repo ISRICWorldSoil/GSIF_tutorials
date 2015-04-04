@@ -5,7 +5,7 @@
 # Note           : Original formula available at e.g. [http://www.eoearth.org/view/article/156087/]
 
 
-OCSKGM <- function(ORCDRC, BLD=1682, CRFVOL=0, HSIZE, ORCDRC.sd=10, BLD.sd=100, CRFVOL.sd=5, se.prop=TRUE){
+OCSKGM <- function(ORCDRC, BLD=1400, CRFVOL=0, HSIZE, ORCDRC.sd=10, BLD.sd=100, CRFVOL.sd=5, se.prop=TRUE){
     if(any(ORCDRC[!is.na(ORCDRC)]<0)|any(BLD[!is.na(BLD)]<0)|any(CRFVOL[!is.na(CRFVOL)]<0)){
        warning("Negative values for 'ORCDRC', 'BLD', 'CRFVOL' found")
     }

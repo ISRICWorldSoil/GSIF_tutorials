@@ -40,7 +40,7 @@ LRI <- function(UHDICM, LHDICM, SNDPPT, SLTPPT, CLYPPT, CRFVOL, BLD, ORCDRC, ECN
     out <- rep(NA, length(UHDICM))
   } else {
     ## missing values:
-    if(missing(BLD)){ BLD <- rep(1682, length(UHDICM)) }  
+    if(missing(BLD)){ BLD <- rep(1400, length(UHDICM)) }  
     if(missing(ECN)){ ECN <- rep(0.1, length(UHDICM)) }
     if(missing(CRB)){ CRB <- rep(0, length(UHDICM)) }
     if(missing(GYP)){ GYP <- rep(0, length(UHDICM)) }

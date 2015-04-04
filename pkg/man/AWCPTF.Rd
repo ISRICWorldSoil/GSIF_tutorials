@@ -4,7 +4,7 @@
 \title{Available soil water capacity }
 \description{Derive available soil water capacity (in cubic-meter per cubic-meter) based on a Pedo-Transfer Function developed using the Africa Soil Profile Database (\href{http://dx.doi.org/10.1016/S0016-7061(02)00105-2}{Hodnett and Tomasella, 2002}; \href{http://dx.doi.org/10.1016/j.geoderma.2012.11.021}{\enc{Wösten}{Wosten} et al. 2013}).}
 \usage{AWCPTF(SNDPPT, SLTPPT, CLYPPT, ORCDRC, 
-    BLD=1682, CEC, PHIHOX, h1=-10, h2=-20, h3=-31.6, 
+    BLD=1400, CEC, PHIHOX, h1=-10, h2=-20, h3=-31.6, 
     pwp=-1585, PTF.coef, fix.values=TRUE, print.coef=TRUE)
 }
 \arguments{

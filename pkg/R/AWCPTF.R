@@ -4,7 +4,7 @@
 # Dev Status     : Stable
 # Note           : Formula available from [http://www.sciencedirect.com/science/article/pii/S001670611200417X]
 
-AWCPTF <- function(SNDPPT, SLTPPT, CLYPPT, ORCDRC, BLD=1682, CEC, PHIHOX, h1=-10, h2=-20, h3=-31.6, pwp=-1585, PTF.coef, fix.values=TRUE, print.coef=TRUE){
+AWCPTF <- function(SNDPPT, SLTPPT, CLYPPT, ORCDRC, BLD=1400, CEC, PHIHOX, h1=-10, h2=-20, h3=-31.6, pwp=-1585, PTF.coef, fix.values=TRUE, print.coef=TRUE){
  ## pedotransfer coefficients developed by Hodnett and Tomasella (2002)
  if(missing(PTF.coef)){
    PTF.coef <- data.frame(
