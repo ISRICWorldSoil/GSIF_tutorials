@@ -60,6 +60,8 @@ setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.f
       ## extract the residuals:
       if(any(names(rgm) == "na.action")){  rmatrix <- rmatrix[-rgm$na.action,] }
       rmatrix[,paste(tv, "residual", sep=".")] <- resid(rgm)
+    } else {
+      stop("Package 'nlme' not available")
     }
   }
   
@@ -72,6 +74,8 @@ setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.f
         rgm <- nlme::gls(formulaString, rmatrix.s, correlation=corExp(nugget=TRUE), na.action=na.omit)
         ## extract the residuals:
         rmatrix[,paste(tv, "residual", sep=".")] <- rmatrix[,tv] - predict(rgm, rmatrix)
+      } else {
+      stop("Package 'nlme' not available")
       }
     } else {
       if(!missing(subsample.reg)){ message("Ignoring 'subsample.reg' argument...") }
@@ -122,6 +126,8 @@ setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.f
         message(paste("Estimated Complexity Parameter (for prunning):", signif(cpar, 4)))
         rgm <- rpart::prune(rgm, cp=cpar)
       }  
+    } else {
+      stop("Package 'rpart' not available")
     }
   }
   
@@ -146,6 +152,8 @@ setMethod("fit.regModel", signature(formulaString = "formula", rmatrix = "data.f
           attr(rgm$y, "name") <- tv
         }  
       }
+    } else {
+      stop("Package 'randomForest' not available")
     }
   }
   
