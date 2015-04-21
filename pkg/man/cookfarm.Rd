@@ -2,8 +2,8 @@
 \docType{data}
 \encoding{latin1}
 \alias{cookfarm}
-\title{The Cook Farm data set}
-\description{The R.J. Cook Agronomy Farm (Cook Farm) is a Long-Term Agroecosystem Research Site operated by Washington State University, located near Pullman, Washington, USA. Contains spatio-temporal (3D+T) measurements of three soil properties and a number of spatial and temporal regression covariates.}
+\title{The Cook Agronomy Farm data set}
+\description{The R.J. Cook Agronomy Farm (\code{cookfarm}) is a Long-Term Agroecosystem Research Site operated by Washington State University, located near Pullman, Washington, USA. Contains spatio-temporal (3D+T) measurements of three soil properties and a number of spatial and temporal regression covariates.}
 \usage{data(cookfarm)}
 \format{
 The \code{cookfarm} data set contains four data frames. The \code{readings} data frame contains measurements of volumetric water content (cubic-m/cubic-m), temperature (degree C) and bulk electrical conductivity (dS/m), measured at 42 locations using 5TE sensors at five standard depths (0.3, 0.6, 0.9, 1.2, 1.5 m) for the period "2011-01-01" to "2012-12-31":
@@ -50,7 +50,7 @@ The \code{weather} data frame contains daily temperatures and rainfall from the 
 \author{Caley Gasch, Tomislav Hengl and David J. Brown}
 \references{
 \itemize{
-\item Gasch, C., Hengl, T., \enc{Gräler}{Graeler}, B., Meyer, H., Magney, T., Brown, D.J., 2015? Spatio-temporal interpolation of soil moisture, temperature, and electrical conductivity in 3D+T: the Cook Farm data set. Spatial Statistics Journal, in review. 
+\item Gasch, C., Hengl, T., \enc{Gräler}{Graeler}, B., Meyer, H., Magney, T., Brown, D.J., 2015. Spatio-temporal interpolation of soil water, temperature, and electrical conductivity in 3D+T: the Cook Agronomy Farm data set. \emph{Spatial Statistics Journal}, accepted. 
 }
 }
 \examples{
