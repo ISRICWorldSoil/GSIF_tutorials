@@ -40,13 +40,13 @@
 <li><p> All variable names must be registered in the <a href="https://www.google.com/fusiontables/DataSource?docid=1VVfBtsRijz_cRM8p5nj5hnijx6AQB9hbYzfRIZQ">Global Soil Data Registry</a>;
 </p>
 </li>
-<li><p> All variable domains must correspond to the <a href="http://books.google.nl/books?id=x0\_PVec33LgC">FAO Guidelines for soil description</a> or similar;
+<li><p> All variable domains must correspond to the FAO Guidelines (2006 or later) for soil description or similar;
 </p>
 </li>
-<li><p> All values must pass the validity checks i.e. numeric values must be within physical limits defined in the <a href="https://www.google.com/fusiontables/DataSource?docid=1VVfBtsRijz_cRM8p5nj5hnijx6AQB9hbYzfRIZQ">Global Soil Data Registry</a>;
+<li><p> All values must pass the validity checks i.e. numeric values must be within physical limits defined in the SoilGrids Global Soil Data Registry;
 </p>
 </li></ul>
- 
+
 
 
 <h3>Author(s)</h3>
@@ -58,10 +58,10 @@
 
 
 <ul>
-<li><p> Beaudette, D. E., Roudier, P., &amp; O'Geen, A. T. (2013). <a href="http://dx.doi.org/10.1016/j.cageo.2012.10.020">Algorithms for quantitative pedology: A toolkit for soil scientists</a>. Computers &amp; Geosciences, 52, 258-268.
+<li><p> Beaudette, D. E., Roudier, P., &amp; O'Geen, A. T. (2013) <a href="http://dx.doi.org/10.1016/j.cageo.2012.10.020">Algorithms for quantitative pedology: A toolkit for soil scientists</a>. Computers &amp; Geosciences, 52, 258-268.
 </p>
 </li>
-<li><p> FAO (2006) <a href="http://books.google.nl/books?id=x0\_PVec33LgC">Guidelines for Soil Description</a>. Food and Agriculture Organization of the United Nations, 4th Ed.
+<li><p> FAO (2006) Guidelines for Soil Description. Food and Agriculture Organization of the United Nations, 4th Ed.
 </p>
 </li></ul>
 
@@ -77,7 +77,6 @@
 
 <pre>
 library(aqp)
-library(plyr)
 library(sp)
 
 LONWGS84 = 3.90
@@ -101,5 +100,5 @@ sp1 &lt;- new("FAO.SoilProfileCollection",
 str(sp1)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.4-3 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.4-5 <a href="00Index.html">Index</a>]</div>
 </body></html>

@@ -19,14 +19,14 @@
 Data of class \code{"FAO.SoilProfileCollection"} must satisfy all of the following requirements (class validity):
   \itemize{
    \item All variable names must be registered in the \href{https://www.google.com/fusiontables/DataSource?docid=1VVfBtsRijz_cRM8p5nj5hnijx6AQB9hbYzfRIZQ}{Global Soil Data Registry};
-   \item All variable domains must correspond to the \href{http://books.google.nl/books?id=x0\_PVec33LgC}{FAO Guidelines for soil description} or similar;
-   \item All values must pass the validity checks i.e. numeric values must be within physical limits defined in the \href{https://www.google.com/fusiontables/DataSource?docid=1VVfBtsRijz_cRM8p5nj5hnijx6AQB9hbYzfRIZQ}{Global Soil Data Registry};
-  } 
+   \item All variable domains must correspond to the FAO Guidelines (2006 or later) for soil description or similar;
+   \item All values must pass the validity checks i.e. numeric values must be within physical limits defined in the SoilGrids Global Soil Data Registry;
+  }
 }
 \references{
 \itemize{
-  \item Beaudette, D. E., Roudier, P., & O'Geen, A. T. (2013). \href{http://dx.doi.org/10.1016/j.cageo.2012.10.020}{Algorithms for quantitative pedology: A toolkit for soil scientists}. Computers & Geosciences, 52, 258-268.
-  \item FAO (2006) \href{http://books.google.nl/books?id=x0\_PVec33LgC}{Guidelines for Soil Description}. Food and Agriculture Organization of the United Nations, 4th Ed.
+  \item Beaudette, D. E., Roudier, P., & O'Geen, A. T. (2013) \href{http://dx.doi.org/10.1016/j.cageo.2012.10.020}{Algorithms for quantitative pedology: A toolkit for soil scientists}. Computers & Geosciences, 52, 258-268.
+  \item FAO (2006) Guidelines for Soil Description. Food and Agriculture Organization of the United Nations, 4th Ed.
 }
 }
 \author{ Tomislav Hengl }

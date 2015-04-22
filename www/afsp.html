@@ -10,7 +10,7 @@
 
 <h3>Description</h3>
 
-<p>A subset of the <a href="http://africasoils.net/data/legacyprofile">Africa Soil Profiles Database</a> (AFSP) that contains over 17,000 geo-referenced legacy soil profile records for 37 countries.</p>
+<p>A merge of the Africa Soil Profiles Database (AFSP) with 17,000+ geo-referenced legacy soil profile records, and AfSIS Sentinel Site database with 9000+ sampling locations.</p>
 
 
 <h3>Usage</h3>
@@ -20,29 +20,25 @@
 
 <h3>Format</h3>
 
-<p>The <code>afsp</code> data set contains two data frames &mdash; sites and horizons. Sites table contains the following columns:
+<p>The <code>afsp</code> data set contains two data frames &mdash; <code>sites</code> and <code>horizons</code>. Sites table contains the following columns:
 </p>
 
 <dl>
 <dt><code>SOURCEID</code></dt><dd><p>factor; unique label to help a user identify a particular site (<code>ProfileID</code> in the AFSP)</p>
 </dd>
-<dt><code>RLBISRIC</code></dt><dd><p>factor; reliability class according to the ISRIC quality standards (<code>Reliab</code> in the AFSP)</p>
+<dt><code>SOURCEDB</code></dt><dd><p>factor; source data base</p>
 </dd>
 <dt><code>LONWGS84</code></dt><dd><p>numeric; longitude in decimal degrees on the WGS84 datum (<code>X_LonDD</code> in the AFSP)</p>
 </dd>
 <dt><code>LATWGS84</code></dt><dd><p>numeric; latitude in decimal degrees on the WGS84 datum (<code>Y_LatDD</code> in the AFSP)</p>
 </dd>
-<dt><code>STDXYZ</code></dt><dd><p>numeric; profile location accuracy in decimal degrees (<code>XYAccur</code> in the AFSP)</p>
-</dd>
 <dt><code>TIMESTRR</code></dt><dd><p>character; the date on which this particular soil was described or sampled (<code>T_Year</code> in the AFSP)</p>
-</dd>
-<dt><code>TAXNWRB</code></dt><dd><p>factor; full soil classification name based on the WRB classification system (<code>ProfileID</code> in the AFSP)</p>
-</dd>
-<dt><code>TAXNFAO</code></dt><dd><p>factor; full soil classification code based on the FAO 1988 classification system (<code>FAO88</code> in the AFSP)</p>
 </dd>
 <dt><code>TAXGWRB</code></dt><dd><p>factor; abbreviated soil group based on the WRB classification system (<code>WRB06rg</code> in the AFSP)</p>
 </dd>
 <dt><code>TAXNUSDA</code></dt><dd><p>factor; Keys to Soil Taxonomy taxon name e.g. <code>"Plinthic Udoxic Dystropept"</code> (<code>USDA</code> in the AFSP)</p>
+</dd>
+<dt><code>BDRICM</code></dt><dd><p>numeric; depth to bedrock in cm</p>
 </dd>
 <dt><code>DRAINFAO</code></dt><dd><p>factor; drainage class based on the FAO guidelines for soil description: <code>E</code> (excessively drained), <code>S</code> (somewhat excessively drained), <code>W</code> (well drained), <code>M</code> (moderately well drained), <code>I</code> (somewhat poorly drained) and <code>V</code> (very poorly drained)</p>
 </dd>
@@ -52,92 +48,41 @@
 </p>
 
 <dl>
-<dt><code>SOURCEID</code></dt><dd><p>factor; a short label to help a user identify a particular site (<code>ProfileID</code> in the AFSP)</p>
+<dt><code>SOURCEID</code></dt><dd><p>factor; a short label to help a user identify a particular site</p>
 </dd>
-<dt><code>LSQINT</code></dt><dd><p>integer; a layer sequence number 1 to N (<code>LayerNr</code> in the AFSP)</p>
+<dt><code>UHDICM</code></dt><dd><p>numeric; upper horizon depth from the surface in cm</p>
 </dd>
-<dt><code>UHDICM</code></dt><dd><p>numeric; upper horizon depth from the surface in cm (<code>UpDpth</code> in the AFSP)</p>
+<dt><code>LHDICM</code></dt><dd><p>numeric; lower horizon depth from the surface in cm</p>
 </dd>
-<dt><code>LHDICM</code></dt><dd><p>numeric; lower horizon depth from the surface in cm (<code>LowDpth</code> in the AFSP)</p>
+<dt><code>MCOMNS</code></dt><dd><p>factor; Munsell color moist</p>
 </dd>
-<dt><code>MCOMNS</code></dt><dd><p>factor; Munsell color moist (<code>ColorM</code> in the NSCD)</p>
+<dt><code>ORCDRC</code></dt><dd><p>numeric; soil organic carbon content in permilles</p>
 </dd>
-<dt><code>CRFVOL</code></dt><dd><p>numeric; volume percentage of coarse fragments (&gt; 2 mm; <code>CfPc</code> in the AFSP)</p>
+<dt><code>PHIHOX</code></dt><dd><p>numeric; pH index measured in water solution</p>
 </dd>
-<dt><code>SNDPPT</code></dt><dd><p>numeric; weight percentage of the sand particles (0.05&ndash;2 mm; <code>Sand</code> in the AFSP)</p>
+<dt><code>SNDPPT</code></dt><dd><p>numeric; weight percentage of the sand particles (0.05&ndash;2 mm)</p>
 </dd>
-<dt><code>SLTPPT</code></dt><dd><p>numeric; weight percentage of the silt particles (0.0002&ndash;0.05 mm; <code>Silt</code> in the AFSP)</p>
+<dt><code>SLTPPT</code></dt><dd><p>numeric; weight percentage of the silt particles (0.0002&ndash;0.05 mm)</p>
 </dd>
-<dt><code>CLYPPT</code></dt><dd><p>numeric; weight percentage of the clay particles (&lt;0.0002 mm; <code>Clay</code> in the AFSP)</p>
+<dt><code>CLYPPT</code></dt><dd><p>numeric; weight percentage of the clay particles (&lt;0.0002 mm)</p>
 </dd>
-<dt><code>BLD</code></dt><dd><p>bulk density in tonnes per cubic-meter (<code>BlkDens</code> in the AFSP)</p>
+<dt><code>CRFVOL</code></dt><dd><p>numeric; volume percentage of coarse fragments (&gt; 2 mm)</p>
 </dd>
-<dt><code>PHIHOX</code></dt><dd><p>numeric; pH index measured in water solution (<code>PHH2O</code> in the AFSP)</p>
+<dt><code>BLD</code></dt><dd><p>numeric;bulk density in tonnes per cubic-meter</p>
 </dd>
-<dt><code>PHIKCL</code></dt><dd><p>numeric; pH index measured in KCl solution (<code>PHKCl</code> in the AFSP)</p>
+<dt><code>CEC</code></dt><dd><p>numeric; Cation exchange capacity (fine earth fraction) in cmolc/kg</p>
 </dd>
-<dt><code>ECN</code></dt><dd><p>numeric; electrical conductivity (<code>EC</code> in the AFSP)</p>
+<dt><code>NTO</code></dt><dd><p>numeric; total N content in permille or g/kg</p>
 </dd>
-<dt><code>ORCDRC</code></dt><dd><p>numeric; soil organic carbon content in permilles (<code>OrgC</code>*10 in the AFSP)</p>
-</dd>
-<dt><code>CEC</code></dt><dd><p>numeric; Cation Exchange Capacity in cmol+/kg (<code>CecSoil</code> in the AFSP)</p>
-</dd>
-<dt><code>EACKCL</code></dt><dd><p>numeric; exchangable acidity (<code>ExAcid</code> in the AFSP)</p>
+<dt><code>EMGX</code></dt><dd><p>numeric; exchangable Mg in cmolc/kg</p>
 </dd>
 </dl>
 
-<p>The <code>afgrid20</code> <code>"SpatialPixelsDataFrame"</code> object contains a list of soil covariates prepared for Africa at 20 km resolution (45,997 grid nodes) obtained from WorldGrids.org:
-</p>
-
-<dl>
-<dt><code>LMTGSH0</code></dt><dd><p>integer; land mask based on <a href="http://www.ngdc.noaa.gov/mgg/shorelines/gshhs.html">GSHHS</a></p>
-</dd>
-<dt><code>SMKMOD0</code></dt><dd><p>integer; mask map indicating soil productive areas</p>
-</dd>
-<dt><code>DEMSRE0</code></dt><dd><p>integer; global relief model based on SRTM 30+ and ETOPO DEM at 1/120 arc degrees</p>
-</dd>
-<dt><code>SLPSRT0</code></dt><dd><p>integer; slope map in percent derived using the DEMSRE</p>
-</dd>
-<dt><code>TWISRE0</code></dt><dd><p>numeric; SAGA Topographic Wetness Index based on the SRTM DEM</p>
-</dd>
-<dt><code>G01ESA0</code></dt><dd><p>integer; percentage of land cover class 1 based on the <a href="http://ionia1.esrin.esa.int">GlobCov v2.2</a></p>
-</dd>
-<dt><code>...</code></dt><dd><p>other land cover classes</p>
-</dd>
-<dt><code>IFLGRE0</code></dt><dd><p>integer; intact forest landscapes based on Greenpeace</p>
-</dd>
-<dt><code>L3POBI0</code></dt><dd><p>factor; physiographic landform units (<a href="http://dx.doi.org/10.1016/j.geomorph.2011.12.001">SCALA project</a>)</p>
-</dd>
-<dt><code>PREGSM0</code></dt><dd><p>numeric; mean monthly precipitation (annual)</p>
-</dd>
-<dt><code>TDHMOD0</code></dt><dd><p>integer; maximum value of the 8-day MODIS day-time LST time series data</p>
-</dd>
-<dt><code>TDMMOD0</code></dt><dd><p>integer; mean value the 8-day MODIS day-time LST time series data</p>
-</dd>
-<dt><code>TDSMOD0</code></dt><dd><p>integer; standard deviation of the 8-day MODIS day-time LST time series data</p>
-</dd>
-<dt><code>TNMMOD0</code></dt><dd><p>integer; mean value the 8-day MODIS night-time LST time series data</p>
-</dd>
-<dt><code>TNSMOD0</code></dt><dd><p>integer; standard deviation of the 8-day MODIS night-time LST time series data</p>
-</dd>
-<dt><code>EVMMOD0</code></dt><dd><p>numeric; mean value of the monthly MODIS EVI time series data</p>
-</dd>
-<dt><code>EVSMOD0</code></dt><dd><p>integer; standard deviation of the monthly MODIS EVI time series data</p>
-</dd>
-<dt><code>SGEUSG0</code></dt><dd><p>factor; parent material class based on the <a href="http://pubs.usgs.gov/of/1997/ofr-97-470/OF97-470A/">USGS Surface Geology map</a></p>
-</dd>      
-</dl>
-
-
-
-<h3>Note</h3>
-
-<p>The soil covariate layers were selected to represent the standard soil forming factors: climate, organism, relief, and parent materials (CLORPT). Listed gridded layers follow a standard naming convention used by WorlGrids.org (the standard 8.3 filename convention with at most eight characters): first three letter are used for the variable type e.g. <code>DEM</code> (digital elevation model); the next three letters represent the data source or collection method e.g. <code>SRE</code> (SRTM/ETOPO); the 6th character is the effective scale e.g. <code>0</code> indicates grid size of i.e. 1/5 decimal degrees (about 20 km).</p>
 
 
 <h3>Author(s)</h3>
 
-<p>The Africa Soil Profiles Database have been prepared by Johan Leenaars &lt;johan.leenaars@wur.nl&gt;. This is a subset of the original database that can be downloaded via <a href="http://www.isric.org/content/africa-soil-profiles-database">www.isric.org</a>. The processing steps used to prepare this data are described in <a href="https://code.google.com/p/gsif/source/browse/trunk/AFRICA/ASPDB/rw_AFSP.R">this script</a>.</p>
+<p>The Africa Soil Profiles Database have been prepared by Johan Leenaars &lt;johan.leenaars@wur.nl&gt;. This is a subset of the original database that can be downloaded via <a href="http://www.isric.org/content/africa-soil-profiles-database">www.isric.org</a>. The AfSIS Sentinel Site database is one of the main deliverables of the Africa Soil Information Service project.</p>
 
 
 <h3>References</h3>
@@ -175,19 +120,9 @@ proj4string(country) = "+proj=longlat +datum=WGS84"
 ## overlay and plot points and maps:
 plot(country, col="darkgrey", xlim=c(-25.3,57.8), ylim=c(-34.8, 37.4))
 points(sites, pch=21, bg="white", cex=.6, col="black")
-## load gridded data for Africa:
-con &lt;- url("http://gsif.isric.org/lib/exe/fetch.php?media=afgrid20.rda")
-load(con)
-## plot maps:
-col = grey(rev(seq(0.1,0.975,0.025)))
-names(afgrid20)
-lns = list("sp.lines", spTransform(country, afgrid20@proj4string))
-spplot(afgrid20["TDMMOD0a"], col.regions=col, sp.layout=lns)
-## write to a GIS format:
-writeGDAL(afgrid20["TDMMOD0a"], "TDMMOD0a.tif", "GTiff", mvFlag=-99999)
 
 ## End(Not run)
 </pre>
 
-<hr><div align="center">[Package <em>GSIF</em> version 0.4-3 <a href="00Index.html">Index</a>]</div>
+<hr><div align="center">[Package <em>GSIF</em> version 0.4-5 <a href="00Index.html">Index</a>]</div>
 </body></html>

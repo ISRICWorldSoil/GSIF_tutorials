@@ -50,7 +50,7 @@ The \code{weather} data frame contains daily temperatures and rainfall from the 
 \author{Caley Gasch, Tomislav Hengl and David J. Brown}
 \references{
 \itemize{
-\item Gasch, C., Hengl, T., \enc{Gräler}{Graeler}, B., Meyer, H., Magney, T., Brown, D.J., 2015. Spatio-temporal interpolation of soil water, temperature, and electrical conductivity in 3D+T: the Cook Agronomy Farm data set. \emph{Spatial Statistics Journal}, accepted. 
+\item Gasch, C., Hengl, T., \enc{Gräler}{Graeler}, B., Meyer, H., Magney, T., Brown, D.J., 2015. Spatio-temporal interpolation of soil water, temperature, and electrical conductivity in 3D+T: the Cook Agronomy Farm data set. Spatial Statistics Journal, accepted. 
 }
 }
 \examples{

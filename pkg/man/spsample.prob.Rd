@@ -25,7 +25,7 @@ This function can be time consuming for large grids.
 }
 \references{
 \itemize{
-\item Baddeley, A. (2008) \href{http://www.csiro.au/resources/pf16h.html}{Analysing spatial point patterns in R}. Technical report, CSIRO Australia. Version 4.
+\item Baddeley, A. (2008) Analysing spatial point patterns in R. Technical report, CSIRO Australia. Version 4.
 \item Royle, J.A., Chandler, R.B., Yackulic, C. and J. D. Nichols. (2012) \href{http://dx.doi.org/10.1111/j.2041-210X.2011.00182.x}{Likelihood analysis of species occurrence probability from presence-only data for modelling species distributions}. Methods in Ecology and Evolution.
 }
 }

@@ -3,7 +3,7 @@
 \encoding{latin1}
 \alias{afsp}
 \title{Africa Soil Profiles Database}
-\description{A merge of the \href{http://africasoils.net/data/legacyprofile}{Africa Soil Profiles Database} (AFSP) with 17,000+ geo-referenced legacy soil profile records, and AfSIS Sentinel Site database with 9000+ sampling locations.}
+\description{A merge of the Africa Soil Profiles Database (AFSP) with 17,000+ geo-referenced legacy soil profile records, and AfSIS Sentinel Site database with 9000+ sampling locations.}
 \usage{data(afsp)}
 \format{
 The \code{afsp} data set contains two data frames --- \code{sites} and \code{horizons}. Sites table contains the following columns:
