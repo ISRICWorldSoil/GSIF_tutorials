@@ -10,7 +10,7 @@ The \code{cookfarm} data set contains four data frames. The \code{readings} data
 \describe{
   \item{\code{SOURCEID}}{factor; unique station ID}
   \item{\code{Date}}{date; observation day}
-  \item{\code{Port*VW}}{numeric; volumetric water content measurements at five dephts}
+  \item{\code{Port*VW}}{numeric; volumetric water content measurements at five depths}
   \item{\code{Port*C}}{numeric; soil temperature measurements at five depths}
   \item{\code{Port*EC}}{numeric; bulk electrical conductivity measurements at five depths}
 }

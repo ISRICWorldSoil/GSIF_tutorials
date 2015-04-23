@@ -151,9 +151,10 @@ varImpPlot(fit.RF, main="Water content (volumetric)", bg="blue", pch=22)
 
 ## predict values using spacetime RF model:
 dates.lst <- seq(as.Date("2012-07-01"),as.Date("2012-07-30"), by=1)
+xy <- attr(grid10m.3D@coords, "dimnames")[[2]]
 for(j in 1:length(dates.lst)){
   date <- dates.lst[j]
-  newD <- cbind(as.data.frame(grid10m.3D),
+  newD <- cbind(data.frame(grid10m.3D),
      data.frame(Date=rep(as.Date(date), length(grid10m.3D))))
   newD <- plyr::join(newD, cookfarm$weather, type="left")
   newD$cday <- floor(unclass(newD$Date)/86400-.5)
@@ -162,9 +163,9 @@ for(j in 1:length(dates.lst)){
   newD[,outn] <- predict(fit.RF, newD)
   for(k in 1:length(s)){
     tif.out <- paste0(outn, "_Port_", k, ".tif")
-    outP <- newD[newD$altitude==s[k], c("x","y",outn)]
-    gridded(outP) <- ~ x+y
+    outP <- newD[newD$altitude==s[k], c(xy,outn)]
+    gridded(outP) <- as.formula(paste("~ ", xy[1], "+", xy[2]))
     proj4string(outP) <- grid10m@proj4string
-    writeGDAL(outP, tif.out, "GTiff", mvFlag=-99999)
+    writeGDAL(outP[outn], tif.out, "GTiff", mvFlag=-99999)
   }
 }
