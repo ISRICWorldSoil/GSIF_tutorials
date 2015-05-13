@@ -12,6 +12,7 @@ library(plotKML)
 library(RCurl)
 library(sp)
 library(rgdal)
+library(randomForest)
 nl.rd <- getURL("http://spatialreference.org/ref/sr-org/6781/proj4/")
 
 ## Geul data:
@@ -30,13 +31,15 @@ proj4string(grd25) <- CRS(nl.rd)
 ## fit a model:
 grd25.spc <- spc(grd25, ~ dem+dis)
 m = pb ~ PC1+PC2
-pbm <- fit.gstatModel(m, observations=geul, grd25.spc@predicted, family=gaussian(link=log))
+#pbm <- fit.gstatModel(m, observations=geul, grd25.spc@predicted, family=gaussian(link=log))
+pbm <- fit.gstatModel(m, observations=geul, grd25.spc@predicted, method="randomForest")
 ## predict values:
-pb.rk <- predict(pbm, grd25.spc@predicted)
+#pb.rk <- predict(pbm, grd25.spc@predicted)
 ## block kriging by default!
-show(pb.rk)
+pb.rk <- autopredict(geul["pb"], grd25.spc@predicted)
+plot(pb.rk)
 ## 57% of variability explained by the model;
-plotKML(pb.rk)
+plot(pb.rk)
 
 ## geostat simulations:
 pb.rks <- predict(pbm, grd25.spc@predicted, nsim=20, block = c(0,0))
