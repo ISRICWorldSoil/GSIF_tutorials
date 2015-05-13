@@ -1,0 +1,50 @@
+====== 3D soil property mapping using the GSIF package ======
+
+^ Edited by:  |  T. Hengl  |
+
+[[http://www.isric.org/content/soilgrids|SoilGrid1km]] (available for download via [[http://soilgrids.org|www.soilgrids.org]]) contains predictions for a selection of soil properties (soil organic carbon content, soil pH, texture fractions, bulk density, coarse fragments and Cation Exchange Capacity), and soil classes (FAO's World Reference Base soil groups and USDA's Soil Taxonomy suborders). This tutorial explains how to obtain SoilGrids1km [[http://www.gdal.org/frmt_gtiff.html|GeoTiffs]], how to load the data to an R session, plot maps and run some basic analysis.
+
+Download the tutorial as **[[https://code.google.com/p/gsif/source/browse/trunk/SoilGrids1km/tutorial_SoilGrids.R|R script]]**.
+
+
+===== Data access =====
+
+SoilGrids1km (GeoTiffs) can be obtained either via the web-mapping interface at www.soilgrids.org or via [[ftp://soilgrids:soilgrids@ftp.soilgrids.org|FTP]]. To download layers from R, we can use the [[http://cran.r-project.org/package=RCurl?|RCurl ]p ckage:
+
+<code rsplus>
+> library(RCurl)
+> sg.ftp <- "ftp://soilgrids:soilgrids@ftp.soilgrids.org/data/5.Dec.2013/"
+> filenames = getURL(sg.ftp, ftp.use.epsv = FALSE, dirlistonly = TRUE)
+> filenames = strsplit(filenames, "\r*\n")[[1]]
+> filenames[1:5]
+[1] "."                                   
+[2] ".."                                  
+[3] "TAXGWRB_Gypsisols_04_dec_2013.tif.gz"
+[4] "CLYPPT_sd2_L_04_dec_2013.tif.gz"     
+[5] "PHIHOX_sd2_U_04_dec_2013.tif.gz"
+</code>
+
+
+<div>
+| [{{:wiki:fig_eberg_hist_sndmht.png?380|Histogram for sand content.}}] |
+</div>
+
+
+
+The purpose of this tutorial is to demonstrate major processing steps used within the GSIF framework for generating soil property and soil class maps from point data, and with the help of multi-scale covariates. The GSIF (R package) project summary page you can find [[http://r-forge.r-project.org/projects/gsif/|here]]. To learn more about the Global Soil Information Facilities (GSIF), visit the main [[http://www.isric.org/projects/global-soil-information-facilities-gsif|project page]]. See also the complete list of **[[http://gsif.r-forge.r-project.org/00Index.html|functions]]** available via the GSIF package.
+
+Download the tutorial as **[[https://code.google.com/p/gsif/source/browse/trunk/eberg/tutorial_eberg.R|R script]]**.
+
+===== Data screening =====
+
+For demonstration purposes we use the [[http://plotkml.r-forge.r-project.org/eberg.html|Ebergötzen data set]], which has been used by the SAGA GIS development team ([[http://saga-gis.org/en/about/references.html|Böhner et al., 2006]]; [[http://dx.doi.org/10.1016/j.jag.2012.02.005|Hengl et al., 2012]]). To start the exercise, first install and load all required packages (see also: [[http://gsif.r-forge.r-project.org/|GSIF installation instructions]]). Note that GSIF is dependent on the [[http://plotkml.r-forge.r-project.org/|plotKML package]], which you should always first install from R-forge as these are both experimental packages:
+
+<code rsplus>
+> eberg.xy <- eberg[runif(nrow(eberg)) < .3,]
+> coordinates(eberg.xy) <- ~X+Y
+> proj4string(eberg.xy) <- CRS("+init=epsg:31467")
+> gridded(eberg_grid) <- ~x+y
+> proj4string(eberg_grid) <- CRS("+init=epsg:31467")
+> gridded(eberg_grid25) <- ~x+y
+> proj4string(eberg_grid25) <- CRS("+init=epsg:31467")
+</code>

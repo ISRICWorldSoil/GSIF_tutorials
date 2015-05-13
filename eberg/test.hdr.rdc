@@ -1,0 +1,29 @@
+file format : IDRISI Raster A.1
+file title  : pred(observedValue)
+Hm‚data type   : real
+file type   : binary
+columns     : 100
+rows        : 100
+ref. system : plane
+ref. units  : m
+unit dist.  : 1
+min. X      : 3570000.0000000
+max. X      : 3580000.0000000
+min. Y      : 5708000.0000000
+max. Y      : 5718000.0000000
+pos'n error : unknown
+resolution  : 100.0000000
+min. value  : -180.9158478
+max. value  : 755.9730225
+display min : -180.9158478
+display max : 755.9730225
+value units : no
+value error : unknown
+flag value  : 0.0000000
+flag def'n  : missing data
+legend cats : 0
+lineage     : program:       gstat 2.4.1 (12 March 2003)
+lineage     : command file:  test.cmd
+lineage     : method used:   using universal kriging
+lineage     : date:          Tue Jul 17 12:37:34 2012
+lineage     :  (seed 1342521443)

@@ -1,0 +1,14 @@
+ref. system : unnamed
+projection  : Transverse Mercator
+datum       : Deutsches_Hauptdreiecksnetz
+delta WGS84 : 606 23 413
+ellipsoid   : Bessel 1841
+major s-ax  : 6377397.155
+minor s-ax  : 6356078.963
+origin long : 9
+origin lat  : 0
+origin X    : 3500000
+origin Y    : 0
+scale fac   : 1
+units       : m
+parameters  : 0

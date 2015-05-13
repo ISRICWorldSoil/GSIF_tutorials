@@ -1,0 +1,29 @@
+file format : IDRISI Raster A.1
+file title  : log_om : simulation 12
+data type   : real
+file type   : binary
+columns     : 78
+rows        : 104
+ref. system : plane
+ref. units  : m
+unit dist.  : 1
+min. X      : 178440.0000000
+max. X      : 181560.0000000
+min. Y      : 329600.0000000
+max. Y      : 333760.0000000
+pos'n error : unknown
+resolution  : 40.0000000
+min. value  : -99999.0000000
+max. value  : 1.7304947
+display min : -1.1271591
+display max : 1.7304947
+value units : no
+value error : unknown
+flag value  : -99999.0000000
+flag def'n  : missing data
+legend cats : 0
+lineage     : program:       C:\windows\system32\gstat.exe 2.4.1 (12 March 2003)
+lineage     : command file:  meuse_om_sims.cmd
+lineage     : method used:   using conditional gaussian simulation
+lineage     : date:          Tue Jul 17 17:57:49 2012
+lineage     :  (seed 1342540661)

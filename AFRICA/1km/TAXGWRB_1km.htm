@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Untitled Document</title>
+</head>
+<body>
+<table>
+	<colgroup>
+		<col width="311" />
+		<col width="409" />
+	</colgroup>
+	<tbody>
+		<tr>
+			<td>File:</td>
+			<td><a href="/sites/default/files/TAXGWRB_1km_mnr.tif.7z">TAXGWRB_1km_mnr.tif.7z</a> (112 MB)</td>
+		</tr>
+		<tr>
+			<td>Target variable (units):</td>
+			<td><a href="ftp://ftp.fao.org/agl/agll/docs/wsrr103e.pdf" target="_blank">WRB soil groups</a> (<a href="http://code.google.com/p/gsif/source/browse/trunk/AFRICA/1km/TAXGWRB_legend.txt">legend</a>)</td>
+		</tr>
+		<tr>
+			<td>Inputs:</td>
+			<td><a href="/content/africa-soil-profiles-database" target="_self">Africa Soil Profile DB</a>, <a href="http://worldgrids.org/doku.php?id=wiki:layers" target="_blank">WorldGrids 1 km covariates</a></td>
+		</tr>
+		<tr>
+			<td>Spatial prediction method:</td>
+			<td><a href="http://stat.ethz.ch/R-manual/R-patched/library/nnet/html/multinom.html" target="_blank">multinomial logistic regression</a>&nbsp;(nnet package)</td>
+		</tr>
+		<tr>
+			<td>Data processing steps (lineage):</td>
+			<td>download the <a href="https://code.google.com/p/gsif/source/browse/trunk/AFRICA/1km/TAXG_1km_AfSIS.R" target="_blank">R script</a></td>
+		</tr>
+		<tr>
+			<td>% of variance explained:</td>
+			<td>Estimated Cohen Kappa (weighted):&nbsp;17%<br />
+			Map purity: 21%</td>
+		</tr>
+	</tbody>
+</table>
+</body>
+</html>

@@ -1,0 +1,431 @@
+<kml xmlns:xsd="http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd" xmlns:xmlns="http://www.opengis.net/kml/2.2/" version="1.0">
+  <Document>
+    <name>prof1</name>
+    <open>1</open>
+    <Folder>
+      <name>SoilProfileCollection</name>
+      <Folder>
+        <name>sites</name>
+        <Style id="poly1">
+          <PolyStyle>
+            <color>#ff374558</color>
+            <fill>1</fill>
+            <outline>1</outline>
+          </PolyStyle>
+        </Style>
+        <Style id="poly2">
+          <PolyStyle>
+            <color>#ff3b5a7e</color>
+            <fill>1</fill>
+            <outline>1</outline>
+          </PolyStyle>
+        </Style>
+        <Style id="poly3">
+          <PolyStyle>
+            <color>#ff4f6ca9</color>
+            <fill>1</fill>
+            <outline>1</outline>
+          </PolyStyle>
+        </Style>
+        <Style id="poly4">
+          <PolyStyle>
+            <color>#ff326ab0</color>
+            <fill>1</fill>
+            <outline>1</outline>
+          </PolyStyle>
+        </Style>
+        <Style id="poly5">
+          <PolyStyle>
+            <color>#ff59739a</color>
+            <fill>1</fill>
+            <outline>1</outline>
+          </PolyStyle>
+        </Style>
+        <Style id="poly6">
+          <PolyStyle>
+            <color>#ff8cacc4</color>
+            <fill>1</fill>
+            <outline>1</outline>
+          </PolyStyle>
+        </Style>
+        <Placemark>
+          <name>18.4</name>
+          <styleUrl>#poly1</styleUrl>
+          <visibility>1</visibility>
+          <Polygon>
+            <tessellate>1</tessellate>
+            <altitudeMode>relativeToGround</altitudeMode>
+            <outerBoundaryIs>
+              <LinearRing>
+                <coordinates>3.89954696396626,7.50064975042384,300
+ 3.90045303603374,7.50064975042384,300
+ 3.90045303603374,7.50064975042384,282
+ 3.89954696396626,7.50064975042384,282
+ 3.89954696396626,7.50064975042384,300</coordinates>
+              </LinearRing>
+            </outerBoundaryIs>
+          </Polygon>
+        </Placemark>
+        <Placemark>
+          <name>4.4</name>
+          <styleUrl>#poly2</styleUrl>
+          <visibility>1</visibility>
+          <Polygon>
+            <tessellate>1</tessellate>
+            <altitudeMode>relativeToGround</altitudeMode>
+            <outerBoundaryIs>
+              <LinearRing>
+                <coordinates>3.89954696396626,7.50064975042384,282
+ 3.90045303603374,7.50064975042384,282
+ 3.90045303603374,7.50064975042384,264
+ 3.89954696396626,7.50064975042384,264
+ 3.89954696396626,7.50064975042384,282</coordinates>
+              </LinearRing>
+            </outerBoundaryIs>
+          </Polygon>
+        </Placemark>
+        <Placemark>
+          <name>3.6</name>
+          <styleUrl>#poly3</styleUrl>
+          <visibility>1</visibility>
+          <Polygon>
+            <tessellate>1</tessellate>
+            <altitudeMode>relativeToGround</altitudeMode>
+            <outerBoundaryIs>
+              <LinearRing>
+                <coordinates>3.89954696396626,7.50064975042384,264
+ 3.90045303603374,7.50064975042384,264
+ 3.90045303603374,7.50064975042384,235
+ 3.89954696396626,7.50064975042384,235
+ 3.89954696396626,7.50064975042384,264</coordinates>
+              </LinearRing>
+            </outerBoundaryIs>
+          </Polygon>
+        </Placemark>
+        <Placemark>
+          <name>3.6</name>
+          <styleUrl>#poly4</styleUrl>
+          <visibility>1</visibility>
+          <Polygon>
+            <tessellate>1</tessellate>
+            <altitudeMode>relativeToGround</altitudeMode>
+            <outerBoundaryIs>
+              <LinearRing>
+                <coordinates>3.89954696396626,7.50064975042384,235
+ 3.90045303603374,7.50064975042384,235
+ 3.90045303603374,7.50064975042384,213
+ 3.89954696396626,7.50064975042384,213
+ 3.89954696396626,7.50064975042384,235</coordinates>
+              </LinearRing>
+            </outerBoundaryIs>
+          </Polygon>
+        </Placemark>
+        <Placemark>
+          <name>3.2</name>
+          <styleUrl>#poly5</styleUrl>
+          <visibility>1</visibility>
+          <Polygon>
+            <tessellate>1</tessellate>
+            <altitudeMode>relativeToGround</altitudeMode>
+            <outerBoundaryIs>
+              <LinearRing>
+                <coordinates>3.89954696396626,7.50064975042384,213
+ 3.90045303603374,7.50064975042384,213
+ 3.90045303603374,7.50064975042384,173
+ 3.89954696396626,7.50064975042384,173
+ 3.89954696396626,7.50064975042384,213</coordinates>
+              </LinearRing>
+            </outerBoundaryIs>
+          </Polygon>
+        </Placemark>
+        <Placemark>
+          <name>1.2</name>
+          <styleUrl>#poly6</styleUrl>
+          <visibility>1</visibility>
+          <Polygon>
+            <tessellate>1</tessellate>
+            <altitudeMode>relativeToGround</altitudeMode>
+            <outerBoundaryIs>
+              <LinearRing>
+                <coordinates>3.89954696396626,7.50064975042384,173
+ 3.90045303603374,7.50064975042384,173
+ 3.90045303603374,7.50064975042384,119
+ 3.89954696396626,7.50064975042384,119
+ 3.89954696396626,7.50064975042384,173</coordinates>
+              </LinearRing>
+            </outerBoundaryIs>
+          </Polygon>
+        </Placemark>
+        <Placemark>
+          <name>ISRIC:NG0017</name>
+          <visibility>1</visibility>
+          <Polygon>
+            <tessellate>1</tessellate>
+            <extrude>1</extrude>
+            <altitudeMode>relativeToGround</altitudeMode>
+            <outerBoundaryIs>
+              <LinearRing>
+                <coordinates>3.89954696396626,7.49935931029684,300
+ 3.90045303603374,7.49935931029684,300
+ 3.90045303603374,7.50064068970316,300
+ 3.89954696396626,7.50064068970316,300
+ 3.89954696396626,7.49935931029684,300</coordinates>
+              </LinearRing>
+            </outerBoundaryIs>
+          </Polygon>
+        </Placemark>
+      </Folder>
+      <Folder>
+        <name>ORCDRC</name>
+        <Style id="pnt1">
+          <LabelStyle>
+            <scale>0.3</scale>
+          </LabelStyle>
+          <IconStyle>
+            <color>#ff0000ff</color>
+            <scale>0.35</scale>
+            <Icon>
+              <href>http://plotkml.r-forge.r-project.org/circlesquare.png</href>
+            </Icon>
+          </IconStyle>
+          <BalloonStyle>
+            <text>$[description]</text>
+          </BalloonStyle>
+        </Style>
+        <Style id="pnt2">
+          <LabelStyle>
+            <scale>0.3</scale>
+          </LabelStyle>
+          <IconStyle>
+            <color>#ff0000ff</color>
+            <scale>0.35</scale>
+            <Icon>
+              <href>http://plotkml.r-forge.r-project.org/circlesquare.png</href>
+            </Icon>
+          </IconStyle>
+          <BalloonStyle>
+            <text>$[description]</text>
+          </BalloonStyle>
+        </Style>
+        <Style id="pnt3">
+          <LabelStyle>
+            <scale>0.3</scale>
+          </LabelStyle>
+          <IconStyle>
+            <color>#ff0000ff</color>
+            <scale>0.35</scale>
+            <Icon>
+              <href>http://plotkml.r-forge.r-project.org/circlesquare.png</href>
+            </Icon>
+          </IconStyle>
+          <BalloonStyle>
+            <text>$[description]</text>
+          </BalloonStyle>
+        </Style>
+        <Style id="pnt4">
+          <LabelStyle>
+            <scale>0.3</scale>
+          </LabelStyle>
+          <IconStyle>
+            <color>#ff0000ff</color>
+            <scale>0.35</scale>
+            <Icon>
+              <href>http://plotkml.r-forge.r-project.org/circlesquare.png</href>
+            </Icon>
+          </IconStyle>
+          <BalloonStyle>
+            <text>$[description]</text>
+          </BalloonStyle>
+        </Style>
+        <Style id="pnt5">
+          <LabelStyle>
+            <scale>0.3</scale>
+          </LabelStyle>
+          <IconStyle>
+            <color>#ff0000ff</color>
+            <scale>0.35</scale>
+            <Icon>
+              <href>http://plotkml.r-forge.r-project.org/circlesquare.png</href>
+            </Icon>
+          </IconStyle>
+          <BalloonStyle>
+            <text>$[description]</text>
+          </BalloonStyle>
+        </Style>
+        <Style id="pnt6">
+          <LabelStyle>
+            <scale>0.3</scale>
+          </LabelStyle>
+          <IconStyle>
+            <color>#ff0000ff</color>
+            <scale>0.35</scale>
+            <Icon>
+              <href>http://plotkml.r-forge.r-project.org/circlesquare.png</href>
+            </Icon>
+          </IconStyle>
+          <BalloonStyle>
+            <text>$[description]</text>
+          </BalloonStyle>
+        </Style>
+        <Placemark>
+          <name>18.4</name>
+          <styleUrl>#pnt1</styleUrl>
+          <description><![CDATA[<span style="font-weight: bold; color: #000000; padding: 3px;">id</span>:&nbsp;
+<span style="color: #000000; padding:3px;">ISRIC:NG0017</span><br>
+<span style="font-weight: bold; color: #000000; padding: 3px;">top</span>:&nbsp;
+<span style="color: #000000; padding:3px;">0</span><br>
+<span style="font-weight: bold; color: #000000; padding: 3px;">bottom</span>:&nbsp;
+<span style="color: #000000; padding:3px;">18</span><br>
+<span style="font-weight: bold; color: #000000; padding: 3px;">ORCDRC</span>:&nbsp;
+<span style="color: #000000; padding:3px;">18.4</span><br>
+<span style="font-weight: bold; color: #000000; padding: 3px;">hue</span>:&nbsp;
+<span style="color: #000000; padding:3px;">7.5YR</span><br>
+<span style="font-weight: bold; color: #000000; padding: 3px;">value</span>:&nbsp;
+<span style="color: #000000; padding:3px;">3</span><br>
+<span style="font-weight: bold; color: #000000; padding: 3px;">chroma</span>:&nbsp;
+<span style="color: #000000; padding:3px;">2</span><br>
+<span style="font-weight: bold; color: #000000; padding: 3px;">soil_color</span>:&nbsp;
+<span style="color: #000000; padding:3px;">#584537FF</span><br>]]></description>
+          <Point>
+            <extrude>1</extrude>
+            <altitudeMode>relativeToGround</altitudeMode>
+            <coordinates>3.9,7.50064975042384,291</coordinates>
+          </Point>
+        </Placemark>
+        <Placemark>
+          <name>4.4</name>
+          <styleUrl>#pnt2</styleUrl>
+          <description><![CDATA[<span style="font-weight: bold; color: #000000; padding: 3px;">id</span>:&nbsp;
+<span style="color: #000000; padding:3px;">ISRIC:NG0017</span><br>
+<span style="font-weight: bold; color: #000000; padding: 3px;">top</span>:&nbsp;
+<span style="color: #000000; padding:3px;">18</span><br>
+<span style="font-weight: bold; color: #000000; padding: 3px;">bottom</span>:&nbsp;
+<span style="color: #000000; padding:3px;">36</span><br>
+<span style="font-weight: bold; color: #000000; padding: 3px;">ORCDRC</span>:&nbsp;
+<span style="color: #000000; padding:3px;">4.4</span><br>
+<span style="font-weight: bold; color: #000000; padding: 3px;">hue</span>:&nbsp;
+<span style="color: #000000; padding:3px;">7.5YR</span><br>
+<span style="font-weight: bold; color: #000000; padding: 3px;">value</span>:&nbsp;
+<span style="color: #000000; padding:3px;">4</span><br>
+<span style="font-weight: bold; color: #000000; padding: 3px;">chroma</span>:&nbsp;
+<span style="color: #000000; padding:3px;">4</span><br>
+<span style="font-weight: bold; color: #000000; padding: 3px;">soil_color</span>:&nbsp;
+<span style="color: #000000; padding:3px;">#7E5A3BFF</span><br>]]></description>
+          <Point>
+            <extrude>1</extrude>
+            <altitudeMode>relativeToGround</altitudeMode>
+            <coordinates> 3.9,7.50064975042384,273</coordinates>
+          </Point>
+        </Placemark>
+        <Placemark>
+          <name>3.6</name>
+          <styleUrl>#pnt3</styleUrl>
+          <description><![CDATA[<span style="font-weight: bold; color: #000000; padding: 3px;">id</span>:&nbsp;
+<span style="color: #000000; padding:3px;">ISRIC:NG0017</span><br>
+<span style="font-weight: bold; color: #000000; padding: 3px;">top</span>:&nbsp;
+<span style="color: #000000; padding:3px;">36</span><br>
+<span style="font-weight: bold; color: #000000; padding: 3px;">bottom</span>:&nbsp;
+<span style="color: #000000; padding:3px;">65</span><br>
+<span style="font-weight: bold; color: #000000; padding: 3px;">ORCDRC</span>:&nbsp;
+<span style="color: #000000; padding:3px;">3.6</span><br>
+<span style="font-weight: bold; color: #000000; padding: 3px;">hue</span>:&nbsp;
+<span style="color: #000000; padding:3px;">2.5YR</span><br>
+<span style="font-weight: bold; color: #000000; padding: 3px;">value</span>:&nbsp;
+<span style="color: #000000; padding:3px;">5</span><br>
+<span style="font-weight: bold; color: #000000; padding: 3px;">chroma</span>:&nbsp;
+<span style="color: #000000; padding:3px;">6</span><br>
+<span style="font-weight: bold; color: #000000; padding: 3px;">soil_color</span>:&nbsp;
+<span style="color: #000000; padding:3px;">#A96C4FFF</span><br>]]></description>
+          <Point>
+            <extrude>1</extrude>
+            <altitudeMode>relativeToGround</altitudeMode>
+            <coordinates> 3.9,7.50064975042384,249.5</coordinates>
+          </Point>
+        </Placemark>
+        <Placemark>
+          <name>3.6</name>
+          <styleUrl>#pnt4</styleUrl>
+          <description><![CDATA[<span style="font-weight: bold; color: #000000; padding: 3px;">id</span>:&nbsp;
+<span style="color: #000000; padding:3px;">ISRIC:NG0017</span><br>
+<span style="font-weight: bold; color: #000000; padding: 3px;">top</span>:&nbsp;
+<span style="color: #000000; padding:3px;">65</span><br>
+<span style="font-weight: bold; color: #000000; padding: 3px;">bottom</span>:&nbsp;
+<span style="color: #000000; padding:3px;">87</span><br>
+<span style="font-weight: bold; color: #000000; padding: 3px;">ORCDRC</span>:&nbsp;
+<span style="color: #000000; padding:3px;">3.6</span><br>
+<span style="font-weight: bold; color: #000000; padding: 3px;">hue</span>:&nbsp;
+<span style="color: #000000; padding:3px;">5YR</span><br>
+<span style="font-weight: bold; color: #000000; padding: 3px;">value</span>:&nbsp;
+<span style="color: #000000; padding:3px;">5</span><br>
+<span style="font-weight: bold; color: #000000; padding: 3px;">chroma</span>:&nbsp;
+<span style="color: #000000; padding:3px;">8</span><br>
+<span style="font-weight: bold; color: #000000; padding: 3px;">soil_color</span>:&nbsp;
+<span style="color: #000000; padding:3px;">#B06A32FF</span><br>]]></description>
+          <Point>
+            <extrude>1</extrude>
+            <altitudeMode>relativeToGround</altitudeMode>
+            <coordinates> 3.9,7.50064975042384,224</coordinates>
+          </Point>
+        </Placemark>
+        <Placemark>
+          <name>3.2</name>
+          <styleUrl>#pnt5</styleUrl>
+          <description><![CDATA[<span style="font-weight: bold; color: #000000; padding: 3px;">id</span>:&nbsp;
+<span style="color: #000000; padding:3px;">ISRIC:NG0017</span><br>
+<span style="font-weight: bold; color: #000000; padding: 3px;">top</span>:&nbsp;
+<span style="color: #000000; padding:3px;">87</span><br>
+<span style="font-weight: bold; color: #000000; padding: 3px;">bottom</span>:&nbsp;
+<span style="color: #000000; padding:3px;">127</span><br>
+<span style="font-weight: bold; color: #000000; padding: 3px;">ORCDRC</span>:&nbsp;
+<span style="color: #000000; padding:3px;">3.2</span><br>
+<span style="font-weight: bold; color: #000000; padding: 3px;">hue</span>:&nbsp;
+<span style="color: #000000; padding:3px;">5YR</span><br>
+<span style="font-weight: bold; color: #000000; padding: 3px;">value</span>:&nbsp;
+<span style="color: #000000; padding:3px;">5</span><br>
+<span style="font-weight: bold; color: #000000; padding: 3px;">chroma</span>:&nbsp;
+<span style="color: #000000; padding:3px;">4</span><br>
+<span style="font-weight: bold; color: #000000; padding: 3px;">soil_color</span>:&nbsp;
+<span style="color: #000000; padding:3px;">#9A7359FF</span><br>]]></description>
+          <Point>
+            <extrude>1</extrude>
+            <altitudeMode>relativeToGround</altitudeMode>
+            <coordinates> 3.9,7.50064975042384,193</coordinates>
+          </Point>
+        </Placemark>
+        <Placemark>
+          <name>1.2</name>
+          <styleUrl>#pnt6</styleUrl>
+          <description><![CDATA[<span style="font-weight: bold; color: #000000; padding: 3px;">id</span>:&nbsp;
+<span style="color: #000000; padding:3px;">ISRIC:NG0017</span><br>
+<span style="font-weight: bold; color: #000000; padding: 3px;">top</span>:&nbsp;
+<span style="color: #000000; padding:3px;">127</span><br>
+<span style="font-weight: bold; color: #000000; padding: 3px;">bottom</span>:&nbsp;
+<span style="color: #000000; padding:3px;">181</span><br>
+<span style="font-weight: bold; color: #000000; padding: 3px;">ORCDRC</span>:&nbsp;
+<span style="color: #000000; padding:3px;">1.2</span><br>
+<span style="font-weight: bold; color: #000000; padding: 3px;">hue</span>:&nbsp;
+<span style="color: #000000; padding:3px;">10YR</span><br>
+<span style="font-weight: bold; color: #000000; padding: 3px;">value</span>:&nbsp;
+<span style="color: #000000; padding:3px;">7</span><br>
+<span style="font-weight: bold; color: #000000; padding: 3px;">chroma</span>:&nbsp;
+<span style="color: #000000; padding:3px;">3</span><br>
+<span style="font-weight: bold; color: #000000; padding: 3px;">soil_color</span>:&nbsp;
+<span style="color: #000000; padding:3px;">#C4AC8CFF</span><br>]]></description>
+          <Point>
+            <extrude>1</extrude>
+            <altitudeMode>relativeToGround</altitudeMode>
+            <coordinates> 3.9,7.50064975042384,146</coordinates>
+          </Point>
+        </Placemark>
+      </Folder>
+      <Camera>
+        <longitude>3.900000</longitude>
+        <latitude>7.490000</latitude>
+        <altitude>300.000000</altitude>
+        <heading>0.0</heading>
+        <tilt>90.0</tilt>
+        <roll>0.0</roll>
+      </Camera>
+    </Folder>
+  </Document>
+</kml>

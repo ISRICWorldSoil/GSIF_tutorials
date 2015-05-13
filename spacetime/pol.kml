@@ -1,0 +1,21 @@
+<kml>
+  <Document>
+    <name>Google headquarters</name>
+    <Folder>
+      <Placemark>
+        <Polygon>
+          <tessellate>1</tessellate>
+          <outerBoundaryIs>
+            <LinearRing>
+              <coordinates>-122.08634,37.42324,0
+ -122.08648,37.42118,0
+ -122.0812,37.42084,0
+ -122.08119,37.42309,0
+ -122.08634,37.42324,0</coordinates>
+            </LinearRing>
+          </outerBoundaryIs>
+        </Polygon>
+      </Placemark>
+    </Folder>
+  </Document>
+</kml>
