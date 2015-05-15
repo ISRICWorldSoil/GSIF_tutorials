@@ -6,8 +6,12 @@ library(stringr)
 
 #global
 options(stringsAsFactors = FALSE)
-dir <- "E:\\data\\soildata\\depth\\points\\australia\\ngis"
-dir_out <- "E:\\data\\soildata\\depth\\points\\"
+dir <- "ngis/"
+dir_out <- "depth/points/"
+## unzip large files:
+unzip("lookup/litlist1.zip", exdir = "./lookup")
+unzip("lookup/litlist5.zip", exdir = "./lookup")
+
 # files of unique records
 list_files <- c("hgulist.txt", "conlist.txt", "keywords.txt",
     "litlist1.txt", "litlist2.txt", "litlist3.txt", "litlist4.txt", "litlist5.txt")
