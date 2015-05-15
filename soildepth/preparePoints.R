@@ -6,6 +6,7 @@ library(plotKML)
 library(sp)
 library(plyr)
 library(raster)
+library(maptools) 
 #global
 dir <- "E:\\data\\soildata\\depth\\points\\profs\\"
 setwd(dir)
@@ -128,43 +129,107 @@ proj4string(CA.ll) <- CRS("+proj=longlat +datum=WGS84")
 ##############################################
 ## WELL DATA (DRILLINGS)
 ##############################################
+DEAbig <- function(x)
+{
+    library(nortest)
+    print(summary(x))
+    print(paste0("Variance: ", var(x, na.rm = TRUE)))
+    y <- x[as.integer(runif(5000, 1,length(x)))]
+#    print( shapiro.test(y))  
+#    print(ad.test(x))
+#    print(cvm.test(x))
+#    print(lillie.test(x))
+#    print(pearson.test(x))
+#    print(sf.test(y))
+    hist(x, breaks=40, col="grey")
+    print("Press enter to get the next plot:")
+    scan(file="", quiet =TRUE)
+    boxplot(x)
+    print("Press enter to get the next plot:")
+    scan(file="", quiet =TRUE)
+    qqnorm(y)
+    qqline(y, col = 2) 
+}
+
+
 
 ## Wells data compiled by Wei:
 dir <- "E:\\data\\soildata\\depth\\points\\profs\\"
 setwd(dir)
+
+
+
+
 us <- read.csv(".\\well\\wells_us.txt", sep="\t")
-ca <- read.csv(".\\well\\wells_ca.txt", sep="\t")
 us$BDRICM <- us$D_BR*100
 names(us)[2:3] <- c("LONWGS84", "LATWGS84")
 us$SOURCEID <- paste0("USWELL_", us$Source)
-#hist(us$BDRICM, breaks=6000, col="grey", xlim = c(0,2000)) 
-#hist(log1p(us$BDRICM), breaks=40, col="grey") 
+hist(us$BDRICM, breaks=6000, col="grey", xlim = c(0,2000)) 
+DEAbig(log1p(us$BDRICM))
+
+
+ 
+ca <- read.csv(".\\well\\wells_ca.txt", sep="\t")
 ca$BDRICM <- ca$D_BR*100
 names(ca)[2:3] <- c("LONWGS84", "LATWGS84")
 ca$SOURCEID <- paste0("CAWELL_", ca$Source)
-#hist(ca$BDRICM, breaks=6000, col="grey", xlim = c(0,2000)) 
-#hist(log1p(ca$BDRICM), breaks=40, col="grey")
+hist(ca$BDRICM, breaks=6000, col="grey", xlim = c(0,2000)) 
+DEAbig(log1p(ca$BDRICM))
+
+
+#as <- read.csv(".\\well\\wells_as2.txt", sep="\t")
+#as$BDRICM <- as$D_BR*100
+#names(as)[2:3] <- c("LONWGS84", "LATWGS84")
+#as$SOURCEID <- paste0("ASWELL_", as$Source)
+#hist(as$BDRICM, breaks=6000, col="grey", xlim = c(0,2000)) 
+#DEAbig(log1p(as$BDRICM))
 
 #us.ll <- us[log1p(us$BDRICM)<4,c("BDRICM","LONWGS84", "LATWGS84","SOURCEID")]
 #coordinates(us.ll) <- ~ LONWGS84+LATWGS84
 #proj4string(us.ll) <- CRS("+proj=longlat +datum=WGS84")
 #plotKML(us.ll[runif(length(us.ll))<0.05,])
 
-## bind all together:
-na.bbox <- matrix(c(-175,14,-58,70), nrow=2)
-NA.pnts <- do.call(rbind, list( 
+
+####plot wells
+
+na.bbox <- matrix(c(-175,14,-58,80), nrow=2)
+NA.wells <- do.call(rbind, list( 
         ca[,c("SOURCEID","LONWGS84","LATWGS84","BDRICM")], 
-        us[,c("SOURCEID","LONWGS84","LATWGS84","BDRICM")], 
-        US.spdb[,c("SOURCEID","LONWGS84","LATWGS84","BDRICM")], 
-        MX.spdb[,c("SOURCEID","LONWGS84","LATWGS84","BDRICM")], 
-        CA.spdb[,c("SOURCEID","LONWGS84","LATWGS84","BDRICM")]))
-#-------------------------------check values        
-#for( i in 2:4)
-#{
-#    print(colnames(NA.pnts[i]))
-#    print(max(NA.pnts[i], na.rm = TRUE))
-#    print(min(NA.pnts[i], na.rm = TRUE))
-#}
+        us[,c("SOURCEID","LONWGS84","LATWGS84","BDRICM")]))
+NA.wells <- NA.wells[complete.cases(NA.wells), ]
+NA.wells <- NA.wells[NA.wells$LATWGS84 > na.bbox[2,1] & 
+        NA.wells$LATWGS84 < na.bbox[2,2] & NA.wells$LONWGS84 < na.bbox[1,2] &
+        NA.wells$LONWGS84 > na.bbox[1,1], ]
+plot(NA.wells[, c("LONWGS84", "LATWGS84")])        
+
+
+#as.pnts <- as[,c("SOURCEID","LONWGS84","LATWGS84","BDRICM")]
+#as.pnts <- as.pnts[complete.cases(as.pnts), ]
+#plot(as.pnts[, c("LONWGS84", "LATWGS84")])        
+#as.sp <- as.pnts[, c("BDRICM","LONWGS84", "LATWGS84","SOURCEID")]
+#coordinates(as.sp) <- ~ LONWGS84+LATWGS84
+#proj4string(as.sp) <- CRS("+proj=longlat +datum=WGS84")     
+#writePointsShape(as.sp, "as")
+save(NA.wells, file="NA.wells.rda")
+
+## plot soils:                                             
+                                                                   
+NA.soils <- do.call(rbind, list(  
+         US.spdb[,c("SOURCEID","LONWGS84","LATWGS84","BDRICM")],   
+         MX.spdb[,c("SOURCEID","LONWGS84","LATWGS84","BDRICM")],   
+        CA.spdb[,c("SOURCEID","LONWGS84","LATWGS84","BDRICM")])) 
+NA.soils <- NA.soils[complete.cases(NA.soils), ]
+NA.soils <- NA.soils[NA.soils$LATWGS84 > na.bbox[2,1] & 
+        NA.soils$LATWGS84 < na.bbox[2,2] & NA.soils$LONWGS84 < na.bbox[1,2] &
+        NA.soils$LONWGS84 > na.bbox[1,1], ]
+plot(NA.soils[, c("LONWGS84", "LATWGS84")])        
+save(NA.soils, file="NA.soils.rda")       
+
+
+#-------------------------------combine        
+NA.pnts <- do.call(rbind, list(   
+         NA.wells[, c("SOURCEID", "LONWGS84", "LATWGS84", "BDRICM")],   
+         NA.soils[, c("SOURCEID", "LONWGS84", "LATWGS84", "BDRICM")])) 
 ## subset to NorthAmerica continent:
 NA.pnts <- NA.pnts[complete.cases(NA.pnts), ]
 NA.pnts <- NA.pnts[NA.pnts$LATWGS84 > na.bbox[2,1] & 
@@ -173,13 +238,13 @@ NA.pnts <- NA.pnts[NA.pnts$LATWGS84 > na.bbox[2,1] &
 plot(NA.pnts[, c("LONWGS84", "LATWGS84")])
 str(NA.pnts)
 hist(log1p(NA.pnts$BDRICM), breaks=40, col="grey")
-## Concentrated values around 0, 1 feet and 2 feet!! Are these all ok. 
 save(NA.pnts, file="NA.pnts.rda")
-NA.sp <- NA.pnts[, c("BDRICM","LONWGS84", "LATWGS84","SOURCEID")]
+#NA.sp <- NA.pnts[, c("BDRICM","LONWGS84", "LATWGS84","SOURCEID")]
+#only wells
+NA.sp <- NA.wells[, c("BDRICM","LONWGS84", "LATWGS84","SOURCEID")]
 coordinates(NA.sp) <- ~ LONWGS84+LATWGS84
 proj4string(NA.sp) <- CRS("+proj=longlat +datum=WGS84")
 save(NA.sp, file="NA.sp.rda")
-
 grd <- vect2rast(NA.sp["BDRICM"], cell.size=.1, bbox=na.bbox)
 plot(log1p(raster(grd)), col=SAGA_pal[[1]])
 grd.pol <- grid2poly(as(grd, "SpatialPixelsDataFrame"))

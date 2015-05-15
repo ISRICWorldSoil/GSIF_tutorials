@@ -18,12 +18,17 @@ setwd(dir)
 load("../profs/NA.sp.rda")
 ## bounding box:
 na.bbox <- matrix(c(-175,14,-58,70), nrow=2)
+#na.bbox <- matrix(c(-175,14,-58,80), nrow=2)
+
 
 ## covariates:
 #cov.lst <- c("TWISRE3a.tif", "SLPSRT3a.tif", "DEMSRE3a.tif",
 #            "L3POBI3b.tif", "GLTUHA3x.tif")
-cov.lst <- c("na_TWISRE3a.tif", "na_SLPSRT3a.tif", "na_DEMSRE3a.tif",
+cov.lst <- c("BIOUSG3a.tif","GCPIIA3a.tif","LFOUSG3a.tif","LITUSG3a.tif","na_TWISRE3a.tif", "na_SLPSRT3a.tif", "na_DEMSRE3a.tif",
             "na_L3POBI3b.tif", "na_GLTUHA3x.tif")
+#GTDHYS3a.tif: to be added
+#GCPIIA3a.tif: percentage
+
 ## extract values:
 sel <- runif(length(NA.sp))<0.05
 ov.NA <- GSIF::extract(NA.sp[sel,], cov.lst, 
@@ -32,11 +37,18 @@ ov.NA <- GSIF::extract(NA.sp[sel,], cov.lst,
 rmat <- plyr::join(as.data.frame(NA.sp[sel,]), ov.NA, type="left", match="first")
 rmat$na_L3POBI3b.tif <- as.factor(rmat$na_L3POBI3b.tif)
 rmat$na_GLTUHA3x.tif <- as.factor(rmat$na_GLTUHA3x.tif)
+rmat$LITUSG3a.tif <- as.factor(rmat$LITUSG3a.tif)
+rmat$LFOUSG3a.tif <- as.factor(rmat$LFOUSG3a.tif)
+rmat$BIOUSG3a.tif <- as.factor(rmat$BIOUSG3a.tif)
 fm <- as.formula(paste("BDRICM ~ ", paste(basename(cov.lst), collapse="+")))
 rf.BDRICM <- randomForest(fm, data=rmat, na.action=na.omit, importance=TRUE)
 rf.BDRICM
 gc()
-#19%, 20%, 21%, 22%, 25%, 27%,
+#5 cov
+#soil+ well:19%, 20%, 21%, 22%, 25%, 27%,
+#well: 22.2%, 23.81%, 24.51%, 24.59%,26.2%, 
+#9 cov
+#19.14
 varImpPlot(rf.BDRICM)
 
 ## prepare prediction locations:
@@ -46,7 +58,7 @@ for(j in 1:length(cov.lst)){
     paste0("G:/NA/covs/na_", cov.lst[j]), 
     te=as.vector(na.bbox), r="near")
   }
-}
+} 
 ## Read to R:
 na1km <- stack(paste0("../covs/", cov.lst))
 ## subset:
@@ -56,6 +68,7 @@ s.na1km <- as(s.na1km, "SpatialPixelsDataFrame")
 sel.C <- complete.cases(s.na1km@data)
 summary(sel.C)
 s.na1km <- s.na1km[sel.C,]
+
 
 names(s.na1km)[1:3] <- cov.lst[1:3]
 ## fix missing factors:
