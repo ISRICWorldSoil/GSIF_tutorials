@@ -73,7 +73,7 @@
       <div align="right"><strong>RMSE</strong>: </div>
     </th>
     <th scope="col">
-      <div align="left">66.62</div>
+      <div align="left">62.31</div>
     </th>
   </tr>
   <tr>
@@ -81,7 +81,7 @@
       <div align="right"><strong>tvar</strong>: </div>
     </th>
     <th scope="col">
-      <div align="left">83.3</div>
+      <div align="left">85.4</div>
     </th>
   </tr>
   <tr>
@@ -89,7 +89,7 @@
       <div align="right"><strong>Bytes</strong>: </div>
     </th>
     <th scope="col">
-      <div align="left">763</div>
+      <div align="left">778</div>
     </th>
   </tr>
   <tr>

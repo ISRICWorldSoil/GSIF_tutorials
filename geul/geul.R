@@ -30,16 +30,18 @@ proj4string(grd25) <- CRS(nl.rd)
 
 ## fit a model:
 grd25.spc <- spc(grd25, ~ dem+dis)
-m = pb ~ PC1+PC2
+m = log1p(pb) ~ PC1+PC2
 #pbm <- fit.gstatModel(m, observations=geul, grd25.spc@predicted, family=gaussian(link=log))
-pbm <- fit.gstatModel(m, observations=geul, grd25.spc@predicted, method="randomForest")
+pbm <- fit.gstatModel(m, observations=geul, grd25.spc@predicted)
 ## predict values:
-#pb.rk <- predict(pbm, grd25.spc@predicted)
+pb.rk0 <- predict(pbm, grd25.spc@predicted)
 ## block kriging by default!
-pb.rk <- autopredict(geul["pb"], grd25.spc@predicted)
+## back-transform:
+pb.rk0@predicted$pb <- expm1(pb.rk0@predicted$pb)
+plot(pb.rk0)
+pb.rk <- autopredict(geul["pb"], grd25)
 plot(pb.rk)
 ## 57% of variability explained by the model;
-plot(pb.rk)
 
 ## geostat simulations:
 pb.rks <- predict(pbm, grd25.spc@predicted, nsim=20, block = c(0,0))
@@ -52,15 +54,22 @@ pal <- get("colour_scale_numeric", envir = plotKML.opts)
 mp <- plotGoogleMaps(pb.rk@predicted, zcol='pb', add=T, colPalette=pal)
 ms <- plotGoogleMaps(geul, zcol='pb', add=F, previousMap=mp)
 
-## extend the model using new covariates:
+## extend the model using a new covariate:
 library(RSAGA)
 writeGDAL(grd25["dem"], "dem.sdat", "SAGA", mvFlag=-99999)
-rsaga.wetness.index("dem.sgrd", "swi.sgrd")
+rsaga.geoprocessor(lib="ta_hydrology", module=15, param=list(DEM ="dem.sgrd", TWI="swi.sgrd"), check.module.exists = FALSE, warn=FALSE)
 grd25$swi <- readGDAL("swi.sdat")$band1[grd25@grid.index]
+library(raster)
+plot(stack(grd25))
+
 grd25.spc2 <- spc(grd25, ~ dem+dis+swi)
 m2 = log1p(pb) ~ PC1+PC2+PC3
 pbm2 <- fit.gstatModel(m2, observations=geul, grd25.spc2@predicted)
 pb.rk2 <- predict(pbm2, grd25.spc2@predicted)
 show(pb.rk2)
+plot(pb.rk2)
+
+## compare to randomForest-kriging:
+pb.rk <- autopredict(geul["pb"], grd25)
 
 ## end of script;
