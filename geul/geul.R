@@ -37,11 +37,14 @@ pbm <- fit.gstatModel(m, observations=geul, grd25.spc@predicted)
 pb.rk0 <- predict(pbm, grd25.spc@predicted)
 ## block kriging by default!
 ## back-transform:
-pb.rk0@predicted$pb <- expm1(pb.rk0@predicted$pb)
+pb.rk0@predicted$pb <- expm1(pb.rk0@predicted$pb + pb.rk0@predicted$var1.var/2)
+pb.rk0
+## 57% of variability explained by the model;
 plot(pb.rk0)
+
+## compare to randomForest-kriging:
 pb.rk <- autopredict(geul["pb"], grd25)
 plot(pb.rk)
-## 57% of variability explained by the model;
 
 ## geostat simulations:
 pb.rks <- predict(pbm, grd25.spc@predicted, nsim=20, block = c(0,0))
