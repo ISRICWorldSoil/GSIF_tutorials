@@ -131,7 +131,7 @@ mcol.RGB$col <- rgb(mcol.RGB$Rc, mcol.RGB$Gc, mcol.RGB$Bc)
 mcol.RGB <- mcol.RGB[mcol.RGB$depth>0 & mcol.RGB$depth<30 & !is.na(mcol.RGB$col),]
 coordinates(mcol.RGB) <- ~ LONWGS84+LATWGS84
 ## plot whole of Africa:
-download.file("http://gsif.isric.org/lib/exe/fetch.php?media=admin.af.rda", "admin.af.rda")
+load(file("http://gsif.isric.org/lib/exe/fetch.php?media=admin.af.rda"))
 load("admin.af.rda")
 proj4string(admin.af) <- "+proj=longlat +datum=WGS84"
 country <- as(admin.af, "SpatialLines")
