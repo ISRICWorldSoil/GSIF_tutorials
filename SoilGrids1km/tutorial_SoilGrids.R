@@ -57,16 +57,18 @@ points(sites, pch="+")
 #ghana.xy@bbox
 
 ## get only Ghana:
+library(raster)
 library(gdalUtils)
 getOption("gdalUtils_gdalPath")
 ## path is unknown, we have to help gdalUtils locate the software:
-fw <- utils::readRegistry("SOFTWARE\\WOW6432Node\\FWTools")$Install_Dir
-gdal_setInstallation(search_path=paste(fw, "bin", sep="\\"), rescan=TRUE)
+gdal.dir <- shortPathName("C:/Program files/GDAL")
+gdal_setInstallation(search_path=gdal.dir, rescan=TRUE)
 getOption("gdalUtils_gdalPath")
 te = as.vector(ghana@bbox)
 unlink("ORC_sd1_Ghana.tif")
 gdalwarp(ORC.tif, dstfile="ORC_sd1_Ghana.tif", te=te)
 ORCDRC_sd1_ghana <- readGDAL("ORC_sd1_Ghana.tif")
+plot(raster(ORCDRC_sd1_ghana))
 
 ## (b) Web Coverage Service
 library(XML)
