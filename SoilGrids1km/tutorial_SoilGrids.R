@@ -180,14 +180,22 @@ spplot(ghana1km["SOCf"], at=at, col.regions=R_pal[["soc_pal"]], sp.layout=bnd, s
 library(rjson)
 library(sp)
 ## 2 points:
-pnts <- data.frame(lon=c(10.65,5.36), lat=c(51.81,51.48), id=c("p1","p2"))
+pnts <- data.frame(lon=c(10.65,5.36), lat=c(51.81,52.48), id=c("p1","p2"))
 coordinates(pnts) <- ~lon+lat
 proj4string(pnts) <- CRS("+proj=longlat +datum=WGS84")
 pnts
+
+sel <- sites@coords[,1]<ghana@bbox[1,2] & sites@coords[,1]>ghana@bbox[1,1] & sites@coords[,2]<ghana@bbox[2,2] & sites@coords[,2]>ghana@bbox[1,2]
+pnts <- sites[sel,][400:500,]
 ## REST example:
 soilgrids.r <- REST.SoilGrids(c("ORCDRC","PHIHOX"))
 ov <- over(soilgrids.r, pnts)
 str(ov)
+
+kml(pnts, colour=SOURCEID, file="PHIHOX_depth.kml", 
+    shape=paste("PHIHOX_depth_", 1:nrow(ov), ".png", sep=""), 
+    size=6, points_names=pnts$SOURCEID, 
+    colour_scale=rep("#FFFFFF", 2))
 
 ## plot soil depth curve:
 ORCDRC.pnt1 <- data.frame(

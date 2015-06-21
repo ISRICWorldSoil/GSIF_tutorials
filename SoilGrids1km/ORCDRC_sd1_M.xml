@@ -3,7 +3,7 @@
   <CoverageName>ORCDRC_sd1_M</CoverageName>
   <CoverageOffering>
     <metadataLink metadataType="TC211">ftp://soilgrids:soilgrids@ftp.soilgrids.org/data/recent/ORCDRC_sd1_M_02_apr_2014.tif.xml</metadataLink>
-    <description/>
+    <description />
     <name>soilgrids1km:ORCDRC_sd1_M</name>
     <label>Soil organic carbon content (fine earth fraction) in permilles (mean estimate) for 2.5 cm depth</label>
     <lonLatEnvelope srsName="urn:ogc:def:crs:OGC:1.3:CRS84">

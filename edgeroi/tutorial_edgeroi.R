@@ -33,7 +33,7 @@ con <- url("http://gsif.isric.org/lib/exe/fetch.php?media=edgeroi.grids.rda")
 load(con)
 gridded(edgeroi.grids) <- ~x+y
 proj4string(edgeroi.grids) <- CRS("+init=epsg:28355")
-m <- fit.gstatModel(h1.xy, CLYPPT~DEMSRT5+TWISRT5+PMTGEO5+EV1MOD5+EV2MOD5+EV3MOD5, edgeroi.grids)
+m <- fit.gstatModel(h1.xy, CLYPPT~DEMSRT5+TWISRT5+PMTGEO5+EV1MOD5+EV2MOD5+EV3MOD5, edgeroi.grids, method="quantregForest")
 m@vgmModel
 rk <- predict(m, edgeroi.grids)
 plot(rk)
