@@ -1,0 +1,14 @@
+ref. system : unnamed
+projection  : Oblique Stereographic
+datum       : unknown
+delta WGS84 : 0 0 0
+ellipsoid   : bessel
+major s-ax  : 6377397.155
+minor s-ax  : 6356078.963
+origin long : 5.38763889
+origin lat  : 52.1561606
+origin X    : 155000
+origin Y    : 463000
+scale fac   : 0.9999079
+units       : m
+parameters  : 0

@@ -1,0 +1,4 @@
+<WCS_GDAL>
+  <ServiceURL>http://wms3.isric.org/geoserver/soilgrids1km/wcs?</ServiceURL>
+  <CoverageName>BLD_sd3_M</CoverageName>
+</WCS_GDAL>

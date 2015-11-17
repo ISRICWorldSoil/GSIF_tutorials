@@ -1,0 +1,31 @@
+<kml xmlns:xsd="http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd" xmlns:xmlns="http://www.opengis.net/kml/2.2/" version="1.0">
+  <Document>
+    <name>ORCDRC_sd1_ghana__val__</name>
+    <open>1</open>
+    <Folder>
+      <name>SpatialGridDataFrame</name>
+      <GroundOverlay>
+        <name>colour</name>
+        <altitude>0</altitude>
+        <altitudeMode>clampToGround</altitudeMode>
+        <Icon>
+          <href>val.png</href>
+        </Icon>
+        <LatLonBox>
+          <north>11.1666666666667</north>
+          <south>4.7416666666667</south>
+          <east>1.18333333333326</east>
+          <west>-3.26666666666674</west>
+        </LatLonBox>
+      </GroundOverlay>
+    </Folder>
+    <ScreenOverlay>
+      <name>Legend</name>
+      <Icon>
+        <href>val_legend.png</href>
+      </Icon>
+      <overlayXY x="0" y="1" xunits="fraction" yunits="fraction"/>
+      <screenXY x="0" y="1" xunits="fraction" yunits="fraction"/>
+    </ScreenOverlay>
+  </Document>
+</kml>

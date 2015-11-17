@@ -1,0 +1,13 @@
+<kml>
+  <Document>
+    <name>Google headquarters</name>
+    <Folder>
+      <Placemark>
+        <Point>
+          <coordinates>
+    -122.08492,37.42316,0</coordinates>
+        </Point>
+      </Placemark>
+    </Folder>
+  </Document>
+</kml>

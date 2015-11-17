@@ -1,0 +1,29 @@
+file format : IDRISI Raster A.1
+file title  : var(SNDMHT.t)
+data type   : real
+file type   : binary
+columns     : 100
+rows        : 100
+ref. system : plane
+ref. units  : m
+unit dist.  : 1
+min. X      : 3570000.0000000
+max. X      : 3580000.0000000
+min. Y      : 5708000.0000000
+max. Y      : 5718000.0000000
+pos'n error : unknown
+resolution  : 100.0000000
+min. value  : -330055872.0000000
+max. value  : 9685551808512.0000000
+display min : -330055872.0000000
+display max : 9685551808512.0000000
+value units : no
+value error : unknown
+flag value  : -99999.0000000
+flag def'n  : missing data
+legend cats : 0
+lineage     : program:       C:\windows\system32\gstat.exe 2.4.1 (12 March 2003)
+lineage     : command file:  eberg_SNDMHT_rk.cmd
+lineage     : method used:   using universal kriging
+lineage     : date:          Tue Jul 17 18:33:16 2012
+lineage     :  (seed 1342542784)

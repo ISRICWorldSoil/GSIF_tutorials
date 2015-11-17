@@ -1,0 +1,1568 @@
+Descriptio	freq	token
+""	5682	4
+*old strata* : basalt(195)	502	2
+*old strata* : blue clay( 15)	125	0
+*old strata* : brown carbonaceous clay( 116)	300	0
+*old strata* : brown carbonaceous silty clay( 113)	107	0
+*old strata* : brown clay cont coal( 116)	129	0
+*old strata* : brown clay( 11)	5161	0
+*old strata* : brown clayey sand( 214)	152	0
+*old strata* : brown clayey silt( 314)	172	0
+*old strata* : brown coal( 0 0)	170	2
+*old strata* : brown sandy clay( 112)	818	0
+*old strata* : brown silt( 31)	247	0
+*old strata* : brown silty clay( 113)	2350	0
+*old strata* : cemented sand( 2)	189	0
+*old strata* : clay sandy( 2 4)	125	0
+*old strata* : clay( 1)	3485	0
+*old strata* : clayey sand( 2 4)	3663	0
+*old strata* : clayey silt( 3 4)	1423	0
+*old strata* : clayey silt(193 4)	131	0
+*old strata* : coal - brown( 0 0)	377	2
+*old strata* : coal - brown( 10 0)	175	2
+*old strata* : coal - brown( 20 0)	138	2
+*old strata* : coal - brown( 50 0)	106	2
+*old strata* : coal - brown( 60 0)	120	2
+*old strata* : coal - brown(100 0)	243	2
+*old strata* : coal - brown(110 0)	113	2
+*old strata* : coal brown( 0 0)	1605	2
+*old strata* : coal brown( 10 0)	863	2
+*old strata* : coal brown( 20 0)	335	2
+*old strata* : coal brown( 40 0)	863	2
+*old strata* : coal brown( 50 0)	709	2
+*old strata* : coal brown( 60 0)	544	2
+*old strata* : coal brown( 70 0)	505	2
+*old strata* : coal brown( 80 0)	608	2
+*old strata* : coal brown(100 0)	200	2
+*old strata* : coal brown(110 0)	207	2
+*old strata* : coal brown(230 0)	185	2
+*old strata* : coal brown(240 0)	104	2
+*old strata* : coal dry( 80 0)	198	2
+*old strata* : coal hard( 80 0)	122	2
+*old strata* : coal wet( 80 0)	226	0
+*old strata* : coal( 0 0)	299	2
+*old strata* : coal( 10 0)	409	2
+*old strata* : coal( 20 0)	163	2
+*old strata* : coal( 40 0)	125	2
+*old strata* : coarse sand( 2)	1704	0
+*old strata* : coarse sandy clay( 1 2)	294	0
+*old strata* : decomposed basalt(195 3)	207	0
+*old strata* : fine sand( 2)	1765	0
+*old strata* : fine sandy clay( 1 2)	181	0
+*old strata* : gravel( 4)	370	0
+*old strata* : gravelly clay( 1 5)	141	0
+*old strata* : grey clay( 14)	6506	0
+*old strata* : grey clayey sand( 244)	260	0
+*old strata* : grey clayey silt( 344)	179	0
+*old strata* : grey sand( 24)	116	0
+*old strata* : grey sandy clay( 142)	1159	0
+*old strata* : grey silty clay( 143)	1172	0
+*old strata* : inferior coal( 0 7)	3102	2
+*old strata* : inferior coal( 10 7)	888	2
+*old strata* : inferior coal( 20 7)	336	2
+*old strata* : inferior coal( 40 7)	695	2
+*old strata* : inferior coal( 50 7)	414	2
+*old strata* : inferior coal( 60 7)	417	2
+*old strata* : inferior coal( 70 7)	411	2
+*old strata* : inferior coal( 80 7)	895	2
+*old strata* : inferior coal(100 7)	236	2
+*old strata* : inferior coal(110 7)	135	2
+*old strata* : inferior coal(230 7)	101	2
+*old strata* : light brown clay( 11)	147	0
+*old strata* : light brown silty clay( 113)	100	0
+*old strata* : ligneous clay( 0 8)	8066	0
+*old strata* : ligneous clayey silt( 3 4)	189	0
+*old strata* : ligneous sandy clay( 0 8)	385	0
+*old strata* : ligneous silt( 3 6)	190	0
+*old strata* : ligneous silty clay( 0 8)	594	0
+*old strata* : medium grained sand( 2)	219	0
+*old strata* : medium sand( 2)	530	0
+*old strata* : mottled clay( 19)	3035	0
+*old strata* : mottled clayey sand( 294)	367	0
+*old strata* : mottled sandy clay( 192)	1227	0
+*old strata* : mottled silty clay( 193)	259	0
+*old strata* : sand( 2)	7149	0
+*old strata* : sandstone( 7 0)	267	0
+*old strata* : sandstone(187 0)	151	0
+*old strata* : sandy clay( 1 2)	5211	0
+*old strata* : sandy silt( 3 2)	650	0
+*old strata* : sandy soil( 8 7)	364	0
+*old strata* : silt( 3)	638	0
+*old strata* : silty clay( 1 3)	4251	0
+*old strata* : silty clay(191 3)	121	0
+*old strata* : silty sand( 2 3)	1192	0
+*old strata* : soil( 8)	2625	0
+*old strata* : strata not recorded( ---)	466	4
+*old strata* : subsoil( 8 4)	114	0
+*old strata* : topsoil( 8)	295	0
+*old strata* : weathered basalt(195 2)	144	0
+*old strata* : wet sand( 2)	135	0
+*old strata* : white clay( 13)	246	0
+*old strata* : yellow and grey clay( 19)	196	0
+*old strata* : yellow clay( 12)	396	0
+*old strata* : yellow clayey sand( 224)	111	0
+*old strata* : yellow sand( 22)	138	0
+*old strata* : yellow sandy clay( 122)	192	0
+125mm pvc	112	4
+AA	1055	4
+Alluvium	214	0
+Andesite	107	2
+AS ABOVE	3586	0
+As above	472	0
+AS ABOVE.	284	0
+Basalt	37078	2
+Basalt & aquifer	104	2
+Basalt & clay	178	0
+Basalt & soapstone	106	2
+Basalt (hard)	151	1
+Basalt and clay	187	0
+Basalt ash	125	0
+Basalt black	343	2
+Basalt black water supply	113	0
+Basalt blue	173	2
+Basalt boulder	151	0
+Basalt boulders	458	0
+Basalt broken	470	0
+Basalt broken water supply	360	0
+Basalt clay	138	0
+Basalt decomposed	884	0
+Basalt decomposed water supply	241	0
+Basalt fractured	157	0
+Basalt fractured water supply	182	0
+Basalt grey	277	2
+Basalt hard	1626	1
+Basalt hard water supply	117	0
+Basalt honeycomb	127	2
+Basalt rock	185	2
+Basalt rotten	100	0
+Basalt soft	349	0
+Basalt very hard	201	1
+Basalt water bearing	131	0
+Basalt water supply	1606	0
+Basalt weathered	457	0
+"Basalt, blue"	206	2
+"Basalt, broken"	230	0
+"Basalt, decomposed"	268	0
+"Basalt, grey"	203	2
+"Basalt, hard"	359	1
+"Basalt, red"	146	2
+"Basalt, soft"	175	0
+"Basalt, water bearing"	302	0
+"Basalt, weathered"	402	0
+Basalt/blue	131	2
+Basaltic clay	774	0
+Basement	222	2
+Bassalt	136	2
+Bauxite	126	2
+Bedrock	1085	1
+BIF AS ABOVE	104	2
+Black basalt	783	2
+Black clay	2783	0
+BLACK CLAY	552	0
+Black clay.	288	0
+Black coal	381	2
+Black loam	107	0
+Black mud	118	0
+BLACK MUD	114	0
+Black mudstone	118	2
+Black sand	564	0
+Black sand.	118	0
+Black sandy clay	192	0
+Black shale	2521	2
+Black shale.	234	2
+Black silty clay	120	0
+Black slate	332	2
+BLACK SLATE	134	2
+Black soil	1642	0
+Black top soil	510	0
+Black topsoil	795	0
+Blacksoil	500	0
+Blue basalt	1690	2
+Blue clay	1831	0
+BLUE CLAY	631	0
+Blue grey clay	127	0
+Blue marl	111	2
+Blue metal	276	2
+Blue mudstone	219	2
+BLUE ROCK	506	2
+Blue rock	445	2
+Blue sandstone	463	0
+Blue sandy clay	167	0
+Blue sandy shale	264	0
+Blue shale	3880	2
+BLUE SHALE	207	2
+BLUE SLATE	706	2
+Blue slate	125	2
+Blue stone	397	2
+Bluestone	2188	2
+Boulders	625	0
+Br gry zc moist	285	0
+Br zc dry	166	4
+Br zc moist	350	0
+Broken basalt	1922	0
+Broken granite	106	0
+Broken limestone	137	0
+BROKEN QUARTZITE	141	0
+Broken rock	395	0
+BROKEN ROCK	245	0
+Broken sandstone	219	0
+Broken shale	136	0
+BROKEN SLATE	207	0
+Brown	1324	4
+Brown & grey clay	1210	0
+Brown & grey clay moist	613	0
+Brown & grey sandy clay	286	0
+Brown & grey shale	184	2
+Brown & grey silty clay	472	0
+Brown & grey silty sandy clay	168	0
+Brown and grey clay	1231	0
+BROWN AND GREY CLAY	107	0
+Brown and grey clay moist	285	0
+Brown and grey clays	166	0
+Brown and grey sandy clay	237	0
+Brown and grey shale	154	2
+Brown and grey silty clay	295	0
+Brown and white clay	128	0
+Brown basalt	1040	2
+Brown clay	21314	0
+BROWN CLAY	2289	0
+Brown clay & basalt	104	0
+Brown clay & gravel	133	0
+Brown clay & limestone	151	0
+Brown clay & sand	105	0
+Brown clay and gravel	146	0
+Brown clay dry	176	0
+Brown clay moist	3874	0
+Brown clay wet	116	0
+Brown clay.	379	0
+BROWN CLAY.	118	0
+Brown clayey loam	142	0
+Brown clayey sand	402	0
+Brown clayey sand wet	132	0
+Brown clayey silt	177	0
+Brown clayey silt moist	109	0
+Brown clays	271	0
+Brown coal	3441	2
+Brown coarse sand	150	0
+Brown fine clayey sand	270	0
+Brown fine sand	419	0
+Brown fine sandy clay	380	0
+Brown gravel	100	0
+Brown gravelly clay	203	0
+Brown grey clay	1612	0
+Brown grey sandy clay	146	0
+Brown grey silty clay	570	0
+Brown grey silty clay moist	119	0
+Brown gritty clay	325	0
+Brown gritty clay moist	307	0
+Brown ligneous clay	131	0
+Brown loam	254	0
+Brown med coarse sand	158	0
+Brown med fine sand	144	0
+Brown medium coarse sand	149	0
+Brown medium fine sand	139	0
+Brown mottled clay	147	0
+Brown mudstone	558	2
+Brown rock	381	2
+Brown sand	3181	0
+Brown sand & gravel	129	0
+Brown sand (f-c)	153	0
+Brown sand (well graded)	220	0
+Brown sand and gravel	167	0
+Brown sand.	205	0
+Brown sands	133	0
+Brown sandstone	946	0
+Brown sandy clay	4529	0
+BROWN SANDY CLAY	573	0
+Brown sandy clay moist	666	0
+Brown sandy clay wet	587	0
+Brown sandy clay.	121	0
+Brown sandy loam	153	0
+Brown sandy shale	359	0
+Brown shale	5067	2
+BROWN SHALE	283	2
+Brown shale & coal	135	2
+Brown silt	325	0
+Brown siltstone	114	2
+Brown silty clay	7197	0
+BROWN SILTY CLAY	109	0
+Brown silty clay dry	297	0
+Brown silty clay moist	3558	0
+Brown silty clay wet	1458	0
+Brown silty sand	238	0
+Brown silty sandy clay	835	0
+Brown soil	352	0
+Brown stone	604	2
+Brown to grey clay	114	0
+Brown to grey silty clay	106	0
+Brown top soil	747	0
+Brown topsoil	440	0
+Brown with grey silty clay moist	151	0
+Buckshot	136	0
+C br/gy hard plastic	163	1
+CALCRETE	686	2
+Calcrete	560	2
+"Calcrete, calcrete"	158	2
+Capstone	178	1
+Capstone.	126	1
+Carbonaceous mudstone	684	2
+Cavity	338	0
+CAVITY	207	0
+"Cavity, lost circulation"	157	0
+Cement	386	5
+Cemented gravel	200	0
+Cemented sand	461	0
+Cemented sand and gravel	104	0
+Cemented sands	126	0
+Chert	181	2
+Chocolate clay	109	0
+Clay	51355	0
+CLAY	12223	0
+Clay - 100%	309	0
+"Clay - brown, good sorting"	109	0
+Clay - unconsolidated	297	0
+Clay - unconsolidated - brown clay.	176	0
+Clay - unconsolidated - clay - 60% ; medium sand - 40%	187	0
+"Clay - unconsolidated - clay - 60%, medium sand - 40%"	111	0
+Clay - unconsolidated - clay - 70% ; medium sand - 30%	104	0
+"Clay - unconsolidated - clay - 70%, medium sand - 30%"	115	0
+Clay - unconsolidated - clay - 80% ; medium sand - 20%	212	0
+"Clay - unconsolidated - clay - 80%, medium sand - 20%"	271	0
+Clay - unconsolidated - clay - 90% ; fine sand - 10%	113	0
+"Clay - unconsolidated - clay - 90%, medium sand - 10%"	196	0
+Clay - unconsolidated - clay - 99%	636	0
+"Clay - unconsolidated - clay - component: clay, sand."	155	0
+Clay & basalt	404	0
+Clay & gravel	543	0
+Clay & limestone	204	0
+Clay & rock	368	0
+Clay & sand	449	0
+CLAY & SAND	265	0
+Clay & sandstone	118	0
+CLAY & STONE	138	0
+Clay & stone	113	0
+Clay & stones	108	0
+Clay and basalt	140	0
+Clay and boulders	174	0
+Clay and gravel	837	0
+CLAY AND GRAVEL	157	0
+CLAY AND LIMESTONE	196	0
+Clay and limestone	175	0
+Clay and rock	346	0
+Clay and sand	630	0
+CLAY AND SAND	311	0
+Clay and sandstone	121	0
+CLAY AND STONE	179	0
+Clay and stone	101	0
+Clay and stones	152	0
+Clay band	205	0
+Clay black	179	0
+Clay bound gravel	353	0
+Clay brown	1525	0
+Clay dark grey	115	0
+Clay gravel	116	0
+Clay grey	1092	0
+Clay grey brown	118	0
+Clay light brown	111	0
+Clay red	373	0
+Clay sand	210	0
+Clay sandy	897	0
+Clay sandy brown	207	0
+Clay silty	282	0
+Clay silty brown	359	0
+Clay volcanic	107	0
+Clay white	234	0
+Clay yellow	391	0
+"Clay, basaltic"	247	0
+"Clay, black"	175	0
+"Clay, blue"	130	0
+"Clay, brown"	2392	0
+"Clay, brown & white"	248	0
+"Clay, brown clay"	109	0
+"Clay, brown sandy"	441	0
+"Clay, brown sandy clay"	134	0
+"Clay, brown, good sorting"	186	0
+"Clay, brown, sandy"	262	0
+"Clay, clay"	661	0
+"Clay, gravel"	116	0
+"Clay, grey"	650	0
+"Clay, light brown"	108	0
+"Clay, ligneous"	340	0
+"Clay, orange"	121	0
+"Clay, pink"	171	0
+"Clay, red"	996	0
+"Clay, red sandy"	172	0
+"Clay, sand"	162	0
+"Clay, sandy"	2445	0
+"Clay, sandy clay"	570	0
+"Clay, silty"	124	0
+"Clay, white"	904	0
+"Clay, white sandy"	423	0
+"Clay, white, sandy"	135	0
+"Clay, yellow"	1474	0
+"Clay, yellow & white"	230	0
+"Clay, yellow sandy"	194	0
+"Clay,ligneous"	114	0
+"Clay,sandy"	273	0
+Clay.	660	0
+CLAY.	119	0
+Clay/claystone	163	0
+Clay/claystone - unconsolidated - black clay	141	0
+Clay/claystone - unconsolidated - brown clay	132	0
+Clay/claystone - unconsolidated - c	118	0
+Clay/claystone - unconsolidated - clay	6437	0
+Clay/claystone - unconsolidated - clay sand	608	0
+Clay/claystone - unconsolidated - clay silt	111	0
+"Clay/claystone - unconsolidated - clay, brown, good sorting"	188	0
+"Clay/claystone - unconsolidated - clay, brown, medium sorting"	111	0
+"Clay/claystone - unconsolidated - clay, grey"	134	0
+"Clay/claystone - unconsolidated - clay, light brown"	136	0
+"Clay/claystone - unconsolidated - clay, light brown and minor sand"	140	0
+"Clay/claystone - unconsolidated - clay, light grey"	372	0
+"Clay/claystone - unconsolidated - clay, light grey and minor sand"	131	0
+Clay/claystone - unconsolidated - clay/fine - medium sand	122	0
+Clay/claystone - unconsolidated - clay/fine medium sand	120	0
+Clay/claystone - unconsolidated - clay/fine sand	155	0
+"Clay/claystone - unconsolidated - clay: brown, minor sand"	163	0
+Clay/claystone - unconsolidated - clay: grey	108	0
+Clay/claystone - unconsolidated - clay: light brown	136	0
+"Clay/claystone - unconsolidated - clay: light brown, minor sand"	119	0
+Clay/claystone - unconsolidated - clay: light grey	354	0
+"Clay/claystone - unconsolidated - clay: light grey, minor sand"	263	0
+Clay/claystone - unconsolidated - clay+ sand	332	0
+Clay/claystone - unconsolidated - clayey sand	842	0
+Clay/claystone - unconsolidated - clayey sand+ sandy clay	132	0
+Clay/claystone - unconsolidated - clays	104	0
+Clay/claystone - unconsolidated - fine medium/sandy clay	151	0
+Clay/claystone - unconsolidated - grey clay	320	0
+Clay/claystone - unconsolidated - red clay	109	0
+Clay/claystone - unconsolidated - sand clay	505	0
+Clay/claystone - unconsolidated - sand+ clay	625	0
+Clay/claystone - unconsolidated - sand+ sandy clay	725	0
+Clay/claystone - unconsolidated - sandy clay	3915	0
+Clay/claystone - unconsolidated - silt clay	654	0
+Clay/claystone - unconsolidated - yellow clay	101	0
+Claybound gravel	941	0
+Claybound sand	468	0
+Claybound sand & gravel	240	0
+Claybound sand and gravel	312	0
+Clayed sand	211	0
+Clayed sands	120	0
+Clayey gravel	504	0
+Clayey sand	3451	0
+Clayey sand & gravel	110	0
+Clayey sand and gravel	169	0
+Clayey sandstone	119	0
+Clayey silt	1271	0
+Clays	1378	0
+CLAYS	385	0
+"Clays, sandy"	115	0
+Claystone	816	2
+CLAYSTONE	110	2
+Clean gravel	104	0
+Clod	116	0
+Coal	7083	2
+Coal & shale	113	2
+Coal bands	100	2
+Coal brown	3977	2
+Coal shale	149	2
+Coal water supply	168	2
+Coal wb	200	2
+Coal weathered	113	0
+Coarse brown sand	427	0
+Coarse drift	140	0
+Coarse gravel	1321	0
+Coarse gravel                      wb	102	0
+Coarse grey sand	347	0
+Coarse sand	4525	0
+Coarse sand & gravel	362	0
+Coarse sand and gravel	338	0
+Coarse sand wet	491	0
+Coarse sand.	268	0
+Coarse sands	224	0
+Coarse sandstone	345	0
+Coarse sandy clay	418	0
+Coarse white sand	460	0
+Coarse white sand.	163	0
+Coarse yellow sand	193	0
+Coffee rock	807	2
+Coffee rock.	310	2
+Coloured clay	937	0
+Coloured clays	428	0
+Coloured sandy clay	242	0
+Concrete	622	5
+Conglomerate	1694	2
+CONGLOMERATE	118	2
+Conglomerate hard	152	1
+Conglomerate water supply	158	0
+CORAL LIMESTONE	319	2
+Coral limestone	170	2
+Core loss	119	5
+Coring	112	4
+Course sand	425	0
+Cracky basalt	189	0
+Cream mudstone	115	2
+Cretaceous	318	2
+Crumbly clay	126	0
+Dark brown clay	1095	0
+DARK BROWN CLAY	122	0
+Dark brown sandy clay	170	0
+Dark brown silty clay	224	0
+Dark brown top soil	140	0
+Dark clay	389	0
+Dark grey clay	1341	0
+DARK GREY CLAY	125	0
+Dark grey mudstone	144	2
+Dark grey sandy clay	346	0
+Dark grey shale	514	2
+Dark grey silty clay	139	0
+Dark sand	109	0
+Dark shale	499	2
+Decomposed basalt	3840	0
+Decomposed granite	1938	0
+DECOMPOSED GRANITE	111	0
+Decomposed rock	507	0
+Decomposed sandstone	299	0
+Decomposed shale	152	0
+Decomposed stone	327	0
+Diorite	683	2
+Dirty brown sand	140	0
+Dirty gravel	156	0
+Dirty sand	211	0
+Dolerite	1180	2
+Dolomite	1427	2
+DOLOMITE	327	2
+"Dolomite, broken"	111	0
+"Dolomite, fractured"	158	0
+"Dolomite, grey"	251	2
+"Dolomite, weathered"	182	0
+Drift	885	0
+Drift                              wb	185	0
+Drift sand	578	0
+Driller	2123	4
+DRY LIMESTONE	114	2
+Dry sand	572	0
+Earth	285	0
+Fill	684	5
+Filling	325	5
+Fine and coarse gravels            wb	103	0
+Fine brown sand	946	0
+Fine clayey sand	168	0
+Fine drift	173	0
+Fine gravel	359	0
+Fine grey sand	776	0
+Fine medium sand wet	256	0
+Fine sand	5974	0
+Fine sand                          wb	118	0
+Fine sand - coarse	375	0
+Fine sand - very coarse	329	0
+Fine sand and clay	107	0
+Fine sand layer	132	0
+Fine sand wet	908	0
+Fine sand.	164	0
+Fine sands	352	0
+Fine sandstone	288	0
+Fine sandy clay	666	0
+Fine silty sand	304	0
+Fine to coarse sand	217	0
+Fine to medium coarse sand wet	112	0
+Fine to medium sand	593	0
+Fine to medium sand wet	170	0
+Fine to medium sands	102	0
+Fine white sand	999	0
+Fine white sand.	292	0
+Fine yellow sand	539	0
+Firm basalt	237	2
+Firm blue basalt	120	2
+Firm brown clay	168	0
+Firm clay	101	0
+Firm grey clay	230	0
+Firm red clay	244	0
+FLINT	138	2
+Flint	112	2
+Fossil limestone	205	2
+Fractured basalt	1219	0
+Fractured blue basalt	178	0
+Fractured granite	116	0
+FRACTURED SLATE	102	0
+Fresh basalt	146	2
+Fresh granite	362	2
+GNEISS	148	2
+Gneiss	108	2
+Granite	6506	2
+GRANITE	773	2
+Granite brown weathered	142	0
+Granite decomposed	1697	0
+Granite decomposed water supply	795	0
+Granite fresh	235	2
+Granite grey	219	2
+Granite grey water supply	102	0
+Granite hard	445	1
+Granite rock	129	2
+Granite sand	204	0
+Granite soft	115	0
+Granite water supply	837	0
+Granite weathered	514	0
+Granite weathered water supply	135	0
+Granite white kaolinised	149	2
+"Granite, blue"	137	2
+"Granite, decomposed"	533	0
+"Granite, fresh"	180	2
+"Granite, granite"	248	2
+"Granite, grey"	176	2
+"Granite, hard"	189	1
+"Granite, weathered"	462	0
+"Granite, weathered granite"	134	0
+Granite.	121	2
+Gravel	6510	0
+Gravel                             wb	358	0
+Gravel - unconsolidated	117	0
+Gravel - unconsolidated - gravel - 90% ; clay - 10%	178	0
+Gravel - unconsolidated - gravel - 99%	124	0
+Gravel & clay	454	0
+Gravel & sand	256	0
+Gravel (water)	134	0
+Gravel and clay	458	0
+Gravel and sand	454	0
+Gravel coarse	116	0
+"Gravel, coarse"	123	0
+Gravelly clay	1373	0
+GRAVELLY CLAY	234	0
+Gravelly sand	147	0
+Gravels	656	0
+Gravely clay	280	0
+Green clay	526	0
+GREEN CLAY	159	0
+Green clay.	127	0
+GREEN LIMESTONE	169	2
+Green sandstone	245	0
+Green sandy clay	165	0
+Green shale	207	2
+Grey	155	4
+Grey & brown clay	672	0
+Grey & brown clay moist	103	0
+Grey & brown sandy clay	160	0
+Grey & brown shale	146	2
+Grey & brown silty clay	245	0
+Grey & orange clay	110	0
+Grey & red clay	122	0
+Grey & yellow clay	298	0
+Grey and brown clay	671	0
+Grey and brown clays	188	0
+Grey and brown sandy clay	134	0
+Grey and orange clay	115	0
+Grey and red clay	119	0
+Grey and yellow clay	369	0
+Grey basalt	707	2
+Grey brown clay	1254	0
+Grey brown clay moist	318	0
+Grey brown s/c	165	2
+Grey brown sandy clay	263	0
+Grey brown sandy clay moist	148	0
+Grey brown silty clay	292	0
+Grey brown silty clay moist	653	0
+Grey clay	15679	0
+GREY CLAY	1748	0
+Grey clay moist	103	0
+Grey clay.	285	0
+Grey clayey sand	390	0
+Grey clays	291	0
+Grey fine sand	120	0
+Grey granite	250	2
+Grey gravelly clay	122	0
+Grey gritty clay	181	0
+GREY LIMESTONE	342	2
+Grey limestone	336	2
+Grey loam	182	0
+Grey marl	627	2
+GREY MARL	543	2
+GREY MARL & FLINT	134	2
+GREY MARL AND FLINT	521	2
+Grey mottled clay	302	0
+Grey mudstone	1927	2
+GREY QUARTZITE	238	2
+Grey rock	820	2
+Grey sand	2445	0
+Grey sand clay	201	0
+Grey sand.	278	0
+Grey sands	116	0
+Grey sandstone	4457	0
+Grey sandy clay	4780	0
+GREY SANDY CLAY	501	0
+Grey sandy clay.	112	0
+Grey sandy loam	159	0
+Grey sandy mudstone	321	0
+Grey sandy shale	1896	0
+Grey sandy soil	114	0
+GREY SCHIST	115	2
+Grey shale	8386	2
+GREY SHALE	264	2
+Grey silt	220	0
+Grey siltstone	712	2
+GREY SILTSTONE	118	2
+Grey silty clay	1189	0
+Grey silty clay dry	103	0
+Grey silty clay moist	252	0
+GREY SLATE	693	2
+Grey slate	537	2
+Grey soil	263	0
+Grey top soil	191	0
+Grey topsoil	410	0
+Grey yellow clay	105	0
+Greyish brown clay	126	0
+Greywacke	377	0
+"Grit - 80%, silt - 20%"	125	0
+Grit - unconsolidated - grit - 60% ; gravel - 40%	211	0
+Grit - unconsolidated - grit - 60% ; silt - 35% ; mica - 05%	134	0
+Grit - unconsolidated - grit - 99%	131	0
+Gritty clay	337	0
+Gry br zc moist	461	0
+Gry br zc wet	113	0
+Hard	209	2
+HARD	135	2
+Hard band	357	2
+Hard bands	299	2
+Hard basalt	4091	1
+Hard black basalt	245	1
+HARD BLACK QUARTZITE	225	1
+Hard black shale	203	1
+HARD BLACK SLATE	250	1
+Hard blue basalt	2017	1
+Hard blue mudstone	249	1
+Hard blue mudstone with some fractures	111	0
+HARD BLUE ROCK	390	1
+Hard blue rock	308	1
+Hard blue shale	516	1
+HARD BLUE SLATE	217	1
+Hard bluestone	337	1
+Hard brown & grey clay	287	0
+Hard brown and grey clay	157	0
+Hard brown clay	778	0
+Hard brown shale	197	1
+Hard clay	1612	0
+HARD CLAY	269	0
+Hard granite	616	1
+Hard grey basalt	208	1
+Hard grey clay	753	0
+Hard grey mudstone	139	1
+HARD GREY QUARTZITE	666	1
+Hard grey rock	283	1
+HARD GREY ROCK	182	1
+Hard grey sandstone	457	0
+Hard grey sandy clay	575	0
+HARD GREY SCHIST	432	1
+Hard grey shale	428	1
+HARD GREY SLATE	607	1
+Hard layer	172	2
+HARD LIMESTONE	931	1
+Hard limestone	848	1
+Hard limestone.	204	1
+Hard mottled clay	178	0
+Hard mudstone	257	1
+Hard orange & grey sandy clay	100	0
+HARD QUARTZITE	181	1
+Hard red clay	174	0
+Hard rock	1114	1
+HARD ROCK	382	1
+Hard sand	107	0
+Hard sandstone	1786	0
+Hard sandy clay	261	0
+HARD SCHIST	120	1
+Hard shale	638	1
+Hard siltstone	120	1
+HARD SLATE	250	1
+Hard smooth clay	122	0
+HARD STONE	153	1
+Hard stone	132	1
+Hard streak	101	2
+Hard streaks	174	2
+HARD WHITE LIMESTONE	130	1
+HARD WHITE QUARTZITE	111	1
+Hard white sandstone	144	0
+Hard yellow clay	162	0
+HARD YELLOW LIMESTONE	101	1
+HARDER GREY QUARTZITE	103	1
+Honeycomb	237	2
+Honeycomb basalt	1177	2
+Honeycomb basalt  (w)	109	2
+Honeycomb basalt wb	413	2
+Honeycomb rock	366	2
+Honeycombe basalt	122	2
+Honeycombed basalt	134	2
+In diorite	265	2
+Inferior coal	2366	2
+Inferior coal weathered	127	0
+Interval not logged	294	4
+Iron stone	119	2
+Ironstone	1995	2
+IRONSTONE	177	2
+Ironstone bands	134	2
+"Ironstone, gravel"	359	0
+Jointed rock	121	2
+Kaolin	343	2
+L/stone.	138	2
+Laterite	1561	0
+"Laterite, clay"	390	0
+"Laterite, red"	237	0
+Light brown clay	1554	0
+LIGHT BROWN CLAY	284	0
+Light brown clay moist	236	0
+Light brown sand	230	0
+Light brown sandy clay	358	0
+LIGHT BROWN SANDY CLAY	105	0
+Light brown sandy clay moist	139	0
+Light brown shale	202	2
+Light brown silty clay	347	0
+Light brown silty clay moist	412	0
+Light brown silty clay wet	239	0
+Light brown top soil	108	0
+Light clay	119	0
+Light grey clay	849	0
+LIGHT GREY CLAY	219	0
+Light grey sandstone	100	0
+Light grey sandy clay	270	0
+LIGHT GREY SANDY CLAY	113	0
+Light grey shale	251	2
+Light grey silty clay	149	0
+Ligneous clay	4216	0
+Ligneous clayey silt	261	0
+Ligneous clays	143	0
+Ligneous sand	156	0
+Ligneous sandy clay	394	0
+Ligneous sandy silt	124	0
+Ligneous silt	226	0
+Ligneous silty clay	448	0
+Ligneous silty sand	164	0
+Lignious clay	188	0
+Lignite	841	2
+LIGNITE	187	2
+LIGNITE CLAY	178	0
+Lignite/brown coal/peat	202	2
+LIGNITIC CLAY	140	0
+Lime stone	158	2
+LIMESAND	166	0
+Limestone	12992	2
+LIMESTONE	8926	2
+Limestone & aquifer	170	0
+Limestone & clay	130	0
+LIMESTONE AND BLACK FLINT	115	2
+Limestone and clay	178	0
+LIMESTONE AND CLAY	166	0
+LIMESTONE AND FLINT	296	2
+Limestone and sand	161	0
+Limestone hard	255	1
+LIMESTONE RUBBLE	104	0
+Limestone soft	112	0
+Limestone water supply	123	0
+"Limestone, broken"	214	0
+"Limestone, clay"	149	0
+"Limestone, fractured"	127	0
+"Limestone, grey"	236	2
+"Limestone, hard"	214	1
+"Limestone, limestone"	243	2
+"Limestone, weathered"	135	0
+"Limestone, white"	281	2
+Limestone.	561	2
+LIMESTONE.	107	2
+Loam	1322	0
+Loose basalt	182	0
+MARBLE	101	2
+Marine clay	103	0
+Marl	1676	2
+MARL	224	2
+Marl/lime seds/limestone	123	2
+Marl/lime seds/limestone - consolidated - coral	143	1
+Marl/lime seds/limestone - consolidated - grey limestone	108	1
+Marl/lime seds/limestone - consolidated - limestone	299	1
+Marle	169	2
+MARLY LIMESTONE	674	2
+Marly limestone	132	2
+MARLY LIMESTONE & FLINT	160	2
+MARLY LIMESTONE AND FLINT	329	2
+Med sand	213	0
+Medium brown sand	132	0
+Medium coarse sand	215	0
+Medium coarse sand wet	347	0
+Medium grain sand	124	0
+Medium grained sand	149	0
+Medium grey sand	149	0
+Medium hard basalt	309	1
+Medium hard blue basalt	110	1
+Medium hard blue shale	237	1
+Medium hard grey mudstone	217	1
+Medium hard mudstone	251	1
+Medium hard sandstone	261	0
+Medium sand	2788	0
+Medium sand - coarse	129	0
+Medium sand - very coarse	205	0
+Medium sand wet	759	0
+Medium sands	164	0
+Medium to coarse sand	580	0
+Medium to coarse sand wet	183	0
+Medium to fine sand	105	0
+Medium white sand	103	0
+MICA SCHIST	163	2
+Missing	131	4
+Moist brown clay	435	0
+Moist brown silty clay	155	0
+Mottled clay	3775	0
+MOTTLED CLAY	133	0
+Mottled clays	495	0
+Mottled sandy clay	515	0
+Mottled silty clay	185	0
+Mottley clay	246	0
+Mud	201	0
+Mud stone	121	2
+Muddy sandstone	197	0
+Mudstone	9733	2
+MUDSTONE	184	2
+Mudstone and sandstone	105	0
+Mudstone grey	168	2
+"Mudstone, carbonaceous"	310	2
+"Mudstone, grey"	157	2
+"Mudstone, sandy"	437	0
+Multicoloured clay	361	0
+Multicoloured clays	155	0
+Multicoloured sandy clay	197	0
+No core	170	4
+NO CORE	104	4
+No data	146	4
+No details	212	4
+No details available	1641	4
+No sample	289	4
+NO SAMPLE	167	4
+No soil;	156	0
+No strata details	106	4
+No strata details available	217	4
+No strata records available	1475	4
+Nominal	162	4
+Not applicable - condition unknown - no comment or log recorded.	175	4
+Not applicable - condition unknown - original illegible.	143	4
+Not logged	1802	4
+Not logged.	889	4
+Orange & grey clay	431	0
+Orange & grey sandy clay	343	0
+Orange and grey clay	297	0
+Orange and grey sandy clay	313	0
+Orange clay	1104	0
+ORANGE CLAY	351	0
+Orange sand	249	0
+Orange sandy clay	241	0
+ORANGE SANDY CLAY	211	0
+Overburden	630	0
+Peat	189	0
+Pink clay	515	0
+Pink sandy clay	113	0
+Pipe clay	624	0
+Pipeclay	176	0
+Porcellanite	187	2
+Porphyry	203	2
+Porphyry water supply	101	0
+Potable	379	4
+Pug	161	0
+Puggy clay	132	0
+Puggy grey shale	102	0
+Pyrites	103	2
+Quality descrip/conduct:   9999	123	4
+Quality descrip/conduct: brackish	300	4
+Quality descrip/conduct: potable	3219	4
+Quality descrip/conduct: salty	399	4
+Quality descrip/conduct: suitable	1038	4
+Quartz	1610	2
+QUARTZ	281	2
+Quartz gravel	120	0
+Quartz sand	121	0
+"Quartz, broken"	195	0
+Quartzite	957	2
+QUARTZITE	460	2
+Red	191	4
+Red & brown clay	191	0
+Red & brown top soil	153	0
+Red & grey clay	371	0
+Red and brown clay	119	0
+Red and grey clay	551	0
+RED AND GREY CLAY	141	0
+Red and white clay	209	0
+Red and yellow clay	111	0
+Red basalt	421	2
+Red brown clay	375	0
+RED BROWN CLAY	153	0
+Red brown clay moist	272	0
+Red brown sandy clay	167	0
+Red brown sandy clay moist	200	0
+Red brown silty clay	467	0
+Red brown silty clay moist	866	0
+Red clay	7900	0
+RED CLAY	1979	0
+RED CLAY.	149	0
+Red clay.	114	0
+Red clays	149	0
+Red gravel	146	0
+Red grey clay	120	0
+Red gritty clay	106	0
+Red loam	273	0
+Red mottled clay	185	0
+Red rock	292	2
+Red sand	566	0
+Red sandstone	361	0
+Red sandy clay	973	0
+RED SANDY CLAY	579	0
+Red sandy top soil	127	0
+Red scoria	198	2
+Red shale	322	2
+Red silty clay	176	0
+Red soil	738	0
+Red subsoil	114	0
+Red top soil	456	0
+Red topsoil	450	0
+Red volcanic soil	108	0
+Reddish brown clay	153	0
+Reddish clay	200	0
+Redy brown clay	264	0
+Redy brown silty clay	111	0
+Redy brown top soil	106	0
+Reef	114	0
+Refer to drillers log numbered	872	4
+River gravel	294	0
+River sand	115	0
+Rock	7185	2
+ROCK	790	2
+Rock black	155	2
+Rock broken	135	0
+Rock decomposed	276	0
+Rock grey	940	2
+Rock grey hard	493	1
+Rock hard	1948	1
+Rock hard water supply	151	0
+Rock red	370	2
+Rock rotten	226	0
+Rock soft	231	0
+Rock very hard	235	1
+Rock water supply	568	0
+Rock white	312	2
+Rock white hard	116	1
+Rock yellow	102	2
+ROCKS	178	2
+Rotten rock	261	0
+Rubble	250	0
+RUBBLE	216	0
+Rubbly stone	123	0
+Salamander	133	2
+Sand	25852	0
+SAND	174	0
+Sand                               wb	125	0
+Sand - clay	199	0
+Sand - unconsolidated	1250	0
+Sand - unconsolidated - coarse sand - 99%	685	0
+Sand - unconsolidated - dominant - clayey sand	112	0
+Sand - unconsolidated - fine sand - 60% ; clay - 40%	108	0
+Sand - unconsolidated - fine sand - 60% ; silt - 35% ; mica - 05%	125	0
+Sand - unconsolidated - fine sand - 99%	169	0
+Sand - unconsolidated - medium sand - 60% ; clay - 40%	315	0
+"Sand - unconsolidated - medium sand - 60%, clay - 40%"	117	0
+"Sand - unconsolidated - medium sand - 70%, clay - 30%"	232	0
+Sand - unconsolidated - medium sand - 80% ; clay - 20%	149	0
+"Sand - unconsolidated - medium sand - 80%, clay - 20%"	452	0
+"Sand - unconsolidated - medium sand - 90%, clay - 10%"	746	0
+"Sand - unconsolidated - medium sand - 95%, clay - 05%"	426	0
+"Sand - unconsolidated - medium sand - 95%, silt - 05%"	127	0
+Sand - unconsolidated - medium sand - 99%	1906	0
+"Sand - unconsolidated - sand - component: sand, clay."	965	0
+"Sand - unconsolidated - sand - component: sand, silt."	101	0
+Sand & clay	599	0
+Sand & gravel	2017	0
+Sand & gravel wb	130	0
+Sand & sandstone	116	0
+Sand & water	144	0
+Sand (water)	166	0
+Sand and clay	894	0
+Sand and gravel	2595	0
+Sand and gravel                    wb	183	0
+Sand and limestone	110	0
+Sand and sandstone	116	0
+Sand and water	127	0
+Sand brown	194	0
+Sand clay	227	0
+Sand clayey	203	0
+Sand coarse	512	0
+Sand coarse grained	218	0
+Sand fine	625	0
+"Sand fine - coarse, brown, medium sorting"	105	0
+"Sand fine - coarse, light brown, medium sorting"	268	0
+Sand fine grained	257	0
+Sand fine to medium	100	0
+Sand grey	137	0
+Sand medium	826	0
+Sand medium grained	554	0
+Sand rock	225	0
+Sand stone	300	0
+"Sand very fine - fine, light brown, good sorting"	731	0
+"Sand very fine - fine, light grey, good sorting"	103	0
+"Sand very fine - medium, light brown, medium sorting"	127	0
+Sand very fine grained	728	0
+Sand water	2099	0
+Sand wb	151	0
+Sand wet	770	0
+Sand white	101	0
+Sand yellow	175	0
+"Sand, brown"	133	0
+"Sand, cemented"	105	0
+"Sand, clay"	212	0
+"Sand, clayey"	105	0
+"Sand, coarse"	222	0
+"Sand, fine"	314	0
+"Sand, fine white"	105	0
+"Sand, gravel"	161	0
+"Sand, grey"	116	0
+"Sand, red"	226	0
+"Sand, sand"	370	0
+"Sand, sand and gravel"	107	0
+"Sand, white"	262	0
+"Sand, yellow"	215	0
+Sand.	1499	0
+Sand/sandstone/grit	181	0
+Sand/sandstone/grit - consolidated - argillite	117	0
+Sand/sandstone/grit - consolidated - sandstone	217	0
+Sand/sandstone/grit - unconsolidated - barren sand	192	0
+Sand/sandstone/grit - unconsolidated - coarse sand	103	0
+Sand/sandstone/grit - unconsolidated - coarse/sand	213	0
+Sand/sandstone/grit - unconsolidated - fine medium sand	538	0
+Sand/sandstone/grit - unconsolidated - fine medium sand/pebbles	107	0
+Sand/sandstone/grit - unconsolidated - fine medium/clayey sand	212	0
+Sand/sandstone/grit - unconsolidated - fine medium/sand	365	0
+Sand/sandstone/grit - unconsolidated - fine sand	496	0
+Sand/sandstone/grit - unconsolidated - fine/sand	284	0
+Sand/sandstone/grit - unconsolidated - grey sand	112	0
+Sand/sandstone/grit - unconsolidated - medium coarse/sand	222	0
+Sand/sandstone/grit - unconsolidated - medium/sand	203	0
+Sand/sandstone/grit - unconsolidated - mineralised sand	192	0
+Sand/sandstone/grit - unconsolidated - sand	21719	0
+Sand/sandstone/grit - unconsolidated - sand clay	130	0
+"Sand/sandstone/grit - unconsolidated - sand: medium-coarse grained, orange, minor clay, hmo-t"	178	0
+Sand/sandstone/grit - unconsolidated - sand+ clayey sand	200	0
+Sand/sandstone/grit - unconsolidated - sandy clay+ clayey sand	114	0
+Sand/sandstone/grit - unconsolidated - sandy clay+ sand	292	0
+Sand/sandstone/grit - unconsolidated - very coarse/sand	122	0
+Sand/sandstone/grit - unconsolidated - very fine/sand	461	0
+Sand/sandstone/grit - unconsolidated - white sand	175	0
+Sand/sandstone/grit - unconsolidated - yellow sand	303	0
+Sanded clays	123	0
+Sandrock	542	0
+Sands	454	0
+Sands wet	226	0
+Sandstone	23904	0
+SANDSTONE	178	0
+Sandstone  * water	164	0
+Sandstone - water	114	0
+Sandstone - water bearing	260	0
+Sandstone - water struck	171	0
+Sandstone & sand	175	0
+Sandstone & shale	202	0
+Sandstone and clay	136	0
+Sandstone and sand	160	0
+Sandstone and shale	255	0
+Sandstone and slate	148	0
+Sandstone grey	173	0
+Sandstone hard	123	0
+Sandstone water	153	0
+Sandstone yellow	178	0
+"Sandstone, brown"	234	0
+"Sandstone, calcareous"	189	0
+"Sandstone, grey"	209	0
+"Sandstone, hard"	354	0
+"Sandstone, red"	233	0
+"Sandstone, sandstone"	337	0
+"Sandstone, soft"	196	0
+"Sandstone, white"	496	0
+"Sandstone, white sandstone"	129	0
+"Sandstone, yellow"	190	0
+Sandstone.	261	0
+Sandy	216	0
+Sandy brown clay	754	0
+Sandy brown shale	102	0
+Sandy clay	16198	0
+SANDY CLAY	4097	0
+Sandy clay and gravel	122	0
+Sandy clay.	202	0
+SANDY CLAY.	163	0
+Sandy clays	337	0
+SANDY CLAYS	251	0
+Sandy drift	244	0
+Sandy gravel	426	0
+Sandy grey clay	640	0
+Sandy grey shale	403	0
+Sandy ligneous clay	148	0
+SANDY LIMESTONE	324	0
+Sandy loam	1896	0
+Sandy marl	109	0
+Sandy mottled clay	180	0
+Sandy mottled clays	128	0
+Sandy mudstone	1136	0
+Sandy shale	3169	0
+Sandy silt	1342	0
+SANDY SILTY CLAY	139	0
+Sandy silty clay	115	0
+Sandy soil	798	0
+Sandy subsoil	163	0
+Sandy top soil	213	0
+Sandy topsoil	339	0
+Sandy white clay	159	0
+Sandy yellow clay	258	0
+SCHIST	512	2
+Schist	410	2
+Schist - consolidated - phyllite	120	1
+Schist - consolidated - quartz mica schist	275	1
+Schist - consolidated - schist	227	1
+Schist - weathered - oxidised quartz mica schist	376	0
+Scoria	773	2
+Sediment (undifferentiated) - unconsolidated - topsoil	159	0
+Serpentine	124	2
+Shale	30880	2
+SHALE	557	2
+Shale - brown	116	2
+Shale & coal	102	2
+Shale & sandstone	191	0
+Shale and sandstone	235	0
+Shale bands	163	2
+Shale black	1432	2
+Shale black hard	109	1
+Shale black water supply	196	0
+Shale broken	117	0
+Shale brown	182	2
+Shale clay	387	0
+Shale coal	103	2
+Shale dark	424	2
+Shale dark brown	122	2
+Shale dark grey	598	2
+Shale decomposed	270	0
+Shale grey	6900	2
+Shale grey hard	533	1
+Shale grey hard bands	198	1
+Shale grey puggy	133	0
+Shale grey sandy	1634	0
+Shale grey sandy water supply	117	0
+Shale grey soft	100	0
+Shale grey sticky	731	2
+Shale grey waddy	123	2
+Shale grey water supply	326	0
+Shale hard	1375	1
+Shale hard bands	212	1
+Shale hard sandy	197	0
+Shale hard water supply	235	0
+Shale light	223	2
+Shale light brown	148	2
+Shale light grey	393	2
+Shale light grey sandy	161	0
+Shale nominal	106	2
+Shale puggy	390	0
+Shale red	336	2
+Shale rock	216	2
+Shale sandstone	255	0
+Shale sandy	2913	0
+Shale sandy water supply	258	0
+Shale seams	101	2
+Shale soft	719	0
+Shale soft water supply	182	0
+Shale sticky	975	2
+Shale waddy	126	2
+Shale water bearing	157	0
+Shale water supply	2259	0
+Shale weathered	149	0
+Shale white	152	2
+Shale white sandy	220	0
+Shale yellow	592	2
+"Shale, black"	1123	2
+"Shale, blue"	460	2
+"Shale, brown"	995	2
+"Shale, carbonaceous"	105	2
+"Shale, dark grey"	122	2
+"Shale, grey"	1513	2
+"Shale, hard"	246	1
+"Shale, light grey"	103	2
+"Shale, red"	546	2
+"Shale, sandy"	743	0
+"Shale, soft"	243	0
+"Shale, weathered"	301	0
+"Shale, weathered brown"	105	0
+"Shale, yellow"	327	2
+Shale.	158	2
+Shale/brown	105	2
+Shales	240	2
+Shaley sandstone	418	0
+Shell	110	0
+SILCRETE	205	0
+Silcrete	119	0
+Silt	3153	0
+SILT	194	0
+Silt - clay	375	0
+Silt - fine sand	264	0
+"Silt - sand fine, brown, good sorting"	133	0
+"Silt - sand fine, light brown, good sorting"	628	0
+"Silt - sand fine, light grey, good sorting"	184	0
+"Silt - sand very fine, brown, good sorting"	159	0
+"Silt - sand very fine, light brown, good sorting"	647	0
+"Silt - sand very fine, light grey, good sorting"	224	0
+Silt - unconsolidated - silt - 60% ; fine sand - 35% ; mica - 05%	320	0
+Silt - unconsolidated - silt - 80% ; fine sand - 15% ; mica - 05%	479	0
+Silt - unconsolidated - silt - 99%	184	0
+"Silt - unconsolidated - silt - component: silt, sand."	100	0
+Silt - very fine sand - fine	150	0
+Silt clay	104	0
+Silt grey	103	0
+Silt sandy	138	0
+Silt/siltstone - consolidated - siltstone	259	1
+Silt/siltstone - consolidated - siltstone (argillite)	134	1
+Silt/siltstone - consolidated - siltstone/argillite	130	1
+Silt/siltstone - unconsolidated - silt	126	0
+"Silt/siltstone - unconsolidated - silt - sand fine, yellow, good sorting"	122	0
+Silt/siltstone - unconsolidated - silt sand	154	0
+Siltstone	4560	2
+SILTSTONE	243	2
+Siltstone grey	132	2
+"Siltstone, brown"	379	2
+"Siltstone, grey"	478	2
+"Siltstone, red"	473	2
+"Siltstone, siltstone"	151	2
+"Siltstone, weathered"	152	0
+"Siltstone, yellow"	195	2
+Silty brown clay	300	0
+Silty clay	6770	0
+SILTY CLAY	666	0
+Silty clay moist	2126	0
+Silty clay moist to damp	169	0
+Silty clay wet	3850	0
+Silty clays	150	0
+Silty fine sand	104	0
+Silty grey clay	204	0
+Silty mudstone	148	2
+Silty sand	2901	0
+Silty sand wet	132	0
+Silty sandy clay	186	0
+Silurian	138	2
+Slate	2736	2
+SLATE	687	2
+Slate & sandstone	251	0
+Slate and sandstone	392	0
+Slate black	119	2
+Slate decomposed	171	0
+Slate grey	314	2
+Slate hard	223	1
+Slate water supply	596	0
+Slate yellow	122	2
+"Slate, black"	161	2
+"SLATE, QUARTZ"	118	2
+Slippery back	573	2
+Slots	140	4
+Soapstone	168	2
+Soft basalt	881	0
+Soft blue basalt	141	0
+Soft brown & grey clay	209	0
+Soft brown basalt	377	0
+Soft brown clay	432	0
+Soft brown coal	108	0
+SOFT BROWN SHALE	167	0
+Soft brown shale	131	0
+Soft clay	318	0
+SOFT CLAY	165	0
+Soft granite	137	0
+Soft grey clay	413	0
+Soft grey sandstone	151	0
+SOFT GREY SCHIST	130	0
+Soft grey shale	153	0
+SOFT GREY SLATE	141	0
+Soft limestone	652	0
+SOFT LIMESTONE	547	0
+Soft limestone.	166	0
+Soft mudstone	213	0
+Soft red basalt	133	0
+Soft rock	252	0
+SOFT ROCK	138	0
+Soft sandstone	1186	0
+Soft sandy clay	366	0
+SOFT SANDY CLAY	102	0
+Soft shale	489	0
+SOFT SHALE	142	0
+Soft silty clay	104	0
+SOFT SLATE	138	0
+Soft slate	125	0
+Soft white clay	100	0
+SOFT WHITE LIMESTONE	121	0
+Soft yellow clay	116	0
+Soft yellow sandstone	334	0
+SOFTER	187	2
+SOFTER LAYERS	141	2
+SOFTER SLATE	107	2
+Soil	6382	0
+Soil & clay	368	0
+Soil and clay	470	0
+"Soil, black"	540	0
+"Soil, red"	204	0
+Solid basalt	318	1
+Solid granite	123	1
+Some clay	137	0
+Splint	132	2
+Standpipe shaft	162	4
+Sticky brown clay	140	0
+Sticky clay	229	0
+STICKY CLAY	102	0
+Sticky grey clay	133	0
+Sticky grey shale	114	2
+Stiff brown clay	266	0
+STIFF BROWN CLAY	139	0
+STIFF CLAY	325	0
+Stiff clay	275	0
+Stiff grey clay	237	0
+STIFF GREY CLAY	120	0
+STIFF RED CLAY	145	0
+STIFF YELLOW CLAY	169	0
+Stone	1326	2
+STONE	195	2
+Stones	104	2
+Stoney clay	213	0
+Strata not recorded	177	4
+Sub soil	397	0
+Subsoil	1043	0
+Surface	134	0
+Surface clay	854	0
+Surface loam	330	0
+Surface sand	308	0
+Surface soil	4721	0
+Surface soil and clay	349	0
+Surficial soil	149	0
+Tight clay	126	0
+Top	216	0
+Top grey soil	174	0
+Top red volcanic soil	266	0
+Top sandy loam	442	0
+Top soil	15495	0
+Top soil & clay	984	0
+Top soil and clay	475	0
+Top soil clay	103	0
+Top soil driller j dolley	129	0
+Top soil.	363	0
+Top volcanic soil	266	0
+Topsoil	21211	0
+TOPSOIL	393	0
+Topsoil & clay	718	0
+Topsoil and clay	606	0
+Topsoil clay	106	0
+Topsoil sandy	138	0
+"Topsoil, black"	172	0
+"Topsoil, brown"	260	0
+"Topsoil, clay"	206	0
+"Topsoil, laterite"	381	0
+"Topsoil, red"	812	0
+"Topsoil, red topsoil"	175	0
+"Topsoil, sandy"	154	0
+"Topsoil, topsoil"	353	0
+Tough clay	115	0
+Tough grey clay	165	0
+Tufa	294	2
+Tuff	181	2
+Unknown	557	4
+Unknown lithology - condition unknown	659	4
+Variegated clay	113	0
+Very fine sand	162	0
+Very fine sand - coarse	254	0
+Very fine sand - fine	955	0
+Very fine sand - medium	338	0
+Very fine sand - very coarse	132	0
+Very fine/sand	109	0
+Very hard basalt	379	1
+Very hard blue basalt	148	1
+Very hard limestone	145	1
+Very hard rock	129	1
+Very hard sandstone	231	0
+Very sandy clay	117	0
+Vesicular basalt	147	2
+Volcanic ash	198	0
+Volcanic clay	763	0
+Volcanic clays	178	0
+Volcanic rock	217	2
+Volcanic top soil	184	0
+Volcanic topsoil	162	0
+W.b. basalt	246	2
+Wash	428	4
+Water	206	0
+Water bearing	163	0
+Water bearing sand	108	0
+Water bearing sandstone	214	0
+Water cut	148	0
+Water sand	268	0
+Water sandstone	121	0
+Water strata	119	0
+Water supply	949	0
+Weathered basalt	3321	0
+Weathered granite	1303	0
+WEATHERED GRANITE	225	0
+WEATHERED MICA SCHIST	105	0
+Weathered rock	287	0
+Weathered sandstone	467	0
+WEATHERED SCHIST	108	0
+Weathered shale	306	0
+Wet brown silty clay	100	0
+Wet sand	128	0
+White clay	3787	0
+WHITE CLAY	891	0
+White clay.	124	0
+White fine sand	115	0
+WHITE LIMESTONE	850	2
+White limestone	439	2
+WHITE MARL	206	2
+White mottled clay	116	0
+White pipe clay	114	0
+WHITE QUARTZITE	158	2
+White rock	313	2
+White sand	1983	0
+White sand.	577	0
+White sands	181	0
+White sandstone	1145	0
+White sandy clay	1410	0
+WHITE SANDY CLAY	541	0
+White sandy clay.	128	0
+White sandy shale	127	0
+White shale	140	2
+White silty clay	115	0
+Wood	197	0
+Wthrd basalt	183	2
+Yellow & blue clay	127	0
+Yellow & grey clay	425	0
+Yellow & grey sandy clay	111	0
+Yellow and blue clay	170	0
+Yellow and grey clay	417	0
+Yellow and grey sandy clay	144	0
+Yellow and white clay	145	0
+Yellow brown clay	322	0
+Yellow brown clay grey inclu moist	170	0
+Yellow brown sandy clay	101	0
+Yellow brown silty clay	127	0
+Yellow brown silty clay dry	147	0
+Yellow brown silty clay grey inclu moist	224	0
+Yellow brown silty clay moist	424	0
+Yellow clay	9384	0
+YELLOW CLAY	1698	0
+Yellow clay and gravel	139	0
+Yellow clay and limestone	117	0
+Yellow clay.	158	0
+YELLOW CLAY.	154	0
+Yellow clayey sand	313	0
+Yellow clays	142	0
+Yellow gravelly clay	130	0
+Yellow grey clay	232	0
+Yellow gritty clay	147	0
+YELLOW LIMESTONE	586	2
+Yellow limestone	440	2
+Yellow mottled clay	584	0
+Yellow mottled sandy clay	169	0
+Yellow mudstone	1023	2
+Yellow sand	3660	0
+Yellow sand.	1031	0
+Yellow sandstone	2324	0
+Yellow sandy clay	2283	0
+YELLOW SANDY CLAY	1356	0
+YELLOW SANDY CLAY.	121	0
+YELLOW SANDY LIMESTONE	113	0
+Yellow shale	934	2
+YELLOW SHALE	454	2
+Yellow silty clay	244	0
+YELLOW SLATE	206	2

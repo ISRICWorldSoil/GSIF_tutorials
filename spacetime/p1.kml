@@ -1,0 +1,10 @@
+<Placemark>
+  <name>Bilogora</name>
+  <TimeStamp>
+    <begin>2008-02-17T00:00:00Z</begin>
+    <end>2008-02-18T00:00:00Z</end>
+  </TimeStamp>
+  <Point>
+    <coordinates>17.2057,45.8851,0</coordinates>
+  </Point>
+</Placemark>

@@ -1,0 +1,31 @@
+<kml xmlns:xsd="http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd" xmlns:xmlns="http://www.opengis.net/kml/2.2/" version="1.0">
+  <Document>
+    <name>eberg_sd6</name>
+    <open>1</open>
+    <Folder>
+      <name>SpatialPixelsDataFrame</name>
+      <GroundOverlay>
+        <name>observedValue</name>
+        <altitude>1527</altitude>
+        <altitudeMode>absolute</altitudeMode>
+        <Icon>
+          <href>SNDMHT_sd6.png</href>
+        </Icon>
+        <LatLonBox>
+          <north>51.5920773330789</north>
+          <south>51.5012439997456</south>
+          <east>10.1528976891153</east>
+          <west>10.007064355782</west>
+        </LatLonBox>
+      </GroundOverlay>
+    </Folder>
+    <ScreenOverlay>
+      <name>Legend</name>
+      <Icon>
+        <href>SNDMHT_sd6_legend.png</href>
+      </Icon>
+      <overlayXY x="0" y="1" xunits="fraction" yunits="fraction"/>
+      <screenXY x="0" y="1" xunits="fraction" yunits="fraction"/>
+    </ScreenOverlay>
+  </Document>
+</kml>

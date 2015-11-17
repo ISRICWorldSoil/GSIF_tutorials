@@ -1,0 +1,255 @@
+del		keep		nouse		noinf		qdel		qsure		nsure
+agglomerate		consolidate		Asphalt		Conduct		above		Adamallite		bitumen
+Alluv				build		Core loss		Allotment		Adit		break
+Aluvial				concrete		details avail		avail		Allaru		brick
+aquifer				excava		details not		before		Amamoor		cement
+AQUITARD				existing		Illegible		Bitumen		Amphibolite		clear
+arenite				exiting		log not		clean out		Andersite		comment
+arentie				fill		loss core		cleaned		Anderson		concrete
+ARKOSE				garbage		Loss of circulation		CORAL		Andesite		core
+Armraynald				Grout		Lost circulation		crack		ankerite		dust
+ash				Old bore		microsiemen		dirt		archean		fossil
+Bentonite				pave		miss		end of sampl		argillite		frac
+Blanchetown				Pre drilled		no core		Fissure		Barossa		hard
+Bookpurnong				Quarry		no cutting reco		flour		basal		Interbed
+Boulder				river		no data		Helby		Basement		laterite
+broken				road		No desc		Helby beds		Baslat		no
+Buck shot				Rubbish		No detail		Later		Bassalt		not
+buckshot				slag		No drilling record		Ligneous		bauxite		possible bedrock
+Burrungule						No entry		liner		bed rock		pug
+Cainozoic						No further strata		litter		bedrock		sample
+Calivil						No geology log		loss		bif		see
+cave						no info		lost		Big Lake Suite		strata
+caving						No initial sample		Original		Biggenden		surface
+Cavit						No lithological desc		Pinjar		Birkhead		texture
+Cenozoic						no llog		Pinjar member		Birksgate		top
+Charcoal						no log		previous		black jack		Total depth
+Claraville						no other construction detail		Reline		blackjack		wash
+"clay,"						No other detail		Sap		blue stone		well
+clay/						No other infor		scree		bluestone		wood
+clayey						no other recor		sediment		Boondooma		
+clod						No particulars of strata		shaft		breakage		
+Cobble						No recognisable sample		Slum		breccia		
+colluv						No recor		soft		Bridge water		
+Coreena						no recov		Standpipe		Bridgewater		
+crap						no report		stiff		Bundaleer tonalite		
+creek						no return		tailing		Burdekin		
+Crushed						No samp		Traver		Cadna		
+damp						No satisfactory samp		Veget		Calc		
+decompos						No solid core		void		Calliope		
+deposit						No srata		water		caprock		
+DILWYN						No stata		yarragadee		capstone		
+drift						No strata		yarragadee		Carbon		
+dune						No tlog		Yss		Carmila		
+dust						No true sample				Castlemaine		
+earth						Not a representative samp				cemented		
+eluvi						not able				Chalce		
+endcap						Not applica				chalk		
+Erebus						not assay				chert		
+Ettrick						not avai				chirt		
+fault						not core				Chlori		
+Ferricrete						not desc				Clacrete		
+flinter						not included				clayband		
+fractur						Not known				claybound		
+fragment						not log				claystone		
+Geera						Not recor				coal		
+Glue						not recov				Comglomerate		
+grass						not sampl				conglomerate		
+gravel						Not sufficient recov				Coquinite		
+Grit						Not sufficient samp				Craigilee		
+Hermansberg						phone				Cretaceous		
+humic						Quality descrip				Crevice		
+Humus						records avail				crust		
+Laom						refer				CRYSTALLINE		
+Laterite						strata not				Cynthia		
+Lilyvale						ukn				Dacite		
+loam						unkno				Daralingie		
+Longsight										Deep lead		
+loose										devonian		
+MEPUNGA 										diabase		
+Mereenie										diorite		
+moist										dolerite		
+Muddy										Dolomite		
+Olney										Dolorite		
+organic										Doncaster		
+Over bur										Dunda		
+Overbur										dyke		
+Pacoota										Edgecumbe		
+PADTHAWAY										Ellenvale		
+Parent material										Elliott		
+Parilla										elvan		
+peat										eolianite		
+pebbl										Etonvale		
+Porous										Evergreen		
+pug										Feldspar		
+reef										Felsite		
+Regolith										Felspar		
+Renmark										Ferricrete		
+Ronlow beds										firm		
+root										flint		
+rott										fm		
+rubble										forma		
+Rusty										FOS		
+sand										gabbr		
+Saprock										Galloway plains		
+saprolite										Geothite		
+shatter										Giles Complex		
+shell										Glauconite		
+shepp										GLAUCONITIC		
+Shingle										gneiss		
+Silcrete										Gniess		
+"silt,"										Goethite		
+sludge										Goyder		
+Slurry										gramite		
+Soak										Grani		
+soil										Granite		
+Stony										granul		
+Surficial										Graphitic		
+swamp										Greybilly		
+tephra										group		
+unconsoli										Gubberamunda		
+wack										Gypsum		
+waether										Haematite		
+Warina										hard band		
+water bear										Hard bar		
+water supply										Hard cement		
+Weahered										hard layer		
+weather										Hard material		
+wet										Hard pan		
+whethe										hardbar		
+winnambool										hardpan		
+Wondoola										Hematite		
+Woorinen										Hiltaba		
+Wyaaba										honeycomb		
+										Hornfel		
+										Hutton		
+										INDURATE		
+										ironstone		
+										Jasper		
+										Jinduckin		
+										Jurasic		
+										Jurassic		
+										Kaoleen		
+										kaolin		
+										Kin kin beds		
+										Lamboo		
+										lava		
+										Lignite		
+										lime		
+										limestone		
+										Limonite		
+										LIMONITIC		
+										Lincoln		
+										Liveringa		
+										loom		
+										Mackunda		
+										Magnesite		
+										MAGNETITE		
+										Manganese		
+										Marble		
+										Mariginiup		
+										marl		
+										mesozoic		
+										metal		
+										metamorphic		
+										metasediemnt		
+										Mica		
+										Milligans		
+										Minmi member		
+										Moody Suite		
+										Moolawatana		
+										Mount morgan trondhjemite		
+										Muderong		
+										mudrock		
+										Mudsdtone		
+										Mudshale		
+										mudso		
+										mudsstone		
+										mudst		
+										mudstone		
+										mudtone		
+										Mulgathing Complex		
+										Mullaman		
+										Neranleigh-fernvale		
+										no break 		
+										no water		
+										Nogo beds		
+										Norite		
+										Northbrook		
+										Oolloo		
+										ord		
+										pegmatite		
+										Pelite		
+										Permain		
+										Permia		
+										Petrified		
+										Philite		
+										Phillite		
+										phyllite		
+										Pisolite		
+										Pitjantjatjara		
+										plastic		
+										Porcellanite		
+										Porphyry		
+										proterozoic		
+										pyrite		
+										qtz		
+										Quart		
+										Quaternary		
+										Ranmoor		
+										Reids dome		
+										Rhyalite		
+										Rhyodacite		
+										rhyolite		
+										rock		
+										Salamander		
+										schist		
+										Scoria		
+										seam		
+										Sericite		
+										Serpentin		
+										shale		
+										Shonkinite		
+										silica		
+										silicif		
+										Siltband		
+										siltite		
+										siltston		
+										Silurian		
+										slate		
+										Slippery back		
+										Slipperyback		
+										Soapstone		
+										splint		
+										Spongolite		
+										springer		
+										stone		
+										strata		
+										Sturgess point member		
+										Syenite		
+										Taconite		
+										Taromeo igneous		
+										Tarong		
+										Texas beds		
+										Tillite		
+										Timber slab		
+										Tindall		
+										Trachyte		
+										Triassic		
+										Troctolite		
+										Tufa		
+										tuff		
+										Tunkillia		
+										Ultrama		
+										unconformity		
+										Urannah igneous		
+										very firm		
+										very hard		
+										volcan		
+										Walloon		
+										Wallumbilla		
+										Wanneroo		
+										Westbourne		
+										Windalia radiolarite		
+										Winton		
+										Wombat		
