@@ -41,7 +41,8 @@ m$soiltype <- as.factor(m$soiltype)
 ## subsample
 s <- sample.int(nrow(m), 500)
 ## CV error for RF
-TAXGRSC.rf <- randomForest(x=m[-s,1:4], y=m$soiltype[-s], xtest=m[s,1:4], ytest=m$soiltype[s])
+TAXGRSC.rf <- randomForest(x=m[-s,1:4], y=m$soiltype[-s], xtest=m[s,1:4], ytest=m$soiltype[s]
+)
 TAXGRSC.rf$test$confusion[,"class.error"]
 
 ## Fit 3 independent machine learning models:
@@ -53,9 +54,10 @@ TAXGRSC.svm$tot.accuracy
 ## Make ensemble predictions:
 probs1 <- predict(TAXGRSC.mn, eberg_grid@data, type="probs", na.action = na.pass) 
 probs2 <- predict(TAXGRSC.rf, eberg_grid@data, type="prob", na.action = na.pass)
-probs3 <- predict(TAXGRSC.svm, eberg_grid@data, probability=TRUE, na.action = na.pass)
+probs3 <- attr(predict(TAXGRSC.svm, eberg_grid@data, probability=TRUE, na.action = na.pass), "probabilities")
 #probs3 <- predict(ens, eberg_grid@data, probability=TRUE, na.action = na.pass)
-lt <- list(probs1, probs2, attr(probs3, "probabilities"))
+leg <- levels(m$soiltype)
+lt <- list(probs1[,leg], probs2[,leg], probs3[,leg])
 ## Simple average:
 probs <- Reduce("+", lt) / length(lt)
 eberg_soiltype = eberg_grid
@@ -76,10 +78,12 @@ names(eberg)
 library(h2o)
 localH2O = h2o.init()
 eberg.hex = as.h2o(m, conn = h2o.getConnection(), destination_frame = "eberg.hex")
-eberg.grid = as.h2o(eberg_grid@data, conn = h2o.getConnection(), destination_frame = "eberg.grid")
+eberg.grid = as.h2o(eberg_grid@data, conn = h2o.getConnection(), destination_frame = "eberg
+.grid")
 View(eberg.hex@mutable$col_names)
 names(m)[22]
-RF.m = h2o.randomForest(y = 22, x = 6:16, training_frame = eberg.hex, ntree = 50, depth = 100, importance=T)
+RF.m = h2o.randomForest(y = 22, x = 6:16, training_frame = eberg.hex, ntree = 50, depth = 100, importance=TRUE)
+RF.m
 eberg_grid$RFx <- as.data.frame(h2o.predict(RF.m, eberg.grid, na.action=na.pass))$predict
 rf.VI = RF.m@model$variable_importances
 print(rf.VI)
