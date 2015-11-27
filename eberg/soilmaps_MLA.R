@@ -18,7 +18,7 @@ gridded(eberg_grid) <- ~x+y
 proj4string(eberg_grid) <- CRS("+init=epsg:31467")
 eberg_spc <- spc(eberg_grid, ~ PRMGEO6+DEMSRT6+TWISRT6+TIRAST6)
 eberg_grid@data <- cbind(eberg_grid@data, eberg_spc@predicted@data)
-## overlay:
+## overlay and create a regression-matrix:
 ov <- over(eberg, eberg_grid)
 m <- cbind(ov, eberg@data)
 
@@ -58,7 +58,7 @@ probs3 <- attr(predict(TAXGRSC.svm, eberg_grid@data, probability=TRUE, na.action
 #probs3 <- predict(ens, eberg_grid@data, probability=TRUE, na.action = na.pass)
 leg <- levels(m$soiltype)
 lt <- list(probs1[,leg], probs2[,leg], probs3[,leg])
-## Simple average:
+## Simple average (an alternative would):
 probs <- Reduce("+", lt) / length(lt)
 eberg_soiltype = eberg_grid
 eberg_soiltype@data <- data.frame(probs)
@@ -78,17 +78,26 @@ names(eberg)
 library(h2o)
 localH2O = h2o.init()
 eberg.hex = as.h2o(m, conn = h2o.getConnection(), destination_frame = "eberg.hex")
-eberg.grid = as.h2o(eberg_grid@data, conn = h2o.getConnection(), destination_frame = "eberg
-.grid")
+eberg.grid = as.h2o(eberg_grid@data, conn = h2o.getConnection(), destination_frame = "eberg.grid")
 View(eberg.hex@mutable$col_names)
-names(m)[22]
+names(m)[22] 
 RF.m = h2o.randomForest(y = 22, x = 6:16, training_frame = eberg.hex, ntree = 50, depth = 100, importance=TRUE)
 RF.m
-eberg_grid$RFx <- as.data.frame(h2o.predict(RF.m, eberg.grid, na.action=na.pass))$predict
 rf.VI = RF.m@model$variable_importances
 print(rf.VI)
-plot(raster(eberg_grid["RFx"]))
-#plotKML(eberg_grid["RFx"], colour_scale=SAGA_pal[[10]], z.lim=c(0,100))
+eberg_grid$RFx <- as.data.frame(h2o.predict(RF.m, eberg.grid, na.action=na.pass))$predict
+plot(raster(eberg_grid["RFx"]), col=SAGA_pal[[1]], zlim=c(10,90))
+rf.R2 = RF.m@model$training_metrics@metrics$r2
+
+## Deep learning
+DL.m = h2o.deeplearning(y = 22, x = 6:16, training_frame = eberg.hex)
+eberg_grid$DLx <- as.data.frame(h2o.predict(DL.m, eberg.grid, na.action=na.pass))$predict
+plot(raster(eberg_grid["DLx"]), col=SAGA_pal[[1]], zlim=c(10,90))
+dl.R2 = DL.m@model$training_metrics@metrics$r2
+
+## merge (weighted average):
+eberg_grid$SNDMHT_A <- rowSums(cbind(eberg_grid$RFx*rf.R2, eberg_grid$DLx*dl.R2), na.rm=TRUE)/(rf.R2+dl.R2)
+plotKML(eberg_grid["SNDMHT_A"], colour_scale=SAGA_pal[[1]], z.lim=c(0,100))
 shape = "http://maps.google.com/mapfiles/kml/paddle/wht-blank.png"
 kml(eberg, colour=SNDMHT_A, shape=shape, labels=SNDMHT_A, colour_scale=SAGA_pal[[10]])
 kml_View("eberg.kml")
