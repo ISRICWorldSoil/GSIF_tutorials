@@ -8,6 +8,7 @@ library(randomForest)
 library(nnet)
 library(e1071)
 library(GSIF)
+library(plyr)
 
 set.seed(42)
 data(eberg)
@@ -41,8 +42,7 @@ m$soiltype <- as.factor(m$soiltype)
 ## subsample
 s <- sample.int(nrow(m), 500)
 ## CV error for RF
-TAXGRSC.rf <- randomForest(x=m[-s,1:4], y=m$soiltype[-s], xtest=m[s,1:4], ytest=m$soiltype[s]
-)
+TAXGRSC.rf <- randomForest(x=m[-s,1:4], y=m$soiltype[-s], xtest=m[s,1:4], ytest=m$soiltype[s])
 TAXGRSC.rf$test$confusion[,"class.error"]
 
 ## Fit 3 independent machine learning models:
@@ -66,23 +66,25 @@ eberg_soiltype@data <- data.frame(probs)
 ch <- rowSums(eberg_soiltype@data)
 summary(ch)
 plot(raster::stack(eberg_soiltype), col=SAGA_pal[[1]], zlim=c(0,1))
+#plotKML(eberg["TAXGRSC"])
 #plotKML(eberg_soiltype["Rendzina"], colour_scale=SAGA_pal[[1]], z.lim=c(0,1))
 #plotKML(eberg_soiltype["Braunerde"], colour_scale=SAGA_pal[[1]], z.lim=c(0,1))
+#plotKML(eberg_soiltype["Regosol"], colour_scale=SAGA_pal[[1]], z.lim=c(0,1))
 
 # ------------------------------------------------------------
-# SOIL PROPERTIES / NUMERIC
+# SOIL PROPERTIES / NUMERIC (h2o)
 # ------------------------------------------------------------
 
 names(eberg)
-## randomForest:
+## randomForest for predicting Sand content (top soil):
 library(h2o)
 localH2O = h2o.init()
-eberg.hex = as.h2o(m, conn = h2o.getConnection(), destination_frame = "eberg.hex")
-eberg.grid = as.h2o(eberg_grid@data, conn = h2o.getConnection(), destination_frame = "eberg.grid")
-View(eberg.hex@mutable$col_names)
+eberg.hex = as.h2o(m, destination_frame = "eberg.hex")
+eberg.grid = as.h2o(eberg_grid@data, destination_frame = "eberg.grid")
 names(m)[22] 
-RF.m = h2o.randomForest(y = 22, x = 6:16, training_frame = eberg.hex, ntree = 50, depth = 100, importance=TRUE)
+RF.m = h2o.randomForest(y = 22, x = 6:16, training_frame = eberg.hex, ntree = 50)
 RF.m
+plot(m$SNDMHT_A, as.data.frame(h2o.predict(RF.m, eberg.hex, na.action=na.pass))$predict, asp=1, xlab="measured", ylab="predicted")
 rf.VI = RF.m@model$variable_importances
 print(rf.VI)
 eberg_grid$RFx <- as.data.frame(h2o.predict(RF.m, eberg.grid, na.action=na.pass))$predict
@@ -102,5 +104,76 @@ shape = "http://maps.google.com/mapfiles/kml/paddle/wht-blank.png"
 kml(eberg, colour=SNDMHT_A, shape=shape, labels=SNDMHT_A, colour_scale=SAGA_pal[[10]])
 kml_View("eberg.kml")
 ## remove objects:
-#h2o.rm(eberg_grid, conn = h2o.getConnection())
+#h2o.rm(eberg_grid)
+
+# ------------------------------------------------------------
+# SOIL PROPERTIES / NUMERIC (3D)
+# ------------------------------------------------------------
+
+## Soil organic carbon in 3D
+## Model fitting using CARET package [http://topepo.github.io/caret/]
+library(caret)
+library(randomForest)
+library(Cubist)
+library(GSIF)
+library(xgboost)
+## under Unix we would also run:
+#library(doMC)
+#registerDoMC(cores = 8)
+
+data(edgeroi)
+edgeroi.spc <- join(edgeroi$sites, edgeroi$horizons, type='inner')
+coordinates(edgeroi.spc) <- ~ LONGDA94 + LATGDA94
+proj4string(edgeroi.spc) <- CRS("+proj=longlat +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +no_defs")
+edgeroi.spc <- spTransform(edgeroi.spc, CRS("+init=epsg:28355"))
+## load the 250 m grids:
+con <- url("http://gsif.isric.org/lib/exe/fetch.php?media=edgeroi.grids.rda")
+load(con)
+gridded(edgeroi.grids) <- ~x+y
+proj4string(edgeroi.grids) <- CRS("+init=epsg:28355")
+## overlay points and grids:
+ov2 <- over(edgeroi.spc, edgeroi.grids)
+m2 <- cbind(ov2, edgeroi.spc@data)
+m2$DEPTH <- m2$UHDICM + (m2$LHDICM - m2$UHDICM)/2
+summary(m2$DEPTH)
+formulaStringP2 = ORCDRC ~ DEMSRT5+TWISRT5+PMTGEO5+EV1MOD5+EV2MOD5+EV3MOD5+DEPTH
+mP2 <- m2[complete.cases(m2[,all.vars(formulaStringP2)]),]
+
+## process parallelized by default:
+ctrl <- trainControl(method="repeatedcv", number=5, repeats=1)
+## First, fine-tune parameters using smaller number of samples 
+sel <- sample.int(nrow(mP2), 500)
+tr.ORCDRC.rf <- train(formulaStringP2, data=mP2[sel,], method = "rf", trControl = ctrl, tuneLength = 3)
+tr.ORCDRC.rf
+## Second, fit the final model using fine-tuned parameters
+## http://stats.stackexchange.com/questions/23763/is-there-a-way-to-disable-the-parameter-tuning-grid-feature-in-caret
+ORCDRC.rf <- train(formulaStringP2, data=mP2, method = "rf", tuneGrid=data.frame(mtry=7), trControl=trainControl(method="none"))
+w1 = 100*max(tr.ORCDRC.rf$results$Rsquared)
+varImpPlot(ORCDRC.rf$finalModel)
+## Cubist:
+tr.ORCDRC.cb <- train(formulaStringP2, data=mP2[sel,], method = "cubist", trControl = ctrl, tuneLength = 3)
+tr.ORCDRC.cb
+ORCDRC.cb <- train(formulaStringP2, data=mP2, method = "cubist", tuneGrid=data.frame(committees = 1, neighbors = 0), trControl=trainControl(method="none"))
+w2 = 100*max(tr.ORCDRC.cb$results$Rsquared)
+## XGBoost - run via the caret package:
+ORCDRC.gb <- train(formulaStringP2, data=mP2, method = "xgbTree", trControl=ctrl)
+w3 = 100*max(tr.ORCDRC.gb$results$Rsquared)
+
+## Ensemble prediction:
+edgeroi.grids$DEPTH = 2.5
+edgeroi.grids$Random_forest <- predict(ORCDRC.rf, edgeroi.grids@data, na.action = na.pass) 
+edgeroi.grids$Cubist <- predict(ORCDRC.cb, edgeroi.grids@data, na.action = na.pass)
+edgeroi.grids$XGBoost <- predict(ORCDRC.gb, edgeroi.grids@data, na.action = na.pass)
+edgeroi.grids$ORCDRC_5cm <- (edgeroi.grids$Random_forest*w1+edgeroi.grids$Cubist*w2+edgeroi.grids$XGBoost*w3)/(w1+w2+w3)
+plot(stack(edgeroi.grids[c("Random_forest","Cubist","XGBoost","ORCDRC_5cm")]), col=SAGA_pal[[1]], zlim=c(5,65))
+plotKML(edgeroi.grids["ORCDRC_5cm"], colour_scale=SAGA_pal[[1]], z.lim=c(5,45))
+## aggregate values for 0-5 cm depths:
+m2$cl <- cut(m2$DEPTH, breaks=c(0,5,15,30,60,100,200))
+ORCDRC.mv <- ddply(m2, .(cl,SOURCEID), summarize, aggregated = mean(ORCDRC))
+ORCDRC.mv <- join(ORCDRC.mv, as.data.frame(edgeroi.spc)[,c("SOURCEID","LONGDA94","LATGDA94")], type="left", match = "first")
+ORCDRC.mv.s <- ORCDRC.mv[ORCDRC.mv$cl=="(0,5]",]
+ORCDRC.mv.s <- ORCDRC.mv.s[!is.na(ORCDRC.mv.s$LONGDA94),]
+coordinates(ORCDRC.mv.s) <- ~ LONGDA94 + LATGDA94
+proj4string(ORCDRC.mv.s) <- CRS("+init=epsg:28355") 
+plotKML(ORCDRC.mv.s["aggregated"])
 
