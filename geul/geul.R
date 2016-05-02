@@ -1,4 +1,3 @@
-# title         : geul.R
 # purpose       : Prediction of heavy metal concentrations for the Geul river valley in NL;
 # reference     : [http://www.isric.org]
 # producer      : Prepared by T. Hengl and G.B.M. Heuvelink
