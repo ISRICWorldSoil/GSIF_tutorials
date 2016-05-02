@@ -167,7 +167,8 @@ edgeroi.grids$XGBoost <- predict(ORCDRC.gb, edgeroi.grids@data, na.action = na.p
 edgeroi.grids$ORCDRC_5cm <- (edgeroi.grids$Random_forest*w1+edgeroi.grids$Cubist*w2+edgeroi.grids$XGBoost*w3)/(w1+w2+w3)
 plot(stack(edgeroi.grids[c("Random_forest","Cubist","XGBoost","ORCDRC_5cm")]), col=SAGA_pal[[1]], zlim=c(5,65))
 plotKML(edgeroi.grids["ORCDRC_5cm"], colour_scale=SAGA_pal[[1]], z.lim=c(5,45))
-## aggregate values for 0-5 cm depths:
+
+## aggregate observed values for 0-5 cm depths:
 m2$cl <- cut(m2$DEPTH, breaks=c(0,5,15,30,60,100,200))
 ORCDRC.mv <- ddply(m2, .(cl,SOURCEID), summarize, aggregated = mean(ORCDRC))
 ORCDRC.mv <- join(ORCDRC.mv, as.data.frame(edgeroi.spc)[,c("SOURCEID","LONGDA94","LATGDA94")], type="left", match = "first")
