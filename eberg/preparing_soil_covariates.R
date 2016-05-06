@@ -139,4 +139,4 @@ str(ov[complete.cases(ov),])
 ## Overlay is implemented in the GSIF package by default:
 demo(meuse, echo=FALSE)
 ## simple model:
-omm <- fit.gstatModel(meuse, om~dist+ffreq, meuse.grid, family = gaussian(log))
+omm <- fit.gstatModel(meuse, log(om)~dist+ffreq, meuse.grid, family = gaussian(log))
