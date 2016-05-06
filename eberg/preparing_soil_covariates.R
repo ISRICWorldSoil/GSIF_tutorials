@@ -16,6 +16,7 @@ proj4string(eberg_grid25) <- CRS("+init=epsg:31467")
 r <- raster(eberg_grid25)
 r
 eberg_zones_r <- rasterize(eberg_zones, r, field="ZONES")
+## TAKES TIME! Raster package is not maybe most suitable for larger data sets
 plot(eberg_zones_r)
 
 ## Rasterize using SAGA GIS:
@@ -52,6 +53,49 @@ system(paste0(gdalwarp, ' eberg_grid_TWISRT6.tif eberg_grid_TWISRT6_250m.tif -r 
 par(mfrow=c(1,2))
 image(raster(eberg_grid["TWISRT6"]), col=SAGA_pal[[1]], zlim=zlim, main="Original", asp=1)
 image(raster("eberg_grid_TWISRT6_250m.tif"), col=SAGA_pal[[1]], zlim=zlim, main="Aggregated", asp=1)
+grid250m <- readGDAL("eberg_grid_TWISRT6_250m.tif")
+grid250m <- grid2poly(grid250m)
+## plot in Google Earth
+kml(grid250m, colour=band1, colour_scale=SAGA_pal[[1]], kmz=TRUE)
+
+## Derive some standard DEM variables of interest for soil mapping:
+saga_DEM_derivatives <- function(INPUT, MASK=NULL, sel=c("SLP","TWI","CRV","VBF","VDP","OPN","DVM")){
+  if(!is.null(MASK)){
+    ## Fill in missing DEM pixels:
+    suppressWarnings( system(paste0(saga_cmd, ' grid_tools 25 -GRID=\"', INPUT, '\" -MASK=\"', MASK, '\" -CLOSED=\"', INPUT, '\"')) )
+  }
+  ## Slope:
+  if(any(sel %in% "SLP")){
+    try( suppressWarnings( system(paste0(saga_cmd, ' ta_morphometry 0 -ELEVATION=\"', INPUT, '\" -SLOPE=\"', gsub(".sgrd", "_slope.sgrd", INPUT), '\" -C_PROF=\"', gsub(".sgrd", "_cprof.sgrd", INPUT), '\"') ) ) )
+  }
+  ## TWI:
+  if(any(sel %in% "TWI")){
+    try( suppressWarnings( system(paste0(saga_cmd, ' ta_hydrology 15 -DEM=\"', INPUT, '\" -TWI=\"', gsub(".sgrd", "_twi.sgrd", INPUT), '\"') ) ) )
+  }
+  ## MrVBF:
+  if(any(sel %in% "VBF")){
+    try( suppressWarnings( system(paste0(saga_cmd, ' ta_morphometry 8 -DEM=\"', INPUT, '\" -MRVBF=\"', gsub(".sgrd", "_vbf.sgrd", INPUT), '\" -T_SLOPE=10 -P_SLOPE=3') ) ) )
+  }
+  ## Valley depth:
+  if(any(sel %in% "VDP")){
+    try( suppressWarnings( system(paste0(saga_cmd, ' ta_channels 7 -ELEVATION=\"', INPUT, '\" -VALLEY_DEPTH=\"', gsub(".sgrd", "_vdepth.sgrd", INPUT), '\"') ) ) )
+  }
+  ## Openess:
+  if(any(sel %in% "OPN")){
+    try( suppressWarnings( system(paste0(saga_cmd, ' ta_lighting 5 -DEM=\"', INPUT, '\" -POS=\"', gsub(".sgrd", "_openp.sgrd", INPUT), '\" -NEG=\"', gsub(".sgrd", "_openn.sgrd", INPUT), '\" -METHOD=0' ) ) ) )
+  }
+  ## Deviation from Mean Value:
+  if(any(sel %in% "DVM")){
+    suppressWarnings( system(paste0(saga_cmd, ' statistics_grid 1 -GRID=\"', INPUT, '\" -DEVMEAN=\"', gsub(".sgrd", "_devmean.sgrd", INPUT), '\" -RADIUS=11' ) ) )
+  }
+}
+
+## test it and plot all results:
+writeGDAL(eberg_grid["DEMSRT6"], "DEMSRT6.sdat", "SAGA")
+saga_DEM_derivatives("DEMSRT6.sgrd")
+dem.lst <- list.files(pattern=glob2rx("^DEMSRT6_*.sdat"))
+
+plot(stack(dem.lst), col=SAGA_pal[[1]])
 
 ## Gap filling:
 eberg_grid$test <- eberg_grid$TWISRT6
@@ -92,7 +136,7 @@ proj4string(eberg) <- CRS("+init=epsg:31467")
 ov = as.data.frame(extract(stack(grd.lst), eberg))
 str(ov[complete.cases(ov),])
 
-## Overlay is implemented in the GSIF package:
+## Overlay is implemented in the GSIF package by default:
 demo(meuse, echo=FALSE)
 ## simple model:
 omm <- fit.gstatModel(meuse, om~dist+ffreq, meuse.grid, family = gaussian(log))
