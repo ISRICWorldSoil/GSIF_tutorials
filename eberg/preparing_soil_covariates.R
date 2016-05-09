@@ -127,6 +127,9 @@ grid25m <- stack(grd.lst)
 grid25m <- as(grid25m, "SpatialGridDataFrame")
 str(grid25m)
 
+### save covariate stack to RDATA file for future use
+save(grid25m, file = "covariates25m.RDATA")
+
 ## Overlay using 'extract'
 library(sp)
 data(eberg)

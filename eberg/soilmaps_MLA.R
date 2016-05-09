@@ -9,6 +9,12 @@ library(nnet)
 library(e1071)
 library(GSIF)
 library(plyr)
+library(raster)
+library(caret)
+library(Cubist)
+library(GSIF)
+library(xgboost)
+library(snowfall)
 
 set.seed(42)
 data(eberg)
@@ -22,35 +28,39 @@ eberg_grid@data <- cbind(eberg_grid@data, eberg_spc@predicted@data)
 ## overlay and create a regression-matrix:
 ov <- over(eberg, eberg_grid)
 m <- cbind(ov, eberg@data)
+dim(m)
 
 # ------------------------------------------------------------
 # SOIL TYPES / FACTORS
 # ------------------------------------------------------------
 
 ## clean-up target variable:
-summary(m$TAXGRSC)
-m$soiltype <- NA
-for(i in levels(m$TAXGRSC)){
-  sel <- grep(pattern=i, m$TAXGRSC)
-  if(length(sel)>5){
-    m$soiltype[sel] <- i
-  }
-}
+xg = summary(m$TAXGRSC, maxsum=length(levels(m$TAXGRSC)))
+str(xg)
+selg.levs = attr(xg, "names")[xg > 5]
+m$soiltype <- m$TAXGRSC
+m$soiltype[which(!m$TAXGRSC %in% selg.levs)] <- NA
+m$soiltype <- droplevels(m$soiltype)
+str(summary(m$soiltype, maxsum=length(levels(m$soiltype))))
+
+## use only complete cases:
 m <- m[complete.cases(m[,1:(ncol(eberg_grid)+2)]),]
 m$soiltype <- as.factor(m$soiltype)
 
 ## subsample
 s <- sample.int(nrow(m), 500)
 ## CV error for RF
-TAXGRSC.rf <- randomForest(x=m[-s,1:4], y=m$soiltype[-s], xtest=m[s,1:4], ytest=m$soiltype[s])
+TAXGRSC.rf <- randomForest(x=m[-s,paste0("PC",1:10)], y=m$soiltype[-s], xtest=m[s,paste0("PC",1:10)], ytest=m$soiltype[s])
 TAXGRSC.rf$test$confusion[,"class.error"]
 
 ## Fit 3 independent machine learning models:
-TAXGRSC.rf <- randomForest(x=m[,1:4], y=m$soiltype)
+TAXGRSC.rf <- randomForest(x=m[,paste0("PC",1:10)], y=m$soiltype)
+fm = as.formula(paste("soiltype~", paste(paste0("PC",1:10), collapse="+")))
+TAXGRSC.mn <- multinom(fm, m)
+TAXGRSC.svm <- svm(fm, m, probability=TRUE, cross=5)
 ## prediction success per class:
-TAXGRSC.mn <- multinom(soiltype~PRMGEO6+DEMSRT6+TWISRT6+TIRAST6, m)
-TAXGRSC.svm <- svm(soiltype~PRMGEO6+DEMSRT6+TWISRT6+TIRAST6, m, probability = TRUE, cross=5)
 TAXGRSC.svm$tot.accuracy
+
 ## Make ensemble predictions:
 probs1 <- predict(TAXGRSC.mn, eberg_grid@data, type="probs", na.action = na.pass) 
 probs2 <- predict(TAXGRSC.rf, eberg_grid@data, type="prob", na.action = na.pass)
@@ -58,7 +68,7 @@ probs3 <- attr(predict(TAXGRSC.svm, eberg_grid@data, probability=TRUE, na.action
 #probs3 <- predict(ens, eberg_grid@data, probability=TRUE, na.action = na.pass)
 leg <- levels(m$soiltype)
 lt <- list(probs1[,leg], probs2[,leg], probs3[,leg])
-## Simple average (an alternative would):
+## Simple average (an alternative would be to use the "caretEnsemble" package):
 probs <- Reduce("+", lt) / length(lt)
 eberg_soiltype = eberg_grid
 eberg_soiltype@data <- data.frame(probs)
@@ -78,27 +88,33 @@ plot(raster::stack(eberg_soiltype), col=SAGA_pal[[1]], zlim=c(0,1))
 names(eberg)
 ## randomForest for predicting Sand content (top soil):
 library(h2o)
-localH2O = h2o.init()
+localH2O = h2o.init(nthreads = -1)
 eberg.hex = as.h2o(m, destination_frame = "eberg.hex")
 eberg.grid = as.h2o(eberg_grid@data, destination_frame = "eberg.grid")
 names(m)[22] 
-RF.m = h2o.randomForest(y = 22, x = 6:16, training_frame = eberg.hex, ntree = 50)
+RF.m = h2o.randomForest(y = which(names(m)=="SNDMHT_A"), x = which(names(m) %in% paste0("PC",1:10)), training_frame = eberg.hex, ntree = 50)
 RF.m
 plot(m$SNDMHT_A, as.data.frame(h2o.predict(RF.m, eberg.hex, na.action=na.pass))$predict, asp=1, xlab="measured", ylab="predicted")
 rf.VI = RF.m@model$variable_importances
 print(rf.VI)
 eberg_grid$RFx <- as.data.frame(h2o.predict(RF.m, eberg.grid, na.action=na.pass))$predict
 plot(raster(eberg_grid["RFx"]), col=SAGA_pal[[1]], zlim=c(10,90))
+points(eberg, pch="+")
 rf.R2 = RF.m@model$training_metrics@metrics$r2
+rf.R2
 
 ## Deep learning
-DL.m = h2o.deeplearning(y = 22, x = 6:16, training_frame = eberg.hex)
+DL.m = h2o.deeplearning(y = which(names(m)=="SNDMHT_A"), x = which(names(m) %in% paste0("PC",1:10)), training_frame = eberg.hex)
+DL.m
 eberg_grid$DLx <- as.data.frame(h2o.predict(DL.m, eberg.grid, na.action=na.pass))$predict
 plot(raster(eberg_grid["DLx"]), col=SAGA_pal[[1]], zlim=c(10,90))
+points(eberg, pch="+")
 dl.R2 = DL.m@model$training_metrics@metrics$r2
 
 ## merge (weighted average):
 eberg_grid$SNDMHT_A <- rowSums(cbind(eberg_grid$RFx*rf.R2, eberg_grid$DLx*dl.R2), na.rm=TRUE)/(rf.R2+dl.R2)
+plot(raster(eberg_grid["SNDMHT_A"]), col=SAGA_pal[[1]], zlim=c(10,90))
+points(eberg, pch="+")
 plotKML(eberg_grid["SNDMHT_A"], colour_scale=SAGA_pal[[1]], z.lim=c(0,100))
 shape = "http://maps.google.com/mapfiles/kml/paddle/wht-blank.png"
 kml(eberg, colour=SNDMHT_A, shape=shape, labels=SNDMHT_A, colour_scale=SAGA_pal[[10]])
@@ -112,11 +128,6 @@ kml_View("eberg.kml")
 
 ## Soil organic carbon in 3D
 ## Model fitting using CARET package [http://topepo.github.io/caret/]
-library(caret)
-library(randomForest)
-library(Cubist)
-library(GSIF)
-library(xgboost)
 ## under Unix we would also run:
 #library(doMC)
 #registerDoMC(cores = 8)
@@ -157,7 +168,7 @@ ORCDRC.cb <- train(formulaStringP2, data=mP2, method = "cubist", tuneGrid=data.f
 w2 = 100*max(tr.ORCDRC.cb$results$Rsquared)
 ## XGBoost - run via the caret package:
 ORCDRC.gb <- train(formulaStringP2, data=mP2, method = "xgbTree", trControl=ctrl)
-w3 = 100*max(tr.ORCDRC.gb$results$Rsquared)
+w3 = 100*max(ORCDRC.gb$results$Rsquared)
 
 ## Ensemble prediction:
 edgeroi.grids$DEPTH = 2.5
@@ -178,3 +189,16 @@ coordinates(ORCDRC.mv.s) <- ~ LONGDA94 + LATGDA94
 proj4string(ORCDRC.mv.s) <- CRS("+init=epsg:28355") 
 plotKML(ORCDRC.mv.s["aggregated"])
 
+## Test accuracy of mapping ORCDRC:
+source_https <- function(url, ...) {
+  require(RCurl)
+  cat(getURL(url, followlocation = TRUE, cainfo = system.file("CurlSSL", "cacert.pem", package = "RCurl")), file = basename(url))
+  source(basename(url))
+}
+source_https("https://raw.githubusercontent.com/ISRICWorldSoil/SoilGrids250m/master/grids/cv/cv_functions.R")
+
+test.ORC <- cv_numeric(formulaStringP2, rmatrix=mP2, nfold=5, idcol="SOURCEID", Log=TRUE)
+str(test.ORC)
+## Plot CV results (use log-scale):
+plt0 <- xyplot(test.ORC[[1]]$Predicted~test.ORC[[1]]$Observed, asp=1, par.settings=list(plot.symbol = list(col=alpha("black", 0.6), fill=alpha("red", 0.6), pch=21, cex=0.9)), scales=list(x=list(log=TRUE, equispaced.log=FALSE), y=list(log=TRUE, equispaced.log=FALSE)), xlab="measured", ylab="predicted (machine learning)")
+plt0
