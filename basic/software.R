@@ -2,10 +2,10 @@
 ## By: T. Hengl
 ## http://gsif.isric.org
 
-## These examples based on the MRO version of R ()
+## These examples based on the MRO version of R (Microsoft R Open 3.2.4)
 
 ## Check that all packages have been installed:
-list.of.packages <- c("GSIF", "plotKML", "nnet", "plyr", "ROCR", "randomForest", "plyr", "parallel", "psych", "mda", "h2o", "dismo", "grDevices", "snowfall", "hexbin", "lattice", "ranger", "xgboost", "doParallel", "caret")
+list.of.packages = c("GSIF", "plotKML", "nnet", "plyr", "ROCR", "randomForest", "plyr", "parallel", "psych", "mda", "h2o", "dismo", "grDevices", "snowfall", "hexbin", "lattice", "ranger", "xgboost", "doParallel", "caret")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
 
@@ -40,7 +40,7 @@ om.rk <- predict(omm, meuse.grid)
 plotKML(om.rk)
 
 ## SAGA GIS (https://sourceforge.net/projects/saga-gis/):
-saga_cmd = "C:/Progra~1/SAGA-GIS/saga_cmd.exe"
+saga_cmd = shortPathName(normalizePath("C:/SAGA-GIS/saga_cmd.exe"))
 system(paste(saga_cmd))
 
 library(rgdal)
