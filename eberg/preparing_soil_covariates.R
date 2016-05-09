@@ -94,7 +94,6 @@ saga_DEM_derivatives <- function(INPUT, MASK=NULL, sel=c("SLP","TWI","CRV","VBF"
 writeGDAL(eberg_grid["DEMSRT6"], "DEMSRT6.sdat", "SAGA")
 saga_DEM_derivatives("DEMSRT6.sgrd")
 dem.lst <- list.files(pattern=glob2rx("^DEMSRT6_*.sdat"))
-
 plot(stack(dem.lst), col=SAGA_pal[[1]])
 
 ## Gap filling:
