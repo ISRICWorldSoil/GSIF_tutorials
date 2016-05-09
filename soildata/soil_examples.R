@@ -1,11 +1,6 @@
-# title         : soil_examples.R
-# purpose       : Some examples of importing, converting and analyzing soil data in R;
-# reference     : [http://www.isric.org]
-# producer      : Prepared by T. Hengl
-# address       : In Wageningen, NL.
-# inputs        : Africa soil profiles database (embedded in the GSIF package);
-# outputs       : visualizations/plots;
-# remarks 1     : this code requires some added functions;
+## Some examples of importing, converting and analyzing soil data in R;
+## On-line version: [http://gsif.isric.org/doku.php?id=wiki:soil_data]
+## by Tom.Hengl@isric.org
 
 # load packages:
 library(maptools)
@@ -160,5 +155,48 @@ prof1
 ## Not run: 
 plotKML(prof1, var.name="ORCDRC", color.name="soil_color")
 
+#----------------------------------
+# Using MLA's to fit PTFs
+#----------------------------------
 
-# end of script;
+library(randomForest)
+library(quantregForest)
+library(randomForestSRC)
+library(ggRandomForests)
+
+data(afsp)
+
+## Pedo-transfer function for bulk density:
+afsp$horizons$DEPTH = afsp$horizons$UHDICM + (afsp$horizons$LHDICM - afsp$horizons$UHDICM)/2
+afsp.vars <- afsp$horizons[,c("BLD","ORCDRC","PHIHOX","SNDPPT","CLYPPT","CRFVOL","DEPTH")]
+## BLD ~ ORCDRC + PHIHOX + SNDPPT + CLYPPT + CRFVOL + DEPTH
+afsp.vars <- afsp.vars[complete.cases(afsp.vars),]
+m.BD <- quantregForest(x=afsp.vars[,c("ORCDRC","PHIHOX","SNDPPT","CLYPPT","CRFVOL","DEPTH")], y=afsp.vars$BLD, importance=TRUE)
+varImpPlot(m.BD)
+## test it:
+predict(m.BD, data.frame(ORCDRC=1.2, PHIHOX=7.6, SNDPPT=45, CLYPPT=12, CRFVOL=0, DEPTH=20))
+
+## Alternative -> predict using the randomForestSRC package
+rfsrc_BD <- rfsrc(BLD ~ ORCDRC + PHIHOX + SNDPPT + CLYPPT + CRFVOL + DEPTH, data=afsp.vars)
+rfsrc_BD
+gg_v <- gg_variable(rfsrc_BD)
+plot(gg_v, xvar=c("ORCDRC","PHIHOX","SNDPPT","CLYPPT","CRFVOL","DEPTH"), panel=TRUE, se=.95, span=1.2, alpha=.4)
+predict(rfsrc_BD, data.frame(ORCDRC=1.2, PHIHOX=7.6, SNDPPT=45, CLYPPT=12, CRFVOL=0, DEPTH=20))$predicted
+
+## Translation of soil classes from one system to the other
+## add few numeric soil properties:
+x.PHIHOX <- aggregate(afsp$horizons$PHIHOX, by=list(afsp$horizons$SOURCEID), FUN=mean, na.rm=TRUE); names(x.PHIHOX)[1] = "SOURCEID"
+x.CLYPPT <- aggregate(afsp$horizons$CLYPPT, by=list(afsp$horizons$SOURCEID), FUN=mean, na.rm=TRUE); names(x.CLYPPT)[1] = "SOURCEID"
+afsp.sites$PHIHOX <- join(afsp.sites, x.PHIHOX, type="left")$x
+afsp.sites$CLYPPT <- join(afsp.sites, x.CLYPPT, type="left")$x
+
+## Model to translate soil classes from one system to the other
+afsp.sites <- afsp.sites[complete.cases(afsp.sites[,c("TAXGWRB","PHIHOX","CLYPPT","TAXNUSDA")]),]
+afsp.sites$TAXNUSDA <- as.factor(afsp.sites$TAXNUSDA)
+afsp.sites$TAXGWRB <- as.factor(afsp.sites$TAXGWRB)
+TAXNUSDA.rf <- randomForest(x=afsp.sites[,c("TAXGWRB","PHIHOX","CLYPPT")], y=afsp.sites$TAXNUSDA)
+str(TAXNUSDA.rf$err.rate)
+## test it:
+newdata = data.frame(TAXGWRB="Solonetz", PHIHOX=7.8, CLYPPT=12, stringsAsFactors=FALSE)
+x <- predict(TAXNUSDA.rf, newdata, type="prob")
+
