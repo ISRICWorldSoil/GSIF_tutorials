@@ -11,9 +11,9 @@ library(aqp)
 library(plyr)
 library(plotKML)
 
-#----------------------------------
+#--------------------------------------------------
 # Example: converting texture-by-hand classes to fractions
-#----------------------------------
+#--------------------------------------------------
 
 ## plot the triangle:
 TT.plot(class.sys = "USDA.TT")
@@ -73,7 +73,7 @@ sd(sim.Cl$SAND); sd(sim.Cl$SILT); sd(sim.Cl$CLAY)
 ## plot Africa Soil Profile Data in texture triangle:
 require(GSIF)
 data(afsp)
-tdf <- afsp$horizons[,c("CLYPPT", "SLTPPT", "SNDPPT")]
+tdf <- SPROPS.WISE$horizons[,c("CLYPPT", "SLTPPT", "SNDPPT")]
 ## remove missing values:
 tdf <- tdf[!is.na(tdf$SNDPPT)&!is.na(tdf$SLTPPT)&!is.na(tdf$CLYPPT),] 
 ## subset to 15%:
@@ -85,9 +85,9 @@ names(tdf)[1:3] <- c("CLAY", "SILT", "SAND")
 TT.plot(class.sys = "USDA.TT", tri.data = tdf, grid.show = FALSE, pch="+", cex=.4, col="red")
 
 
-#----------------------------------
+#--------------------------------------------------
 # Example with Munsell color codes
-#----------------------------------
+#--------------------------------------------------
 
 ## load color table for all Munsell values:
 load(file("http://gsif.isric.org/lib/exe/fetch.php?media=munsell_rgb.rdata"))
@@ -155,48 +155,57 @@ prof1
 ## Not run: 
 plotKML(prof1, var.name="ORCDRC", color.name="soil_color")
 
-#----------------------------------
+#--------------------------------------------------
 # Using MLA's to fit PTFs
-#----------------------------------
+#--------------------------------------------------
 
-library(randomForest)
-library(quantregForest)
 library(randomForestSRC)
 library(ggRandomForests)
+library(ggplot2)
+library(scales)
 
-data(afsp)
+## ISRIC WISE data set:
+load(file("http://gsif.isric.org/lib/exe/fetch.php?media=sprops.wise.rda"))
+str(SPROPS.WISE)
 
 ## Pedo-transfer function for bulk density:
-afsp$horizons$DEPTH = afsp$horizons$UHDICM + (afsp$horizons$LHDICM - afsp$horizons$UHDICM)/2
-afsp.vars <- afsp$horizons[,c("BLD","ORCDRC","PHIHOX","SNDPPT","CLYPPT","CRFVOL","DEPTH")]
-## BLD ~ ORCDRC + PHIHOX + SNDPPT + CLYPPT + CRFVOL + DEPTH
-afsp.vars <- afsp.vars[complete.cases(afsp.vars),]
-m.BD <- quantregForest(x=afsp.vars[,c("ORCDRC","PHIHOX","SNDPPT","CLYPPT","CRFVOL","DEPTH")], y=afsp.vars$BLD, importance=TRUE)
-varImpPlot(m.BD)
-## test it:
-predict(m.BD, data.frame(ORCDRC=1.2, PHIHOX=7.6, SNDPPT=45, CLYPPT=12, CRFVOL=0, DEPTH=20))
-
-## Alternative -> predict using the randomForestSRC package
-rfsrc_BD <- rfsrc(BLD ~ ORCDRC + PHIHOX + SNDPPT + CLYPPT + CRFVOL + DEPTH, data=afsp.vars)
+#s.n <- sample.int(nrow(SPROPS.WISE), 10000)
+#rfsrc_BD <- rfsrc(BLD ~ ORCDRC + PHIHOX + SNDPPT + CLYPPT + CRFVOL + DEPTH, data=SPROPS.WISE[s.n,])
+rfsrc_BD <- rfsrc(BLD ~ ORCDRC + PHIHOX + SNDPPT + CLYPPT + CRFVOL + DEPTH, data=SPROPS.WISE)
 rfsrc_BD
-gg_v <- gg_variable(rfsrc_BD)
-plot(gg_v, xvar=c("ORCDRC","PHIHOX","SNDPPT","CLYPPT","CRFVOL","DEPTH"), panel=TRUE, se=.95, span=1.2, alpha=.4)
+plot.variable(rfsrc_BD, xvar.names=c("ORCDRC","PHIHOX","SNDPPT","CLYPPT","CRFVOL","DEPTH"))
+#plot.variable(rfsrc_BD, xvar.names=c("ORCDRC","PHIHOX","SNDPPT","CLYPPT","CRFVOL","DEPTH"), partial=TRUE, smooth.lines=TRUE, sorted=TRUE, npts=50)
+## Test prediction:
 predict(rfsrc_BD, data.frame(ORCDRC=1.2, PHIHOX=7.6, SNDPPT=45, CLYPPT=12, CRFVOL=0, DEPTH=20))$predicted
+predict(rfsrc_BD, data.frame(ORCDRC=150, PHIHOX=4.6, SNDPPT=25, CLYPPT=35, CRFVOL=0, DEPTH=20))$predicted
 
-## Translation of soil classes from one system to the other
+
+## Pedo-transfer function for soil classification:
+load(file("http://gsif.isric.org/lib/exe/fetch.php?media=wise_tax.rda"))
+str(WISE_tax)
+## Legend:
+leg <- read.csv(file("http://gsif.isric.org/lib/exe/fetch.php?media=taxousda_greatgroups.csv"))
+str(leg)
+
 ## add few numeric soil properties:
-x.PHIHOX <- aggregate(afsp$horizons$PHIHOX, by=list(afsp$horizons$SOURCEID), FUN=mean, na.rm=TRUE); names(x.PHIHOX)[1] = "SOURCEID"
-x.CLYPPT <- aggregate(afsp$horizons$CLYPPT, by=list(afsp$horizons$SOURCEID), FUN=mean, na.rm=TRUE); names(x.CLYPPT)[1] = "SOURCEID"
-afsp.sites$PHIHOX <- join(afsp.sites, x.PHIHOX, type="left")$x
-afsp.sites$CLYPPT <- join(afsp.sites, x.CLYPPT, type="left")$x
+x.PHIHOX <- aggregate(SPROPS.WISE$PHIHOX, by=list(SPROPS.WISE$SOURCEID), FUN=mean, na.rm=TRUE); names(x.PHIHOX)[1] = "SOURCEID"
+x.CLYPPT <- aggregate(SPROPS.WISE$CLYPPT, by=list(SPROPS.WISE$SOURCEID), FUN=mean, na.rm=TRUE); names(x.CLYPPT)[1] = "SOURCEID"
+WISE_tax$PHIHOX <- join(WISE_tax, x.PHIHOX, type="left")$x
+WISE_tax$CLYPPT <- join(WISE_tax, x.CLYPPT, type="left")$x
 
 ## Model to translate soil classes from one system to the other
-afsp.sites <- afsp.sites[complete.cases(afsp.sites[,c("TAXGWRB","PHIHOX","CLYPPT","TAXNUSDA")]),]
-afsp.sites$TAXNUSDA <- as.factor(afsp.sites$TAXNUSDA)
-afsp.sites$TAXGWRB <- as.factor(afsp.sites$TAXGWRB)
-TAXNUSDA.rf <- randomForest(x=afsp.sites[,c("TAXGWRB","PHIHOX","CLYPPT")], y=afsp.sites$TAXNUSDA)
-str(TAXNUSDA.rf$err.rate)
+WISE_tax.sites <- WISE_tax[complete.cases(WISE_tax[,c("TAXNWRB","PHIHOX","CLYPPT","TAXOUSDA")]),]
+## clean up names:
+WISE_tax.sites$TAXOUSDA.f <- NA
+for(j in leg$Suborder){
+  sel <- grep(j, WISE_tax.sites$TAXOUSDA, ignore.case=TRUE)
+  WISE_tax.sites$TAXOUSDA.f[sel] = j
+}
+WISE_tax.sites$TAXOUSDA.f <- as.factor(WISE_tax.sites$TAXOUSDA.f)
+WISE_tax.sites$TAXNWRB <- as.factor(paste(WISE_tax.sites$TAXNWRB))
+TAXNUSDA.rf <- rfsrc(TAXOUSDA.f ~ TAXNWRB + PHIHOX + CLYPPT, data=WISE_tax.sites)
+TAXNUSDA.rf
 ## test it:
-newdata = data.frame(TAXGWRB="Solonetz", PHIHOX=7.8, CLYPPT=12, stringsAsFactors=FALSE)
-x <- predict(TAXNUSDA.rf, newdata, type="prob")
-
+newdata = data.frame(TAXNWRB=factor("Calcaric Cambisol", levels=levels(WISE_tax.sites$TAXNWRB)), PHIHOX=7.8, CLYPPT=12)
+x <- data.frame(predict(TAXNUSDA.rf, newdata, type="prob")$predicted)
+x[,order(1/x)[1:2]]
