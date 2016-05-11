@@ -73,7 +73,7 @@ sd(sim.Cl$SAND); sd(sim.Cl$SILT); sd(sim.Cl$CLAY)
 ## plot Africa Soil Profile Data in texture triangle:
 require(GSIF)
 data(afsp)
-tdf <- SPROPS.WISE$horizons[,c("CLYPPT", "SLTPPT", "SNDPPT")]
+tdf <- afsp$horizons[,c("CLYPPT", "SLTPPT", "SNDPPT")]
 ## remove missing values:
 tdf <- tdf[!is.na(tdf$SNDPPT)&!is.na(tdf$SLTPPT)&!is.na(tdf$CLYPPT),] 
 ## subset to 15%:
@@ -127,7 +127,7 @@ mcol.RGB <- mcol.RGB[mcol.RGB$depth>0 & mcol.RGB$depth<30 & !is.na(mcol.RGB$col)
 coordinates(mcol.RGB) <- ~ LONWGS84+LATWGS84
 ## plot whole of Africa:
 load(file("http://gsif.isric.org/lib/exe/fetch.php?media=admin.af.rda"))
-load("admin.af.rda")
+#load("admin.af.rda")
 proj4string(admin.af) <- "+proj=longlat +datum=WGS84"
 country <- as(admin.af, "SpatialLines")
 par(mar=c(.0,.0,.0,.0))
@@ -137,6 +137,7 @@ dev.off()
 
 ## plot a single profile in Google Earth
 ## sample profile from Nigeria:
+library(fossil)
 lon = 3.90; lat = 7.50; id = "ISRIC:NG0017"; FAO1988 = "LXp" 
 top = c(0, 18, 36, 65, 87, 127) 
 bottom = c(18, 36, 65, 87, 127, 181)
@@ -167,6 +168,7 @@ library(scales)
 ## ISRIC WISE data set:
 load(file("http://gsif.isric.org/lib/exe/fetch.php?media=sprops.wise.rda"))
 str(SPROPS.WISE)
+plot(SPROPS.WISE$LONWGS84, SPROPS.WISE$LATWGS84, pch="+")
 
 ## Pedo-transfer function for bulk density:
 #s.n <- sample.int(nrow(SPROPS.WISE), 10000)
