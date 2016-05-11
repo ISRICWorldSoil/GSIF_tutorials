@@ -7,7 +7,8 @@ library(gstat)
 library(raster)
 ?eberg
 data(eberg_zones)
-spplot(eberg_zones[1])
+spplot(eberg_zones)
+plotKML(eberg_zones)
 
 ## Rasterize using 'raster' package:
 data("eberg_grid25")
@@ -15,7 +16,7 @@ gridded(eberg_grid25) <- ~x+y
 proj4string(eberg_grid25) <- CRS("+init=epsg:31467")
 r <- raster(eberg_grid25)
 r
-eberg_zones_r <- rasterize(eberg_zones, r, field="ZONES")
+system.time( eberg_zones_r <- rasterize(eberg_zones, r, field="ZONES") )
 ## TAKES TIME! Raster package is not maybe most suitable for larger data sets
 plot(eberg_zones_r)
 
@@ -24,8 +25,9 @@ library(rgdal)
 eberg_zones$ZONES_int <- as.integer(eberg_zones$ZONES)
 writeOGR(eberg_zones["ZONES_int"], "eberg_zones.shp", ".", "ESRI Shapefile")
 ## specify location of SAGA GIS:
-saga_cmd = "C:/Progra~1/SAGA-GIS/saga_cmd.exe"
+saga_cmd = shortPathName("C:/SAGA-GIS/saga_cmd.exe")
 pix = 25
+## http://saga-gis.org/saga_module_doc/2.2.7/grid_gridding_0.html
 system(paste0(saga_cmd, ' grid_gridding 0 -INPUT \"eberg_zones.shp\" -FIELD \"ZONES_int\" -GRID \"eberg_zones.sgrd\" -GRID_TYPE 0 -TARGET_DEFINITION 0 -TARGET_USER_SIZE ', pix, ' -TARGET_USER_XMIN ', extent(r)[1]+pix/2,' -TARGET_USER_XMAX ', extent(r)[2]-pix/2, ' -TARGET_USER_YMIN ', extent(r)[3]+pix/2,' -TARGET_USER_YMAX ', extent(r)[4]-pix/2))
 eberg_zones_r2 <- readGDAL("eberg_zones.sdat")
 levels(eberg_zones$ZONES)
@@ -118,10 +120,10 @@ rd = range(eberg_spc@predicted@data[,1], na.rm=TRUE)
 plot(stack(eberg_spc@predicted[1:11]), zlim=rd, col=rev(rainbow(65)[1:48]))
 
 ## Read files to R using 'stack':
-writeGDAL(eberg_grid25["DEMTOPx"], "DEMTOPx_25m.tif")
-writeGDAL(eberg_grid25["NVILANx"], "NVILANx_25m.tif")
-writeGDAL(eberg_zones_r2[1], "eberg_zones_25m.tif")
-grd.lst <- list.files(pattern="25m")
+writeGDAL(eberg_grid25["DEMTOPx"], "DEMTOPx_25mf.tif")
+writeGDAL(eberg_grid25["NVILANx"], "NVILANx_25mf.tif")
+writeGDAL(eberg_zones_r2[1], "eberg_zones_25mf.tif")
+grd.lst <- list.files(pattern="_25mf.tif")
 grd.lst
 grid25m <- stack(grd.lst)
 grid25m <- as(grid25m, "SpatialGridDataFrame")
