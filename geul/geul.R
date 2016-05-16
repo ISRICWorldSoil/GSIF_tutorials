@@ -12,6 +12,7 @@ library(RCurl)
 library(sp)
 library(rgdal)
 library(randomForest)
+library(ranger)
 nl.rd <- getURL("http://spatialreference.org/ref/sr-org/6781/proj4/")
 
 ## Geul data:
