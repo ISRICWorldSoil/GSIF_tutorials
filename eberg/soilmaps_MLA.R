@@ -171,13 +171,15 @@ ORCDRC.gb <- train(formulaStringP2, data=mP2, method = "xgbTree", trControl=ctrl
 w3 = 100*max(ORCDRC.gb$results$Rsquared)
 
 ## Ensemble prediction:
-edgeroi.grids$DEPTH = 2.5
+edgeroi.grids$DEPTH = 30
 edgeroi.grids$Random_forest <- predict(ORCDRC.rf, edgeroi.grids@data, na.action = na.pass) 
 edgeroi.grids$Cubist <- predict(ORCDRC.cb, edgeroi.grids@data, na.action = na.pass)
 edgeroi.grids$XGBoost <- predict(ORCDRC.gb, edgeroi.grids@data, na.action = na.pass)
-edgeroi.grids$ORCDRC_5cm <- (edgeroi.grids$Random_forest*w1+edgeroi.grids$Cubist*w2+edgeroi.grids$XGBoost*w3)/(w1+w2+w3)
+edgeroi.grids$ORCDRC_30cm <- (edgeroi.grids$Random_forest*w1+edgeroi.grids$Cubist*w2+edgeroi.grids$XGBoost*w3)/(w1+w2+w3)
 plot(stack(edgeroi.grids[c("Random_forest","Cubist","XGBoost","ORCDRC_5cm")]), col=SAGA_pal[[1]], zlim=c(5,65))
 plotKML(edgeroi.grids["ORCDRC_5cm"], colour_scale=SAGA_pal[[1]], z.lim=c(5,45))
+plotKML(edgeroi.grids["ORCDRC_100cm"], colour_scale=SAGA_pal[[1]], z.lim=c(5,45))
+plotKML(edgeroi.grids["ORCDRC_30cm"], colour_scale=SAGA_pal[[1]], z.lim=c(5,45))
 
 ## aggregate observed values for 0-5 cm depths:
 m2$cl <- cut(m2$DEPTH, breaks=c(0,5,15,30,60,100,200))
