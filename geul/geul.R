@@ -20,7 +20,7 @@ coordinates(geul) <- ~x+y
 proj4string(geul) <- CRS(nl.rd) 
 grd25 <- readGDAL("dem25.txt")
 names(grd25) = "dem"
-# grd25$river <- factor(readGDAL("river.txt")$band1, labels = "River")
+#grd25$river <- factor(readGDAL("river.txt")$band1, labels = "River")
 grd25$dis <- readGDAL("riverdist.txt")$band1
 ## mask out missing pixels:
 grd25 <- as(grd25, "SpatialPixelsDataFrame")
@@ -72,8 +72,8 @@ kml_View("pb_predicted.kml")
 
 ## plot in GoogleMaps:
 str(pb.rk2@predicted)
-mp <- plotGoogleMaps(pb.rk2@predicted, zcol='pb', add=TRUE, colPalette=SAGA_pal[[1]])
-ms <- plotGoogleMaps(geul, zcol='pb', add=FALSE, previousMap=mp)
+mp <- plotGoogleMaps(pb.rk2@predicted, filename='geul.html', zcol='pb', add=TRUE, colPalette=SAGA_pal[[1]])
+ms <- plotGoogleMaps(geul, filename='geul.html', zcol='pb', add=FALSE, previousMap=mp)
 
 ## plot using Leaflet:
 r = raster(pb.rk2@predicted["pb"])
