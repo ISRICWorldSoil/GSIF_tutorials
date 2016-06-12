@@ -1,0 +1,31 @@
+<kml xmlns:xsd="http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd" xmlns:xmlns="http://www.opengis.net/kml/2.2/" version="1.0">
+  <Document>
+    <name>pr.mw1@predicted_2_</name>
+    <open>1</open>
+    <Folder>
+      <name>SpatialGridDataFrame</name>
+      <GroundOverlay>
+        <name>"CLYPPT"</name>
+        <altitude>0</altitude>
+        <altitudeMode>clampToGround</altitudeMode>
+        <Icon>
+          <href>CLYPPT.png</href>
+        </Icon>
+        <LatLonBox>
+          <north>40.0238596883396</north>
+          <south>37.6951696883397</south>
+          <east>-118.808648756011</east>
+          <west>-121.723648756011</west>
+        </LatLonBox>
+      </GroundOverlay>
+    </Folder>
+    <ScreenOverlay>
+      <name>Legend</name>
+      <Icon>
+        <href>CLYPPT_legend.png</href>
+      </Icon>
+      <overlayXY x="0" y="1" xunits="fraction" yunits="fraction"/>
+      <screenXY x="0" y="1" xunits="fraction" yunits="fraction"/>
+    </ScreenOverlay>
+  </Document>
+</kml>
