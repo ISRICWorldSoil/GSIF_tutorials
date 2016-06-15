@@ -37,9 +37,9 @@ vgmFun <- "Nug"
 vgmmodel <- NULL
 pal <- SAGA_pal[[1]]
 
-## Standard covariates (could be geotifs, virtual mosaicks)
-y <- c("H:\\AFSIS\\100m\\SRTMGL3_AF_100m.tif", "H:\\AFSIS\\100m\\GLC2010_100m.tif", "H:\\AFSIS\\100m\\PHIHOX_M_sl2_250m.tif")
-factors = c(FALSE, TRUE, FALSE)
+## Standard covariates (could be geotifs and/or virtual mosaicks)
+y <- paste0("H:\\AFSIS\\100m\\", c("DEM100m.tif", "GLC2010_100m.tif", "SLPNED6.tif", "CRVNED6.tif", "TAXOUSDA_250m.tif", "PHIHOX_M_sl2_250m.tif"))
+factors = c(FALSE, TRUE, FALSE, FALSE, TRUE, FALSE)
 ## Prepare covariates:
 covariates <- makePixels(as(target, "SpatialPoints"), y, factors, pixel.size = pixel.size, sigma=sigma, t.dens=t.dens)
 if(dens.maps==TRUE){
