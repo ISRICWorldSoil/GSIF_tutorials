@@ -1,0 +1,4 @@
+<WCS_GDAL>
+  <ServiceURL>http://webservices.isric.org/geoserver/wcs?</ServiceURL>
+  <CoverageName>orcdrc_m_sl4</CoverageName>
+</WCS_GDAL>

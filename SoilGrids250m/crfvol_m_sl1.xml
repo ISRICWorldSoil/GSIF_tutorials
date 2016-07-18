@@ -1,0 +1,4 @@
+<WCS_GDAL>
+  <ServiceURL>http://webservices.isric.org/geoserver/wcs?</ServiceURL>
+  <CoverageName>crfvol_m_sl1</CoverageName>
+</WCS_GDAL>
