@@ -2,10 +2,6 @@
 # Reference: [http://gsif.isric.org/doku.php?id=wiki:tutorial_soilgrids]
 # Tom.Hengl@isric.org
 
-##-----------------------------------
-## Accessing data
-##-----------------------------------
-
 library(RCurl)
 library(rgdal)
 library(GSIF)
@@ -16,20 +12,25 @@ library(lattice)
 library(aqp)
 library(soiltexture)
 
-
-## GDAL path:
+## GDAL paths:
 if(.Platform$OS.type == "windows"){
   gdal.dir <- shortPathName("C:/Program files/GDAL")
   gdal_translate <- paste0(gdal.dir, "/gdal_translate.exe")
   gdalwarp <- paste0(gdal.dir, "/gdalwarp.exe") 
+  gdalinfo <- paste0(gdal.dir, "/gdalinfo.exe")
 } else {
   gdal_translate = "gdal_translate"
   gdalwarp = "gdalwarp"
+  gdalinfo = "gdalinfo"
 }
+
+##-----------------------------------
+## Accessing data
+##-----------------------------------
 
 ## (a) FTP download:
 ## location of soilgrids:
-sg.ftp <- "ftp://soilgrids:soilgrids@ftp.soilgrids.org/data/recent/"
+sg.ftp <- "ftp://ftp.soilgrids.org/data/recent/"
 filenames = getURL(sg.ftp, ftp.use.epsv = FALSE, dirlistonly = TRUE)
 filenames = strsplit(filenames, "\r*\n")[[1]]
 filenames[1:5]
@@ -38,7 +39,7 @@ filenames[1:5]
 ORC.name <- filenames[grep(filenames, pattern=glob2rx("ORCDRC_M_sl1_250m_ll.tif$"))]
 ORC.name
 try(download.file(paste(sg.ftp, ORC.name, sep=""), ORC.name))
-## 2.8GB Geotiff!
+## 2.8GB Geotiff!!
 
 ## check that everything is OK:
 GDALinfo(ORC.name)
@@ -71,7 +72,7 @@ points(sites, pch="+")
 ## get only Ghana:
 te = as.vector(ghana@bbox)
 unlink("ORC_sl1_Ghana.tif")
-system(paste0('gdalwarp ', ORC.name, ' ORC_sl1_Ghana.tif -te ', paste(te, collapse=" ")))
+system(paste0(gdalwarp, ' ', ORC.name, ' ORC_sl1_Ghana.tif -te ', paste(te, collapse=" ")))
 ORCDRC_sl1_ghana <- readGDAL("ORC_sl1_Ghana.tif")
 plot(log1p(raster(ORCDRC_sl1_ghana)), col=SAGA_pal[[1]])
 
@@ -87,7 +88,7 @@ xml.out = "ORCDRC_M_sl1.xml"
 saveXML(l1, file=xml.out)
 
 ## check if the layer exists:
-GDALinfo(xml.out)
+system(paste(gdalinfo, xml.out))
 
 ## Alternative: calculate offset and region dims:
 extent(raster(ORC.name))
@@ -103,9 +104,9 @@ o.x; o.y; d.x; d.y
 system(paste0(gdal_translate, ' ', xml.out, ' ORC_sl1_Ghana.tif -tr ', 1/120, ' ', 1/120, ' -co \"COMPRESS=DEFLATE\" -srcwin ', paste(c(o.x, o.y, d.x, d.y), collapse=" ")))
 ## This will only fetch pixels for the bounding box
 GDALinfo("ORC_sl1_Ghana.tif")
-ORCDRC_sl1_ghana <- readGDAL("ORC_sl1_Ghana.tif")
 
 ## plot the map:
+ORCDRC_sl1_ghana <- readGDAL("ORC_sl1_Ghana.tif")
 data(soil.legends)
 class.labels = make.unique(as.character(round((soil.legends[["ORCDRC"]]$MAX-soil.legends[["ORCDRC"]]$MIN)/2, 1)))
 ORCDRC_sl1_ghana$val <- cut(ORCDRC_sl1_ghana$band1, breaks=c(soil.legends[["ORCDRC"]]$MIN[1], soil.legends[["ORCDRC"]]$MAX), labels = class.labels)
@@ -154,10 +155,10 @@ library(raster)
 ghana1km <- stack(paste(var.name, "_Ghana.tif", sep=""))
 ghana1km <- as(as(ghana1km, "SpatialGridDataFrame"), "SpatialPixelsDataFrame")
 ## mask out missing pixels:
-sel.NA <- !ghana1km$orcdrc_m_sl1_250m_Ghana < 0 & !ghana1km$crfvol_m_sl1_250m_Ghana < 0 
-summary(sel.NA)
+sel.NA <- !ghana1km$orcdrc_m_sl1_250m_Ghana < 0 & !ghana1km$crfvol_m_sl1_250m_Ghana < 0 summary(sel.NA)
 ghana1km <- ghana1km[sel.NA,]
-str(ghana1km)
+str(ghana1km@data)
+
 ## Standard depths:
 std <- c(0,5,15,30)
 ## Soil Organic Carbon stock formula: http://gsif.r-forge.r-project.org/OCSKGM.html
@@ -176,9 +177,9 @@ for(d in c(1,2,3)){
 
 ## aggregate values and optimize for plotting:
 ghana1km$OCS_30cm <- rowSums(ghana1km@data[,paste0("OCS_sd", c(1,2,3))], na.rm=TRUE)
+
 rg <- quantile(ghana1km$OCS_30cm, c(0.01, 0.99), na.rm=TRUE)
 at <- expm1(seq(log1p(rg[1]), log1p(rg[2]), length.out=20))
-
 ghana1km$OCS_30cmf <- ifelse(ghana1km$OCS_30cm<rg[1], rg[1], ifelse(ghana1km$OCS_30cm>rg[2], rg[2], ghana1km$OCS_30cm))
 spplot(ghana1km["OCS_30cmf"], at=at, col.regions=R_pal[["soc_pal"]], sp.layout=bnd, scales=list(draw=TRUE), main="Total soil carbon stock (0--30 cm) in tonnes per ha")
 

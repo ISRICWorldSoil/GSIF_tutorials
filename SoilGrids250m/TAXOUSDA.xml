@@ -17,8 +17,8 @@
     <domainSet>
       <spatialDomain>
         <Envelope srsName="EPSG:4326">
-          <pos>-183.599999424 -170.91537534100001</pos>
-          <pos>183.599941824 196.284565907</pos>
+          <pos>-198.73454157847286 -186.04991749547287</pos>
+          <pos>198.73448397847287 211.41910806147285</pos>
         </Envelope>
         <RectifiedGrid dimension="2" srsName="EPSG:4326">
           <limits>
