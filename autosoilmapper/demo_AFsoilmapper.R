@@ -18,11 +18,13 @@ gdal.dir <- shortPathName("C:/Program files/GDAL")
 gdalwarp <- paste0(gdal.dir, "/gdalwarp.exe")
 
 ## Input parameters:
-target <- readOGR("samples.gml", "samples")
+target <- readOGR("Profiles_Data.shp", "Profiles_Data")
+target <- target["CARBON"]
+#target <- readOGR("samples.gml", "samples")
 ## The GML driver does not support coordinate reference systems
 proj4st <- "+proj=merc +lon_0=0 +lat_ts=6.64456744726493 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +ellps=WGS84 +towgs84=0,0,0"
 proj4string(target) <- proj4st
-tvar <- "N"
+tvar <- "CARBON" # "N"
 target <- target[tvar]
 pixel.size <- 100
 t.dens <- 0.05
@@ -38,7 +40,7 @@ vgmmodel <- NULL
 pal <- SAGA_pal[[1]]
 
 ## Standard covariates (could be geotifs and/or virtual mosaicks)
-y <- paste0("H:\\AFSIS\\100m\\", c("DEM100m.tif", "GLC2010_100m.tif", "SLPNED6.tif", "CRVNED6.tif", "TAXOUSDA_250m.tif", "PHIHOX_M_sl2_250m.tif"))
+y <- paste0("H:\\AFSIS\\100m\\", c("DEM100m.tif", "GLC2010_100m.tif", "SLPSRT6.tif", "CRVSRT6.tif", "TAXOUSDA_250m.tif", "PHIHOX_M_sl2_250m.tif"))
 factors = c(FALSE, TRUE, FALSE, FALSE, TRUE, FALSE)
 ## Prepare covariates:
 covariates <- makePixels(as(target, "SpatialPoints"), y, factors, pixel.size = pixel.size, sigma=sigma, t.dens=t.dens)

@@ -1,0 +1,20 @@
+<GMLFeatureClassList>
+  <GMLFeatureClass>
+    <Name>samples</Name>
+    <ElementPath>samples</ElementPath>
+    <!--POINT-->
+    <GeometryType>1</GeometryType>
+    <DatasetSpecificInfo>
+      <FeatureCount>153</FeatureCount>
+      <ExtentXMin>3804056.50489</ExtentXMin>
+      <ExtentXMax>3812462.82407</ExtentXMax>
+      <ExtentYMin>-773813.30764</ExtentYMin>
+      <ExtentYMax>-764543.21063</ExtentYMax>
+    </DatasetSpecificInfo>
+    <PropertyDefn>
+      <Name>N</Name>
+      <ElementPath>N</ElementPath>
+      <Type>Integer</Type>
+    </PropertyDefn>
+  </GMLFeatureClass>
+</GMLFeatureClassList>
