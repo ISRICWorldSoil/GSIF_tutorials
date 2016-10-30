@@ -5,12 +5,16 @@
 ## These examples based on the MRO version of R (Microsoft R Open 3.2.4)
 
 ## Check that all packages have been installed:
-list.of.packages = c("GSIF", "plotKML", "nnet", "plyr", "ROCR", "randomForest", "plyr", "parallel", "psych", "mda", "h2o", "dismo", "grDevices", "snowfall", "hexbin", "lattice", "ranger", "xgboost", "doParallel", "caret")
+list.of.packages = c("GSIF", "plotKML", "nnet", "plyr", "ROCR", "randomForest", "plyr", "parallel", "psych", "mda", "h2o", "dismo", "grDevices", "snowfall", "hexbin", "lattice", "ranger", "xgboost", "doParallel", "caret", "RQGIS")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
 
 ## (optional) install from R-Forge:
 install.packages("GSIF", repos=c("http://R-Forge.R-project.org"), type="source", dependencies=TRUE)
+
+## (optional) install from github:
+library(devtools)
+devtools::install_github("jannes-m/RQGIS")
 
 ## http://stackoverflow.com/questions/8229859/sourcing-an-r-script-from-github-for-global-session-use-from-within-a-wrapper
 source_https <- function(url, ...) {
@@ -40,7 +44,11 @@ om.rk <- predict(omm, meuse.grid)
 plotKML(om.rk)
 
 ## SAGA GIS (https://sourceforge.net/projects/saga-gis/):
-saga_cmd = shortPathName(normalizePath("C:/SAGA-GIS/saga_cmd.exe"))
+if(.Platform$OS.type == "windows"){
+  saga_cmd = shortPathName(normalizePath("C:/SAGA-GIS/saga_cmd.exe"))
+} else {
+  saga_cmd = "/usr/local/bin/saga_cmd"
+}  
 system(paste(saga_cmd))
 
 library(rgdal)
@@ -65,3 +73,14 @@ system(paste(gdalwarp))
 system(paste(gdalwarp, ' DEMSRT6.sdat DEMSRT6_ll.tif -t_srs \"+proj=longlat +datum=WGS84\"'))
 plot(raster("DEMSRT6_ll.tif"))
 
+## RQGIS (https://www.r-bloggers.com/rqgis-0-1-0-release/)
+library(RQGIS)
+env <- set_env()
+find_algorithms("wetness index", name_only=TRUE, qgis_env=env)
+args <- get_args_man(alg="saga:sagawetnessindex", options=TRUE, qgis_env=env)
+args$DEM <- raster("DEMSRT6.sdat", layer=0)
+## Output path:
+args$TWI <- "twi.asc"
+twi <- run_qgis(alg="saga:sagawetnessindex", params=args, load_output=args$TWI, qgis_env=env)
+## visualize the result:
+plotKML(twi, colour_scale=SAGA_pal[[1]])

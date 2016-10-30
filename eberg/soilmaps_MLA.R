@@ -77,8 +77,8 @@ ch <- rowSums(eberg_soiltype@data)
 summary(ch)
 plot(raster::stack(eberg_soiltype), col=SAGA_pal[[1]], zlim=c(0,1))
 #plotKML(eberg["TAXGRSC"])
-#plotKML(eberg_soiltype["Rendzina"], colour_scale=SAGA_pal[[1]], z.lim=c(0,1))
-#plotKML(eberg_soiltype["Braunerde"], colour_scale=SAGA_pal[[1]], z.lim=c(0,1))
+kml(eberg_soiltype["Rendzina"], colour=Rendzina, colour_scale=SAGA_pal[[1]], z.lim=c(0,1))
+kml(eberg_soiltype["Braunerde"], colour=Braunerde, colour_scale=SAGA_pal[[1]], z.lim=c(0,1))
 #plotKML(eberg_soiltype["Regosol"], colour_scale=SAGA_pal[[1]], z.lim=c(0,1))
 
 # ------------------------------------------------------------
@@ -121,6 +121,7 @@ kml(eberg, colour=SNDMHT_A, shape=shape, labels=SNDMHT_A, colour_scale=SAGA_pal[
 kml_View("eberg.kml")
 ## remove objects:
 #h2o.rm(eberg_grid)
+h2o.shutdown()
 
 # ------------------------------------------------------------
 # SOIL PROPERTIES / NUMERIC (3D)
@@ -171,12 +172,12 @@ ORCDRC.gb <- train(formulaStringP2, data=mP2, method = "xgbTree", trControl=ctrl
 w3 = 100*max(ORCDRC.gb$results$Rsquared)
 
 ## Ensemble prediction:
-edgeroi.grids$DEPTH = 30
+edgeroi.grids$DEPTH = 5
 edgeroi.grids$Random_forest <- predict(ORCDRC.rf, edgeroi.grids@data, na.action = na.pass) 
 edgeroi.grids$Cubist <- predict(ORCDRC.cb, edgeroi.grids@data, na.action = na.pass)
 edgeroi.grids$XGBoost <- predict(ORCDRC.gb, edgeroi.grids@data, na.action = na.pass)
-edgeroi.grids$ORCDRC_30cm <- (edgeroi.grids$Random_forest*w1+edgeroi.grids$Cubist*w2+edgeroi.grids$XGBoost*w3)/(w1+w2+w3)
-plot(stack(edgeroi.grids[c("Random_forest","Cubist","XGBoost","ORCDRC_5cm")]), col=SAGA_pal[[1]], zlim=c(5,65))
+edgeroi.grids$ORCDRC_5cm <- (edgeroi.grids$Random_forest*w1+edgeroi.grids$Cubist*w2+edgeroi.grids$XGBoost*w3)/(w1+w2+w3)
+plot(log1p(stack(edgeroi.grids[c("Random_forest","Cubist","XGBoost","ORCDRC_5cm")])), col=SAGA_pal[[1]], zlim=log1p(c(5,65)))
 plotKML(edgeroi.grids["ORCDRC_5cm"], colour_scale=SAGA_pal[[1]], z.lim=c(5,45))
 plotKML(edgeroi.grids["ORCDRC_100cm"], colour_scale=SAGA_pal[[1]], z.lim=c(5,45))
 plotKML(edgeroi.grids["ORCDRC_30cm"], colour_scale=SAGA_pal[[1]], z.lim=c(5,45))
@@ -202,5 +203,5 @@ source_https("https://raw.githubusercontent.com/ISRICWorldSoil/SoilGrids250m/mas
 test.ORC <- cv_numeric(formulaStringP2, rmatrix=mP2, nfold=5, idcol="SOURCEID", Log=TRUE)
 str(test.ORC)
 ## Plot CV results (use log-scale):
-plt0 <- xyplot(test.ORC[[1]]$Predicted~test.ORC[[1]]$Observed, asp=1, par.settings=list(plot.symbol = list(col=alpha("black", 0.6), fill=alpha("red", 0.6), pch=21, cex=0.9)), scales=list(x=list(log=TRUE, equispaced.log=FALSE), y=list(log=TRUE, equispaced.log=FALSE)), xlab="measured", ylab="predicted (machine learning)")
+plt0 <- xyplot(test.ORC[[1]]$Observed~test.ORC[[1]]$Predicted, asp=1, par.settings=list(plot.symbol = list(col=alpha("black", 0.6), fill=alpha("red", 0.6), pch=21, cex=0.9)), scales=list(x=list(log=TRUE, equispaced.log=FALSE), y=list(log=TRUE, equispaced.log=FALSE)), ylab="measured", xlab="predicted (machine learning)")
 plt0
