@@ -1,7 +1,7 @@
 ## Some examples with deriving uncertainty (for spatial prediction) using the ranger package
 ## tom.hengl@isric.org
 
-list.of.packages = c("GSIF", "plotKML", "entropy", "plyr", "parallel", "ranger", "doParallel", "doMC", "rgdal", "caret")
+list.of.packages = c("GSIF", "plotKML", "entropy", "plyr", "parallel", "ranger", "raster", "doParallel", "doMC", "rgdal", "caret", "dismo", "snowfall")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
 
@@ -10,12 +10,15 @@ library(GSIF)
 library(entropy)
 library(ranger)
 library(rgdal)
+library(dismo)
+library(raster)
 library(caret)
 library(parallel)
 library(doParallel)
 library(doMC)
 library(plyr)
-cpus = 4
+library(snowfall)
+cpus = 8
 registerDoMC(cpus)
 
 ## Uncertainty factor type variable:
@@ -40,47 +43,70 @@ m$soiltype <- droplevels(m$soiltype)
 m$soiltype <- as.factor(m$soiltype)
 ## fit model:
 fm1 = as.formula(paste("soiltype ~", paste0("PC", 1:10, collapse = "+")))
-TAXGRSC.rf <- ranger(fm1, data = m[complete.cases(m[,all.vars(fm1)]),], write.forest = TRUE, probability = TRUE)
+mD = m[complete.cases(m[,all.vars(fm1)]),all.vars(fm1)]
+TAXGRSC.rf <- ranger(fm1, data = mD, write.forest = TRUE, probability = TRUE)
 ## predict values:
 eberg_soiltype = eberg_grid[1]
 eberg_soiltype@data <- data.frame(predict(TAXGRSC.rf, eberg_grid@data, na.action = na.pass)$predictions)
 str(eberg_soiltype@data)
-## uncertainty can be represented using the Shannon Entropy:
-entropy.empirical(c(0,0,0,0,1))
-entropy.empirical(c(1/5,1/5,1/5,1/5,1/5))
-entropy.empirical(unlist(eberg_soiltype@data[1,]))
-## apply function in parallel:
+## uncertainty can be represented using the Shannon Entropy (entropy package); some examples:
+entropy.empirical(c(0,0,0,0,1)) ## smallest entropy
+entropy.empirical(c(1/5,1/5,1/5,1/5,1/5)) ## highest entropy
+entropy.empirical(unlist(eberg_soiltype@data[1,])) ## example
+
+## apply entropy function in parallel:
 eberg_soiltype$SE = unlist(alply(eberg_soiltype@data, 1, .fun=function(x){entropy.empirical(unlist(x))}, .parallel = TRUE))
-hist(eberg_soiltype$SE)
+hist(eberg_soiltype$SE, col="grey")
 ## divide by maximum possible uncertainty:
 eberg_soiltype$SE = round(eberg_soiltype$SE/entropy.empirical(rep(1/length(levels(m$soiltype)),length(levels(m$soiltype))))*100)
 ## plot:
 plot(raster(eberg_soiltype["SE"]), col=SAGA_pal[[1]])
 points(eberg[!is.na(eberg$TAXGRSC),], pch="+")
+## high uncertainty correlates with extrapolation areas
 
-## Uncertainty numeric variable:
+## Uncertainty for numeric variables:
 fm2 = as.formula(paste("SNDMHT_D ~", paste0("PC", 1:10, collapse = "+")))
 mS = m[complete.cases(m[,all.vars(fm2)]),all.vars(fm2)]
 SNDMHT.rf <- ranger(fm2, data = mS, write.forest = TRUE)
 SNDMHT.rf
-## Sample CV errors based on the caret approach:
-fitControl <- trainControl(method="repeatedcv", number=5, repeats=1)
-mFit <- train(fm2, data=mS, method="ranger", trControl=fitControl)
-mS$resid = abs(resid(mFit))
-mS$predicted = mFit$finalModel$predictions
-xyplot(predicted~SNDMHT_D, mS, asp=1, par.settings=list(plot.symbol = list(col=alpha("black", 0.6), fill=alpha("red", 0.6), pch=21, cex=0.9)), xlab="measured", ylab="predicted (machine learning)")
-## scales=list(x=list(log=TRUE, equispaced.log=FALSE), y=list(log=TRUE, equispaced.log=FALSE))
+sqrt(SNDMHT.rf$prediction.error) ## mean error = +/-15
+
+## Estimate CV residuals with re-fitting ("repeated CV"):
+predict_cv_resid = function(formulaString, data, nfold){
+  sel <- dismo::kfold(data, k=nfold)
+  out = list(NULL)
+  for(j in 1:nfold){
+    s.train <- data[!sel==j,]
+    s.test <- data[sel==j,]
+    m <- ranger(formulaString, data=s.train, write.forest=TRUE)
+    pred <- predict(m, s.test, na.action = na.pass)$predictions
+    obs.pred <- as.data.frame(list(s.test[,all.vars(formulaString)[1]], pred))
+    names(obs.pred) = c("Observed", "Predicted")
+    obs.pred[,"ID"] <- row.names(s.test)
+    obs.pred$fold = j
+    out[[j]] = obs.pred
+  }
+  out <- plyr::rbind.fill(out)
+  out <- out[order(as.numeric(out$ID)),]
+  return(out)
+}
+resid.SNDMHT = predict_cv_resid(fm2, data=mS, nfold=5)
+xyplot(Predicted~Observed, resid.SNDMHT, asp=1, par.settings=list(plot.symbol = list(col=alpha("black", 0.6), fill=alpha("red", 0.6), pch=21, cex=0.9)), xlab="measured", ylab="predicted (ranger)")
+mS$resid = abs(resid.SNDMHT$Observed - resid.SNDMHT$Predicted)
+
 ## model absolute residuals as function of covariates:
 var.fm2 = as.formula(paste("resid ~", paste0("PC", 1:10, collapse = "+")))
-var.SNDMHT.rf <- ranger(var.fm2, data = mS, write.forest = TRUE, mtry = mFit$finalModel$mtry)
+var.SNDMHT.rf <- ranger(var.fm2, data = mS, write.forest = TRUE)
 var.SNDMHT.rf
 ## predict uncertainty:
 eberg_SNDMHT = eberg_grid[1]
 eberg_SNDMHT$SNDMHT_D <- predict(mFit, eberg_grid@data, na.action = na.pass)
 plot(raster(eberg_SNDMHT["SNDMHT_D"]), col=SAGA_pal[[1]])
+## prediction error:
 eberg_SNDMHT$var.SNDMHT_D <- predict(var.SNDMHT.rf, eberg_grid@data, na.action = na.pass)$predictions
 summary(eberg_SNDMHT$var.SNDMHT_D)
-eberg_SNDMHT$var.SNDMHT_Df = ifelse(eberg_SNDMHT$var.SNDMHT_D>12, 12, eberg_SNDMHT$var.SNDMHT_D)
-## uncertainty is function of location / covariates, but also of values (higher values - higher uncertainty usually):
+## mean/median is a bit smaller than what we get with ranger OOB - probably because in most of the study area SND content is low
+eberg_SNDMHT$var.SNDMHT_Df = ifelse(eberg_SNDMHT$var.SNDMHT_D>20, 20, eberg_SNDMHT$var.SNDMHT_D)
 plot(raster(eberg_SNDMHT["var.SNDMHT_Df"]), col=SAGA_pal[[1]])
 points(eberg[!is.na(eberg$SNDMHT_D),], pch="+")
+## uncertainty is function of location / covariates, but also of values (higher values - higher uncertainty usually):
