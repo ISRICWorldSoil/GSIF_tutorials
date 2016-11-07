@@ -52,6 +52,11 @@ str(eberg_soiltype@data)
 ## uncertainty can be represented using the Shannon Entropy (entropy package); some examples:
 entropy.empirical(c(0,0,0,0,1)) ## smallest entropy
 entropy.empirical(c(1/5,1/5,1/5,1/5,1/5)) ## highest entropy
+## scaled entropy using log-base as number of classes:
+p=c(0,0.8,0.2,0,0)
+sum(-p*log(p,base=length(p)), na.rm=TRUE)
+entropy.empirical(p)/entropy.empirical(rep(1/length(p),length(p)))
+## same result!
 entropy.empirical(unlist(eberg_soiltype@data[1,])) ## example
 
 ## apply entropy function in parallel:

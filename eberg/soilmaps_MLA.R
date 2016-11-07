@@ -1,6 +1,12 @@
 ## Testing machine learning methods for prediction of soil classes and soil properties
 ## tom.hengl@isric.org
 
+list.of.packages <- c("nnet", "plyr", "ROCR", "randomForest", "plyr", "parallel", "psych", "mda", "Cubist", "h2o", "dismo", "grDevices", "snowfall", "hexbin", "lattice", "ranger", "xgboost", "mxnet", "doParallel", "caret")
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+
+#library(devtools)
+#devtools::install_github('dmlc/mxnet/R-package')
 #library(caretEnsemble)
 library(plotKML)
 library(sp)
@@ -15,6 +21,7 @@ library(Cubist)
 library(GSIF)
 library(xgboost)
 library(snowfall)
+library(mxnet)
 
 set.seed(42)
 data(eberg)
@@ -53,30 +60,45 @@ s <- sample.int(nrow(m), 500)
 TAXGRSC.rf <- randomForest(x=m[-s,paste0("PC",1:10)], y=m$soiltype[-s], xtest=m[s,paste0("PC",1:10)], ytest=m$soiltype[s])
 TAXGRSC.rf$test$confusion[,"class.error"]
 
-## Fit 3 independent machine learning models:
-TAXGRSC.rf <- randomForest(x=m[,paste0("PC",1:10)], y=m$soiltype)
+## Fit 4 independent machine learning models
+## Random Forest
+TAXGRSC.rf <- randomForest(x=m[,paste0("PC",1:10)], y=m$soiltype, keep.forest = TRUE)
+## prediction success per class:
+TAXGRSC.rf
+## Multinomial Logistic Regression
 fm = as.formula(paste("soiltype~", paste(paste0("PC",1:10), collapse="+")))
 TAXGRSC.mn <- multinom(fm, m)
-TAXGRSC.svm <- svm(fm, m, probability=TRUE, cross=5)
-## prediction success per class:
+## Support Vector Machines
+TAXGRSC.svm <- svm(fm, m, probability=TRUE, cross=5) ## Takes few secs
 TAXGRSC.svm$tot.accuracy
+## Deep Neural Net
+train.x = data.matrix(m[,all.vars(fm)[-1]])
+## mxnet requires that the classes are coded as 0, 1, 2 ... p 
+train.yf = as.factor(as.vector(m[,all.vars(fm)[1]]))
+train.y = as.integer(train.yf)-1
+TAXGRSC.nn <- mx.mlp(train.x, train.y, hidden_node=ncol(train.x), out_node=length(levels(m$soiltype)), out_activation="softmax", num.round=10, array.batch.size=15, learning.rate=0.1, momentum=0.9, eval.metric=mx.metric.accuracy, array.layout="rowmajor")
 
 ## Make ensemble predictions:
-probs1 <- predict(TAXGRSC.mn, eberg_grid@data, type="probs", na.action = na.pass) 
+probs1 <- predict(TAXGRSC.mn, eberg_grid@data, type="probs", na.action = na.pass)
 probs2 <- predict(TAXGRSC.rf, eberg_grid@data, type="prob", na.action = na.pass)
 probs3 <- attr(predict(TAXGRSC.svm, eberg_grid@data, probability=TRUE, na.action = na.pass), "probabilities")
 #probs3 <- predict(ens, eberg_grid@data, probability=TRUE, na.action = na.pass)
+probs4 <- t(predict(TAXGRSC.nn, data.matrix(eberg_grid@data[,all.vars(fm)[-1]]), array.layout="rowmajor"))
+attr(probs4, "dimnames")[[2]] = levels(train.yf)
+
 leg <- levels(m$soiltype)
-lt <- list(probs1[,leg], probs2[,leg], probs3[,leg])
+lt <- list(probs1[,leg], probs2[,leg], probs3[,leg], probs4[,leg])
 ## Simple average (an alternative would be to use the "caretEnsemble" package):
 probs <- Reduce("+", lt) / length(lt)
 eberg_soiltype = eberg_grid
+#eberg_soiltype@data <- data.frame(probs4)
 eberg_soiltype@data <- data.frame(probs)
 ## check that probs sum up to 1:
 ch <- rowSums(eberg_soiltype@data)
 summary(ch)
 plot(raster::stack(eberg_soiltype), col=SAGA_pal[[1]], zlim=c(0,1))
 #plotKML(eberg["TAXGRSC"])
+setwd("./img")
 kml(eberg_soiltype["Rendzina"], colour=Rendzina, colour_scale=SAGA_pal[[1]], z.lim=c(0,1))
 kml(eberg_soiltype["Braunerde"], colour=Braunerde, colour_scale=SAGA_pal[[1]], z.lim=c(0,1))
 #plotKML(eberg_soiltype["Regosol"], colour_scale=SAGA_pal[[1]], z.lim=c(0,1))
