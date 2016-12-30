@@ -1,7 +1,7 @@
 ## Testing machine learning methods for prediction of soil classes and soil properties
 ## tom.hengl@isric.org
 
-list.of.packages <- c("nnet", "plyr", "ROCR", "randomForest", "plyr", "parallel", "psych", "mda", "Cubist", "h2o", "dismo", "grDevices", "snowfall", "hexbin", "lattice", "ranger", "xgboost", "mxnet", "doParallel", "caret")
+list.of.packages <- c("nnet", "plyr", "ROCR", "randomForest", "plyr", "parallel", "psych", "mda", "Cubist", "h2o", "dismo", "grDevices", "snowfall", "hexbin", "lattice", "ranger", "xgboost", "mxnet", "doParallel", "caret", "bartMachine")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
 
@@ -22,6 +22,9 @@ library(GSIF)
 library(xgboost)
 library(snowfall)
 library(mxnet)
+#options(java.parameters = "-Xmx5g")
+library(bartMachine)
+set_bart_machine_num_cores(4)
 
 set.seed(42)
 data(eberg)
@@ -179,30 +182,42 @@ ctrl <- trainControl(method="repeatedcv", number=5, repeats=1)
 sel <- sample.int(nrow(mP2), 500)
 tr.ORCDRC.rf <- train(formulaStringP2, data=mP2[sel,], method = "rf", trControl = ctrl, tuneLength = 3)
 tr.ORCDRC.rf
-## Second, fit the final model using fine-tuned parameters
+## fit the final model using fine-tuned parameters
 ## http://stats.stackexchange.com/questions/23763/is-there-a-way-to-disable-the-parameter-tuning-grid-feature-in-caret
 ORCDRC.rf <- train(formulaStringP2, data=mP2, method = "rf", tuneGrid=data.frame(mtry=7), trControl=trainControl(method="none"))
 w1 = 100*max(tr.ORCDRC.rf$results$Rsquared)
 varImpPlot(ORCDRC.rf$finalModel)
-## Cubist:
+## the same using the "Cubist" package:
 tr.ORCDRC.cb <- train(formulaStringP2, data=mP2[sel,], method = "cubist", trControl = ctrl, tuneLength = 3)
 tr.ORCDRC.cb
 ORCDRC.cb <- train(formulaStringP2, data=mP2, method = "cubist", tuneGrid=data.frame(committees = 1, neighbors = 0), trControl=trainControl(method="none"))
 w2 = 100*max(tr.ORCDRC.cb$results$Rsquared)
-## XGBoost - run via the caret package:
+## "XGBoost" package:
 ORCDRC.gb <- train(formulaStringP2, data=mP2, method = "xgbTree", trControl=ctrl)
 w3 = 100*max(ORCDRC.gb$results$Rsquared)
+## "bartMachine" package (Bayesian Additive Regression Trees):
+tuneGrid.bM <- expand.grid(num_trees=c(20,80), k=2, alpha=0.95, beta=2, nu=3)
+tr.ORCDRC.bM <- train(formulaStringP2, data=mP2[sel,], method = "bartMachine", trControl=ctrl, tuneGrid=tuneGrid.bM)
+w4 = 100*max(tr.ORCDRC.bM$results$Rsquared)
+ORCDRC.bM <- train(formulaStringP2, data=mP2, method = "bartMachine", tuneGrid=tr.ORCDRC.bM$finalModel$tuneValue, trControl=trainControl(method="none"))
 
 ## Ensemble prediction:
 edgeroi.grids$DEPTH = 5
 edgeroi.grids$Random_forest <- predict(ORCDRC.rf, edgeroi.grids@data, na.action = na.pass) 
 edgeroi.grids$Cubist <- predict(ORCDRC.cb, edgeroi.grids@data, na.action = na.pass)
 edgeroi.grids$XGBoost <- predict(ORCDRC.gb, edgeroi.grids@data, na.action = na.pass)
-edgeroi.grids$ORCDRC_5cm <- (edgeroi.grids$Random_forest*w1+edgeroi.grids$Cubist*w2+edgeroi.grids$XGBoost*w3)/(w1+w2+w3)
-plot(log1p(stack(edgeroi.grids[c("Random_forest","Cubist","XGBoost","ORCDRC_5cm")])), col=SAGA_pal[[1]], zlim=log1p(c(5,65)))
-plotKML(edgeroi.grids["ORCDRC_5cm"], colour_scale=SAGA_pal[[1]], z.lim=c(5,45))
-plotKML(edgeroi.grids["ORCDRC_100cm"], colour_scale=SAGA_pal[[1]], z.lim=c(5,45))
-plotKML(edgeroi.grids["ORCDRC_30cm"], colour_scale=SAGA_pal[[1]], z.lim=c(5,45))
+## Takes few minutes...
+## See computing times in: https://arxiv.org/abs/1312.2171
+edgeroi.grids$bartMachine <- predict(ORCDRC.bM, edgeroi.grids@data, na.action = na.pass)
+## final prediction as weighted average:
+edgeroi.grids$ORCDRC_5cm <- (edgeroi.grids$Random_forest*w1+edgeroi.grids$Cubist*w2+edgeroi.grids$XGBoost*w3+edgeroi.grids$bartMachine*w4)/(w1+w2+w3+w4)
+plot(log1p(stack(edgeroi.grids[c("Random_forest","Cubist","XGBoost","bartMachine","ORCDRC_5cm")])), col=SAGA_pal[[1]], zlim=log1p(c(5,65)))
+## Visual comparison:
+plot(log1p(raster(edgeroi.grids["bartMachine"])), col=SAGA_pal[[1]], zlim=log1p(c(5,65)))
+points(edgeroi.spc, pch="+", col="black")
+plot(log1p(raster(edgeroi.grids["Random_forest"])), col=SAGA_pal[[1]], zlim=log1p(c(5,65)))
+points(edgeroi.spc, pch="+", col="black")
+#plotKML(edgeroi.grids["ORCDRC_5cm"], colour_scale=SAGA_pal[[1]], z.lim=c(5,45))
 
 ## aggregate observed values for 0-5 cm depths:
 m2$cl <- cut(m2$DEPTH, breaks=c(0,5,15,30,60,100,200))
@@ -212,7 +227,7 @@ ORCDRC.mv.s <- ORCDRC.mv[ORCDRC.mv$cl=="(0,5]",]
 ORCDRC.mv.s <- ORCDRC.mv.s[!is.na(ORCDRC.mv.s$LONGDA94),]
 coordinates(ORCDRC.mv.s) <- ~ LONGDA94 + LATGDA94
 proj4string(ORCDRC.mv.s) <- CRS("+init=epsg:28355") 
-plotKML(ORCDRC.mv.s["aggregated"])
+#plotKML(ORCDRC.mv.s["aggregated"])
 
 ## Test accuracy of mapping ORCDRC:
 source_https <- function(url, ...) {
