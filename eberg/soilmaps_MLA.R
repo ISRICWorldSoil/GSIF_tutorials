@@ -5,8 +5,6 @@ list.of.packages <- c("nnet", "plyr", "ROCR", "randomForest", "plyr", "parallel"
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
 
-#library(devtools)
-#devtools::install_github('dmlc/mxnet/R-package')
 #library(caretEnsemble)
 library(plotKML)
 library(sp)
@@ -21,6 +19,9 @@ library(Cubist)
 library(GSIF)
 library(xgboost)
 library(snowfall)
+#library(devtools)
+#devtools::install_github('dmlc/mxnet/R-package')
+#https://github.com/dmlc/dmlc-core/issues/144
 library(mxnet)
 
 set.seed(42)
