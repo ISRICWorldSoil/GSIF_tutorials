@@ -25,7 +25,11 @@ library(rgdal)
 eberg_zones$ZONES_int <- as.integer(eberg_zones$ZONES)
 writeOGR(eberg_zones["ZONES_int"], "eberg_zones.shp", ".", "ESRI Shapefile")
 ## specify location of SAGA GIS:
-saga_cmd = shortPathName("C:/SAGA-GIS/saga_cmd.exe")
+if(.Platform$OS.type=="windows"){
+  saga_cmd = shortPathName("C:/SAGA-GIS/saga_cmd.exe")
+} else {
+  saga_cmd = "saga_cmd"
+}
 pix = 25
 ## http://saga-gis.org/saga_module_doc/2.2.7/grid_gridding_0.html
 system(paste0(saga_cmd, ' grid_gridding 0 -INPUT \"eberg_zones.shp\" -FIELD \"ZONES_int\" -GRID \"eberg_zones.sgrd\" -GRID_TYPE 0 -TARGET_DEFINITION 0 -TARGET_USER_SIZE ', pix, ' -TARGET_USER_XMIN ', extent(r)[1]+pix/2,' -TARGET_USER_XMAX ', extent(r)[2]-pix/2, ' -TARGET_USER_YMIN ', extent(r)[3]+pix/2,' -TARGET_USER_YMAX ', extent(r)[4]-pix/2))
@@ -97,6 +101,8 @@ writeGDAL(eberg_grid["DEMSRT6"], "DEMSRT6.sdat", "SAGA")
 saga_DEM_derivatives("DEMSRT6.sgrd")
 dem.lst <- list.files(pattern=glob2rx("^DEMSRT6_*.sdat"))
 plot(stack(dem.lst), col=SAGA_pal[[1]])
+r = readGDAL(dem.lst[6])
+plotKML(r, colour_scale=SAGA_pal[[1]])
 
 ## Gap filling:
 eberg_grid$test <- eberg_grid$TWISRT6
