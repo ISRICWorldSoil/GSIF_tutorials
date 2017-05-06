@@ -1,11 +1,15 @@
-## Derivation of Soil Organic Carbon Stocks (SOCS)
-## tom.hengl@isric.org
+## Spatial prediction and derivation of Soil Organic Carbon Stock (OCS)
+## prepared by: tom.hengl@isric.org
+## http://gsif.isric.org/doku.php/wiki:soil_organic_carbon
 
-list.of.packages = c("GSIF", "plotKML", "nnet", "plyr", "ROCR", "randomForest", "plyr", "parallel", "psych", "mda", "h2o", "dismo", "grDevices", "snowfall", "hexbin", "lattice", "ranger", "xgboost", "doParallel", "caret", "mboost")
+list.of.packages = c("GSIF", "plotKML", "nnet", "aqp", "plyr", "ROCR", "randomForest", "parallel", "psych", "mda", "dismo", "grDevices", "snowfall", "hexbin", "lattice", "ranger", "xgboost", "doParallel", "caret", "mboost")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
 
 #library(geospt)
+library(aqp)
+library(plyr)
+library(sp)
 library(scales)
 library(rgdal)
 library(raster)
@@ -27,13 +31,75 @@ if(.Platform$OS.type == "windows"){
 load(".RData")
 source('SOCS_functions.R')
 
-## 1. SOCS points from La Libertad Research Center (Colombia)
+## 0. Fitting splines for profiles ----
+
+## http://www.asris.csiro.au/mapping/hyperdocs/NatSoil/399%5EEDGEROI%5Eed079.pdf
+lon = 149.73; lat = -30.09; id = "399_EDGEROI_ed079"; TIMESTRR = "1987-01-05"
+top = c(0, 10, 20, 55, 90) 
+bottom = c(10, 20, 55, 90, 116)
+ORC = c(8.2, 7.5, 6.1, 3.3, 1.6)
+BLD = c(1340, 1367, 1382, 1433, 1465)
+CRF = c(6, 6, 7, 8, 8)
+#OCS = OCSKGM(ORC, BLD, CRF, HSIZE=bottom-top)
+prof1 <- join(data.frame(id, top, bottom, ORC, BLD, CRF), 
+              data.frame(id, lon, lat, TIMESTRR), type='inner')
+depths(prof1) <- id ~ top + bottom
+site(prof1) <- ~ lon + lat + TIMESTRR
+coordinates(prof1) <- ~ lon + lat
+proj4string(prof1) <- CRS("+proj=longlat +datum=WGS84")
+## fit a spline:
+ORC.s <- mpspline(prof1, var.name="ORC", d=t(c(0,30,100,200)), vhigh = 2200)
+BLD.s <- mpspline(prof1, var.name="BLD", d=t(c(0,30,100,200)), vhigh = 2200)
+CRF.s <- mpspline(prof1, var.name="CRF", d=t(c(0,30,100,200)), vhigh = 2200)
+## derive OCS for standard depths:
+OCSKGM(ORC.s$var.std$`0-30 cm`, BLD.s$var.std$`0-30 cm`, CRF.s$var.std$`0-30 cm`, HSIZE=30)
+OCSKGM(ORC.s$var.std$`30-100 cm`, BLD.s$var.std$`30-100 cm`, CRF.s$var.std$`30-100 cm`, HSIZE=70)
+
+## Organic soil from Canada:
+lon = -97.08639; lat = 51.12972; id = "CanSIS:3010"; TIMESTRR = "1966-06-05"
+top = c(0, 31, 61, 91, 122) 
+bottom = c(31, 61, 91, 122, 130)
+ORC = c(472, 492, 487, 502, 59)
+BLD = c(179, 166, 169, 160, 787)
+CRF = c(5, 6, 6, 6, 6)
+#OCS = OCSKGM(ORC, BLD, CRF, HSIZE=bottom-top)
+prof2 <- join(data.frame(id, top, bottom, ORC, BLD, CRF), 
+              data.frame(id, lon, lat, TIMESTRR), type='inner')
+depths(prof2) <- id ~ top + bottom
+site(prof2) <- ~ lon + lat + TIMESTRR
+coordinates(prof2) <- ~ lon + lat
+proj4string(prof2) <- CRS("+proj=longlat +datum=WGS84")
+## fit a spline:
+ORC.s <- mpspline(prof2, var.name="ORC", d=t(c(0,30,100,200)), vhigh = 2200)
+BLD.s <- mpspline(prof2, var.name="BLD", d=t(c(0,30,100,200)), vhigh = 2200)
+CRF.s <- mpspline(prof2, var.name="CRF", d=t(c(0,30,100,200)), vhigh = 2200)
+## derive OCS for standard depths:
+OCSKGM(ORC.s$var.std$`0-30 cm`, BLD.s$var.std$`0-30 cm`, CRF.s$var.std$`0-30 cm`, HSIZE=30)
+OCSKGM(ORC.s$var.std$`30-100 cm`, BLD.s$var.std$`30-100 cm`, CRF.s$var.std$`30-100 cm`, HSIZE=70)
+
+## 1. Model performance ----
+fitControl <- trainControl(method="repeatedcv", number=2, repeats=2)
+demo(meuse, echo=FALSE)
+meuse.ov <- cbind(over(meuse, meuse.grid), meuse@data)
+mFit0 <- train(om~1, data=meuse.ov, method="glm", family=gaussian(link=log), trControl=fitControl, na.action=na.omit)
+mFit1 <- train(om~soil, data=meuse.ov, method="glm", family=gaussian(link=log), trControl=fitControl, na.action=na.omit)
+mFit2 <- train(om~dist+soil+ffreq, data=meuse.ov, method="glm", family=gaussian(link=log), trControl=fitControl, na.action=na.omit)
+mFit3 <- train(om~dist+soil+ffreq, data=meuse.ov, method="ranger", trControl=fitControl, na.action=na.omit)
+## compare performance:
+resamps <- resamples(list(Mean=mFit0, Soilmap=mFit1, GLM=mFit2, RF=mFit3))
+summary(resamps)
+bwplot(resamps, layout = c(3, 1))
+## Improvement in efficiency = 32%:
+round((1-min(mFit3$results$RMSE)/min(mFit0$results$RMSE))*100)
+
+## 2. SOCS points from La Libertad Research Center (Colombia) ----
 ## https://github.com/cran/geospt/tree/master/data
 load("COSha10.rda")
 load("COSha30.rda")
+str(COSha30)
 load("COSha30map.rda")
 proj4string(COSha30map) = "+proj=utm +zone=18 +ellps=WGS84 +datum=WGS84 +units=m +no_defs"
-plotKML(COSha30map, color=var1.pred, colour_scale=SAGA_pal[[1]])
+plotKML(COSha30map, color=var1.pred, colour_scale=SAGA_pal[[1]], png.type = "cairo")
 coordinates(COSha30) = ~ x+y
 proj4string(COSha30) = proj4string(COSha30map)
 shape = "http://maps.google.com/mapfiles/kml/pal2/icon18.png"
@@ -65,6 +131,7 @@ covs30mdist = buffer.dist(COSha30["COSha30"], covs30m[1], classes)
 #plot(stack(covs30mdist))
 covs30m@data = cbind(covs30m@data, covs30mdist@data)
 fm.spc = as.formula(paste(" ~ ", paste(names(covs30m), collapse = "+")))
+fm.spc
 proj4string(covs30m) = proj4string(COSha30)
 covs30m.spc = spc(covs30m, fm.spc)
 ov.COSha30 = cbind(as.data.frame(COSha30), over(COSha30, covs30m.spc@predicted))
@@ -72,25 +139,28 @@ ov.COSha30 = cbind(as.data.frame(COSha30), over(COSha30, covs30m.spc@predicted))
 
 ## Model building:
 fm.COSha30 = as.formula(paste("COSha30 ~ ", paste(names(covs30m.spc@predicted), collapse = "+")))
+fm.COSha30
 fitControl <- trainControl(method="repeatedcv", number=3, repeats=3)
 gb.tuneGrid <- expand.grid(eta = c(0.3,0.4), nrounds = c(50,100), max_depth = 2:3, gamma = 0, colsample_bytree = 0.8, min_child_weight = 1)
 mFit1 <- train(fm.COSha30, data=ov.COSha30, method="ranger", trControl=fitControl)
 mFit1
 mFit2 <- train(fm.COSha30, data=ov.COSha30, method="xgbTree", trControl=fitControl, tuneGrid=gb.tuneGrid)
 mFit3 <- train(fm.COSha30, data=ov.COSha30, method="gamboost", trControl=fitControl)
-w1 = max(mFit1$results$Rsquared) #26%
-w2 = max(mFit2$results$Rsquared) #18%
-w3 = max(mFit3$results$Rsquared) #14%
+w1 = max(mFit1$results$Rsquared) #24%
+w2 = max(mFit2$results$Rsquared) #25%
+w3 = max(mFit3$results$Rsquared) #17%
 COSha30.pr = covs30m[1]
 names(COSha30.pr) = "SOCS30cm_pred"
 COSha30.pr@data[,1] = rowSums(cbind(w1/(w1+w2)*predict(mFit1, covs30m.spc@predicted@data), w2/(w1+w2)*predict(mFit2, covs30m.spc@predicted@data)))
-plotKML(COSha30.pr, colour_scale=SAGA_pal[[1]])
+plot(raster(COSha30.pr), col=SAGA_pal[[1]])
+points(COSha30, pch="+")
+plotKML(COSha30.pr, colour_scale=SAGA_pal[[1]], png.type = "cairo")
 writeGDAL(COSha30.pr, "SOCS30cm_pred.tif", options="COMPRESS=DEFLATE")
 ## Average and total SOCS:
 mean(COSha30.pr$SOCS30cm_pred); mean(COSha30$COSha30, na.rm=TRUE)
-## 50,1 tonnes / ha
+## 50,1 tonnes / ha in average
 sum(COSha30.pr$SOCS30cm_pred*30^2/1e4)
-## 105,346 tonnes
+## 106,809 tonnes
 
 ## Plot fitting success:
 yr = range(COSha30.pr$SOCS30cm_pred, na.rm=TRUE)
@@ -108,76 +178,3 @@ labl = round(expm1(rowMeans(cbind(brks1[-length(brks1)], brks1[-1]))))
 COSha30.pr$SOCS30cm_predC = cut(log1p(COSha30.pr$SOCS30cm_pred), breaks=brks1, labels=labl)
 spplot(COSha30.pr["SOCS30cm_predC"], col.regions=SAGA_pal[[1]], sp.layout=list(list("sp.points", COSha30, pch="+", col="black")))
 
-## 2. SOCS using legacy soil profiles from Ethiopia
-## http://www.isric.org/data/cascape-ethiopia-woredas-soil-landscape-resources
-tig_profs = readOGR("eth_profs_tigray.shp", "eth_profs_tigray")
-tig_admin = readOGR("eth_tigray.shp", "eth_tigray")
-et.prj = "+proj=utm +zone=37 +datum=WGS84 +units=m +no_defs"
-tig_profs = spTransform(tig_profs, CRS(et.prj))
-tig_admin = spTransform(tig_admin, CRS(et.prj))
-
-## Covariates at 250 m resolution
-if(!file.exists("SRTMDEM250m.sdat")){
-  system(paste(gdalwarp, ' /home/tom/Downloads/EarthEnv-DEM90_N10E035/EarthEnv-DEM90_N10E035.bil SRTMDEM250m.sdat -of \"SAGA\" -t_srs \"', proj4string(tig_admin), '\" -tr 250 250 -te ', paste(as.vector(tig_admin@bbox), collapse=" ")))
-}
-plot(raster("SRTMDEM250m.sdat"), col=SAGA_pal[[1]])
-## DEM derivatives:
-saga_DEM_derivatives("SRTMDEM250m.sgrd")
-plot(raster("SRTMDEM250m_vbf.sdat"), col=SAGA_pal[[1]])
-## Landsat images:
-for(i in c("B3","B4","B5","B6","B7","B10")){
-  if(!file.exists(paste0('L8_250m_',i,'.tif'))){
-    system(paste0(gdalwarp, ' /home/tom/Downloads/LC81680512014322LGN00/LC81680512014322LGN00_',i,'.TIF L8_250m_',i,'.tif -co \"COMPRESS=DEFLATE\" -t_srs \"', proj4string(tig_admin), '\" -tr 250 250 -r \"average\" -te ', paste(as.vector(tig_admin@bbox), collapse=" ")))
-  }
-}
-## Land cover from 2010:
-if(!file.exists("LC_250m.tif")){
-  system(paste(gdalwarp, ' /home/tom/Envirometrix/LDN/ESACCI-LC-L4-LCCS-Map-300m-P5Y-2010-v1.6.1.tif LC_250m.tif -t_srs \"', proj4string(tig_admin), '\" -co \"COMPRESS=DEFLATE\" -r \"near\" -tr 250 250 -te ', paste(as.vector(tig_admin@bbox), collapse=" ")))
-}
-
-## SoilGrids ORC and BLD maps:
-for(i in 1:4){
-  if(!file.exists(paste0('ORCDRC_sl',i,'.tif'))){
-    system(paste0(gdalwarp, ' /home/tom/Downloads/geonode-orcdrc_m_sl',i,'_250m.tif ORCDRC_sl',i,'.tif -co \"COMPRESS=DEFLATE\" -t_srs \"', proj4string(tig_admin), '\" -tr 250 250 -te ', paste(as.vector(tig_admin@bbox), collapse=" ")))
-  }
-  if(!file.exists(paste0('BLDFIE_sl',i,'.tif'))){
-    system(paste0(gdalwarp, ' /home/tom/Downloads/geonode-bldfie_m_sl',i,'_250m.tif BLDFIE_sl',i,'.tif -co \"COMPRESS=DEFLATE\" -t_srs \"', proj4string(tig_admin), '\" -tr 250 250 -te ', paste(as.vector(tig_admin@bbox), collapse=" ")))
-  }
-}
-
-## Study area of interest:
-et_mask = rasterize(tig_admin, raster("LC_250m.tif"))
-
-## Overlay points / covariates:
-covs250m = stack(c(list.files(pattern=glob2rx("SRTMDEM250m*.sdat$")),list.files(pattern=glob2rx("L8_250m_*.tif$"))))
-covs250m = as(as(covs250m, "SpatialGridDataFrame"), "SpatialPixelsDataFrame")
-plot(stack(covs250m), col=SAGA_pal[[1]])
-classes = cut(COSha30$COSha30, breaks=seq(0, 100, length=10))
-covs250mdist = buffer.dist(COSha30["COSha30"], covs250m[1], classes)
-covs250m@data = cbind(covs250m@data, covs250mdist@data)
-fm.spc = as.formula(paste(" ~ ", paste(names(covs250m), collapse = "+")))
-proj4string(covs250m) = proj4string(COSha30)
-covs250m.spc = spc(covs250m, fm.spc)
-ov.COSha30 = cbind(as.data.frame(COSha30), over(COSha30, covs250m.spc@predicted))
-
-## Model building:
-fm.COSha30 = as.formula(paste("COSha30 ~ ", paste(names(covs250m.spc@predicted), collapse = "+")))
-fitControl <- trainControl(method="repeatedcv", number=3, repeats=3)
-gb.tuneGrid <- expand.grid(eta = c(0.3,0.4), nrounds = c(50,100), max_depth = 2:3, gamma = 0, colsample_bytree = 0.8, min_child_weight = 1)
-mFit1 <- train(fm.COSha30, data=ov.COSha30, method="ranger", trControl=fitControl)
-mFit1
-mFit2 <- train(fm.COSha30, data=ov.COSha30, method="xgbTree", trControl=fitControl, tuneGrid=gb.tuneGrid)
-mFit3 <- train(fm.COSha30, data=ov.COSha30, method="gamboost", trControl=fitControl)
-w1 = max(mFit1$results$Rsquared) #26%
-w2 = max(mFit2$results$Rsquared) #18%
-w3 = max(mFit3$results$Rsquared) #14%
-COSha30.pr = covs250m[1]
-names(COSha30.pr) = "SOCS30cm_pred"
-COSha30.pr@data[,1] = rowSums(cbind(w1/(w1+w2)*predict(mFit1, covs250m.spc@predicted@data), w2/(w1+w2)*predict(mFit2, covs250m.spc@predicted@data)))
-plotKML(COSha30.pr, colour_scale=SAGA_pal[[1]])
-writeGDAL(COSha30.pr, "SOCS30cm_pred.tif", options="COMPRESS=DEFLATE")
-## Average and total SOCS:
-mean(COSha30.pr$SOCS30cm_pred); mean(COSha30$COSha30, na.rm=TRUE)
-## 50,1 tonnes / ha
-sum(COSha30.pr$SOCS30cm_pred*30^2/1e4)
-## 105,346 tonnes

@@ -105,7 +105,7 @@ var.SNDMHT.rf <- ranger(var.fm2, data = mS, write.forest = TRUE)
 var.SNDMHT.rf
 ## predict uncertainty:
 eberg_SNDMHT = eberg_grid[1]
-eberg_SNDMHT$SNDMHT_D <- predict(mFit, eberg_grid@data, na.action = na.pass)
+eberg_SNDMHT$SNDMHT_D <- predict(SNDMHT.rf, eberg_grid@data, na.action = na.pass)
 plot(raster(eberg_SNDMHT["SNDMHT_D"]), col=SAGA_pal[[1]])
 ## prediction error:
 eberg_SNDMHT$var.SNDMHT_D <- predict(var.SNDMHT.rf, eberg_grid@data, na.action = na.pass)$predictions
