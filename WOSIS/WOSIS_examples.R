@@ -45,7 +45,6 @@ rs <- dbSendQuery(con, 'SELECT * FROM "Profile"."Profile"')
 #  )
 ## This error means that SQL query had problems in this case the connection may have been terminated. Try to run the 
 #con <- dbConnect......
-
 result <- fetch(rs, n=10)
 
 ## Question: why do we get this warning?
@@ -68,7 +67,6 @@ result <- fetch(rs,n=-1)
 
 ## a. First search For countryID in Location.Countries
 ## We can run a describe table to see the fields inside:
-
 rs <- dbSendQuery(con, 'SELECT * FROM "Location"."Country" WHERE "Name"=\'Spain\' OR "Name"=\'Portugal\'')
 fetch(rs,n=-1)
 
