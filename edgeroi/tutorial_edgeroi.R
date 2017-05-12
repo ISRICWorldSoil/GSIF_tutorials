@@ -1,10 +1,6 @@
-# title         : tutorial_edgeroi.R
-# purpose       : Mapping soil organic carbon for the Edgeroi area using 3D regression-kriging;
-# reference     : [https://github.com/thengl/GSIF_tutorials/tree/master/edgeroi]
-# producer      : Prepared by T. Hengl
-# address       : In Wageningen, NL.
-# inputs        : The Edgeroi [http://plotkml.r-forge.r-project.org/edgeroi.html] is one of the standard soil data sets used to test soil mapping methods in Australia. It contains 359 soil profiles with soil observations in sites and horizons tables;
-# outputs       : 3D predictions of soil properties and classes;
+## Mapping soil organic carbon for the Edgeroi area using 3D regression-kriging;
+## The Edgeroi data set [http://plotkml.r-forge.r-project.org/edgeroi.html] is one of the standard soil data sets used to test soil mapping methods in Australia. It contains 359 soil profiles with soil observations in sites and horizons tables;
+## Prepared by Tom.Hengl@isric.org
 
 #install.packages("GSIF", repos="http://R-Forge.R-project.org", type="source")
 #install.packages("plotKML", repos="http://R-Forge.R-project.org", type="source")
@@ -43,6 +39,9 @@ plot(rk0)
 
 ## 3D soil mapping:
 data(edgeroi)
+str(edgeroi)
+edgeroi$sites$SOURCEID = paste0("AU_", edgeroi$sites$SOURCEID)
+edgeroi$horizons$SOURCEID = paste0("AU_", edgeroi$horizons$SOURCEID)
 edgeroi.spc <- join(edgeroi$horizons, edgeroi$sites, type='inner')
 depths(edgeroi.spc) <- SOURCEID ~ UHDICM + LHDICM
 site(edgeroi.spc) <- ~ LONGDA94 + LATGDA94 + TAXGAUC + NOTEOBS
@@ -116,4 +115,26 @@ kml(ORCDRC.geo, shape=shape, colour=observedValue, z.lim=zlim, colour_scale=SAGA
 #x <- grid2poly(sd.l[[1]]@predicted["ORCDRC"])
 #kml(x, colour=ORCDRC, colour_scale = SAGA_pal[[1]])
 
-## end of script;
+## Download SoilGrids predictions for the same area:
+sg.lst = as.vector(sapply(c("ORCDRC", "BLDFIE", "CRFVOL"), function(x){ paste0("/mnt/cartman/ftp.soilgrids.org/data/recent/", x, "_M_sl", 1:4, "_250m_ll.tif")}))
+tr = edgeroi.grids@grid@cellsize[1]
+te = paste(as.vector(edgeroi.grids@bbox), collapse=" ")
+for(j in 1:length(sg.lst)){
+  if(!file.exists(basename(sg.lst[j]))){
+    system(paste0('gdalwarp ', sg.lst[j], ' ', basename(sg.lst[j]), ' -co \"COMPRESS=DEFLATE\" -t_srs \"', proj4string(edgeroi.grids), '\" -tr ', tr, ' ', tr, ' -te ', te))
+  }
+}
+tif.lst = list.files(pattern="250m_ll")
+for(i in 1:length(tif.lst)){
+  edgeroi.grids@data[,basename(tif.lst[i])] = readGDAL(tif.lst[i])$band1
+}
+plot(stack(edgeroi.grids[,grep("ORCDRC", names(edgeroi.grids))]), zlim=c(0,25))
+saveRDS(edgeroi.grids, "edgeroi.grids.rds")
+
+## Fit splines to actual profiles:
+?mpspline
+## fit a spline:
+ORC.s <- mpspline(edgeroi.spc, var.name="ORCDRC", d=t(c(0,5,15,30)), vhigh = 2200)
+str(ORC.s)
+saveRDS(ORC.s, "ORCDRC_splines.rds")
+View(ORC.s$var.std)

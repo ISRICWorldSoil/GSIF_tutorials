@@ -1,11 +1,5 @@
-# title         : WOSIS_examples.R
-# purpose       : Data access to WOSIS / examples of how to query;
-# reference     : [https://code.google.com/p/gsif/source/browse/trunk/WOSIS/]
-# producer      : Prepared by E. Ribeiro, J. Mendes de Jesus & T. Hengl
-# address       : In Wageningen, NL.
-# inputs        : WOSIS is ISRIC's central database;
-# outputs       : tabular data;
-
+## Data access to WOSIS / examples of how to query;
+## Prepared by E. Ribeiro & T. Hengl (tom.hengl@isric.org)
 
 ## WOSIS Postgresql Connection and exercises
 ## NOTE: WOSIS only accepts WUR IP for connections
@@ -21,7 +15,7 @@ install.packages(c("DBI","RPostgreSQL"))
 ## database name, login (user and password), location of server (host) and where is the database listening (port)
 library(RPostgreSQL)
 drv <- dbDriver("PostgreSQL")
-con <- dbConnect(drv, dbname="spring", user= "student", host="81.169.159.7", port="5432", password="student")
+con <- dbConnect(drv, dbname="spring", user="student", host="81.169.159.7", port="5432", password="student")
 
 ## This error indicates that we couldnt connect maybe there is something wrong with connection string
 #Error in postgresqlNewConnection(drv, ...) : 
@@ -29,6 +23,7 @@ con <- dbConnect(drv, dbname="spring", user= "student", host="81.169.159.7", por
 
 ## 3. Question the following commant reports what sort of information ??
 dbGetInfo(con)
+dbListTables(con)
 
 ## 4. First query lets count the number of profiles on database, in WOSIS the profiles 
 ## are described on the "Profile"."Profile" table
@@ -50,7 +45,7 @@ rs <- dbSendQuery(con, 'SELECT * FROM "Profile"."Profile"')
 ## This error means that SQL query had problems in this case the connection may have been terminated. Try to run the 
 #con <- dbConnect......
 
-result <- fetch(rs,n=10)
+result <- fetch(rs, n=10)
 
 ## Question: why do we get this warning?
 # Warning messages:
@@ -86,6 +81,21 @@ View(data)
 rs <- dbSendQuery(con,'SELECT ST_X("Location") AS x, ST_Y("Location") AS y FROM "Profile"."Profile" WHERE "CountryId"=172 OR "CountryId"=196') 
 points <- fetch(rs,n=-1)
 View(points)
+
+## Get all data from WoSIS currently available:
+wosis.pnts <- dbSendQuery(con, "SELECT * FROM web_services.latest_all;")
+wosis.pnts.tbl <- fetch(wosis.pnts, n=-1)
+summary(wosis.pnts.tbl$bd_ws)
+wosis.pnts.tbl = plyr::rename(wosis.pnts.tbl, c("latest_ph_cacl2"="ph_cacl2", "latest_ph_h2o"="ph_h2o", "latest_ph_kcl"="ph_kcl", "latest_ph_naf"="ph_naf"))
+str(wosis.pnts.tbl)
+
+wosis.xy <- dbSendQuery(con, "SELECT profile_id, country_id, datasets, latitude, longitude, geom_accuracy FROM web_services.latest_profiles;")
+wosis.xy.tbl <- fetch(wosis.xy, n=-1)
+str(wosis.xy.tbl)
+
+wosis_profiles <- list(wosis.xy.tbl, wosis.pnts.tbl)
+names(wosis_profiles) = c("sites", "horizons")
+save(wosis_profiles, file="wosis_profiles.rda", compress="xz")
 
 ## b. We can query the DB for some actual soil data like pH 
 library(plotKML)

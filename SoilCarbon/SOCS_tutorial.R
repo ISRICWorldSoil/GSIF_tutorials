@@ -6,6 +6,7 @@ list.of.packages = c("GSIF", "plotKML", "nnet", "aqp", "plyr", "ROCR", "randomFo
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
 
+load(".RData")
 #library(geospt)
 library(aqp)
 library(plyr)
@@ -14,6 +15,7 @@ library(scales)
 library(rgdal)
 library(raster)
 library(caret)
+library(utils)
 library(ranger)
 library(randomForest)
 library(xgboost)
@@ -28,11 +30,12 @@ if(.Platform$OS.type == "windows"){
   gdal_translate = "gdal_translate"
   gdalwarp = "gdalwarp"
 }
-load(".RData")
 source('SOCS_functions.R')
+md = getwd()
 
 ## 0. Fitting splines for profiles ----
 
+## Mineral soil profile
 ## http://www.asris.csiro.au/mapping/hyperdocs/NatSoil/399%5EEDGEROI%5Eed079.pdf
 lon = 149.73; lat = -30.09; id = "399_EDGEROI_ed079"; TIMESTRR = "1987-01-05"
 top = c(0, 10, 20, 55, 90) 
@@ -94,6 +97,7 @@ round((1-min(mFit3$results$RMSE)/min(mFit0$results$RMSE))*100)
 
 ## 2. SOCS points from La Libertad Research Center (Colombia) ----
 ## https://github.com/cran/geospt/tree/master/data
+setwd("./LRC")
 load("COSha10.rda")
 load("COSha30.rda")
 str(COSha30)
@@ -103,34 +107,33 @@ plotKML(COSha30map, color=var1.pred, colour_scale=SAGA_pal[[1]], png.type = "cai
 coordinates(COSha30) = ~ x+y
 proj4string(COSha30) = proj4string(COSha30map)
 shape = "http://maps.google.com/mapfiles/kml/pal2/icon18.png"
-kml(COSha30, colour=COSha30, shape=shape, labels=COSha30$COSha30, colour_scale=SAGA_pal[[1]])
+kml(COSha30, colour=COSha30, shape=shape, labels=round(COSha30$COSha30), colour_scale=SAGA_pal[[1]])
 writeOGR(COSha30, "COSha30.shp", "COSha30", "ESRI Shapefile")
+## resample to 30 by 30 m:
+writeGDAL(COSha30map["var1.pred"], "COSha30map_var1pred.tif", options=c("COMPRESS=DEFLATE"))
+system('gdalwarp COSha30map_var1pred.tif COSha30map_var1pred_.tif -tr 30 30')
+rLRC = raster("COSha30map_var1pred_.tif")
+unlink("COSha30map_var1pred.tif")
 
-## Download extra covariates:
-#system(paste(gdalwarp, ' /home/tom/Downloads/N004W074/AVERAGE/N004W074_AVE_DSM.tif DEM30m.sdat -of \"SAGA\" -t_srs \"', proj4string(COSha30map), '\" -tr 30 30 -te ', paste(as.vector(COSha30map@bbox), collapse=" ")))
-if(!file.exists("SRTMDEM30m.sdat")){
-  system(paste(gdalwarp, ' /home/tom/Downloads/n04_w074_1arc_v3.tif SRTMDEM30m.sdat -of \"SAGA\" -t_srs \"', proj4string(COSha30map), '\" -tr 30 30 -te ', paste(as.vector(COSha30map@bbox), collapse=" ")))
-}
-plot(raster("SRTMDEM30m.sdat"), col=SAGA_pal[[1]])
-## DEM derivatives:
-saga_DEM_derivatives("SRTMDEM30m.sgrd")
-plot(raster("SRTMDEM30m_vbf.sdat"), col=SAGA_pal[[1]])
-## Landsat images:
-for(i in c("B3","B4","B5","B6","B7","B10")){
-  if(!file.exists(paste0('L8',i,'.tif'))){
-    system(paste0(gdalwarp, ' /home/tom/Downloads/LC80070572014090LGN00/LC80070572014090LGN00_',i,'.TIF L8',i,'.tif -co \"COMPRESS=DEFLATE\" -t_srs \"', proj4string(COSha30map), '\" -tr 30 30 -te ', paste(as.vector(COSha30map@bbox), collapse=" ")))
-  }
-}
+## Prepare covariates:
+get_30m_covariates(te=paste(as.vector(extent(rLRC))[c(1,3,2,4)], collapse=" "), tr=res(rLRC)[1], p4s=proj4string(rLRC))
+saga_DEM_derivatives("SRTMGL1_SRTMGL1.2.tif")
+plot(raster("SRTMGL1_SRTMGL1.2_vbf.sdat"), col=SAGA_pal[[1]])
+unlink("SRTMGL1_SRTMGL1.2.tif")
 
 ## Overlay points / covariates:
-covs30m = stack(c(list.files(pattern=glob2rx("SRTMDEM30m*.sdat$")),list.files(pattern=glob2rx("L8B*.tif$"))))
+cov.lst = c(list.files(pattern=glob2rx("*.sdat$")),list.files(pattern=glob2rx("*.tif$")))
+covs30m = stack(cov.lst)
 covs30m = as(as(covs30m, "SpatialGridDataFrame"), "SpatialPixelsDataFrame")
-plot(stack(covs30m), col=SAGA_pal[[1]])
-classes = cut(COSha30$COSha30, breaks=seq(0, 100, length=10))
+#plot(stack(covs30m), col=SAGA_pal[[1]])
+#plot(raster(covs30m["Landsat_bare2010"]), col=SAGA_pal[[1]])
+#plot(raster(covs30m["GlobalSurfaceWater_occurrence"]), col=SAGA_pal[[1]])
+classes = cut(COSha30$COSha30, breaks=seq(30, 95, length=10))
 covs30mdist = buffer.dist(COSha30["COSha30"], covs30m[1], classes)
 #plot(stack(covs30mdist))
 covs30m@data = cbind(covs30m@data, covs30mdist@data)
-fm.spc = as.formula(paste(" ~ ", paste(names(covs30m), collapse = "+")))
+sel.rm = c("GlobalSurfaceWater_occurrence", "GlobalSurfaceWater_extent", "Landsat_bare2010", "COSha30map_var1pred_")
+fm.spc = as.formula(paste(" ~ ", paste(names(covs30m)[-which(names(covs30m@data) %in% sel.rm)], collapse = "+")))
 fm.spc
 proj4string(covs30m) = proj4string(COSha30)
 covs30m.spc = spc(covs30m, fm.spc)
@@ -140,30 +143,35 @@ ov.COSha30 = cbind(as.data.frame(COSha30), over(COSha30, covs30m.spc@predicted))
 ## Model building:
 fm.COSha30 = as.formula(paste("COSha30 ~ ", paste(names(covs30m.spc@predicted), collapse = "+")))
 fm.COSha30
-fitControl <- trainControl(method="repeatedcv", number=3, repeats=3)
-gb.tuneGrid <- expand.grid(eta = c(0.3,0.4), nrounds = c(50,100), max_depth = 2:3, gamma = 0, colsample_bytree = 0.8, min_child_weight = 1)
-mFit1 <- train(fm.COSha30, data=ov.COSha30, method="ranger", trControl=fitControl)
+fitControl <- trainControl(method="repeatedcv", number=3, repeats=2)
+gb.tuneGrid <- expand.grid(eta = c(0.3,0.4), nrounds = c(50,100), max_depth = 2:3, gamma = 0, colsample_bytree = 0.8, min_child_weight = 1, subsample=1)
+mFit1 <- train(fm.COSha30, data=ov.COSha30, method="ranger", trControl=fitControl, importance='impurity')
 mFit1
+xl <- as.list(ranger::importance(mFit1$finalModel))
+print(t(data.frame(xl[order(unlist(xl), decreasing=TRUE)[1:10]])))
+#spplot(covs30m.spc@predicted["PC7"])
 mFit2 <- train(fm.COSha30, data=ov.COSha30, method="xgbTree", trControl=fitControl, tuneGrid=gb.tuneGrid)
+mFit2
 mFit3 <- train(fm.COSha30, data=ov.COSha30, method="gamboost", trControl=fitControl)
-w1 = max(mFit1$results$Rsquared) #24%
-w2 = max(mFit2$results$Rsquared) #25%
-w3 = max(mFit3$results$Rsquared) #17%
-COSha30.pr = covs30m[1]
-names(COSha30.pr) = "SOCS30cm_pred"
-COSha30.pr@data[,1] = rowSums(cbind(w1/(w1+w2)*predict(mFit1, covs30m.spc@predicted@data), w2/(w1+w2)*predict(mFit2, covs30m.spc@predicted@data)))
-plot(raster(COSha30.pr), col=SAGA_pal[[1]])
-points(COSha30, pch="+")
-plotKML(COSha30.pr, colour_scale=SAGA_pal[[1]], png.type = "cairo")
-writeGDAL(COSha30.pr, "SOCS30cm_pred.tif", options="COMPRESS=DEFLATE")
+mFit3
+w1 = max(mFit1$results$Rsquared) #13%
+w2 = max(mFit2$results$Rsquared) #13%
+w3 = max(mFit3$results$Rsquared) #15%
+## Two best models gamboost
+COSha30.pr = covs30m["COSha30map_var1pred_"]
+COSha30.pr@data[,"COSha30map_MLA"] = rowSums(cbind(w1/(w1+w3)*predict(mFit1, covs30m.spc@predicted@data), w3/(w1+w3)*predict(mFit2, covs30m.spc@predicted@data)))
+COSha30.pr$COSha30map_MLA = ifelse(is.na(COSha30.pr$COSha30map_var1pred_), NA, COSha30.pr$COSha30map_MLA)
+spplot(COSha30.pr, col.regions=SAGA_pal[[1]], sp.layout = list("sp.points", COSha30, pch = "+", col="black", cex=1.5))
+plotKML(COSha30.pr["COSha30map_MLA"], colour_scale=SAGA_pal[[1]], png.type = "cairo")
+#writeGDAL(COSha30.pr["COSha30map_MLA"], "SOCS30cm_pred.tif", options="COMPRESS=DEFLATE")
 ## Average and total SOCS:
-mean(COSha30.pr$SOCS30cm_pred); mean(COSha30$COSha30, na.rm=TRUE)
-## 50,1 tonnes / ha in average
-sum(COSha30.pr$SOCS30cm_pred*30^2/1e4)
-## 106,809 tonnes
+mean(COSha30.pr$COSha30map_MLA, na.rm=TRUE); mean(COSha30$COSha30, na.rm=TRUE)
+## 51 tonnes / ha in average
+sum(COSha30.pr$COSha30map_MLA*30^2/1e4, na.rm=TRUE)
+## 48,608 tonnes in total
 
 ## Plot fitting success:
-yr = range(COSha30.pr$SOCS30cm_pred, na.rm=TRUE)
+yr = range(COSha30.pr$COSha30map_MLA, na.rm=TRUE)
 panel_line = function(x,y,...) {
   panel.xyplot(x, y)
   panel.abline(0,1, ...)
@@ -177,4 +185,29 @@ brks1 = seq(yrl[1], yrl[2], by=byl)
 labl = round(expm1(rowMeans(cbind(brks1[-length(brks1)], brks1[-1]))))
 COSha30.pr$SOCS30cm_predC = cut(log1p(COSha30.pr$SOCS30cm_pred), breaks=brks1, labels=labl)
 spplot(COSha30.pr["SOCS30cm_predC"], col.regions=SAGA_pal[[1]], sp.layout=list(list("sp.points", COSha30, pch="+", col="black")))
+setwd(md)
 
+## 3. Soil profiles case study Bor  (Serbia) ----
+## https://github.com/pejovic/sparsereg3D
+setwd("./bor")
+load("BorData.rda")
+coordinates(bor) = ~ x + y
+proj4string(bor) = "+proj=utm +zone=34 +ellps=GRS80 +towgs84=0.26901,0.18246,0.06872,-0.01017,0.00893,-0.01172,0.99999996031 +units=m"
+bor = spTransform(bor, CRS(proj4string(rBor)))
+rBor = raster("bor_soiltype_50m.tif")
+get_30m_covariates(te=paste(as.vector(extent(rBor))[c(1,3,2,4)], collapse=" "), tr=res(rBor)[1], p4s=proj4string(rBor))
+saga_DEM_derivatives("SRTMGL1_SRTMGL1.2.tif")
+
+cov2.lst = c(list.files(pattern=glob2rx("*.sdat$")),list.files(pattern=glob2rx("*.tif$")))
+covs50m = stack(cov2.lst)
+covs50m = as(as(covs50m, "SpatialGridDataFrame"), "SpatialPixelsDataFrame")
+#plot(raster(covs50m["bor_soiltype_50m"]))
+#plot(raster(covs50m["GlobalForestChange2000.2014_first_REDL00"]))
+bor$ORC = bor$SOM*0.58*10
+summary(bor$ORC)
+classes2 = cut(bor$ORC, breaks=seq(0, 250, length=15))
+covs50mdist = buffer.dist(bor["ORC"], covs50m["bor_soiltype_50m"], classes2)
+#plot(stack(covs50mdist))
+covs30m@data = cbind(covs30m@data, covs30mdist@data)
+sel.rm = c("GlobalSurfaceWater_occurrence", "GlobalSurfaceWater_extent", "Landsat_bare2010", "COSha30map_var1pred_")
+fm.spc = as.formula(paste(" ~ ", paste(names(covs30m)[-which(names(covs30m@data) %in% sel.rm)], collapse = "+")))

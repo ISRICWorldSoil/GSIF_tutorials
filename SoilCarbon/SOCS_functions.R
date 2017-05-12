@@ -1,5 +1,28 @@
 
+## Get global 30 m resolution soil covariates
+get_30m_covariates <- function(te, tr, p4s, input.vrt=c("/mnt/cartman/GlobalForestChange2000-2014/first.vrt", "/mnt/cartman/GlobalForestChange2000-2014/treecover2000.vrt", "/mnt/cartman/GlobalSurfaceWater/occurrence.vrt", "/mnt/cartman/GlobalSurfaceWater/extent.vrt", "/mnt/cartman/SRTMGL1/SRTMGL1.2.tif", "/mnt/cartman/Landsat/bare2010.vrt"), l.bands=c("REDL00", "NIRL00", "SW1L00", "SW2L00")){
+  ## paste0("/mnt/cartman/GlobCover30/2010/glc", seq(10,100,by=10),".vrt"))
+  for(j in 1:length(input.vrt)){
+    if(basename(input.vrt[j])=="first.vrt"){
+      tmp <- tempfile(pattern = "file", tmpdir = tempdir(), fileext = ".tif")
+      system(paste0('gdalwarp ', input.vrt[j], ' ', tmp, ' -co \"COMPRESS=DEFLATE\" -t_srs \"', p4s, '\" -tr ', tr, ' ', tr, ' -te ', te))
+      for(k in 1:4){
+        outname = paste0(gsub(".vrt", paste0("_", l.bands[k]), gsub("/", "_", gsub("/mnt/cartman/", "", (input.vrt[j])))), ".tif")
+        if(!file.exists(outname)){ system(paste0('gdal_translate ', tmp, ' ', outname, ' -co \"COMPRESS=DEFLATE\" -b ', k)) }
+      }
+      unlink(tmp)
+    } else {
+      outname = RSAGA::set.file.extension(gsub("/", "_", gsub("/mnt/cartman/", "", (input.vrt[j]))), ".tif")
+      if(!file.exists(outname)){ system(paste0('gdalwarp ', input.vrt[j], ' ', outname, ' -co \"COMPRESS=DEFLATE\" -t_srs \"', p4s, '\" -tr ', tr, ' ', tr, ' -te ', te)) }
+    }
+  }
+}
+
 saga_DEM_derivatives <- function(INPUT, MASK=NULL, sel=c("SLP","TWI","CRV","VBF","VDP","OPN","DVM"), saga_cmd="saga_cmd"){
+  if(!tools::file_ext(INPUT)=="sgrd"){ 
+    system(paste0('gdal_translate ', INPUT, ' -of \"SAGA\" ', RSAGA::set.file.extension(INPUT, ".sdat")))
+    INPUT = RSAGA::set.file.extension(INPUT, ".sgrd")
+  }
   if(!is.null(MASK)){
     ## Fill in missing DEM pixels:
     suppressWarnings( system(paste0(saga_cmd, ' grid_tools 25 -GRID=\"', INPUT, '\" -MASK=\"', MASK, '\" -CLOSED=\"', INPUT, '\"')) )
