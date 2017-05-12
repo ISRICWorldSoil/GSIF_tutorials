@@ -1,4 +1,5 @@
-## Data access to WOSIS / examples of how to query;
+## Data access to WOSIS / examples of how to query
+## http://www.isric.org/projects/data-wosis-project
 ## Prepared by E. Ribeiro & T. Hengl (tom.hengl@isric.org)
 
 ## WOSIS Postgresql Connection and exercises

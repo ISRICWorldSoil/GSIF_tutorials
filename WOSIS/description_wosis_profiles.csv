@@ -1,0 +1,71 @@
+Column_name,Type,Description
+profile_layer_id,integer,"Primary key and Foreign key that refers to table ""profile_layer"""
+dataset_id,character,"Foreign key that refers to table ""dataset"""
+profile_id,integer,"Foreign key that refers to table ""profile"""
+upper_depth,smallint,Depth of upper horizon boundary (cm)
+lower_depth,smallint,Depth of lower horizon boundary (cm)
+sample_code,text,Sample code
+country_id,character,"Foreign key that refers to table ""country"""
+title,text,Title
+reference_page,character,Reference page where the profile description appears
+reference_profile_code,character,Profile code in such reference
+isbn,character,ISBN number
+publisher,character,Publisher
+publication_year,smallint,Publication year
+issue,character,Issue
+url,text,URL
+bd_fe,numeric,Bulk density fine earth
+bd_ws,numeric,Bulk density whole soil
+cce_f01,numeric,Calcium carbonate equivalent fraction
+cce_t,numeric,Calcium carbonate equivalent total
+carbon_o,numeric,Organic carbon
+carbon_t,numeric,Total carbon
+nitrogen_t,numeric,Total nitrogen
+gypsum,numeric,Gypsum content
+electrical_c,numeric,Electrical conductivity
+hydraulic_c,numeric,Hydraulic conductivity
+wr_g,numeric,Water retention gravimetric
+wr_v,numeric,Water retention volumetric
+ph_cacl2,numeric,pH CaCl2
+ph_h2o,numeric,pH H2O
+ph_kcl,numeric,pH KCl
+ph_naf,numeric,pH NaF
+ph_nh4cl,numeric,pH NH4CL
+ph_field,numeric,pH field
+ph_unk,numeric,pH unknown
+cfg_f01,numeric,Coarse fragments gravimetric fraction 01
+cfg_f02,numeric,Coarse fragments gravimetric fraction 02
+cfg_f03,numeric,Coarse fragments gravimetric fraction 03
+cfg_t,numeric,Coarse fragments gravimetric total
+cfv_f01,numeric,Coarse fragments volumetric fraction 01
+cfv_f02,numeric,Coarse fragments volumetric fraction 02
+cfv_f03,numeric,Coarse fragments volumetric fraction 03
+cfv_t,numeric,Coarse fragments volumetric total
+sand_f01,numeric,Sand fraction 01
+sand_f02,numeric,Sand fraction 02
+sand_f03,numeric,Sand fraction 03
+sand_f04,numeric,Sand fraction 04
+sand_f05,numeric,Sand fraction 05
+sand_f06,numeric,Sand fraction 06
+sand_f07,numeric,Sand fraction 07
+sand_f08,numeric,Sand fraction 08
+sand_f09,numeric,Sand fraction 09
+sand_f10,numeric,Sand fraction 10
+sand_t,numeric,Sand total
+silt_f01,numeric,Silt fraction 01
+silt_f02,numeric,Silt fraction 02
+silt_f03,numeric,Silt fraction 03
+silt_t,numeric,Silt total
+clay_f01,numeric,Clay fraction 01
+clay_t,numeric,Clay total
+exch_al,numeric,Exchangeable aluminium
+exch_h,numeric,Exchangeable hydrogen
+exch_ca,numeric,Exchangeable calcium
+exch_mg,numeric,Exchangeable magnesium
+exch_k,numeric,Exchangeable potassium
+exch_na,numeric,Exchangeable sodium
+exch_acidity,numeric,Exchangeable acidity
+exch_bases,numeric,Exchangeable bases
+cec,numeric,Cation exchange capacity (CEC)
+ecec,numeric,Effective cation exchange capacity (ECEC)
+ecec_isric,numeric,Effective cation exchange capacity (ECEC) 

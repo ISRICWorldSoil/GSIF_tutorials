@@ -1,0 +1,46 @@
+<PAMDataset>
+  <Metadata>
+    <MDI key="ATTRIBUTE_LABEL">BLDFIE_M_sl1</MDI>
+    <MDI key="ATTRIBUTE_MEASUREMENT_RESOLUTION">1</MDI>
+    <MDI key="ATTRIBUTE_TITLE">Bulk density (fine earth) in kg / cubic-meter at depth 0.00 m</MDI>
+    <MDI key="ATTRIBUTE_UNITS_OF_MEASURE">kg / cubic-m</MDI>
+    <MDI key="CITATION_ADDRESS">tom.hengl@isric.org</MDI>
+    <MDI key="CITATION_ORIGINATOR">ISRIC - World Soil Information</MDI>
+    <MDI key="CITATION_URL">http://dx.doi.org/10.1371/journal.pone.0169748</MDI>
+    <MDI key="CONFIDENCE_INTERVAL">M</MDI>
+    <MDI key="DATA_FORMAT">Int16</MDI>
+    <MDI key="DEPTH">0.00 m</MDI>
+    <MDI key="DOWNLOAD_FTP_URL">ftp://ftp.soilgrids.org/data/recent/BLDFIE_M_sl1_250m_ll.tif</MDI>
+    <MDI key="HORIZON_LOWER_DEPTH">0.00 m</MDI>
+    <MDI key="HORIZON_UPPER_DEPTH">0.00 m</MDI>
+    <MDI key="KEYWORD1">bulk</MDI>
+    <MDI key="KEYWORD2">density</MDI>
+    <MDI key="NO_DATA">-32768</MDI>
+    <MDI key="PROJECT_URL">http://soilgrids.org</MDI>
+    <MDI key="PUBLICATION_DATE">2017-03-10</MDI>
+    <MDI key="RANGE_DOMAIN_MAXIMUM">2650</MDI>
+    <MDI key="RANGE_DOMAIN_MINIMUM">50</MDI>
+    <MDI key="SERIES_NAME">SoilGrids250m</MDI>
+    <MDI key="SLD_NAME">soilgrids250m:BLDFIE</MDI>
+    <MDI key="SLD_URL">ftp://ftp.soilgrids.org/legends/BLDFIE.sld</MDI>
+    <MDI key="TECHNICAL_SPECIFICATIONS_URL">https://github.com/ISRICWorldSoil/SoilGrids250m</MDI>
+  </Metadata>
+  <PAMRasterBand band="1">
+    <Histograms>
+      <HistItem>
+        <HistMin>1236.501515151515</HistMin>
+        <HistMax>1566.498484848485</HistMax>
+        <BucketCount>330</BucketCount>
+        <IncludeOutOfRange>0</IncludeOutOfRange>
+        <Approximate>0</Approximate>
+        <HistCounts>4|0|0|0|0|0|7|0|0|0|0|0|2|0|0|0|0|0|0|0|0|0|0|0|0|0|0|1|0|0|3|0|0|0|0|0|0|0|0|2|5|0|4|0|2|0|2|4|7|4|4|3|15|0|8|6|4|10|5|11|4|4|6|4|14|8|1|16|4|6|6|11|8|3|21|6|8|5|4|6|15|21|10|26|12|13|15|18|16|4|24|31|4|8|14|10|16|22|13|23|17|18|12|18|6|1|23|12|27|16|24|22|28|22|34|29|24|9|17|36|19|21|19|34|48|29|16|24|22|38|39|69|36|56|27|47|49|37|30|54|70|68|68|34|45|70|62|74|84|106|79|74|48|84|62|60|66|80|101|76|64|72|46|80|99|78|93|67|85|88|97|102|96|104|124|77|84|123|118|87|115|98|119|116|127|121|114|161|101|151|138|127|206|171|123|137|169|149|135|193|159|173|125|193|144|186|194|239|167|178|143|150|188|160|230|197|180|203|230|213|204|190|200|212|217|279|259|227|204|148|191|218|227|247|238|229|290|256|235|254|266|250|269|281|287|222|246|245|288|223|307|258|281|256|238|243|251|253|214|194|221|170|223|249|227|161|118|189|118|134|130|103|119|125|96|84|71|77|85|109|42|57|45|54|41|37|30|33|22|36|29|10|11|0|6|6|4|7|10|0|0|0|0|4|6|2|0|0|0|0|0|0|0|2|0|4|0|0|0|0|0|0|0|0|0|4|0|0|0|2</HistCounts>
+      </HistItem>
+    </Histograms>
+    <Metadata>
+      <MDI key="STATISTICS_MAXIMUM">1566</MDI>
+      <MDI key="STATISTICS_MEAN">1451.3928128872</MDI>
+      <MDI key="STATISTICS_MINIMUM">1237</MDI>
+      <MDI key="STATISTICS_STDDEV">45.479819432434</MDI>
+    </Metadata>
+  </PAMRasterBand>
+</PAMDataset>
