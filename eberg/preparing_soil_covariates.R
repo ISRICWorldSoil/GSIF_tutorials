@@ -2,7 +2,7 @@
 ## By: tom.hengl@isric.org and bas.kempen@wur.nl
 
 library(plotKML)
-library(sp)
+library(rgdal)
 library(gstat)
 library(raster)
 ?eberg
@@ -150,3 +150,18 @@ str(ov[complete.cases(ov),])
 demo(meuse, echo=FALSE)
 ## simple model:
 omm <- fit.gstatModel(meuse, om~dist+ffreq, meuse.grid, family = gaussian(log))
+
+## Tiling - working with larger rasters:
+fn = system.file("pictures/SP27GTIF.TIF", package = "rgdal")
+obj <- GDALinfo(fn)
+tiles <- GSIF::getSpatialTiles(obj, block.x=5000, return.SpatialPolygons = FALSE)
+tiles.pol <- GSIF::getSpatialTiles(obj, block.x=5000, return.SpatialPolygons = TRUE)
+tile.pol = SpatialPolygonsDataFrame(tiles.pol, tiles)
+plot(tile.pol)
+## Read a single tile:
+x = readGDAL(fn, offset=unlist(tiles[1,c("offset.y","offset.x")]), region.dim=unlist(tiles[1,c("region.dim.y","region.dim.x")]), output.dim=unlist(tiles[1,c("region.dim.y","region.dim.x")]), silent = TRUE)
+spplot(x)
+## from plotKML:
+library(parallel)
+library(snowfall)
+plotKML.GDALobj(obj, tiles=tiles, z.lim=c(0,185))
