@@ -52,3 +52,20 @@ saga_DEM_derivatives <- function(INPUT, MASK=NULL, sel=c("SLP","TWI","CRV","VBF"
     suppressWarnings( system(paste0(saga_cmd, ' statistics_grid 1 -GRID=\"', INPUT, '\" -DEVMEAN=\"', gsub(".sgrd", "_devmean.sgrd", INPUT), '\" -RADIUS=11' ) ) )
   }
 }
+
+## Spatiotemporal overlay
+ov_st <- function(x, y, profs, vnames, col.names=c("SOURCEID","YEAR","OCDENS","DEPTH.f","LONWGS84","LATWGS84")){
+  sel = which(profs$YEAR_c==x)
+  pnts = profs[sel,]
+  if(nrow(pnts)>0){
+    sfInit(parallel=TRUE, cpus=56)
+    sfExport("pnts", "y")
+    sfLibrary(rgdal)
+    sfLibrary(raster)
+    out <- data.frame(sfClusterApplyLB(y, function(i){try( raster::extract(y=pnts, x=raster(i)) )}))
+    sfStop()
+    names(out) = vnames
+    out <- cbind(as.data.frame(pnts)[,col.names], out)
+    return(out)
+  }
+}
