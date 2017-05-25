@@ -117,8 +117,10 @@ if(!file.exists("wosis_tbl.rds")){
   wosis_tbl = cbind(wosis_tbl, ind.tax)
   #str(wosis_tbl)  
   saveRDS(wosis_tbl, "wosis_tbl.rds")
+  saveRDS(ind.tax, "ov_wosis_taxousda.rds")
 } else {
   wosis_tbl = readRDS("wosis_tbl.rds")
+  ind.tax = readRDS("ov_wosis_taxousda.rds")
 }
 library(ranger)
 hist(log1p(wosis_tbl$carbon_o), breaks=45)
