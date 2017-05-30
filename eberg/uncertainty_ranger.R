@@ -115,3 +115,18 @@ eberg_SNDMHT$var.SNDMHT_Df = ifelse(eberg_SNDMHT$var.SNDMHT_D>20, 20, eberg_SNDM
 plot(raster(eberg_SNDMHT["var.SNDMHT_Df"]), col=SAGA_pal[[1]])
 points(eberg[!is.na(eberg$SNDMHT_D),], pch="+")
 ## uncertainty is function of location / covariates, but also of values (higher values - higher uncertainty usually):
+
+## Since ranger v0.7.2 errors can be extracted directly from the package based on the method of Wager et al. (2014) 
+## https://github.com/imbs-hl/ranger/issues/136
+SNDMHT.rfu <- ranger(fm2, data = mS, num.trees = 85, write.forest = TRUE, keep.inbag = TRUE)
+eberg_SNDMHT = eberg_grid[1]
+x = predict(SNDMHT.rfu, eberg_grid@data, type = "se") ## this is somewhat computationally intensive if the number of trees is high!
+eberg_SNDMHT$SNDMHT_D <- x$predictions
+eberg_SNDMHT$sd.SNDMHT_D <- x$se ## standard errors i.e. absolute errors +/-
+plot(raster(eberg_SNDMHT["SNDMHT_D"]), col=SAGA_pal[[1]])
+plot(raster(eberg_SNDMHT["sd.SNDMHT_D"]), col=SAGA_pal[[1]]) ## in some areas errors are quite high!
+points(eberg[!is.na(eberg$SNDMHT_D),], pch="+")
+## compare numbers:
+summary(x$se)
+SNDMHT.rfu
+## median se about 15 hence good match!

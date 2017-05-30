@@ -96,6 +96,7 @@ bwplot(resamps, layout = c(3, 1))
 round((1-min(mFit3$results$RMSE)/min(mFit0$results$RMSE))*100)
 
 ## 2. Global PTF for estimating bulk density from profile data ----
+library(ranger)
 if(!file.exists("wosis_tbl.rds")){
   download.file("http://gsif.isric.org/lib/exe/fetch.php?media=wosis_profiles.rda", "wosis_profiles.rda")
   load("wosis_profiles.rda"); unlink("wosis_profiles.rda")
@@ -118,25 +119,27 @@ if(!file.exists("wosis_tbl.rds")){
   #str(wosis_tbl)  
   saveRDS(wosis_tbl, "wosis_tbl.rds")
   saveRDS(ind.tax, "ov_wosis_taxousda.rds")
+  hist(log1p(wosis_tbl$carbon_o), breaks=45)
+  fm = as.formula(paste0('bd ~ carbon_o + ph_h2o + sand_t + clay_t + depth +', paste(names(ind.tax), collapse="+")))
+  rf_BD <- ranger(fm, data=wosis_tbl, num.trees = 85, importance='impurity')
+  rf_BD
+  library(scales)
+  library(hexbin)
+  library(lattice)
+  library(plotKML)
+  pfun <- function(x,y, ...){
+    panel.hexbinplot(x,y, ...)
+    panel.loess(x, y, ..., col = "black",lty=1,lw=2,span=1/18)
+  }
+  pal = R_pal[["bpy_colors"]][3:18]
+  hexbinplot(wosis_tbl$bd~wosis_tbl$carbon_o, colramp=colorRampPalette(pal), xlab="Organic carbon (permiles)", ylab="Bulk density (kg/cubic-m)", type="g", lwd=1, lcex=8, inner=.2, cex.labels=.8, asp=1, xbins=40, ybins=40, xlim=c(0,400), panel=pfun, colorcut=c(0,0.008,0.01,0.018,0.028,0.07,0.15,0.25,0.5,0.75,1))
 } else {
-  wosis_tbl = readRDS("wosis_tbl.rds")
-  ind.tax = readRDS("ov_wosis_taxousda.rds")
+  ind.tax = readRDS("ov_taxousda.rds")
+  dfs_tbl = readRDS("wosis_tbl.rds")
+  fm.BLD = as.formula(paste("BLD ~ ORCDRC + CLYPPT + SNDPPT + PHIHOX + DEPTH.f +", paste(names(ind.tax), collapse="+")))
+  m.BLD_PTF <- ranger(fm.BLD, dfs_tbl, num.trees = 85, importance='impurity')
+  m.BLD_PTF
 }
-library(ranger)
-hist(log1p(wosis_tbl$carbon_o), breaks=45)
-fm = as.formula(paste0('bd ~ carbon_o + ph_h2o + sand_t + clay_t + depth +', paste(names(ind.tax), collapse="+")))
-rf_BD <- ranger(fm, data=wosis_tbl, num.trees = 85, importance='impurity')
-rf_BD
-library(scales)
-library(hexbin)
-library(lattice)
-library(plotKML)
-pfun <- function(x,y, ...){
-  panel.hexbinplot(x,y, ...)
-  panel.loess(x, y, ..., col = "black",lty=1,lw=2,span=1/18)
-}
-pal = R_pal[["bpy_colors"]][3:18]
-hexbinplot(wosis_tbl$bd~wosis_tbl$carbon_o, colramp=colorRampPalette(pal), xlab="Organic carbon (permiles)", ylab="Bulk density (kg/cubic-m)", type="g", lwd=1, lcex=8, inner=.2, cex.labels=.8, asp=1, xbins=40, ybins=40, xlim=c(0,400), panel=pfun, colorcut=c(0,0.008,0.01,0.018,0.028,0.07,0.15,0.25,0.5,0.75,1))
 
 ## 3. SOCS points from La Libertad Research Center (Colombia) ----
 ## https://github.com/cran/geospt/tree/master/data
@@ -301,17 +304,53 @@ fitControl <- trainControl(method="repeatedcv", number=3, repeats=2)
 gb.tuneGrid <- expand.grid(eta = c(0.3,0.4), nrounds = c(50,100), max_depth = 2:3, gamma = 0, colsample_bytree = 0.8, min_child_weight = 1, subsample=1)
 mFit1 <- train(fm.COSha30, data=ov.COSha30, method="ranger", trControl=fitControl, importance='impurity')
 mFit1
+setwd(md)
 
 ## 5. Spatiotemporal modeling of OCD (USA48) ----
 ## 250,428 observations of organic carbon density (kg/m3) together with some 80+ covariates
+setwd("./USA48")
 OCD_stN = readRDS("usa48.OCD_spacetime_matrix.rds")
 pr.lst <- names(OCD_stN)[-which(names(OCD_stN) %in% c("SOURCEID", "DEPTH.f", "OCDENS",   "YEAR", "YEAR_c", "LONWGS84", "LATWGS84"))]
 ## 132 vars
 fm0.st <- as.formula(paste('OCDENS ~ DEPTH.f + ', paste(pr.lst, collapse="+")))
 sel0.m = complete.cases(OCD_stN[,all.vars(fm0.st)])
 rf0.OCD_st <- ranger(fm0.st, data=OCD_stN[sel0.m,all.vars(fm0.st)], importance="impurity", write.forest=TRUE, num.trees=120)
+# Growing trees.. Progress: 31%. Estimated remaining time: 1 minute, 11 seconds.
+# Growing trees.. Progress: 71%. Estimated remaining time: 27 seconds.
 rf0.OCD_st
 ## RMSE = 10 kg/m3 / 60%
+## Most important variables:
 xl <- as.list(ranger::importance(rf0.OCD_st))
 print(t(data.frame(xl[order(unlist(xl), decreasing=TRUE)[1:15]])))
 
+## Map the decrease of OCD:
+library(greenbrown)
+library(raster)
+## import and re-organize predictions:
+tif.lst = list.files(pattern="_10km.tif")
+g10km = as(readGDAL(tif.lst[1]), "SpatialPixelsDataFrame")
+for(i in 2:length(tif.lst)){ g10km@data[,i] = readGDAL(tif.lst[i], silent=TRUE)$band1[g10km@grid.index] }
+names(g10km) = basename(tif.lst)
+g10km = as.data.frame(g10km)
+gridded(g10km) = ~x+y
+proj4string(g10km) = "+proj=longlat +datum=WGS84"
+## Focus on Texas
+library(maps)
+library(maptools)
+states <- map('state', plot=FALSE, fill=TRUE)
+states = SpatialPolygonsDataFrame(map2SpatialPolygons(states, IDs=1:length(states$names)), data.frame(names=states$names))
+proj4string(states) = "+proj=longlat +datum=WGS84"
+ov.g10km = over(y=states, x=g10km)
+txg10km = g10km[which(ov.g10km$names=="texas"),]
+txg10km = as.data.frame(txg10km)
+gridded(txg10km) = ~x+y
+proj4string(txg10km) = "+proj=longlat +datum=WGS84"
+spplot(log1p(stack(txg10km)), col.regions=SAGA_pal[[1]])
+g10km.b = raster::brick(txg10km)
+#names(g10km.b)
+trendmap <- TrendRaster(g10km.b, start=c(1935, 1), freq=1, breaks=1) ## can be computationally intensive
+#plot(trendmap, col=brgr.colors(20), legend.width=2)
+plot(trendmap[["SlopeSEG1"]], col=rev(SAGA_pal[["SG_COLORS_GREEN_GREY_RED"]]), zlim=c(-1.5,1.5), main="Slope SEG1")
+trendclassmap <- TrendClassification(trendmap, min.length=8, max.pval=0.05)
+plot(trendclassmap)
+setwd(md)
