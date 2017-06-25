@@ -111,6 +111,15 @@ system(paste(gdalwarp))
 system(paste(gdalwarp, ' DEMSRT6.sdat DEMSRT6_ll.tif -t_srs \"+proj=longlat +datum=WGS84\"'))
 plot(raster("DEMSRT6_ll.tif"))
 
+## Add metadata to a GeoTiff:
+data("eberg_grid")
+gridded(eberg_grid) = ~ x+y
+proj4string(eberg_grid) <- CRS("+init=epsg:31467")
+ writeGDAL(eberg_grid["DEMSRT6"], "eberg_DEM.tif", options="COMPRESS=DEFLATE")
+?eberg
+system(paste0('gdal_edit.py -mo \"DESCRIPTION=elevation values from the SRTM DEM\" -mo \"DOWNLOAD_URL=http://geomorphometry.org/content/ebergotzen\" eberg_DEM.tif'))
+system('gdalinfo eberg_DEM.tif')
+
 ## RQGIS (https://www.r-bloggers.com/rqgis-0-1-0-release/)
 library(RQGIS)
 env <- set_env()
