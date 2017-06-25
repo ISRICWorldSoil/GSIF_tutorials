@@ -27,6 +27,34 @@ source_https <- function(url, ...) {
 source_https("https://raw.githubusercontent.com/cran/GSIF/master/R/OCSKGM.R")
 OCSKGM
 
+## Test rgdal package:
+library(rgdal)
+spnad83 <- readGDAL(system.file("pictures/erdas_spnad83.tif", package = "rgdal")[1])
+str(spnad83)
+## This is just a vector really:
+#spnad83.tbl <- as.data.frame(spnad83)
+library(raster)
+plot(raster(spnad83))
+
+## Vector maps:
+install_github("edzer/sfr")
+library(sf); library(plotKML)
+data(eberg_zones)
+class(eberg_zones)
+eberg_zones.tbl <- st_as_sf(eberg_zones)
+str(eberg_zones.tbl)
+
+## GPKG
+library(RSQLite)
+data(eberg)
+coordinates(eberg) <- ~X+Y
+proj4string(eberg) <- CRS("+init=epsg:31467")
+writeOGR(eberg, "eberg.gpkg", "eberg", "GPKG")
+con <- dbConnect(RSQLite::SQLite(), dbname = "eberg.gpkg")
+df <- dbGetQuery(con, 'select "soiltype" from eberg')
+summary(as.factor(df$soiltype))
+dbGetQuery(con, 'select * from gpkg_spatial_ref_sys')[3,"description"]
+
 ## Test GSIF package:
 library(GSIF)
 library(sp)
@@ -42,6 +70,16 @@ demo(meuse, echo=FALSE)
 omm <- fit.gstatModel(meuse, om~dist+ffreq, meuse.grid, method="quantregForest")
 om.rk <- predict(omm, meuse.grid)
 plotKML(om.rk)
+
+library(leaflet)
+library(htmlwidgets)
+library(GSIF)
+library(raster)
+demo(meuse, echo=FALSE)
+omm <- autopredict(meuse["om"], meuse.grid[c("dist","soil","ffreq")], method="ranger", auto.plot=FALSE, rvgm=NULL)
+meuse.ll <- reproject(meuse["om"])
+m = leaflet() %>% addTiles() %>% addRasterImage(raster(omm$predicted["om"]), colors = SAGA_pal[[1]][4:20]) %>% addCircles(lng = meuse.ll@coords[,1], lat = meuse.ll@coords[,2], color = c('black'), radius=meuse.ll$om)  
+saveWidget(m, file="organicmater_predicted.html")
 
 ## SAGA GIS (https://sourceforge.net/projects/saga-gis/):
 if(.Platform$OS.type == "windows"){
