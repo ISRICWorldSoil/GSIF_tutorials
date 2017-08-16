@@ -12,6 +12,7 @@ library(scales)
 library(ranger)
 library(RCurl)
 #library(geoR)
+#.onLoad failed in loadNamespace() for 'tcltk', details
 leg = c("#0000ff", "#0028d7", "#0050af", "#007986", "#00a15e", "#00ca35", "#00f20d", "#1aff00", "#43ff00", "#6bff00", "#94ff00", "#bcff00", "#e5ff00", "#fff200", "#ffca00", "#ffa100", "#ff7900", "#ff5000", "#ff2800", "#ff0000")
 ## Load the Meuse data set:
 demo(meuse, echo=FALSE)
@@ -51,6 +52,7 @@ dn0 <- paste(names(grid.dist0), collapse="+")
 fm0 <- as.formula(paste("zinc ~", dn0))
 m0 <- fit.gstatModel(meuse, fm0, grid.dist0, method="ranger", rvgm=NULL)
 rk.m0 <- predict(m0, grid.dist0)
+plot(rk.m0)
 
 ## Plot predictions next to each other:
 png(file = "Fig_comparison_OK_RF_zinc_meuse.png", res = 150, width = 1750, height = 1200)
