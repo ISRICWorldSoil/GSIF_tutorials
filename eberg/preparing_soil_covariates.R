@@ -1,4 +1,5 @@
 ## Some examples of how to prepare soil covariates for spatial prediction
+## http://gsif.isric.org/doku.php/wiki:soil_covariates#working_with_larger_rasters
 ## By: tom.hengl@isric.org and bas.kempen@wur.nl
 
 library(plotKML)
@@ -165,7 +166,8 @@ obj <- GDALinfo(fn)
 tiles <- GSIF::getSpatialTiles(obj, block.x=5000, return.SpatialPolygons = FALSE)
 tiles.pol <- GSIF::getSpatialTiles(obj, block.x=5000, return.SpatialPolygons = TRUE)
 tile.pol = SpatialPolygonsDataFrame(tiles.pol, tiles)
-plot(tile.pol)
+plot(raster(fn), col=bpy.colors(20))
+lines(tile.pol, lwd=2)
 
 ## function to parallelize:
 fun_mask <- function(i, tiles, dir="./tiled/", threshold=190){
@@ -187,7 +189,7 @@ system('gdalbuildvrt -input_file_list SP27GTIF_tiles.txt SP27GTIF.vrt')
 system('gdalwarp SP27GTIF.vrt SP27GTIF_mask.tif -ot \"Byte\" -dstnodata 255 -co \"BIGTIFF=YES\" -r \"near\" -overwrite -co \"COMPRESS=DEFLATE\"')
 plot(raster("SP27GTIF_mask.tif"))
 
-## parallization of ploting of the map from the plotKML package:
+## Parallization of ploting of the map from the plotKML package ----
 library(parallel)
 library(snowfall)
 plotKML.GDALobj(obj, tiles=tiles, z.lim=c(0,185))

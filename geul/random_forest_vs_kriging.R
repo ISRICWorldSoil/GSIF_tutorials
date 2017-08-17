@@ -3,7 +3,7 @@
 
 list.of.packages <- c("plyr", "parallel", "randomForest", "quantregForest", "plotKML", "GSIF", "ranger", "RCurl", "raster", "rgdal")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
-if(length(new.packages)) install.packages(new.packages)
+if(length(new.packages)) install.packages(new.packages, dependencies = TRUE)
 
 library(GSIF)
 library(rgdal)
@@ -16,8 +16,7 @@ library(scales)
 library(ranger)
 library(RCurl)
 library(parallel)
-#library(geoR)
-#.onLoad failed in loadNamespace() for 'tcltk', details
+library(geoR)
 leg = c("#0000ff", "#0028d7", "#0050af", "#007986", "#00a15e", "#00ca35", "#00f20d", "#1aff00", "#43ff00", "#6bff00", "#94ff00", "#bcff00", "#e5ff00", "#fff200", "#ffca00", "#ffa100", "#ff7900", "#ff5000", "#ff2800", "#ff0000")
 ## Load the Meuse data set:
 demo(meuse, echo=FALSE)
