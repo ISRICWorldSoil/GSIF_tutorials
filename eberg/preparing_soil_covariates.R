@@ -178,6 +178,7 @@ fun_mask <- function(i, tiles, dir="./tiled/", threshold=190){
 }
 
 ## Run in parallel:
+dir.create("./tiled")
 x0 = mclapply(1:nrow(tiles), FUN=fun_mask, tiles=tiles)
 ## Mosaick back results of computing:
 t.lst <- list.files(path="./tiled", pattern=glob2rx("^T*.tif$"), full.names=TRUE, recursive=TRUE)

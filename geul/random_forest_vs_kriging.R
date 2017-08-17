@@ -1,5 +1,9 @@
-## Comparison RF vs kriging
+## Comparison RF vs kriging, see slides at: https://github.com/ISRICWorldSoil/GSIF_tutorials/blob/master/geul/5H_Hengl.pdf
 ## tom.hengl@isric.org
+
+list.of.packages <- c("plyr", "parallel", "randomForest", "quantregForest", "plotKML", "GSIF", "ranger", "RCurl", "raster", "rgdal")
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
 
 library(GSIF)
 library(rgdal)
@@ -11,13 +15,14 @@ library(plotKML)
 library(scales)
 library(ranger)
 library(RCurl)
+library(parallel)
 #library(geoR)
 #.onLoad failed in loadNamespace() for 'tcltk', details
 leg = c("#0000ff", "#0028d7", "#0050af", "#007986", "#00a15e", "#00ca35", "#00f20d", "#1aff00", "#43ff00", "#6bff00", "#94ff00", "#bcff00", "#e5ff00", "#fff200", "#ffca00", "#ffa100", "#ff7900", "#ff5000", "#ff2800", "#ff0000")
 ## Load the Meuse data set:
 demo(meuse, echo=FALSE)
 
-## compare GLM vs RF
+## Compare GLM vs RF ----
 m <- glm(zinc~log1p(dist)+ffreq, meuse, family=gaussian(link=log))
 plot(m$fitted.values~m$y, asp=1)
 abline(0,1)
@@ -38,7 +43,7 @@ points(meuse, pch="+")
 dev.off()
 ## TH: Very similar
 
-## Zinc predicted using ordinary kriging:
+## Zinc predicted using ordinary kriging ----
 zinc.geo <- as.geodata(meuse["zinc"])
 #plot(variog4(zinc.geo, lambda=0, max.dist=1500, messages=FALSE), lwd=2)
 zinc.vgm <- likfit(zinc.geo, lambda=0, messages=FALSE, ini=c(var(log1p(zinc.geo$data)),500), cov.model="exponential")
@@ -46,7 +51,7 @@ locs = meuse.grid@coords
 zinc.ok <- krige.conv(zinc.geo, locations=locs, krige=krige.control(obj.m=zinc.vgm))
 meuse.grid$zinc_ok = zinc.ok$predict
 
-## Zinc predicted using RF and buffer distances only:
+## Zinc predicted using RF and buffer distances only ----
 grid.dist0 <- buffer.dist(meuse["zinc"], meuse.grid[1], as.factor(1:nrow(meuse)))
 dn0 <- paste(names(grid.dist0), collapse="+")
 fm0 <- as.formula(paste("zinc ~", dn0))
@@ -65,7 +70,7 @@ dev.off()
 ## TH: RF smooths somewhat more than OK (TO-DO: test bias and accuracy using cross-validation)
 
 nl.rd <- getURL("http://spatialreference.org/ref/sr-org/6781/proj4/")
-## Geul data:
+## Geul data ----
 geul <- read.table("geul.dat", header = TRUE, as.is = TRUE)
 geul$pb = as.numeric(geul$pb)
 geul = geul[!is.na(geul$pb),]
@@ -75,13 +80,13 @@ grd25 <- readGDAL("dem25.txt")
 grd25 <- as(grd25, "SpatialPixelsDataFrame")
 proj4string(grd25) = proj4string(geul) 
 
-## Pb predicted using OK:
+## Pb predicted using OK ----
 pb.geo <- as.geodata(geul["pb"])
 pb.vgm <- likfit(pb.geo, lambda=0, messages=FALSE, ini=c(var(log1p(pb.geo$data)),500), cov.model="exponential")
 locs2 = grd25@coords
 pb.ok <- krige.conv(pb.geo, locations=locs2, krige=krige.control(obj.m=pb.vgm))
 grd25$pb_ok = pb.ok$predict
-## RF
+## Pb predicted using RF only ----
 ov.geul = over(geul["pb"], grd25)
 summary(ov.geul$band1)
 geul.s = geul[!is.na(ov.geul$band1),"pb"]
@@ -101,7 +106,7 @@ plot(log1p(raster(rk.m1@predicted[2])), col=leg, zlim=c(4.2,6.6), main="Random F
 points(geul.s, pch="+")
 dev.off()
 
-## RF with both buffer dist and covariates:
+## RF with both buffer dist and covariates ----
 grd25$swi <- readGDAL("swi.sdat")$band1[grd25@grid.index]
 grd25$dis <- readGDAL("riverdist.txt")$band1[grd25@grid.index]
 plot(stack(grd25))
@@ -127,7 +132,7 @@ plot(log1p(raster(rk.m1@predicted[2])), col=leg, zlim=c(4.2,6.6), main="Random F
 points(geul.s, pch="+")
 dev.off()
 
-## Ebergotzen data set:
+## Factor type variable (Ebergotzen data set) ----
 data(eberg)
 eberg <- eberg[runif(nrow(eberg))<.3,]
 coordinates(eberg) <- ~X+Y
@@ -139,7 +144,6 @@ proj4string(eberg_grid) <- CRS("+init=epsg:31467")
 ## predict soil types:
 soiltype <- autopredict(eberg["soiltype"], eberg_grid, auto.plot=FALSE)
 plot(stack(soiltype$predicted), col=SAGA_pal[["SG_COLORS_YELLOW_RED"]], zlim=c(0,100))
-
 ## Plot soil type "G"
 r.G = soiltype$predicted["G"]
 r.G$G = ifelse(r.G$G>40, 40, r.G$G)
@@ -152,3 +156,4 @@ r.D$D = ifelse(r.D$D>40, 40, r.D$D)
 plot(raster(r.D), col=SAGA_pal[["SG_COLORS_YELLOW_RED"]], zlim=c(0,40))
 points(eberg[eberg$soiltype=="D",], pch=19)
 points(eberg[!eberg$soiltype=="D",], pch="+")
+## Conclusion: looks like regression-kriging on class probs
