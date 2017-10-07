@@ -1,10 +1,12 @@
 ## Comparison RF vs kriging, see slides at: https://github.com/ISRICWorldSoil/GSIF_tutorials/blob/master/geul/5H_Hengl.pdf
 ## tom.hengl@isric.org
 
-list.of.packages <- c("plyr", "parallel", "randomForest", "quantregForest", "plotKML", "GSIF", "ranger", "RCurl", "raster", "rgdal")
+list.of.packages <- c("plyr", "parallel", "randomForest", "quantregForest", "plotKML", "GSIF", "ranger", "RCurl", "raster", "rgdal", "geoR")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages, dependencies = TRUE)
 
+setwd("~/git/GSIF_tutorials/geul")
+load(".RData")
 library(GSIF)
 library(rgdal)
 library(raster)
@@ -17,6 +19,7 @@ library(ranger)
 library(RCurl)
 library(parallel)
 library(geoR)
+library(geostatsp)
 leg = c("#0000ff", "#0028d7", "#0050af", "#007986", "#00a15e", "#00ca35", "#00f20d", "#1aff00", "#43ff00", "#6bff00", "#94ff00", "#bcff00", "#e5ff00", "#fff200", "#ffca00", "#ffa100", "#ff7900", "#ff5000", "#ff2800", "#ff0000")
 ## Load the Meuse data set:
 demo(meuse, echo=FALSE)
@@ -47,26 +50,110 @@ zinc.geo <- as.geodata(meuse["zinc"])
 #plot(variog4(zinc.geo, lambda=0, max.dist=1500, messages=FALSE), lwd=2)
 zinc.vgm <- likfit(zinc.geo, lambda=0, messages=FALSE, ini=c(var(log1p(zinc.geo$data)),500), cov.model="exponential")
 locs = meuse.grid@coords
-zinc.ok <- krige.conv(zinc.geo, locations=locs, krige=krige.control(obj.m=zinc.vgm))
+zinc.ok <- krige.conv(zinc.geo, locations=locs, krige=krige.control(obj.model=zinc.vgm))
 meuse.grid$zinc_ok = zinc.ok$predict
+meuse.grid$zinc_ok_var = zinc.ok$krige.var
 
 ## Zinc predicted using RF and buffer distances only ----
 grid.dist0 <- buffer.dist(meuse["zinc"], meuse.grid[1], as.factor(1:nrow(meuse)))
 dn0 <- paste(names(grid.dist0), collapse="+")
-fm0 <- as.formula(paste("zinc ~", dn0))
-m0 <- fit.gstatModel(meuse, fm0, grid.dist0, method="ranger", rvgm=NULL)
-rk.m0 <- predict(m0, grid.dist0)
-plot(rk.m0)
+fm0 <- as.formula(paste("zinc ~ ", dn0))
+ov.zinc <- over(meuse["zinc"], grid.dist0)
+m.zinc <- ranger(fm0, cbind(meuse@data["zinc"], ov.zinc), keep.inbag = TRUE)
+zinc.rfd <- predict(m.zinc, grid.dist0@data, type = "se")
+meuse.grid$zinc_rfd = zinc.rfd$predictions
+meuse.grid$zinc_rfd_var = zinc.rfd$se
 
 ## Plot predictions next to each other:
-png(file = "Fig_comparison_OK_RF_zinc_meuse.png", res = 150, width = 1750, height = 1200)
-par(mfrow=c(1,2), oma=c(0,0,0,0))
-plot(log1p(raster(meuse.grid["zinc_ok"])), col=leg, zlim=c(4.8,7.4), main="geoR (krige.conv)")
+#png(file = "Fig_comparison_OK_RF_zinc_meuse.png", res = 150, width = 1750, height = 1200)
+var.max = max(c(meuse.grid$zinc_rfd_var, sqrt(meuse.grid$zinc_ok_var)))
+axis.ls = list(at=c(4.8,5.7,6.5,7.4), labels=round(expm1(c(4.8,5.7,6.5,7.4))))
+pdf(file = "Fig_comparison_OK_RF_zinc_meuse.pdf", width=9, height=9)
+par(mfrow=c(2,2), oma=c(0,0,0,1), mar=c(0,0,4,3))
+plot(log1p(raster(meuse.grid["zinc_ok"])), col=leg, zlim=c(4.8,7.4), main="Ordinary Kriging (OK)", axes=FALSE, box=FALSE, axis.args=axis.ls)
 points(meuse, pch="+")
-plot(log1p(raster(rk.m0@predicted[2])), col=leg, zlim=c(4.8,7.4), main="Random Forest")
+plot(log1p(raster(meuse.grid["zinc_rfd"])), col=leg, zlim=c(4.8,7.4), main="Random Forest (RF)", axes=FALSE, box=FALSE, axis.args=axis.ls)
+points(meuse, pch="+")
+plot(sqrt(raster(meuse.grid["zinc_ok_var"])), col=rev(bpy.colors()), zlim=c(0,var.max), main="OK prediction error", axes=FALSE, box=FALSE)
+points(meuse, pch="+")
+plot(raster(meuse.grid["zinc_rfd_var"]), col=rev(bpy.colors()), zlim=c(0,var.max), main="RF prediction error", axes=FALSE, box=FALSE)
 points(meuse, pch="+")
 dev.off()
-## TH: RF smooths somewhat more than OK (TO-DO: test bias and accuracy using cross-validation)
+## TH: RF smooths somewhat more than OK
+
+## cross-validation:
+
+## RF with combined covariates ----
+meuse.grid$SW_occurrence = readGDAL("Meuse_GlobalSurfaceWater_occurrence.tif")$band1[meuse.grid@grid.index]
+meuse.grid$AHN = readGDAL("ahn.asc")$band1[meuse.grid@grid.index]
+meuse.grid$LGN5 = as.factor(readGDAL("lgn5.asc")$band1[meuse.grid@grid.index])
+grids.spc = spc(meuse.grid, as.formula("~ SW_occurrence + AHN + ffreq + dist"))
+## fit hybrid RF model:
+fm1 <- as.formula(paste("zinc ~ ", dn0, " + ", paste(names(grids.spc@predicted), collapse = "+")))
+ov.zinc1 <- over(meuse["zinc"], grids.spc@predicted)
+m1.zinc <- ranger(fm1, do.call(cbind, list(meuse@data["zinc"], ov.zinc, ov.zinc1)), keep.inbag = TRUE, importance = "impurity")
+m1.zinc
+zinc.rfd1 <- predict(m1.zinc, cbind(grid.dist0@data, grids.spc@predicted@data), type = "se")
+meuse.grid$zinc_rfd1 = zinc.rfd1$predictions
+meuse.grid$zinc_rfd1_var = zinc.rfd1$se
+xl <- as.list(ranger::importance(m1.zinc))
+print(t(data.frame(xl[order(unlist(xl), decreasing=TRUE)[1:10]])))
+m2.zinc <- ranger(paste("zinc ~ ", paste(names(grids.spc@predicted), collapse = "+")), do.call(cbind, list(meuse@data["zinc"], ov.zinc1)))
+m2.zinc
+meuse.grid$zinc_rfd2 = predict(m2.zinc, grids.spc@predicted@data)$predictions
+
+pdf(file = "Fig_RF_covs_bufferdist_zinc_meuse.pdf", width=9, height=5)
+par(mfrow=c(1,2), oma=c(0,0,0,1), mar=c(0,0,4,3))
+plot(log1p(raster(meuse.grid["zinc_rfd2"])), col=leg, zlim=c(4.8,7.4), main="Random Forest (RF) covs only", axes=FALSE, box=FALSE, axis.args=axis.ls)
+points(meuse, pch="+")
+plot(log1p(raster(meuse.grid["zinc_rfd1"])), col=leg, zlim=c(4.8,7.4), main="Random Forest (RF) covs + buffer dist.", axes=FALSE, box=FALSE, axis.args=axis.ls)
+points(meuse, pch="+")
+dev.off()
+
+## SIC 1997 data set ----
+## measurements made in Switzerland on the 8th of May 1986
+sic97.sp = readRDS("sic97.rds")
+swiss1km = readRDS("swiss1km.rds")
+ov = over(y=swiss1km, x=sic97.sp)
+#plot(stack(swiss1km[1:2]))
+## linear geostatistical model from: https://www.jstatsoft.org/article/view/v063i12/v63i12.pdf 
+swissFit <- lgm(rainfall ~ CHELSA_rainfall + DEM, sic97.sp, grid = raster(swiss1km["border"]), covariates = stack(swiss1km[c("CHELSA_rainfall","DEM")]), aniso = TRUE)
+## Example from the paper not working for some reason?!
+#swissFit <- lgm(rainfall ~ CHELSA_rainfall + DEM, sic97.sp, grid = raster(swiss1km["border"]), covariates = stack(swiss1km[c("CHELSA_rainfall","DEM")]),, shape = 1, fixShape = TRUE, boxcox = 0.5, fixBoxcox = TRUE, aniso = TRUE)
+# Error in (function (formula, data, paramToEstimate = c("range", "nugget"),  : 
+# L-BFGS-B needs finite values of 'fn'
+swiss1km$rainfall_UK = as(swissFit$predict[["predict"]], "SpatialGridDataFrame")@data[swiss1km@grid.index,1]
+swiss1km$rainfall_krigeSd = as(swissFit$predict[["krigeSd"]], "SpatialGridDataFrame")@data[swiss1km@grid.index,1]
+
+## Random Forest example:
+swiss.dist0 <- buffer.dist(sic97.sp["rainfall"], swiss1km[1], as.factor(1:nrow(sic97.sp))) ## takes 2-3 mins
+ov.swiss = over(sic97.sp["rainfall"], swiss.dist0)
+sw.dn0 <- paste(names(swiss.dist0), collapse="+")
+sw.fm1 <- as.formula(paste("rainfall ~ ", sw.dn0, " + CHELSA_rainfall + DEM"))
+ov.rain <- over(sic97.sp["rainfall"], swiss1km[1:2])
+sw.rm = do.call(cbind, list(sic97.sp@data["rainfall"], ov.rain, ov.swiss))
+m1.rain <- ranger(sw.fm1, sw.rm[complete.cases(sw.rm),], keep.inbag = TRUE, importance = "impurity")
+m1.rain
+rain.rfd1 <- predict(m1.rain, cbind(swiss.dist0@data, swiss1km@data), type = "se")
+swiss1km$rainfall_rfd1 = rain.rfd1$predictions
+swiss1km$rainfall_rfd1_var = rain.rfd1$se
+xl1 <- as.list(ranger::importance(m1.rain))
+print(t(data.frame(xl1[order(unlist(xl1), decreasing=TRUE)[1:15]])))
+
+rain.max = max(swiss1km$rainfall_rfd1, na.rm = TRUE)
+swiss1km$rainfall_UK = ifelse(swiss1km$rainfall_UK<0, 0, ifelse(swiss1km$rainfall_UK>rain.max, rain.max, swiss1km$rainfall_UK))
+## Plot predictions next to each other:
+pdf(file = "Fig_Swiss_rainfall_UK_vs_RF.pdf", width=12, height=8)
+par(mfrow=c(2,2), oma=c(0,0,0,0.5), mar=c(0,0,1.5,1))
+plot(raster(swiss1km["rainfall_UK"]), col=leg, main="Universal kriging (UK)", axes=FALSE, box=FALSE, zlim=c(0, rain.max))
+points(sic97.sp, pch="+")
+plot(raster(swiss1km["rainfall_rfd1"]), col=leg, main="Random Forest (RF)", axes=FALSE, box=FALSE, zlim=c(0, rain.max))
+points(sic97.sp, pch="+")
+plot(raster(swiss1km["rainfall_krigeSd"]), col=rev(bpy.colors()), main="Universal kriging (UK) prediction error", axes=FALSE, box=FALSE, zlim=c(0,140))
+points(sic97.sp, pch="+")
+plot(raster(swiss1km["rainfall_rfd1_var"]), col=rev(bpy.colors()), main="Random Forest (RF) prediction error", axes=FALSE, box=FALSE, zlim=c(0,140))
+points(sic97.sp, pch="+")
+dev.off()
 
 nl.rd <- getURL("http://spatialreference.org/ref/sr-org/6781/proj4/")
 ## Geul data ----

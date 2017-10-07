@@ -1,5 +1,5 @@
 ## Spatial prediction and derivation of Soil Organic Carbon Stock (OCS)
-## prepared by: tom.hengl@isric.org
+## prepared by: tom.hengl@isric.org and bas.kempen@wur.nl
 ## http://gsif.isric.org/doku.php/wiki:soil_organic_carbon
 
 list.of.packages = c("GSIF", "plotKML", "nnet", "aqp", "plyr", "ROCR", "randomForest", "parallel", "psych", "mda", "dismo", "grDevices", "snowfall", "hexbin", "lattice", "ranger", "xgboost", "doParallel", "caret", "mboost")
@@ -32,6 +32,8 @@ if(.Platform$OS.type == "windows"){
 }
 source('SOCS_functions.R')
 md = getwd()
+leg = c("#0000ff", "#0028d7", "#0050af", "#007986", "#00a15e", "#00ca35", "#00f20d", "#1aff00", "#43ff00", "#6bff00", "#94ff00", "#bcff00", "#e5ff00", "#fff200", "#ffca00", "#ffa100", "#ff7900", "#ff5000", "#ff2800", "#ff0000")
+
 
 ## 0. Fitting splines for profiles ----
 
@@ -80,7 +82,7 @@ CRF.s <- mpspline(prof2, var.name="CRF", d=t(c(0,30,100,200)), vhigh = 2200)
 OCSKGM(ORC.s$var.std$`0-30 cm`, BLD.s$var.std$`0-30 cm`, CRF.s$var.std$`0-30 cm`, HSIZE=30)
 OCSKGM(ORC.s$var.std$`30-100 cm`, BLD.s$var.std$`30-100 cm`, CRF.s$var.std$`30-100 cm`, HSIZE=70)
 
-## 1. Model performance ----
+## 1. Improving model performance ----
 fitControl <- trainControl(method="repeatedcv", number=2, repeats=2)
 demo(meuse, echo=FALSE)
 meuse.ov <- cbind(over(meuse, meuse.grid), meuse@data)
@@ -95,7 +97,7 @@ bwplot(resamps, layout = c(3, 1))
 ## Improvement in efficiency = 32%:
 round((1-min(mFit3$results$RMSE)/min(mFit0$results$RMSE))*100)
 
-## 2. Global PTF for estimating bulk density from profile data ----
+## 2. Fitting a global PTF for estimating BD from profile data ----
 library(ranger)
 if(!file.exists("wosis_tbl.rds")){
   download.file("http://gsif.isric.org/lib/exe/fetch.php?media=wosis_profiles.rda", "wosis_profiles.rda")
@@ -138,7 +140,9 @@ if(!file.exists("wosis_tbl.rds")){
   dfs_tbl = readRDS("wosis_tbl.rds")
   fm.BLD = as.formula(paste("BLD ~ ORCDRC + CLYPPT + SNDPPT + PHIHOX + DEPTH.f +", paste(names(ind.tax), collapse="+")))
   m.BLD_PTF <- ranger(fm.BLD, dfs_tbl, num.trees = 85, importance='impurity')
+  ## takes 30--60 secs
   m.BLD_PTF
+  saveRDS(m.BLD_PTF, "m.BLD_PTF.rds")
 }
 
 ## 3. SOCS points from La Libertad Research Center (Colombia) ----
@@ -239,71 +243,76 @@ COSha30.pr$SOCS30cm_predC = cut(log1p(COSha30.pr$COSha30map_MLA), breaks=brks1, 
 spplot(COSha30.pr["SOCS30cm_predC"], col.regions=SAGA_pal[[1]], sp.layout=list(list("sp.points", COSha30, pch="+", col="black")))
 setwd(md)
 
-## 4. Soil profiles case study Bor (Serbia) ----
-## https://github.com/pejovic/sparsereg3D
-setwd("./bor")
-load("BorData.rda")
-coordinates(bor) = ~ x + y
-proj4string(bor) = "+proj=utm +zone=34 +ellps=GRS80 +towgs84=0.26901,0.18246,0.06872,-0.01017,0.00893,-0.01172,0.99999996031 +units=m"
-rBor = raster("bor_soiltype_50m.tif")
-bor = spTransform(bor, CRS(proj4string(rBor)))
-bor$depth = (bor$Bottom - bor$Top)/2+bor$Top
-
-if(!file.exists("covs50m.rds")){
-  get_30m_covariates(te=paste(as.vector(extent(rBor))[c(1,3,2,4)], collapse=" "), tr=res(rBor)[1], p4s=proj4string(rBor))
-  saga_DEM_derivatives("SRTMGL1_SRTMGL1.2.tif")
-  cov2.lst = c(list.files(pattern=glob2rx("*.sdat$")),list.files(pattern=glob2rx("*.tif$")))
-  covs50m = stack(cov2.lst)
-  covs50m = as(as(covs50m, "SpatialGridDataFrame"), "SpatialPixelsDataFrame")
-  #plot(raster(covs50m["bor_soiltype_50m"]))
-  #plot(raster(covs50m["GlobalForestChange2000.2014_first_REDL00"]))
-  saveRDS(covs50m, "covs50m.rds")
-} else {
-  covs30m = readRDS("covs50m.rds")  
+## 4. Soil profiles case study Edgeroi ----
+setwd("./edgeroi")
+data(edgeroi)
+edgeroi.sp = edgeroi$sites
+coordinates(edgeroi.sp) <- ~ LONGDA94 + LATGDA94
+proj4string(edgeroi.sp) <- CRS("+proj=longlat +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +no_defs")
+edgeroi.sp <- spTransform(edgeroi.sp, CRS("+init=epsg:28355"))
+writeOGR(edgeroi.sp, "edgeroi.gpkg", "edgeroi", driver="GPKG")
+con <- url("http://gsif.isric.org/lib/exe/fetch.php?media=edgeroi.grids.rda")
+load(con)
+gridded(edgeroi.grids) <- ~x+y
+proj4string(edgeroi.grids) <- CRS("+init=epsg:28355")
+edgeroi.spc = spc(edgeroi.grids, ~DEMSRT5+TWISRT5+PMTGEO5+EV1MOD5+EV2MOD5+EV3MOD5)
+#plot(stack(edgeroi.grids))
+## Impute missing bulk density using SoilGrids250m:
+summary(edgeroi$horizons[,c("ORCDRC","CLYPPT")])
+ov.edgeroi.BLD = raster::extract(stack(paste0("/mnt/cartman/ftp.soilgrids.org/data/recent/BLDFIE_M_sl",1:7,"_250m_ll.tif")), spTransform(edgeroi.sp, CRS("+proj=longlat +datum=WGS84")))
+## Derive averaged estimates for standard depth intervals:
+ov.edgeroi.BLDm = data.frame(BLD.f=as.vector(sapply(2:ncol(ov.edgeroi.BLD), function(i){rowMeans(ov.edgeroi.BLD[,c(i-1,i)])})), DEPTH.c=as.vector(sapply(1:6, function(i){rep(paste0("sd",i), nrow(edgeroi$sites))})), SOURCEID=rep(edgeroi$sites$SOURCEID, 6))
+str(ov.edgeroi.BLDm)
+## Match BLD values with actual horizons:
+edgeroi$horizons$DEPTH = edgeroi$horizons$UHDICM + (edgeroi$horizons$LHDICM - edgeroi$horizons$UHDICM)/2
+edgeroi$horizons$DEPTH.c = cut(edgeroi$horizons$DEPTH, include.lowest=TRUE, breaks=c(0,5,15,30,60,100,1000), labels=paste0("sd",1:6))
+summary(edgeroi$horizons$DEPTH.c)
+edgeroi$horizons$BLD.f = plyr::join(edgeroi$horizons[,c("SOURCEID","DEPTH.c")], ov.edgeroi.BLDm)$BLD.f
+## Derive Organic Carbon Density in x10kg/m3:
+edgeroi$horizons$OCD = edgeroi$horizons$ORCDRC/1000 * edgeroi$horizons$BLD.f
+summary(edgeroi$horizons$OCD)
+## Prepare regression matrix:
+ov2 <- over(edgeroi.sp, edgeroi.spc@predicted)
+ov2$SOURCEID = edgeroi.sp$SOURCEID
+h2 = hor2xyd(edgeroi$horizons)
+## regression matrix:
+m2 <- plyr::join_all(dfs = list(edgeroi$sites, h2, ov2))
+## Fit a RF model:
+fm.OCD = as.formula(paste0("OCD ~ DEPTH + ", paste(names(edgeroi.spc@predicted), collapse = "+")))
+fm.OCD
+m.OCD <- ranger(fm.OCD, m2[complete.cases(m2[,all.vars(fm.OCD)]),], keep.inbag = TRUE, importance = "impurity")
+m.OCD
+xl <- as.list(ranger::importance(m.OCD))
+print(t(data.frame(xl[order(unlist(xl), decreasing=TRUE)[1:10]])))
+## Predict OCD (with uncertainty):
+for(i in c(0,30)){
+  edgeroi.spc@predicted$DEPTH = i
+  OCD.rf <- predict(m.OCD, edgeroi.spc@predicted@data)
+  #system.time(OCD.rf <- predict(m.OCD, edgeroi.spc@predicted@data, type = "se"))
+  edgeroi.grids@data[,paste0("OCD.", i, "cm")] = OCD.rf$predictions
+  #edgeroi.grids@data[,paste0("OCD.", i, "cm_se")] = OCD.rf$se
 }
-
-## Convert soil organic matter to OC:
-bor$ORC = bor$SOM*0.58*10
-summary(bor$ORC)
-classes2 = cut(bor$ORC, breaks=seq(0, 250, length=15))
-covs50mdist = buffer.dist(bor["ORC"], covs50m["bor_soiltype_50m"], classes2)
-#plot(stack(covs50mdist))
-covs50m@data = cbind(covs50m@data, covs50mdist@data)
-covs50m$bor_soiltype_50m = as.factor(covs50m$bor_soiltype_50m)
-sel.rm = c("GlobalSurfaceWater_occurrence", "GlobalSurfaceWater_extent", "Landsat_bare2010", "COSha30map_var1pred_")
-fm.spc2 = as.formula(paste(" ~ ", paste(names(covs50m)[-which(names(covs50m@data) %in% sel.rm)], collapse = "+")))
-covs50m.spc = spc(covs50m, fm.spc2)
-#plot(stack(covs50m.spc@predicted[1:6]), col=SAGA_pal[[1]])
-
-## Fill in the bulk density values using SoilGrids:
-bor.ll = spTransform(bor, CRS("+proj=longlat +datum=WGS84"))
-bor.ll = bor.ll[!duplicated(bor.ll$ID),c("ID","Soil.Type")]
-## 206 unique points
-## REST example:
-library(rjson)
-library(sp)
-soilgrids.r <- REST.SoilGrids(c("BLDFIE"))
-ov.sg <- over(soilgrids.r, bor.ll)
-## Match values of BLD using standard depths:
-## 7 standard depths
-breaks = c(0, rowMeans(data.frame(c(0,5,15,30,60,100), c(5,15,30,60,100,200))), 200, 4500)
-bor$depth_c = cut(bor$depth, breaks, labels = paste0("sl", 1:8))
-summary(bor$depth_c)
-#sl1 sl2 sl3 sl4 sl5 sl6 sl7 sl8 
-#33  90 145 119  69  15   0   0
-## Estimate Organic carbon density:
-bor$BLDFIE = NA
-bor$OCD = bor$ORC/1000 * bor$BLDFIE
-
-ov.bor = cbind(as.data.frame(bor[c("ID","depth","OCD")]), over(bor, covs50m.spc@predicted))
-
-## Model building:
-fm.COSha30 = as.formula(paste("COSha30 ~ ", paste(names(covs30m.spc@predicted), collapse = "+")))
-fm.COSha30
-fitControl <- trainControl(method="repeatedcv", number=3, repeats=2)
-gb.tuneGrid <- expand.grid(eta = c(0.3,0.4), nrounds = c(50,100), max_depth = 2:3, gamma = 0, colsample_bytree = 0.8, min_child_weight = 1, subsample=1)
-mFit1 <- train(fm.COSha30, data=ov.COSha30, method="ranger", trControl=fitControl, importance='impurity')
-mFit1
+## Deriving the error map is VERY computationally intensive (>5minutes), especially if the number of covariates is high
+## Derive Organic carbon stocks in t/ha:
+edgeroi.grids$OCS.30cm = rowMeans(edgeroi.grids@data[,paste0("OCD.", c(0,30), "cm")]) * 0.3 * 10
+edgeroi.grids$OCS.30cm.f = ifelse(edgeroi.grids$OCS.30cm>76, 76, ifelse(edgeroi.grids$OCS.30cm<28, 28, edgeroi.grids$OCS.30cm))
+## plot OCS 0-30 cm and the error map:
+png(file = "Fig_RF_organic_carbon_stock_Edgeroi.png", width = 900, height = 1100, res=120)
+par(mfrow=c(2,1), oma=c(0,0,0,1), mar=c(0,0,3.5,1.5))
+plot(raster(edgeroi.grids["OCS.30cm.f"]), col=leg, main=paste0("Organic carbon stock 0", "\U2012", "30 cm (t/ha)"), axes=FALSE, box=FALSE, zlim=c(28,76))
+points(edgeroi.sp, pch=21, bg="white", cex=.8)
+plot(raster(edgeroi.grids["OCD.30cm_se"])*0.3*10, col=rev(bpy.colors()), main="Standard prediction error (t/ha)", axes=FALSE, box=FALSE)
+points(edgeroi.sp, pch=21, bg="white", cex=.8)
+dev.off()
+## Total OCS per land use (http://data.environment.nsw.gov.au/dataset/nsw-landuseac11c):
+edgeroi.grids$LandUse = readGDAL("edgeroi_LandUse.sdat")$band1
+lu.leg = read.csv("LandUse.csv")
+edgeroi.grids$LandUseClass = paste(join(data.frame(LandUse=edgeroi.grids$LandUse), lu.leg, match="first")$LU_NSWDeta)
+OCS_agg.lu <- plyr::ddply(edgeroi.grids@data, .(LandUseClass), summarize, Total_OCS_kt=round(sum(OCS.30cm*250^2/1e4, na.rm=TRUE)/1e3), Area_km2=round(sum(!is.na(OCS.30cm))*250^2/1e6))
+OCS_agg.lu$LandUseClass.f = strtrim(OCS_agg.lu$LandUseClass, 34)
+OCS_agg.lu$OCH_t_ha_M = round(OCS_agg.lu$Total_OCS_kt*1000/(OCS_agg.lu$Area_km2*100))
+OCS_agg.lu[OCS_agg.lu$Area_km2>5,c("LandUseClass.f","Total_OCS_kt","Area_km2","OCH_t_ha_M")]
+sum(OCS_agg.lu$Total_OCS_kt, na.rm = TRUE)
 setwd(md)
 
 ## 5. Spatiotemporal modeling of OCD (USA48) ----
